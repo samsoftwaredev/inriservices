@@ -41,8 +41,7 @@ const TrustBadges = () => {
 
   return (
     <Box overflow="hidden" width="100%" p={2} textAlign={"center"}>
-      <Typography
-        variant="body1"
+      <Box
         sx={{
           textAlign: "center",
           my: { xs: 2, md: 4 },
@@ -58,7 +57,7 @@ const TrustBadges = () => {
           INRI Services
         </Typography>{" "}
         Trusted by Many Happy Dallas Homeowners
-      </Typography>
+      </Box>
       <Grid
         container
         spacing={1}
