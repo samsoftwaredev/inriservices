@@ -5,87 +5,144 @@ import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Box, Typography, useMediaQuery } from "@mui/material";
+import {
+  Box,
+  Typography,
+  useMediaQuery,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
 import Image from "next/image";
+import { useState } from "react";
 
 const TopNavbar = () => {
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isDesktop = useMediaQuery(theme.breakpoints.up("md"));
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const toggleDrawer = (open: boolean) => () => {
+    setDrawerOpen(open);
+  };
 
   return (
-    <AppBar
-      position="static"
-      component="header" // Semantic HTML for SEO
-      sx={{
-        backgroundColor: theme.palette.warning.main,
-        height: isMobile ? "48px" : "50px",
-      }}
-    >
-      <Toolbar sx={{ minHeight: isMobile ? "48px" : "56px" }}>
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          sx={{ mr: 2 }}
-        >
-          {isMobile ? <MenuIcon /> : null}
-        </IconButton>
-        <Typography
-          color="white"
-          variant="h1"
-          href="/"
-          component="a"
+    <>
+      <AppBar
+        position="static"
+        component="header"
+        sx={{
+          backgroundColor: theme.palette.warning.main,
+          height: "48px", // Default for mobile
+          [theme.breakpoints.up("md")]: {
+            height: "50px", // Adjust for desktop
+          },
+        }}
+      >
+        <Toolbar
           sx={{
-            marginRight: { xs: "35px", md: "inherit" },
-            display: { xs: "flex", md: "inherit" },
-            textAlign: { xs: "center", md: "inherit" },
-            justifyContent: { xs: "center", md: "inherit" },
-            width: { xs: "100%", md: "inherit" },
-            fontSize: isMobile ? "1.25rem" : "1.5rem",
-            fontWeight: "bold",
+            minHeight: "48px", // Default for mobile
+            [theme.breakpoints.up("md")]: {
+              minHeight: "56px", // Adjust for desktop
+            },
           }}
         >
-          <Image
-            src="/inriServices.png"
-            alt="INRI Services Logo"
-            priority
-            width={80}
-            height={80}
-            style={{
-              marginTop: "10px",
-              borderRadius: "62px",
-              border: "2px solid white",
-              boxShadow: "0 0 10px rgba(0, 0, 0, 0.7)",
-            }} // Added styles for the logo
-          />
-        </Typography>
-        <Box sx={{ flexGrow: 1 }} />
-        {!isMobile && (
-          <>
-            <Typography
-              color="white"
-              variant="body1"
-              component="p"
-              sx={{ mr: 2 }}
-            >
-              Company located in Dallas area
-            </Typography>
-            <Typography
-              href="/contact"
-              variant="h6"
-              component="a"
-              color="white"
-              sx={{
-                fontWeight: "bold",
-                cursor: "pointer",
-                textDecoration: "underline",
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            onClick={toggleDrawer(true)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            color="white"
+            variant="h1"
+            href="/"
+            component="a"
+            sx={{
+              display: "flex",
+              textAlign: "center",
+              justifyContent: "center",
+              width: "100%",
+              fontSize: "1.25rem", // Default for mobile
+              fontWeight: "bold",
+              marginRight: "50px",
+              [theme.breakpoints.up("md")]: {
+                marginRight: "inherit",
+                display: "inherit",
+                textAlign: "inherit",
+                justifyContent: "inherit",
+                width: "inherit",
+                fontSize: "1.5rem", // Adjust for desktop
+              },
+            }}
+          >
+            <Image
+              src="/inriServices.png"
+              alt="INRI Services Logo"
+              priority
+              width={80}
+              height={80}
+              style={{
+                marginTop: "10px",
+                borderRadius: "62px",
+                border: "2px solid white",
+                boxShadow: "0 0 10px rgba(0, 0, 0, 0.7)",
               }}
-            >
-              Get Your Free Quote Today!
-            </Typography>
-          </>
-        )}
-      </Toolbar>
-    </AppBar>
+            />
+          </Typography>
+          <Box sx={{ flexGrow: 1 }} />
+          {isDesktop && (
+            <>
+              <Typography
+                color="white"
+                variant="body1"
+                component="p"
+                sx={{ mr: 2 }}
+              >
+                Company located in Dallas area
+              </Typography>
+              <Typography
+                href="/contact"
+                variant="h6"
+                component="a"
+                color="white"
+                sx={{
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  textDecoration: "underline",
+                }}
+              >
+                Get Your Free Quote Today!
+              </Typography>
+            </>
+          )}
+        </Toolbar>
+      </AppBar>
+
+      {/* Drawer for mobile navigation */}
+      <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
+        <Box
+          sx={{ width: 250 }}
+          role="presentation"
+          onClick={toggleDrawer(false)}
+          onKeyDown={toggleDrawer(false)}
+        >
+          <List>
+            {[
+              { text: "About", href: "/about" },
+              { text: "Contact", href: "/contact" },
+              { text: "FAQs", href: "/frequently-asked-questions" },
+            ].map((item) => (
+              <ListItem component="a" href={item.href} key={item.text}>
+                <ListItemText primary={item.text} />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
+    </>
   );
 };
 
