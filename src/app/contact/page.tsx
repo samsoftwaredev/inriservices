@@ -1,8 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { Container, Box, Typography, TextField, Button } from "@mui/material";
+import {
+  Container,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Paper,
+  Link,
+} from "@mui/material";
 import { useRouter } from "next/navigation";
+import Head from "next/head";
+import { Footer, TopNavbar, TrustBadges } from "@/components";
 
 const ContactPage = () => {
   const router = useRouter();
@@ -56,86 +66,113 @@ const ContactPage = () => {
     e.preventDefault();
     if (validate()) {
       alert("Message sent successfully!");
-      // You can replace the above line with your actual form handler
       setFormData({ fullName: "", email: "", message: "" });
     }
   };
 
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ my: 4 }}>
-        <Typography
-          variant="h4"
-          component="h1"
-          sx={{ fontWeight: "bold", mb: 2 }}
-        >
-          Contact Us
-        </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-          Have questions or need a quote? We&apos;d love to hear from you.
-        </Typography>
-
-        <form onSubmit={handleSubmit} noValidate>
-          <TextField
-            label="Full Name"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            error={!!errors.fullName}
-            helperText={errors.fullName}
-          />
-
-          <TextField
-            label="Email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            error={!!errors.email}
-            helperText={errors.email}
-          />
-
-          <TextField
-            label="Message"
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
-            multiline
-            rows={4}
-            fullWidth
-            margin="normal"
-            error={!!errors.message}
-            helperText={errors.message}
-          />
-
-          <Box sx={{ mt: 3 }}>
-            <Button
-              variant="contained"
+    <>
+      <Head>
+        <title>Contact Us - INRI Services</title>
+        <meta
+          name="description"
+          content="Get in touch with INRI Services for expert painting and drywall repair in Texas. We're here to help you!"
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://inriservices.com/contact" />
+      </Head>
+      <TopNavbar />
+      <Container maxWidth="sm">
+        <TrustBadges />
+        <Box sx={{ my: 4 }}>
+          <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 }, borderRadius: 3 }}>
+            <Typography
+              variant="h4"
+              component="h1"
+              sx={{ fontWeight: "bold", mb: 2 }}
               color="primary"
-              type="submit"
-              fullWidth
-              size="large"
             >
-              Send Message
-            </Button>
-          </Box>
-        </form>
+              Contact Us
+            </Typography>
+            <Box fontSize="small" component="span" sx={{ color: "red" }}>
+              Get a Free Quote!
+            </Box>
+            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+              <Typography
+                color="primary.main"
+                component={"a"}
+                href="/frequently-asked-questions"
+              >
+                Have questions
+              </Typography>{" "}
+              or need a quote? We'd love to hear from you.
+            </Typography>
 
-        <Box sx={{ mt: 4, textAlign: "center" }}>
-          <Button
-            variant="text"
-            color="secondary"
-            onClick={() => router.push("/")}
-          >
-            ← Back to Home
-          </Button>
+            <form onSubmit={handleSubmit} noValidate>
+              <TextField
+                label="Full Name"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                error={!!errors.fullName}
+                helperText={errors.fullName}
+              />
+
+              <TextField
+                label="Email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                error={!!errors.email}
+                helperText={errors.email}
+              />
+
+              <TextField
+                label="Message"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                multiline
+                rows={4}
+                fullWidth
+                margin="normal"
+                error={!!errors.message}
+                helperText={errors.message}
+              />
+
+              <Box sx={{ mt: 3 }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  type="submit"
+                  fullWidth
+                  size="large"
+                >
+                  Send Message
+                </Button>
+              </Box>
+            </form>
+
+            <Box sx={{ mt: 4, textAlign: "center" }}>
+              <Button
+                variant="text"
+                color="secondary"
+                onClick={() => router.push("/")}
+              >
+                ← Back to Home
+              </Button>
+            </Box>
+          </Paper>
         </Box>
-      </Box>
-    </Container>
+      </Container>
+      <Footer />
+    </>
   );
 };
 

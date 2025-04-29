@@ -1,9 +1,6 @@
-"use client";
-
 import React from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
-import Head from "next/head";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -14,8 +11,18 @@ import CardContent from "@mui/material/CardContent";
 import { theme } from "./theme";
 import { ThemeRegistry } from "./ThemeRegistry";
 import { Paper } from "@mui/material";
-import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import { useRouter } from "next/navigation";
+import {
+  Hero,
+  Meta,
+  ObjectionsBusters,
+  TestimonialSection,
+  TrustBadges,
+  Footer,
+  TopNavbar,
+  MapServices,
+  HoursOperation,
+} from "@/components";
+import PromoBadge from "@/components/PromoBadge";
 
 const pricingData = [
   {
@@ -45,72 +52,14 @@ const pricingData = [
 ];
 
 export default function Home() {
-  const router = useRouter();
-
   return (
     <ThemeRegistry>
-      <Head>
-        <title>
-          INRIservices.com - Expert Painting & Drywall Repair Services
-        </title>
-        <meta name="viewport" content="initial-scale=1, width=device-width" />
-      </Head>
-      <Container maxWidth="md" className={styles["grid-background"]}>
-        {/* Header Section */}
-        <Box sx={{ my: { xs: 2, md: 4 }, textAlign: "center" }} display="flex">
-          <AutoAwesomeIcon />
-          <Typography
-            variant="h1"
-            component="h2"
-            color="primary.main"
-            sx={{
-              fontSize: { xs: "1.2rem", md: "2.5rem" },
-              textTransform: "uppercase",
-              fontWeight: "500",
-            }}
-          >
-            Expert Painting & Drywall Repair
-            <Box
-              sx={{
-                fontWeight: "500",
-                fontSize: { xs: "1.2rem", md: "3.5rem" },
-              }}
-              color="warning.main"
-              display="block"
-              component="span"
-            >
-              Services
-            </Box>
-          </Typography>
-          <AutoAwesomeIcon />
-        </Box>
-        <Box sx={{ my: { xs: 2, md: 4 }, textAlign: "center" }}>
-          <Box
-            component={Paper}
-            elevation={8}
-            sx={{
-              m: { xs: 2, md: 3 },
-              px: 3,
-              py: { xs: 1, md: 1 },
-              borderStyle: "dashed",
-              borderWidth: 3,
-              borderColor: theme.palette.primary.main,
-              borderRadius: 10,
-              backgroundColor: theme.palette.warning.main,
-              display: "inline-block",
-            }}
-          >
-            <Typography
-              variant="body1"
-              sx={{
-                color: "white",
-                fontSize: { xs: "0.9rem", md: "1rem" },
-              }}
-            >
-              <strong>3 Small Patches + Touch-Up Paint – Only $200!</strong>
-            </Typography>
-          </Box>
-        </Box>
+      <Meta />
+      <TopNavbar />
+      <Container maxWidth="md">
+        <TrustBadges />
+        <Hero />
+        <ObjectionsBusters />
 
         <Box
           sx={{
@@ -231,7 +180,39 @@ export default function Home() {
             ))}
           </Grid>
         </Box>
-
+        <TestimonialSection />
+        <Box sx={{ my: { xs: 2, md: 4 }, textAlign: "center" }}>
+          <Box
+            component={Paper}
+            elevation={8}
+            sx={{
+              m: { xs: 2, md: 3 },
+              px: 3,
+              py: { xs: 1, md: 1 },
+              borderStyle: "dashed",
+              borderWidth: 3,
+              borderColor: theme.palette.primary.main,
+              borderRadius: 10,
+              backgroundColor: theme.palette.warning.main,
+              display: "inline-block",
+            }}
+          >
+            <Typography
+              variant="body1"
+              sx={{
+                color: "white",
+                fontSize: { xs: "0.9rem", md: "1rem" },
+              }}
+            >
+              <strong>3 Small Patches + Touch-Up Paint – Only $200!</strong>
+            </Typography>
+          </Box>
+        </Box>
+        <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+          <PromoBadge />
+        </Box>
+        <HoursOperation />
+        <MapServices />
         {/* Discount & Call to Action Section */}
         <Box
           sx={{
@@ -275,26 +256,16 @@ export default function Home() {
             Offer ends July 1st, 2025.
           </Typography>
           <Button
+            href="/contact"
             variant="contained"
             size="large"
             color="primary"
             sx={{ fontSize: { xs: "0.8rem", md: "1rem" } }}
-            onClick={() => router.push("/contact")}
           >
             Book Your Service Now!
           </Button>
         </Box>
-
-        {/* Footer */}
-        <Box sx={{ my: { xs: 2, md: 4 }, textAlign: "center" }}>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ fontSize: { xs: "0.8rem", md: "1rem" } }}
-          >
-            © {new Date().getFullYear()} INRIservices.com. All rights reserved.
-          </Typography>
-        </Box>
+        <Footer />
       </Container>
     </ThemeRegistry>
   );
