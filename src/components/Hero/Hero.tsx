@@ -16,7 +16,7 @@ const Hero = () => {
         component="h1" // Use h1 for the main heading
         color="primary.main"
         sx={{
-          fontSize: { xs: "1.5rem", sm: "1.8rem", md: "2.5rem" },
+          fontSize: { xs: "2rem", sm: "2.5rem", md: "2.8rem" },
           textTransform: "uppercase",
           fontWeight: "500",
         }}
