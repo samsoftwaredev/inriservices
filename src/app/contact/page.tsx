@@ -20,6 +20,7 @@ import emailjs from "emailjs-com";
 
 const ContactPage = () => {
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -70,6 +71,7 @@ const ContactPage = () => {
 
   const sendEmail = (e: React.FormEvent) => {
     setIsSuccess(false);
+    setIsLoading(true);
     emailjs
       .sendForm(
         "service_iq0k3g9",
@@ -95,6 +97,7 @@ const ContactPage = () => {
           phone: "",
           message: "",
         });
+        setIsLoading(false);
       });
   };
 
@@ -211,6 +214,7 @@ const ContactPage = () => {
               )}
               <Box sx={{ mt: 3 }}>
                 <Button
+                  disabled={isLoading}
                   variant="contained"
                   color="warning"
                   type="submit"
