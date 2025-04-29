@@ -17,6 +17,7 @@ import {
   TopNavbar,
   MapServices,
   HoursOperation,
+  SampleWork,
 } from "@/components";
 import PromoBadge from "@/components/PromoBadge";
 import Pricing from "@/components/Pricing";
@@ -33,6 +34,7 @@ export default function Home() {
         <ObjectionsBusters />
         <Pricing />
         <TestimonialSection />
+        <SampleWork />
         <Box sx={{ my: { xs: 2, md: 4 }, textAlign: "center" }}>
           <Box
             component={Paper}
