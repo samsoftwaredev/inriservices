@@ -1,6 +1,8 @@
+"use client";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import Image from "next/image";
+import ImagesearchRollerIcon from "@mui/icons-material/ImagesearchRoller";
 
 const Hero = () => {
   return (
@@ -79,6 +81,29 @@ const Hero = () => {
           Delivering quality craftsmanship and personalized service you can
           trust.
         </Typography>
+      </Box>
+      <Box mt={3} display="flex" justifyContent="center">
+        <Button
+          href="/contact"
+          sx={{
+            my: 5,
+            px: 4,
+            py: 1.5,
+            backgroundColor: "warning.main",
+            color: "white",
+            fontSize: "1rem",
+            fontWeight: "bold",
+            borderRadius: "8px",
+            border: "none",
+            cursor: "pointer",
+            textTransform: "uppercase",
+            "&:hover": {
+              backgroundColor: "primary.dark",
+            },
+          }}
+        >
+          <ImagesearchRollerIcon /> Book Service
+        </Button>
       </Box>
     </Box>
   );

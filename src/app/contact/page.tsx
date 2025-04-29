@@ -9,13 +9,12 @@ import {
   Button,
   Paper,
 } from "@mui/material";
-import { useRouter } from "next/navigation";
 import Head from "next/head";
 import { Footer, TopNavbar, TrustBadges } from "@/components";
+import { ThemeRegistry } from "../ThemeRegistry";
+import { red } from "@mui/material/colors";
 
 const ContactPage = () => {
-  const router = useRouter();
-
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -70,7 +69,7 @@ const ContactPage = () => {
   };
 
   return (
-    <>
+    <ThemeRegistry>
       <Head>
         <title>Contact Us - INRI Services</title>
         <meta
@@ -94,7 +93,7 @@ const ContactPage = () => {
             >
               Contact Us
             </Typography>
-            <Box fontSize="small" component="span" sx={{ color: "red" }}>
+            <Box fontSize="small" component="span" sx={{ color: red[500] }}>
               Get a Free Quote!
             </Box>
             <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
@@ -148,30 +147,35 @@ const ContactPage = () => {
               <Box sx={{ mt: 3 }}>
                 <Button
                   variant="contained"
-                  color="primary"
+                  color="warning"
                   type="submit"
                   fullWidth
                   size="large"
+                  sx={{
+                    px: 4,
+                    py: 1.5,
+                    backgroundColor: "warning.main",
+                    color: "white",
+                    fontSize: "1rem",
+                    fontWeight: "bold",
+                    borderRadius: "8px",
+                    border: "none",
+                    cursor: "pointer",
+                    textTransform: "uppercase",
+                    "&:hover": {
+                      backgroundColor: "warning.dark",
+                    },
+                  }}
                 >
                   Send Message
                 </Button>
               </Box>
             </form>
-
-            <Box sx={{ mt: 4, textAlign: "center" }}>
-              <Button
-                variant="text"
-                color="secondary"
-                onClick={() => router.push("/")}
-              >
-                ← Back to Home
-              </Button>
-            </Box>
           </Paper>
         </Box>
       </Container>
       <Footer />
-    </>
+    </ThemeRegistry>
   );
 };
 
