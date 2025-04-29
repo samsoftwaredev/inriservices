@@ -49,6 +49,14 @@ const TrustBadges = () => {
           px: { xs: 2, md: 0 },
         }}
       >
+        <Typography
+          sx={{
+            fontSize: { xs: "1.5rem", md: "2rem" },
+            fontWeight: "bold",
+          }}
+        >
+          INRI Services
+        </Typography>{" "}
         Trusted by Many Happy Dallas Homeowners
       </Typography>
       <Grid
