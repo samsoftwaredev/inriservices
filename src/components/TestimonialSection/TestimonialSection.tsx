@@ -99,7 +99,7 @@ const TestimonialSection = () => {
         transition={{ duration: 0.8 }}
       >
         {testimonials.map((t, idx) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={idx}>
+          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={idx}>
             <Card
               elevation={4}
               sx={{

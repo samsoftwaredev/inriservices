@@ -54,7 +54,7 @@ const AboutUs: React.FC = () => {
 
         <Grid container spacing={4} mt={4}>
           {/* Our Mission */}
-          <Grid item xs={12} sm={12} md={12}>
+          <Grid size={{ xs: 12, sm: 12, md: 12 }}>
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -82,7 +82,7 @@ const AboutUs: React.FC = () => {
           </Grid>
 
           {/* Our Commitment */}
-          <Grid item xs={12} sm={12} md={12}>
+          <Grid size={{ xs: 12, sm: 12, md: 12 }}>
             <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -110,7 +110,7 @@ const AboutUs: React.FC = () => {
           </Grid>
 
           {/* Based in Texas */}
-          <Grid item xs={12} sm={12} md={12}>
+          <Grid size={{ xs: 12, sm: 12, md: 12 }}>
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}

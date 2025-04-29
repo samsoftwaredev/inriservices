@@ -8,7 +8,6 @@ import {
   TextField,
   Button,
   Paper,
-  Link,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 import Head from "next/head";
@@ -106,7 +105,7 @@ const ContactPage = () => {
               >
                 Have questions
               </Typography>{" "}
-              or need a quote? We'd love to hear from you.
+              or need a quote? We&apos;d love to hear from you.
             </Typography>
 
             <form onSubmit={handleSubmit} noValidate>

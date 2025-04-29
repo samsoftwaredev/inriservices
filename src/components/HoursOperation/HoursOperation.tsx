@@ -10,9 +10,7 @@ const HoursOperation = () => {
 
   return (
     <Grid
-      item
-      xs={12}
-      md={6}
+      size={{ xs: 12, md: 6 }}
       ref={textRef}
       sx={{
         opacity: textInView ? 1 : 0,

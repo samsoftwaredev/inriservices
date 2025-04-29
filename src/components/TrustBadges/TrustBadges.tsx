@@ -60,7 +60,7 @@ const TrustBadges = () => {
         }}
       >
         {getVisibleImages().map((src, idx) => (
-          <Grid item key={idx} sx={{ flex: "0 0 auto", width: "20%" }}>
+          <Grid key={idx} sx={{ flex: "0 0 auto", width: "20%" }}>
             <Box
               sx={{
                 position: "relative",

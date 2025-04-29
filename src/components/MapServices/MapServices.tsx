@@ -21,9 +21,7 @@ const MapServices = () => {
       >
         {/* Map Section */}
         <Grid
-          item
-          xs={12}
-          md={6}
+          size={{ xs: 12, md: 6 }}
           ref={mapRef}
           sx={{
             opacity: mapInView ? 1 : 0,
