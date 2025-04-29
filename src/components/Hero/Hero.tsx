@@ -98,7 +98,7 @@ const Hero = () => {
             cursor: "pointer",
             textTransform: "uppercase",
             "&:hover": {
-              backgroundColor: "primary.dark",
+              backgroundColor: "warning.dark",
             },
           }}
         >

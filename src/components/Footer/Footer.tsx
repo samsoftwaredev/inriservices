@@ -34,17 +34,7 @@ const Footer = () => {
           }}
         >
           contact@inriservices.com
-        </a>{" "}
-        | Phone:{" "}
-        {/* <a
-          href="tel:+1234567890"
-          style={{
-            color: theme.palette.primary.main,
-            textDecoration: "none",
-          }}
-        >
-          +1 (234) 567-890
-        </a> */}
+        </a>
       </Typography>
     </Box>
   );

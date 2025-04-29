@@ -8,27 +8,34 @@ import {
   TextField,
   Button,
   Paper,
+  Alert,
 } from "@mui/material";
 import Head from "next/head";
 import { Footer, TopNavbar, TrustBadges } from "@/components";
 import { ThemeRegistry } from "../ThemeRegistry";
 import { red } from "@mui/material/colors";
+import CheckIcon from "@mui/icons-material/Check";
+
+import emailjs from "emailjs-com";
 
 const ContactPage = () => {
+  const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
+    phone: "",
     message: "",
   });
 
   const [errors, setErrors] = useState({
     fullName: "",
     email: "",
+    phone: "",
     message: "",
   });
 
   const validate = () => {
-    const newErrors = { fullName: "", email: "", message: "" };
+    const newErrors = { fullName: "", email: "", phone: "", message: "" };
     let valid = true;
 
     if (!formData.fullName.trim()) {
@@ -44,6 +51,14 @@ const ContactPage = () => {
       valid = false;
     }
 
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required.";
+      valid = false;
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Phone number must be 10 digits.";
+      valid = false;
+    }
+
     if (!formData.message.trim()) {
       newErrors.message = "Message cannot be empty.";
       valid = false;
@@ -51,6 +66,36 @@ const ContactPage = () => {
 
     setErrors(newErrors);
     return valid;
+  };
+
+  const sendEmail = (e: React.FormEvent) => {
+    setIsSuccess(false);
+    emailjs
+      .sendForm(
+        "service_iq0k3g9",
+        "template_oqdz2yo",
+        // @ts-expect-error passing form data
+        e.target,
+        "lh-EE7Ydp27tFht5R"
+      )
+      .then(
+        (result) => {
+          console.log("Email sent successfully:", result.text);
+          setIsSuccess(true);
+        },
+        (error) => {
+          console.error("Email sending error:", error.text);
+          setIsSuccess(false);
+        }
+      )
+      .finally(() => {
+        setFormData({
+          fullName: "",
+          email: "",
+          phone: "",
+          message: "",
+        });
+      });
   };
 
   const handleChange = (
@@ -63,8 +108,7 @@ const ContactPage = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      alert("Message sent successfully!");
-      setFormData({ fullName: "", email: "", message: "" });
+      sendEmail(e);
     }
   };
 
@@ -132,6 +176,18 @@ const ContactPage = () => {
               />
 
               <TextField
+                label="Phone Number"
+                name="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                error={!!errors.phone}
+                helperText={errors.phone}
+              />
+
+              <TextField
                 label="Message"
                 name="message"
                 value={formData.message}
@@ -144,6 +200,15 @@ const ContactPage = () => {
                 helperText={errors.message}
               />
 
+              {isSuccess && (
+                <Alert
+                  icon={<CheckIcon fontSize="inherit" />}
+                  severity="success"
+                >
+                  <strong>Thank you for reaching out! </strong>
+                  We will get back to you within 24 hours!
+                </Alert>
+              )}
               <Box sx={{ mt: 3 }}>
                 <Button
                   variant="contained"

@@ -47,8 +47,6 @@ const testimonials = [
   },
 ];
 
-const colors = ["#ffe0e6", "#e0f7fa", "#e8f5e9", "#fff3e0", "#ede7f6"];
-
 const TestimonialSection = () => {
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -58,7 +56,7 @@ const TestimonialSection = () => {
   return (
     <Box
       component="section"
-      sx={{ py: 8, px: 2, backgroundColor: "#fefefe" }}
+      sx={{ py: 8, px: 2 }}
       aria-labelledby="testimonial-section-title"
     >
       <Typography
@@ -104,7 +102,6 @@ const TestimonialSection = () => {
               elevation={4}
               sx={{
                 height: "100%",
-                backgroundColor: colors[idx % colors.length],
                 borderRadius: 3,
               }}
               component={motion.div}
