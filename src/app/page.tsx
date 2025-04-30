@@ -18,6 +18,7 @@ import {
   MapServices,
   HoursOperation,
   SampleWork,
+  SocialProof,
 } from "@/components";
 import PromoBadge from "@/components/PromoBadge";
 import Pricing from "@/components/Pricing";
@@ -133,6 +134,7 @@ export default function Home() {
             Schedule Your Service Today!
           </Button>
         </Box>
+        <SocialProof />
         <Footer />
       </Container>
     </ThemeRegistry>

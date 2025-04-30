@@ -10,3 +10,4 @@ export { default as MapServices } from "./MapServices";
 export { default as HoursOperation } from "./HoursOperation";
 export { default as SampleWork } from "./SampleWork";
 export { default as ContactForm } from "./ContactForm";
+export { default as SocialProof } from "./SocialProof";
