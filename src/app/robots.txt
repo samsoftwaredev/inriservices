@@ -1,0 +1,10 @@
+# robots.txt for https://inriservices.com
+
+User-agent: *
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+Allow: /
+
+Sitemap: https://inriservices.com/sitemap.xml
