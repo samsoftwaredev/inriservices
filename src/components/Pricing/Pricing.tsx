@@ -97,7 +97,7 @@ const Pricing = () => {
                   position: "relative",
                   flexDirection: "column",
                   border: "2px solid",
-                  maxWidth: { md: "200px", sm: "150px", xs: "320px" },
+                  maxWidth: { md: "200px", sm: "150px", xs: "250px" },
                   backgroundColor: theme.palette.primary.main,
                   borderColor: theme.palette.primary.main,
                   borderTopLeftRadius: "50px",
@@ -135,11 +135,12 @@ const Pricing = () => {
                     </Typography>
                   ))}
                   <Typography
+                    color="success.dark"
                     variant="h6"
                     sx={{
                       mt: 2,
                       fontWeight: "bold",
-                      fontSize: { xs: "1rem", md: "1.2rem" },
+                      fontSize: { xs: "2rem", md: "2.5rem" },
                     }}
                   >
                     {item.price}

@@ -23,7 +23,7 @@ export const theme = createTheme({
       main: "#f7bd59", // Warm yellow-orange
     },
     success: {
-      main: "#fbde5a", // Bright yellow
+      main: "#4caf50", // Bright yellow
     },
   },
 });

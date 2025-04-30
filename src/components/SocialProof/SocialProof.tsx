@@ -100,7 +100,7 @@ const backlinkData = [
 
 const SocialProof = () => {
   return (
-    <Container maxWidth="lg" sx={{ my: 6 }}>
+    <Container maxWidth="lg" sx={{ my: 6, display: "none" }}>
       <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
         🌐 INRI Services Everywhere!
       </Typography>
@@ -113,7 +113,7 @@ const SocialProof = () => {
           <Grid container spacing={3}>
             {section.links.map((link) => (
               <Grid size={{ xs: 12, sm: 6, md: 4 }} key={link.name}>
-                <Card elevation={2}>
+                <Card elevation={2} sx={{ backgroundColor: "#f5f5f5" }}>
                   <CardActionArea
                     href={link.url}
                     target="_blank"
