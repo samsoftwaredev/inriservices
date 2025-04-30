@@ -108,7 +108,6 @@ const Pricing = () => {
                   <Typography
                     gutterBottom
                     variant="h5"
-                    component="h2"
                     color="white"
                     fontWeight="bold"
                     textAlign={"center"}

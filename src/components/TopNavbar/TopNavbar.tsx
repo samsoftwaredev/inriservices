@@ -57,7 +57,7 @@ const TopNavbar = () => {
           </IconButton>
           <Typography
             color="white"
-            variant="h1"
+            variant="h2"
             href="/"
             component="a"
             sx={{

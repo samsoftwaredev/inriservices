@@ -21,7 +21,7 @@ const HoursOperation = () => {
       <article>
         <Typography
           variant="h1"
-          component="h1"
+          component="h3"
           sx={{
             textAlign: "center",
             fontWeight: "bold",

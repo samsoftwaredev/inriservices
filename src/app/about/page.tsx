@@ -1,22 +1,13 @@
 "use client";
 import React from "react";
-import Head from "next/head";
 import { Typography, Container, Grid, Paper, Divider } from "@mui/material";
-import { Footer, TopNavbar } from "@/components";
+import { Footer, Meta, TopNavbar } from "@/components";
 import { motion } from "framer-motion";
 
 const AboutUs: React.FC = () => {
   return (
     <>
-      <Head>
-        <title>About Us - INRI Painting & Drywall Repair Services</title>
-        <meta
-          name="description"
-          content="Learn more about INRI Services, a trusted family-owned business in Texas offering expert painting and drywall repair services with a commitment to craftsmanship, integrity, and local care."
-        />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-
+      <Meta pageName="About - " />
       <TopNavbar />
 
       <Container maxWidth="md" sx={{ mt: 8, mb: 8 }}>
