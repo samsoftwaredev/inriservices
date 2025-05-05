@@ -54,11 +54,11 @@ const faqs = [
     answer:
       "If we discover hidden issues (like water damage or mold), we'll immediately inform you, explain your options, and adjust the plan if needed — with full transparency.",
   },
-  {
-    question: "Do you offer any warranties or guarantees?",
-    answer:
-      "Yes! We back our workmanship with a 2-Year Warranty. If anything isn’t right, we’ll make it right — no stress, no hassle.",
-  },
+  // {
+  //   question: "Do you offer any warranties or guarantees?",
+  //   answer:
+  //     "Yes! We back our workmanship with a 2-Year Warranty. If anything isn’t right, we’ll make it right — no stress, no hassle.",
+  // },
   {
     question: "How do I schedule a service?",
     answer:

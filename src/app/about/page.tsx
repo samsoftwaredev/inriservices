@@ -32,12 +32,7 @@ const AboutUs: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <Typography
-            variant="h4"
-            align="center"
-            color="text.secondary"
-            paragraph
-          >
+          <Typography align="center" color="text.secondary" paragraph>
             Expert Painting & Drywall Repair Services in Texas – Delivering
             Quality, Integrity, and Beautiful Results.
           </Typography>
@@ -137,12 +132,7 @@ const AboutUs: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <Typography
-            variant="h4"
-            align="center"
-            color="primary"
-            fontWeight="bold"
-          >
+          <Typography align="center" color="primary" fontWeight="bold">
             Trusted Texas Painting & Drywall Repair Experts – Professional,
             Affordable, and Local.
           </Typography>

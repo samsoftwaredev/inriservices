@@ -31,6 +31,7 @@ const TopNavbar = () => {
         position="static"
         component="header"
         sx={{
+          mb: 4,
           backgroundColor: theme.palette.warning.main,
           height: "48px", // Default for mobile
           [theme.breakpoints.up("md")]: {
@@ -82,10 +83,10 @@ const TopNavbar = () => {
               src="/inriLogo.png"
               alt="INRI Paint & Wall LLC Logo"
               priority
-              width={80}
-              height={80}
+              width={120}
+              height={120}
               style={{
-                marginTop: "10px",
+                marginTop: "50px",
                 borderRadius: "62px",
                 border: "2px solid white",
                 boxShadow: "0 0 10px rgba(0, 0, 0, 0.7)",
@@ -130,7 +131,22 @@ const TopNavbar = () => {
           onKeyDown={toggleDrawer(false)}
         >
           <List>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                src="/inriLogo.png"
+                alt="INRI Paint & Wall LLC Logo"
+                width={160}
+                height={160}
+              />
+            </Box>
             {[
+              { text: "Home", href: "/" },
               { text: "About", href: "/about" },
               { text: "Contact", href: "/contact" },
               { text: "FAQs", href: "/frequently-asked-questions" },
