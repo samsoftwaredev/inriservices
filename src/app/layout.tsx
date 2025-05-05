@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { companyName } from "@/constants";
 
 export const metadata: Metadata = {
-  title: "INRI Services",
+  title: companyName,
   description: "Expert Painting & Drywall Repair Services",
   keywords: [
     "painting",
@@ -31,22 +32,22 @@ export const metadata: Metadata = {
   ],
   authors: [
     {
-      name: "INRI Services",
+      name: companyName,
       url: "https://inriservices.com",
     },
   ],
-  creator: "INRI Services",
+  creator: companyName,
   openGraph: {
-    title: "INRI Services",
+    title: companyName,
     description: "Expert Painting & Drywall Repair Services",
     url: "https://inriservices.com",
-    siteName: "INRI Services",
+    siteName: companyName,
     images: [
       {
         url: "https://inriservices.com/images/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "INRI Services - Expert Painting & Drywall Repair Services",
+        alt: companyName + " - Expert Painting & Drywall Repair Services",
       },
     ],
     locale: "en_US",

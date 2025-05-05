@@ -102,7 +102,7 @@ const SocialProof = () => {
   return (
     <Container maxWidth="lg" sx={{ my: 6, display: "none" }}>
       <Typography variant="h4" align="center" gutterBottom fontWeight="bold">
-        🌐 INRI Services Everywhere!
+        🌐 INRI Paint & Wall LLC is Everywhere!
       </Typography>
 
       {backlinkData.map((section) => (

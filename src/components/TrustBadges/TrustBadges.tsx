@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Grid, Typography } from "@mui/material";
 import Image from "next/image";
+import { companyName } from "@/constants";
 
 const images = [
   "/payments.jpg",
@@ -54,7 +55,7 @@ const TrustBadges = () => {
             fontWeight: "bold",
           }}
         >
-          INRI Services
+          {companyName}
         </Typography>{" "}
         Trusted by Many Happy Dallas Homeowners
       </Box>

@@ -11,6 +11,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Head from "next/head";
 import { motion } from "framer-motion";
 import { Footer, TopNavbar } from "@/components";
+import { companyName } from "@/constants";
 
 const faqs = [
   {
@@ -26,7 +27,7 @@ const faqs = [
   {
     question: "Are you licensed and insured?",
     answer:
-      "Absolutely. INRI Services is fully licensed and insured for your peace of mind. Safety and professionalism are our top priorities.",
+      "Absolutely. INRI Paint & Wall LLC is fully licensed and insured for your peace of mind. Safety and professionalism are our top priorities.",
   },
   {
     question: "How long will my project take?",
@@ -70,7 +71,7 @@ export default function FAQPage() {
     <>
       <TopNavbar />
       <Head>
-        <title>FAQs - INRI Painting & Drywall Repair Services</title>
+        <title>FAQs - {companyName} Services</title>
         <meta
           name="description"
           content="Find answers to the most common questions about our expert painting and drywall repair services in Dallas. Family-owned, insured, and trusted."

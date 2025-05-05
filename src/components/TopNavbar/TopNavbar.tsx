@@ -79,8 +79,8 @@ const TopNavbar = () => {
             }}
           >
             <Image
-              src="/inriServices.png"
-              alt="INRI Services Logo"
+              src="/inriLogo.png"
+              alt="INRI Paint & Wall LLC Logo"
               priority
               width={80}
               height={80}

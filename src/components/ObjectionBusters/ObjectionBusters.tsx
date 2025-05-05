@@ -1,4 +1,5 @@
 "use client";
+import { companyName } from "@/constants";
 import { Box, Typography, Card, CardContent } from "@mui/material";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
@@ -34,7 +35,7 @@ const ObjectionBusters = () => {
           px: { xs: 2, md: 6 },
         }}
       >
-        At INRI Services, we’re more than painters — we’re homeowners too.
+        At {companyName}, we’re more than painters — we’re homeowners too.
         That’s why we treat every project with the care and respect it deserves.
       </Typography>
 
