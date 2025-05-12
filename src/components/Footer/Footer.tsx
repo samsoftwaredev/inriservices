@@ -40,13 +40,13 @@ const Footer = () => {
         >
           Contact us:{" "}
           <a
-            href="mailto:contact@inriservices.com"
+            href="mailto:samuel@inripaintwall.com"
             style={{
               color: theme.palette.primary.main,
               textDecoration: "none",
             }}
           >
-            contact@inriservices.com
+            samuel@inripaintwall.com
           </a>
         </Typography>
         <Typography
