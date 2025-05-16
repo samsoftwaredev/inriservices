@@ -31,7 +31,7 @@ const Meta = ({ pageName = "" }: { pageName?: string }) => {
       <meta property="og:url" content="https://inriservices.com/" />
       <meta
         property="og:title"
-        content="INRI Paint & Wall | Expert Painting & Drywall Repair in Dallas"
+        content="INRI Paint & Wall LLC | Expert Painting & Drywall Repair in Dallas"
       />
       <meta
         property="og:description"
