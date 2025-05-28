@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import {
   Box,
@@ -11,48 +9,19 @@ import {
   Stack,
   Rating,
 } from "@mui/material";
-import { useInView } from "react-intersection-observer";
-import { motion } from "framer-motion";
+interface Props {
+  testimonials: {
+    name: string;
+    image: string;
+    text: string;
+    rating: number;
+  }[];
+}
 
-const testimonials = [
-  {
-    name: "Sarah L.",
-    image: "/avatars/avatar1.png",
-    text: "I had a huge hole in my drywall after a plumbing issue—these guys patched it up seamlessly and even repainted the whole wall. You can't tell anything ever happened!",
-    rating: 5,
-  },
-  {
-    name: "James M.",
-    image: "/avatars/avatar2.png",
-    text: "We hired them to repaint our living room and fix a few nail pops. Not only were they super tidy, but they finished ahead of schedule. Our walls look brand new!",
-    rating: 5,
-  },
-  {
-    name: "Monica T.",
-    image: "/avatars/avatar3.png",
-    text: "Excellent job! I appreciated how they matched the existing paint perfectly after repairing a water-damaged area. The team was respectful and professional.",
-    rating: 4.5,
-  },
-  {
-    name: "Carlos G.",
-    image: "/avatars/avatar4.png",
-    text: "They helped repaint and touch up after we moved out of our rental. The landlord was so impressed we got our full deposit back. Highly recommended!",
-    rating: 5,
-  },
-  {
-    name: "Amy K.",
-    image: "/avatars/avatar5.png",
-    text: "Fast, clean, and honest pricing. They repaired a crack running across our ceiling and you’d never know it was there. Super happy with the results.",
-    rating: 4.5,
-  },
-];
-
-const TestimonialSection = () => {
-  const { ref, inView } = useInView({
-    triggerOnce: true,
-    threshold: 0.2,
-  });
-
+const TestimonialSection = ({
+  testimonials
+}: Props) => {
+ 
   return (
     <Box
       component="section"
@@ -90,11 +59,6 @@ const TestimonialSection = () => {
         container
         spacing={4}
         justifyContent="center"
-        ref={ref}
-        component={motion.div}
-        initial={{ opacity: 0, y: 50 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.8 }}
       >
         {testimonials.map((t, idx) => (
           <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }} key={idx}>
@@ -104,10 +68,6 @@ const TestimonialSection = () => {
                 height: "100%",
                 borderRadius: 3,
               }}
-              component={motion.div}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={inView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.5, delay: idx * 0.2 }}
             >
               <CardContent>
                 <Stack direction="row" spacing={2} alignItems="center" mb={1}>

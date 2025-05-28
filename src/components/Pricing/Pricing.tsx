@@ -3,34 +3,19 @@ import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
 import Image from "next/image";
 import styles from "./Pricing.module.css";
 
-const pricingData = [
-  {
-    imageSrc: "/painterOrange.png",
-    title: "Small PATCH area",
-    subTitle: "(1-5 inches)",
-    description: ["Quick fixes for minor damage"],
-    price: "$50 - $100",
-    image: "/cartoon-painter-1.svg",
-  },
-  {
-    imageSrc: "/plumber.png",
-    title: "Medium PATCH area",
-    subTitle: "(6-12 inches)",
-    description: ["For moderate repairs that need precision"],
-    price: "$150 - $250",
-    image: "/cartoon-painter-2.svg",
-  },
-  {
-    imageSrc: "/painter.png",
-    title: "Large PATCH area",
-    subTitle: "(13+ inches)",
-    description: ["Extensive repairs requiring more materials and time"],
-    price: "$300+",
-    image: "/cartoon-painter-3.svg",
-  },
-];
+interface Props {
+  pricingData: {
+    title: string;
+    subTitle: string;
+    description: string[];
+    price: string;
+    imageSrc: string;
+  }[];
+}
 
-const Pricing = () => {
+const Pricing = ({
+  pricingData = []
+}: Props) => {
   return (
     <>
       <Box
@@ -71,7 +56,7 @@ const Pricing = () => {
                   sx={{
                     position: "absolute",
                     top: { md: "70px", sm: "auto", xs: "10px" },
-                    left: { md: "150px", sm: "auto", xs: "auto" },
+                    left: { md: "180px", sm: "auto", xs: "auto" },
                     right: { md: "auto", sm: 0, xs: "120px" },
                     height: {
                       xs: "200px",
@@ -135,12 +120,12 @@ const Pricing = () => {
                     </Typography>
                   ))}
                   <Typography
-                    color="success.dark"
                     variant="h6"
                     sx={{
                       mt: 2,
                       fontWeight: "bold",
-                      fontSize: { xs: "2rem", md: "2.5rem" },
+                      color: "white",
+                      fontSize: { xs: "2rem", md: "1.8rem" },
                     }}
                   >
                     {item.price}

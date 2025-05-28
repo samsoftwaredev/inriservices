@@ -49,7 +49,7 @@ const MapServices = () => {
               sx={{ marginTop: 2, textAlign: "center" }}
             >
               Our services cover a wide range of areas, including{" "}
-              <strong>Dallas</strong>, <strong>Garland</strong>,{" "}
+              <strong>Garland</strong>, <strong>Dallas</strong>, {" "}
               <strong>Richardson</strong>, <strong>Rowlett</strong>,{" "}
               <strong>Plano</strong>, <strong>Mesquite</strong> and{" "}
               <strong>Addison</strong>.

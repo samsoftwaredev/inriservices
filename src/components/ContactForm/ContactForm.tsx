@@ -6,12 +6,7 @@ import {
   TextField,
   Button,
   Alert,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
   SelectChangeEvent,
-  Typography,
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 
@@ -22,7 +17,6 @@ const ContactForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    service: "",
     phone: "",
     message: "",
     address: "",
@@ -31,7 +25,6 @@ const ContactForm = () => {
 
   const [errors, setErrors] = useState({
     name: "",
-    service: "",
     phone: "",
     message: "",
     address: "",
@@ -41,7 +34,6 @@ const ContactForm = () => {
   const validate = () => {
     const newErrors = {
       name: "",
-      service: "",
       phone: "",
       message: "",
       address: "",
@@ -51,11 +43,6 @@ const ContactForm = () => {
 
     if (!formData.name.trim()) {
       newErrors.name = "Full name is required.";
-      valid = false;
-    }
-
-    if (!formData.service.trim()) {
-      newErrors.service = "Service selection is required.";
       valid = false;
     }
 
@@ -94,8 +81,6 @@ const ContactForm = () => {
         formData.message +
         "\n\n\nPHONE:" +
         formData.phone +
-        "\n\n\nSERVICE:" +
-        formData.service +
         "\n\n\nADDRESS:" +
         formData.address +
         "\n\n\nZIPCODE:" +
@@ -122,7 +107,6 @@ const ContactForm = () => {
       .finally(() => {
         setFormData({
           name: "",
-          service: "",
           phone: "",
           message: "",
           address: "",
@@ -164,48 +148,6 @@ const ContactForm = () => {
         error={!!errors.name}
         helperText={errors.name}
       />
-
-      <FormControl fullWidth margin="normal" error={!!errors.service}>
-        <InputLabel sx={{ px: 1, backgroundColor: "white" }} id="service-label">
-          Select Service
-        </InputLabel>
-        <Select
-          labelId="service-label"
-          name="service"
-          value={formData.service}
-          onChange={handleChange}
-        >
-          <MenuItem value="Trim Repair and Installation">
-            🪚 Trim Repair and Installation
-          </MenuItem>
-          <MenuItem value="Cabinet Painting">🎨 Cabinet Painting</MenuItem>
-          <MenuItem value="ReTexture Walls">🖌️ ReTexture Walls</MenuItem>
-          <MenuItem value="Interior Painting">🏠 Interior Painting</MenuItem>
-          <MenuItem value="Exterior Painting">🌳 Exterior Painting</MenuItem>
-          <MenuItem value="Wallpaper Removal">🧹 Wallpaper Removal</MenuItem>
-          <MenuItem value="Popcorn Ceiling Removal">
-            🪜 Popcorn Ceiling Removal
-          </MenuItem>
-          <MenuItem value="Deck Staining and Sealing">
-            🌞 Deck Staining and Sealing
-          </MenuItem>
-          <MenuItem value="Drywall Installation">
-            🔧 Drywall Installation
-          </MenuItem>
-          <MenuItem value="Pressure Washing">💦 Pressure Washing</MenuItem>
-        </Select>
-        {errors.service && (
-          <Typography
-            pl={1}
-            color="error.main"
-            variant="body1"
-            fontSize="small"
-          >
-            {errors.service}
-          </Typography>
-        )}
-      </FormControl>
-
       <TextField
         label="Phone Number"
         name="phone"

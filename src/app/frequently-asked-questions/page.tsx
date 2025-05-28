@@ -17,7 +17,7 @@ const faqs = [
   {
     question: "What areas do you serve?",
     answer:
-      "We proudly serve homeowners throughout Dallas and surrounding areas. Not sure if we cover your neighborhood? Just give us a call!",
+      "We proudly serve homeowners throughout Garland and surrounding areas. Not sure if we cover your neighborhood? Just give us a call!",
   },
   {
     question: "Do you provide free estimates?",
@@ -74,7 +74,7 @@ export default function FAQPage() {
         <title>FAQs - {companyName} Services</title>
         <meta
           name="description"
-          content="Find answers to the most common questions about our expert painting and drywall repair services in Dallas. Family-owned, insured, and trusted."
+          content="Find answers to the most common questions about our expert painting and drywall repair services in Garland. Family-owned, insured, and trusted."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>

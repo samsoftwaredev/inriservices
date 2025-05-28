@@ -4,7 +4,15 @@ import { Box, Button, Typography } from "@mui/material";
 import Image from "next/image";
 import ImagesearchRollerIcon from "@mui/icons-material/ImagesearchRoller";
 
-const Hero = () => {
+interface Props {
+  services?: string;
+  heroImage?: string;
+}
+
+const Hero = ({
+  services = "Expert Painting & Drywall Repair",
+  heroImage = "/workers.png"
+}: Props) => {
   return (
     <Box
       component="header" // Use semantic HTML
@@ -15,7 +23,7 @@ const Hero = () => {
     >
       <Typography
         variant="h1"
-        component="h1" // Use h1 for the main heading
+        component="h3" // Use h1 for the main heading
         color="primary.main"
         sx={{
           fontSize: { xs: "2rem", sm: "2.5rem", md: "2.8rem" },
@@ -23,7 +31,7 @@ const Hero = () => {
           fontWeight: "500",
         }}
       >
-        Expert Painting & Drywall Repair
+        {services}
         <Box
           sx={{
             fontWeight: "500",
@@ -57,7 +65,7 @@ const Hero = () => {
       </Typography>
       <Box sx={{ width: "100%", position: "relative", mt: 2 }}>
         <Image
-          src="/workers.png"
+          src={heroImage}
           alt="Painter"
           layout="responsive"
           width={1920}

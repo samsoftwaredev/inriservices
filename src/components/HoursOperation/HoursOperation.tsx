@@ -1,22 +1,9 @@
-"use client";
-import { useInView } from "react-intersection-observer";
 import { Grid, List, ListItem, Typography } from "@mui/material";
 
 const HoursOperation = () => {
-  const { ref: textRef, inView: textInView } = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
   return (
     <Grid
       size={{ xs: 12, md: 6 }}
-      ref={textRef}
-      sx={{
-        opacity: textInView ? 1 : 0,
-        transform: textInView ? "translateY(0)" : "translateY(50px)",
-        transition: "opacity 1.2s ease, transform 1.2s ease",
-      }}
     >
       <article>
         <Typography

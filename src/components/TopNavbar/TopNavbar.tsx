@@ -102,7 +102,7 @@ const TopNavbar = () => {
                 component="p"
                 sx={{ mr: 2 }}
               >
-                Company located in Dallas area
+                Company located in Garland area
               </Typography>
               <Typography
                 href="/contact"
