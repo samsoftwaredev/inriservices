@@ -146,8 +146,8 @@ const TopNavbar = () => {
               />
             </Box>
             {[
-              { text: 'Home', href: '/' },
-              { text: 'Cleaning', href: '/cleaning-services' },
+              { text: 'Painting Services', href: '/' },
+              { text: 'Cleaning Services', href: '/cleaning-services' },
               { text: 'About', href: '/about' },
               { text: 'Contact', href: '/contact' },
               { text: 'FAQs', href: '/frequently-asked-questions' },
