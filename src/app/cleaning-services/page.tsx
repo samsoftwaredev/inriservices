@@ -160,9 +160,6 @@ export default function Home() {
         <Pricing pricingData={pricingData} />
         <TestimonialSection testimonials={testimonials} />
         <SampleWork services={services} hideCarousel />
-        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-          <PromoBadge />
-        </Box>
         <HoursOperation />
         <MapServices />
         {/* Discount & Call to Action Section */}
@@ -232,6 +229,9 @@ export default function Home() {
           </Button>
         </Box>
         <SocialProof />
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+          <PromoBadge />
+        </Box>
         <Footer />
       </Container>
     </ThemeRegistry>

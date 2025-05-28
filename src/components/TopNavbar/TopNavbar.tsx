@@ -149,7 +149,7 @@ const TopNavbar = () => {
               { text: 'Painting Services', href: '/' },
               { text: 'Cleaning Services', href: '/cleaning-services' },
               { text: 'About', href: '/about' },
-              { text: 'Contact', href: '/contact' },
+              { text: 'Contact Us', href: '/contact' },
               { text: 'FAQs', href: '/frequently-asked-questions' },
             ].map((item) => (
               <ListItem component="a" href={item.href} key={item.text}>

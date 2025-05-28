@@ -184,9 +184,6 @@ export default function Home() {
         <TestimonialSection testimonials={testimonials} />
         <SampleWork services={services} />
         <PatchSpecial />
-        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-          <PromoBadge />
-        </Box>
         <HoursOperation />
         <MapServices />
         {/* Discount & Call to Action Section */}
@@ -256,6 +253,9 @@ export default function Home() {
           </Button>
         </Box>
         <SocialProof />
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+          <PromoBadge />
+        </Box>
         <Footer />
       </Container>
     </ThemeRegistry>
