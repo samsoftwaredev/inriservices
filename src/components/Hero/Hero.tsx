@@ -3,6 +3,7 @@ import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { Box, Button, Typography } from "@mui/material";
 import Image from "next/image";
 import ImagesearchRollerIcon from "@mui/icons-material/ImagesearchRoller";
+import { theme } from "@/app/theme";
 
 interface Props {
   services?: string;
@@ -11,7 +12,7 @@ interface Props {
 
 const Hero = ({
   services = "Expert Painting & Drywall Repair",
-  heroImage = "/workers.png"
+  heroImage = "/workers.png",
 }: Props) => {
   return (
     <Box
@@ -110,8 +111,27 @@ const Hero = ({
             },
           }}
         >
-          <ImagesearchRollerIcon /> Book Service
+          <ImagesearchRollerIcon /> Book Service Online
         </Button>
+      </Box>
+      OR
+      <Box mt={2} display="flex" justifyContent="center">
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ fontSize: { xs: "0.8rem", md: "1rem" }, mt: 1 }}
+        >
+          Call/Text{" "}
+          <a
+            href="tel:+12144001397"
+            style={{
+              color: theme.palette.primary.main,
+              textDecoration: "none",
+            }}
+          >
+            +1 (214) 400-1397
+          </a>
+        </Typography>
       </Box>
     </Box>
   );
