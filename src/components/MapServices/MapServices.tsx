@@ -1,32 +1,22 @@
-"use client";
-
 import React from "react";
-import { Grid, Typography, useMediaQuery } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
-import { useInView } from "react-intersection-observer";
+import { Grid, Typography } from "@mui/material";
 import ContactForm from "../ContactForm";
 
 const MapServices = () => {
-  const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const [mapRef, mapInView] = useInView({ triggerOnce: true, threshold: 0.2 });
-
   return (
     <section>
       <Grid
         container
         spacing={4}
         alignItems="flex-start"
-        direction={isSmallScreen ? "column" : "row"}
+        sx={{ display: "flex", flexDirection: { xs: "column", md: "row" } }}
       >
         {/* Map Section */}
         <Grid
           size={{ xs: 12, md: 6 }}
-          ref={mapRef}
           sx={{
-            opacity: mapInView ? 1 : 0,
-            transform: mapInView ? "translateY(0)" : "translateY(50px)",
+            opacity: 1,
+            transform: "translateY(0)",
             transition: "opacity 0.8s ease, transform 0.8s ease",
           }}
         >
@@ -49,7 +39,7 @@ const MapServices = () => {
               sx={{ marginTop: 2, textAlign: "center" }}
             >
               Our services cover a wide range of areas, including{" "}
-              <strong>Garland</strong>, <strong>Dallas</strong>, {" "}
+              <strong>Garland</strong>, <strong>Dallas</strong>,{" "}
               <strong>Richardson</strong>, <strong>Rowlett</strong>,{" "}
               <strong>Plano</strong>, <strong>Mesquite</strong> and{" "}
               <strong>Addison</strong>.
@@ -62,7 +52,7 @@ const MapServices = () => {
               referrerPolicy="no-referrer-when-downgrade"
               style={{
                 border: "0",
-                minHeight: isSmallScreen ? "300px" : "500px",
+                minHeight: "500px",
               }}
               title="Google Maps Embed showing Dallas, TX"
             ></iframe>
@@ -70,10 +60,9 @@ const MapServices = () => {
         </Grid>
         <Grid
           size={{ xs: 12, md: 6 }}
-          ref={mapRef}
           sx={{
-            opacity: mapInView ? 1 : 0,
-            transform: mapInView ? "translateY(0)" : "translateY(50px)",
+            opacity: 1,
+            transform: "translateY(0)",
             transition: "opacity 0.8s ease, transform 0.8s ease",
           }}
         >
