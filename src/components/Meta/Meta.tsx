@@ -2,14 +2,17 @@ import React from "react";
 import Head from "next/head";
 import { companyName } from "@/constants";
 
-interface Props   { pageName?: string, location?: string }
+interface Props {
+  pageName?: string;
+  location?: string;
+}
 
 const Meta = ({ pageName = "", location = "Garland" }: Props) => {
   return (
     <Head>
       <title>
-        {pageName} {companyName} | Expert Painting & Drywall Repair in {location},
-        TX
+        {pageName} {companyName} | Expert Painting & Drywall Repair in{" "}
+        {location}, TX
       </title>
 
       {/* Language and Viewport */}
@@ -30,7 +33,7 @@ const Meta = ({ pageName = "", location = "Garland" }: Props) => {
 
       {/* Open Graph / Facebook */}
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://inriservices.com/" />
+      <meta property="og:url" content="https://inripaintwall.com/" />
       <meta
         property="og:title"
         content={`INRI Paint & Wall LLC | Expert Painting & Drywall Repair in ${location}`}
@@ -41,7 +44,7 @@ const Meta = ({ pageName = "", location = "Garland" }: Props) => {
       />
       <meta
         property="og:image"
-        content="https://inriservices.com/og-image.jpg"
+        content="https://inripaintwall.com/og-image.jpg"
       />
 
       {/* Twitter */}
@@ -56,11 +59,11 @@ const Meta = ({ pageName = "", location = "Garland" }: Props) => {
       />
       <meta
         name="twitter:image"
-        content="https://inriservices.com/og-image.jpg"
+        content="https://inripaintwall.com/og-image.jpg"
       />
 
       {/* Canonical URL */}
-      <link rel="canonical" href="https://inriservices.com/" />
+      <link rel="canonical" href="https://inripaintwall.com/" />
 
       {/* Favicon */}
       <link rel="icon" href="/favicon.ico" />

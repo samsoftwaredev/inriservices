@@ -8,7 +8,7 @@ interface Props {
 }
 
 const MetaCleaning = ({
-  pageName = "Residential Cleaning Services",
+  pageName = "Residential Cleaning Services in Garland, TX",
   location = "Garland",
 }: Props) => {
   return (
@@ -35,7 +35,7 @@ const MetaCleaning = ({
 
       {/* Open Graph / Facebook */}
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://inriservices.com/cleaning" />
+      <meta property="og:url" content="https://inripaintwall.com/cleaning" />
       <meta
         property="og:title"
         content={`INRI Paint & Wall | Trusted Residential Cleaning in ${location}, TX`}
@@ -46,7 +46,7 @@ const MetaCleaning = ({
       />
       <meta
         property="og:image"
-        content="https://inriservices.com/og-cleaning-image.jpg"
+        content="https://inripaintwall.com/og-cleaning-image.jpg"
       />
 
       {/* Twitter */}
@@ -61,11 +61,11 @@ const MetaCleaning = ({
       />
       <meta
         name="twitter:image"
-        content="https://inriservices.com/og-cleaning-image.jpg"
+        content="https://inripaintwall.com/og-cleaning-image.jpg"
       />
 
       {/* Canonical URL */}
-      <link rel="canonical" href="https://inriservices.com/cleaning" />
+      <link rel="canonical" href="https://inripaintwall.com/cleaning" />
 
       {/* Favicon */}
       <link rel="icon" href="/favicon.ico" />

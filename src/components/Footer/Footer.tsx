@@ -140,7 +140,7 @@ const Footer = () => {
           color="text.secondary"
           sx={{ fontSize: { xs: "0.8rem", md: "1rem" } }}
         >
-          © {new Date().getFullYear()} INRIservices.com. All rights reserved.
+          © {new Date().getFullYear()} INRIpaintwall.com. All rights reserved.
         </Typography>
         <Typography
           variant="body2"

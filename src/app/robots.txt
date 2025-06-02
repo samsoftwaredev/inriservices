@@ -1,4 +1,4 @@
-# robots.txt for https://inriservices.com
+# robots.txt for https://inripaintwall.com
 
 User-agent: *
 Disallow: /api/
@@ -7,4 +7,4 @@ Disallow: /private/
 
 Allow: /
 
-Sitemap: https://inriservices.com/sitemap.xml
+Sitemap: https://inripaintwall.com/sitemap.xml

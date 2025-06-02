@@ -4,19 +4,31 @@ import { companyName } from "@/constants";
 
 export const metadata: Metadata = {
   title: companyName,
-  description: "Expert Painting & Drywall Repair Services",
+  description:
+    "Expert Painting, Drywall Repair & Cleaning Services in Garland, TX",
+  themeColor: "#ffffff",
   keywords: [
     "painting",
     "drywall repair",
     "home improvement",
     "interior painting",
+    "interior painters in garland",
+    "interior painters near me",
     "exterior painting",
+    "exterior painters in garland",
+    "exterior painters near me",
     "drywall installation",
     "drywall finishing",
     "home renovation",
     "home repair",
     "home services",
     "professional painters",
+    "garland TX painters",
+    "garland painter",
+    "painters in garland",
+    "painters near me",
+    "drywall contractors near me",
+    "drywall repair near me",
     "drywall contractors",
     "home maintenance",
     "residential painting",
@@ -33,18 +45,18 @@ export const metadata: Metadata = {
   authors: [
     {
       name: companyName,
-      url: "https://inriservices.com",
+      url: "https://inripaintwall.com",
     },
   ],
   creator: companyName,
   openGraph: {
     title: companyName,
     description: "Expert Painting & Drywall Repair Services",
-    url: "https://inriservices.com",
+    url: "https://inripaintwall.com",
     siteName: companyName,
     images: [
       {
-        url: "https://inriservices.com/images/og-image.jpg",
+        url: "https://inripaintwall.com/images/og-image.jpg",
         width: 1200,
         height: 630,
         alt: companyName + " - Expert Painting & Drywall Repair Services",
