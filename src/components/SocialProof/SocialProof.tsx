@@ -47,11 +47,6 @@ const backlinkData = [
   //   category: 'Contractor Directories',
   //   links: [
   //     {
-  //       name: 'Paint Contractor Locator',
-  //       url: 'https://www.paintcontractorlocator.com/',
-  //       emoji: '🎨',
-  //     },
-  //     {
   //       name: 'Painter Choice',
   //       url: 'https://www.painterchoice.com/',
   //       emoji: '🖌️',
