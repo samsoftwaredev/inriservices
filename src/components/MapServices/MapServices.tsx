@@ -45,7 +45,7 @@ const MapServices = () => {
               <strong>Addison</strong>.
             </Typography>
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d237224.96571434004!2d-96.89724851381499!3d32.81868418651351!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864c19f77b45974b%3A0xb9ec9ba4f647678f!2sDallas%2C%20TX!5e1!3m2!1sen!2sus!4v1745886916344!5m2!1sen!2sus"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d107188.14486894789!2d-96.68811318415631!3d32.907962048005956!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864c03c1db5fc275%3A0x71fbdcb38623cd0!2sGarland%2C%20TX%2C%20USA!5e0!3m2!1sen!2sec!4v1720563133255!5m2!1sen!2sec"
               width="100%"
               height="100%"
               loading="lazy"

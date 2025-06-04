@@ -18,10 +18,7 @@ interface Props {
   }[];
 }
 
-const TestimonialSection = ({
-  testimonials
-}: Props) => {
- 
+const TestimonialSection = ({ testimonials }: Props) => {
   return (
     <Box
       component="section"
@@ -55,13 +52,9 @@ const TestimonialSection = ({
         We take pride in delivering exceptional service to our customers. Here’s
         what they have to say about their experiences with us.
       </Typography>
-      <Grid
-        container
-        spacing={4}
-        justifyContent="center"
-      >
+      <Grid container spacing={4} justifyContent="center">
         {testimonials.map((t, idx) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }} key={idx}>
+          <Grid size={{ xs: 12, sm: 6, md: 5, lg: 5 }} key={idx}>
             <Card
               elevation={4}
               sx={{
