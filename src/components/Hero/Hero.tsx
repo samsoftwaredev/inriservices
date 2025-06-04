@@ -66,6 +66,7 @@ const Hero = ({
       </Typography>
       <Box sx={{ width: "100%", position: "relative", mt: 2 }}>
         <Image
+          priority
           src={heroImage}
           alt="Painter"
           layout="responsive"

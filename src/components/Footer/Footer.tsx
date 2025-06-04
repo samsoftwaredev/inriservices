@@ -15,6 +15,7 @@ const Footer = () => {
   const pages = [
     { text: "Painting Services", href: "/" },
     { text: "Cleaning Services", href: "/cleaning-services" },
+    { text: "Garland Painter", href: "/painting-room-in-garland-painter" },
     { text: "About", href: "/about" },
     { text: "Contact Us", href: "/contact" },
     { text: "FAQs", href: "/frequently-asked-questions" },
@@ -66,20 +67,9 @@ const Footer = () => {
         flexDirection: { xs: "column", md: "row" },
         alignItems: "center",
         justifyContent: "center",
-        textAlign: { xs: "center", md: "left" },
+        textAlign: "center",
       }}
     >
-      <Image
-        src="/inriLogo.png"
-        alt="INRI Paint & Wall LLC Logo"
-        width={80}
-        height={80}
-        style={{
-          borderRadius: "62px",
-          border: "2px solid white",
-          boxShadow: "0 0 10px rgba(0, 0, 0, 0.7)",
-        }}
-      />
       <Box sx={{ ml: { md: 2 }, mt: { xs: 2, md: 0 }, width: 1 }}>
         <Box
           sx={{
@@ -87,7 +77,7 @@ const Footer = () => {
             gap: 2,
             flexWrap: "wrap",
             mb: 1,
-            justifyContent: { xs: "center", md: "flex-start" },
+            justifyContent: "center",
           }}
         >
           {pages.map((page) => (
@@ -103,7 +93,7 @@ const Footer = () => {
             </MuiLink>
           ))}
         </Box>
-        <Box>
+        <Box sx={{ maxWidth: 400, mx: "auto", mb: 2 }}>
           {backlinkData.map((item) => (
             <MuiLink
               key={item.url}
@@ -135,6 +125,17 @@ const Footer = () => {
             </MuiLink>
           ))}
         </Box>
+        <Image
+          src="/inriLogo.png"
+          alt="INRI Paint & Wall Logo"
+          width={80}
+          height={80}
+          style={{
+            borderRadius: "62px",
+            border: "2px solid white",
+            boxShadow: "0 0 10px rgba(0, 0, 0, 0.7)",
+          }}
+        />
         <Typography
           variant="body2"
           color="text.secondary"
