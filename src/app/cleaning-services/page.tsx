@@ -9,7 +9,6 @@ import { ThemeRegistry } from "../ThemeRegistry";
 import {
   Hero,
   ObjectionsBusters,
-  TestimonialSection,
   TrustBadges,
   Footer,
   TopNavbar,
