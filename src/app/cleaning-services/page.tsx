@@ -74,39 +74,6 @@ const pricingData = [
   },
 ];
 
-const testimonials = [
-  {
-    name: "Rebecca S.",
-    image: "/avatars/avatar6.png",
-    text: "The deep cleaning service was incredible! They scrubbed everything from the baseboards to the ceiling fans. My house feels brand new. Will definitely book again!",
-    rating: 5,
-  },
-  {
-    name: "David N.",
-    image: "/avatars/avatar7.png",
-    text: "I hired them for a move-out clean and they did such a thorough job—even the property manager complimented it. Worth every penny.",
-    rating: 5,
-  },
-  {
-    name: "Lucia M.",
-    image: "/avatars/avatar8.png",
-    text: "I’ve used a lot of cleaners over the years, but these folks are on another level. Professional, punctual, and they left my kitchen sparkling.",
-    rating: 4.5,
-  },
-  {
-    name: "Anthony J.",
-    image: "/avatars/avatar9.png",
-    text: "They came in for a last-minute deep clean before a family event and absolutely crushed it. Floors, carpets, windows—everything spotless.",
-    rating: 5,
-  },
-  {
-    name: "María C.",
-    image: "/avatars/avatar10.png",
-    text: "Super impressed by their attention to detail. They even cleaned under the furniture and organized the pantry without me asking. Highly recommend!",
-    rating: 5,
-  },
-];
-
 const services = [
   {
     title: "Deep Cleaning",
@@ -158,7 +125,6 @@ export default function Home() {
           cards={cards}
         />
         <Pricing pricingData={pricingData} />
-        <TestimonialSection testimonials={testimonials} />
         <SampleWork services={services} hideCarousel />
         <HoursOperation />
         <MapServices />
