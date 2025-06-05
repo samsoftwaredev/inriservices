@@ -1,8 +1,8 @@
-'use client';
-import { Box, Typography } from '@mui/material';
-import { useState } from 'react';
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+"use client";
+import { Box, Typography } from "@mui/material";
+import { useState } from "react";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 interface Props {
   services: {
@@ -17,21 +17,21 @@ interface Props {
 
 const SampleWork = ({
   services,
-  path = '/sampleWork/painting',
-  imagesLength = 16,
+  path = "/sampleWork/painting",
+  imagesLength = 18,
   hideCarousel = false,
 }: Props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === imagesLength - 1 ? 0 : prevIndex + 1,
+      prevIndex === imagesLength - 1 ? 0 : prevIndex + 1
     );
   };
 
   const handlePrev = () => {
     setCurrentIndex((prevIndex) =>
-      prevIndex === 0 ? imagesLength - 1 : prevIndex - 1,
+      prevIndex === 0 ? imagesLength - 1 : prevIndex - 1
     );
   };
 
@@ -40,16 +40,16 @@ const SampleWork = ({
       component="section"
       sx={{
         my: { xs: 2, md: 4 },
-        textAlign: 'center',
+        textAlign: "center",
       }}
     >
       <Typography
         variant="h4"
         component="h3"
         sx={{
-          display: hideCarousel === true ? 'none' : 'block',
-          fontWeight: 'bold',
-          fontSize: { xs: '1.5rem', md: '2rem' },
+          display: hideCarousel === true ? "none" : "block",
+          fontWeight: "bold",
+          fontSize: { xs: "1.5rem", md: "2rem" },
         }}
       >
         What We Can Do for You
@@ -57,9 +57,9 @@ const SampleWork = ({
       <Typography
         variant="body1"
         sx={{
-          display: hideCarousel === true ? 'none' : 'block',
+          display: hideCarousel === true ? "none" : "block",
           mb: 4,
-          color: 'text.secondary',
+          color: "text.secondary",
         }}
       >
         Take a look at some of the incredible transformations. We bring your
@@ -67,19 +67,19 @@ const SampleWork = ({
       </Typography>
       <Box
         sx={{
-          display: hideCarousel === true ? 'none' : 'block',
-          position: 'relative',
-          overflow: 'hidden',
-          width: '100%',
+          display: hideCarousel === true ? "none" : "block",
+          position: "relative",
+          overflow: "hidden",
+          width: "100%",
           maxWidth: 600,
-          margin: '0 auto',
+          margin: "0 auto",
         }}
       >
         <Box
           sx={{
-            display: 'flex',
+            display: "flex",
             transform: `translateX(-${currentIndex * 100}%)`,
-            transition: 'transform 0.5s ease-in-out',
+            transition: "transform 0.5s ease-in-out",
           }}
         >
           {(() => {
@@ -89,15 +89,15 @@ const SampleWork = ({
                 <Box
                   key={index}
                   component="img"
-                  src={`${path}${index + 1}.jpg`}
-                  alt={'Sample Work'}
+                  src={`${path}${index + 1}.jpeg`}
+                  alt={"Sample Work"}
                   sx={{
-                    width: '100%',
-                    height: 'auto',
+                    width: "100%",
+                    height: "auto",
                     flexShrink: 0,
-                    objectFit: 'cover',
+                    objectFit: "cover",
                   }}
-                />,
+                />
               );
             }
             return items;
@@ -106,19 +106,19 @@ const SampleWork = ({
         <Box
           onClick={handlePrev}
           sx={{
-            position: 'absolute',
-            top: '50%',
+            position: "absolute",
+            top: "50%",
             left: 0,
-            transform: 'translateY(-50%)',
-            cursor: 'pointer',
+            transform: "translateY(-50%)",
+            cursor: "pointer",
             width: 48,
             height: 48,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             background:
-              'linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3))',
-            color: 'white',
+              "linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3))",
+            color: "white",
           }}
         >
           <ArrowBackIosNewIcon />
@@ -126,25 +126,25 @@ const SampleWork = ({
         <Box
           onClick={handleNext}
           sx={{
-            position: 'absolute',
-            top: '50%',
+            position: "absolute",
+            top: "50%",
             right: 0,
-            transform: 'translateY(-50%)',
-            cursor: 'pointer',
+            transform: "translateY(-50%)",
+            cursor: "pointer",
             width: 48,
             height: 48,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             background:
-              'linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3))',
-            color: 'white',
+              "linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3))",
+            color: "white",
           }}
         >
           <ArrowForwardIosIcon />
         </Box>
       </Box>
-      <Box sx={{ mt: 2, display: hideCarousel === true ? 'none' : 'block' }}>
+      <Box sx={{ mt: 2, display: hideCarousel === true ? "none" : "block" }}>
         {(() => {
           const items = [];
           for (let index = 0; index < imagesLength; index++) {
@@ -153,16 +153,16 @@ const SampleWork = ({
                 key={index}
                 onClick={() => setCurrentIndex(index)}
                 sx={{
-                  display: 'inline-block',
+                  display: "inline-block",
                   width: 12,
                   height: 12,
                   mx: 0.5,
-                  borderRadius: '50%',
+                  borderRadius: "50%",
                   backgroundColor:
-                    currentIndex === index ? 'primary.main' : 'grey.400',
-                  cursor: 'pointer',
+                    currentIndex === index ? "primary.main" : "grey.400",
+                  cursor: "pointer",
                 }}
-              />,
+              />
             );
           }
           return items;
@@ -173,8 +173,8 @@ const SampleWork = ({
           variant="h5"
           component="h4"
           sx={{
-            fontWeight: 'bold',
-            fontSize: { xs: '1.25rem', md: '1.5rem' },
+            fontWeight: "bold",
+            fontSize: { xs: "1.25rem", md: "1.5rem" },
             mb: 2,
           }}
         >
@@ -183,13 +183,13 @@ const SampleWork = ({
         <Box
           component="ul"
           sx={{
-            listStyle: 'none',
+            listStyle: "none",
             padding: 0,
             margin: 0,
-            display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
             gap: 2,
-            textAlign: 'left',
+            textAlign: "left",
           }}
         >
           {services.map((service, index) => (
@@ -197,7 +197,7 @@ const SampleWork = ({
               key={index}
               component="li"
               sx={{
-                backgroundColor: 'background.paper',
+                backgroundColor: "background.paper",
                 padding: 2,
                 borderRadius: 1,
                 boxShadow: 1,
@@ -207,8 +207,8 @@ const SampleWork = ({
                 variant="h6"
                 component="h5"
                 sx={{
-                  fontWeight: 'bold',
-                  fontSize: { xs: '1rem', md: '1.25rem' },
+                  fontWeight: "bold",
+                  fontSize: { xs: "1rem", md: "1.25rem" },
                   mb: 1,
                 }}
               >
@@ -216,7 +216,7 @@ const SampleWork = ({
               </Typography>
               <Typography
                 variant="body2"
-                sx={{ color: 'text.secondary', fontSize: '0.875rem' }}
+                sx={{ color: "text.secondary", fontSize: "0.875rem" }}
               >
                 {service.description}
               </Typography>
