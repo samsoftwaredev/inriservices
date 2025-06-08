@@ -27,7 +27,7 @@ const Meta = ({ pageName = "", location = "Garland" }: Props) => {
       />
       <meta
         name="keywords"
-        content={`${location} painting services, drywall repair ${location}, home painting, INRI Paint & Wall, house painters Texas, affordable painting, local drywall contractors`}
+        content={`${location} painting services, drywall repair ${location}, inri paint wall, inri paint and wall, paint wall, paint and wall, home painting, INRI Paint & Wall, house painters Texas, affordable painting, local drywall contractors`}
       />
       <meta name="author" content="INRI Paint & Wall" />
 

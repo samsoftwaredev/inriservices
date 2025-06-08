@@ -3,16 +3,18 @@ import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { Box, Button, Typography } from "@mui/material";
 import Image from "next/image";
 import ImagesearchRollerIcon from "@mui/icons-material/ImagesearchRoller";
-import { theme } from "@/app/theme";
+import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 
 interface Props {
   services?: string;
   heroImage?: string;
+  freeEstimateURL?: string;
 }
 
 const Hero = ({
   services = "Expert Painting & Drywall Repair",
   heroImage = "/workers.png",
+  freeEstimateURL = "/get-painting-estimate-in-minutes",
 }: Props) => {
   return (
     <Box
@@ -94,7 +96,7 @@ const Hero = ({
       </Box>
       <Box mt={3} display="flex" justifyContent="center">
         <Button
-          href="/contact"
+          href="/booking"
           sx={{
             my: 5,
             px: 4,
@@ -116,23 +118,19 @@ const Hero = ({
         </Button>
       </Box>
       OR
-      <Box mt={2} display="flex" justifyContent="center">
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ fontSize: { xs: "0.8rem", md: "1rem" }, mt: 1 }}
+      <Box mt={3} display="flex" justifyContent="center">
+        <Button
+          href={freeEstimateURL}
+          variant="text"
+          color="primary"
+          sx={{
+            my: 5,
+            px: 4,
+            py: 1.5,
+          }}
         >
-          Call/Text{" "}
-          <a
-            href="tel:+12144001397"
-            style={{
-              color: theme.palette.primary.main,
-              textDecoration: "none",
-            }}
-          >
-            +1 (214) 400-1397
-          </a>
-        </Typography>
+          <CardGiftcardIcon /> Get Your FREE Painting Estimate in Minutes!
+        </Button>
       </Box>
     </Box>
   );

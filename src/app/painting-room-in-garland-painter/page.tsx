@@ -42,7 +42,7 @@ export default function HowToPaintARoom() {
         <Paper
           elevation={3}
           sx={{
-            backgroundColor: "#e4f4f9",
+            backgroundColor: "#f1f2f3",
             p: { xs: 2, sm: 3, md: 4 },
             borderRadius: { xs: 2, sm: 3 },
           }}

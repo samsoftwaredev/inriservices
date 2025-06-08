@@ -14,3 +14,4 @@ export { default as ContactForm } from "./ContactForm";
 export { default as SocialProof } from "./SocialProof";
 export { default as PatchSpecial } from "./PatchSpecial";
 export { default as Pricing } from "./Pricing";
+export { default as EstimateStepper } from "./EstimateStepper";

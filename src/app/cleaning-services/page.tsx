@@ -117,7 +117,11 @@ export default function Home() {
           title="Cleaning Services You Can Trust"
           description="Professional Residential Cleaning Services in Garland, TX"
         />
-        <Hero heroImage="/cleaning/hero.png" services="Professional Cleaning" />
+        <Hero
+          freeEstimateURL="/get-cleaning-estimate-in-minutes"
+          heroImage="/cleaning/hero.png"
+          services="Professional Cleaning"
+        />
         <ObjectionsBusters
           title="Now Offering Expert Home Cleaning Services – Because Clean Walls Deserve Clean Spaces"
           description="At INRI Paint & Wall, we’ve mastered the art of revitalizing homes with precision painting and expert drywall repairs. Now, we're bringing the same dedication and detail to residential cleaning services. Whether it’s your apartment, condo, or house, we make your home feel brand new—top to bottom."
