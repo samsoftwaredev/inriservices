@@ -93,13 +93,21 @@ const Hero = ({
           Get a Free Quote Ready to bring your vision to life?
         </Typography>
       </Box>
-      <Box gap={2} mt={3} display="flex" justifyContent="center">
+      <Box
+        mt={3}
+        display="flex"
+        justifyContent="center"
+        sx={{
+          flexDirection: { xs: "column", sm: "row" },
+          gap: { xs: 0, sm: 2 },
+        }}
+      >
         <Button
           href="/booking"
           color="warning"
           variant="contained"
           sx={{
-            my: 5,
+            my: 1,
             px: 4,
             py: 1.5,
             fontSize: "1rem",
@@ -119,7 +127,7 @@ const Hero = ({
           color="primary"
           variant="contained"
           sx={{
-            my: 5,
+            my: 1,
             px: 4,
             py: 1.5,
           }}
