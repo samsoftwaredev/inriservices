@@ -90,46 +90,41 @@ const Hero = ({
           color="text.secondary"
           sx={{ mt: 0.5, textAlign: "center" }}
         >
-          Delivering quality craftsmanship and personalized service you can
-          trust.
+          Get a Free Quote Ready to bring your vision to life?
         </Typography>
       </Box>
-      <Box mt={3} display="flex" justifyContent="center">
+      <Box gap={2} mt={3} display="flex" justifyContent="center">
         <Button
           href="/booking"
+          color="warning"
+          variant="contained"
           sx={{
             my: 5,
             px: 4,
             py: 1.5,
-            backgroundColor: "warning.main",
-            color: "white",
             fontSize: "1rem",
             fontWeight: "bold",
             borderRadius: "8px",
             border: "none",
-            cursor: "pointer",
-            textTransform: "uppercase",
+
             "&:hover": {
               backgroundColor: "warning.dark",
             },
           }}
         >
-          <ImagesearchRollerIcon /> Book Service Online
+          <ImagesearchRollerIcon /> Appointment Request
         </Button>
-      </Box>
-      OR
-      <Box mt={3} display="flex" justifyContent="center">
         <Button
           href={freeEstimateURL}
-          variant="text"
           color="primary"
+          variant="contained"
           sx={{
             my: 5,
             px: 4,
             py: 1.5,
           }}
         >
-          <CardGiftcardIcon /> Get Your FREE Painting Estimate in Minutes!
+          <CardGiftcardIcon /> Free Estimate in Minutes!
         </Button>
       </Box>
     </Box>

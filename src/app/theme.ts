@@ -5,6 +5,7 @@ export const theme = createTheme({
   palette: {
     primary: {
       main: "#49b5fe", // Bright Blue
+      contrastText: "#fff", // Black text for contrast
     },
     secondary: {
       main: "#ff3131", // Bold Red
@@ -21,9 +22,23 @@ export const theme = createTheme({
     },
     warning: {
       main: "#f7bd59", // Warm yellow-orange
+      contrastText: "#fff", // Black text for contrast
     },
     success: {
       main: "#4caf50", // Bright yellow
+    },
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          cursor: "pointer",
+          textTransform: "uppercase",
+          borderRadius: "8px", // Add rounded corners
+          padding: "8px 16px", // Add padding for better touch targets
+          fontWeight: "bold", // Make button text bold
+        },
+      },
     },
   },
 });

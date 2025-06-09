@@ -13,9 +13,11 @@ import {
   FormGroup,
   FormLabel,
 } from "@mui/material";
+import Image from "next/image";
 
 const EstimateStepper: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const defaultSquareFootage = 3000;
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -85,8 +87,8 @@ const EstimateStepper: React.FC = () => {
 
   const calculateEstimate = () => {
     const { squareFootage, paintType, extras, crewSize } = formData;
-    const sqft = parseInt(squareFootage) || 0;
-    const crew = parseInt(crewSize) || 1;
+    const sqft = parseInt(squareFootage) || defaultSquareFootage;
+    const crew = parseInt(crewSize) || 2;
 
     let baseProductivity = 1500; // default interior rate
     if (isExterior) {
@@ -141,16 +143,91 @@ const EstimateStepper: React.FC = () => {
               value={formData.projectType}
               onChange={handleChange}
               row
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                gap: 4,
+              }}
             >
               <FormControlLabel
                 value="interior"
                 control={<Radio />}
-                label="Interior Painting"
+                label={
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 1,
+                      minWidth: 100,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 200,
+                        height: 200,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Image
+                        src="/paintStepper/interiorPainting.jpg"
+                        alt="Interior Painting"
+                        width={200}
+                        height={200}
+                        style={{
+                          borderRadius: "62px",
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </Box>
+                    Interior Painting
+                  </Box>
+                }
+                sx={{ marginRight: 4 }}
               />
               <FormControlLabel
                 value="exterior"
                 control={<Radio />}
-                label="Exterior Painting"
+                label={
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 1,
+                      minWidth: 100,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 200,
+                        height: 200,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Image
+                        src="/paintStepper/exteriorPainting.jpg"
+                        alt="Exterior Painting"
+                        width={200}
+                        height={200}
+                        style={{
+                          borderRadius: "62px",
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </Box>
+                    Exterior Painting
+                  </Box>
+                }
               />
             </RadioGroup>
           </>
@@ -159,60 +236,53 @@ const EstimateStepper: React.FC = () => {
         return (
           <>
             <Typography>Approximate square footage</Typography>
-            {formData.squareFootage !== "unknown" && (
-              <>
-                <Slider
-                  value={Number(formData.squareFootage) || 0}
-                  onChange={(_, value) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      squareFootage: Array.isArray(value)
-                        ? String(value[0])
-                        : String(value),
-                    }))
-                  }
-                  step={100}
-                  min={500}
-                  max={5000}
-                  valueLabelDisplay="auto"
-                  disabled={formData.squareFootage === "unknown"}
-                />
-                <Typography>
-                  {formData.squareFootage === "unknown"
-                    ? "Unknown"
-                    : `${formData.squareFootage} sq ft`}
-                </Typography>
+            <Image
+              src="/paintStepper/houseArea.jpg"
+              alt="Exterior Painting"
+              width={200}
+              height={200}
+              style={{
+                borderRadius: "62px",
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            />
+            <Slider
+              value={Number(formData.squareFootage) || defaultSquareFootage}
+              onChange={(_, value) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  squareFootage: Array.isArray(value)
+                    ? String(value[0])
+                    : String(value),
+                }))
+              }
+              step={100}
+              min={500}
+              max={5000}
+              valueLabelDisplay="auto"
+              disabled={formData.squareFootage === "unknown"}
+            />
+            <Typography>
+              {formData.squareFootage === "unknown"
+                ? "Unknown"
+                : `${formData.squareFootage} sq ft`}
+            </Typography>
 
-                <Button
-                  variant="text"
-                  onClick={() =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      squareFootage: "unknown",
-                    }))
-                  }
-                  sx={{ mb: 2 }}
-                >
-                  I don&apos;t know the square footage
-                </Button>
-              </>
-            )}
-            {formData.squareFootage === "unknown" && (
-              <>
-                <Typography>
-                  If you don&apos;t know the square footage, we can estimate
-                  based on your location.
-                </Typography>
-                <TextField
-                  label="Location"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleChange}
-                  fullWidth
-                  margin="normal"
-                />
-              </>
-            )}
+            <Button
+              variant="text"
+              onClick={() => {
+                handleNext();
+                setFormData((prev) => ({
+                  ...prev,
+                  squareFootage: "unknown",
+                }));
+              }}
+              sx={{ mb: 2 }}
+            >
+              I don&apos;t know the square footage
+            </Button>
           </>
         );
       case 2:
@@ -224,21 +294,145 @@ const EstimateStepper: React.FC = () => {
               value={formData.paintType}
               onChange={handleChange}
               row
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                gap: 4,
+              }}
             >
               <FormControlLabel
                 value="standard"
                 control={<Radio />}
-                label="Standard Paint"
+                label={
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 1,
+                      minWidth: 140,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 100,
+                        height: 100,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Image
+                        src="/paintStepper/standardPaint.avif"
+                        alt="Standard Paint"
+                        width={100}
+                        height={100}
+                        style={{
+                          borderRadius: "24px",
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </Box>
+                    <Typography fontWeight="bold">Standard Paint</Typography>
+                    <Typography variant="caption" align="center">
+                      Reliable, cost-effective paint for most homes. Good
+                      durability and coverage.
+                    </Typography>
+                  </Box>
+                }
+                sx={{ marginRight: 4 }}
               />
               <FormControlLabel
                 value="eco"
                 control={<Radio />}
-                label="Eco-Friendly Paint"
+                label={
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 1,
+                      minWidth: 140,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 100,
+                        height: 100,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Image
+                        src="/paintStepper/ecoFriendly.webp"
+                        alt="Eco-Friendly Paint"
+                        width={100}
+                        height={100}
+                        style={{
+                          borderRadius: "24px",
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </Box>
+                    <Typography fontWeight="bold">
+                      Eco-Friendly Paint
+                    </Typography>
+                    <Typography variant="caption" align="center">
+                      Low-VOC, environmentally friendly paint. Safer for
+                      children, pets, and the planet.
+                    </Typography>
+                  </Box>
+                }
+                sx={{ marginRight: 4 }}
               />
               <FormControlLabel
                 value="premium"
                 control={<Radio />}
-                label="Premium Paint"
+                label={
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 1,
+                      minWidth: 140,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 100,
+                        height: 100,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Image
+                        src="/paintStepper/ultraPremium.jpeg"
+                        alt="Premium Paint"
+                        width={100}
+                        height={100}
+                        style={{
+                          borderRadius: "24px",
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    </Box>
+                    <Typography fontWeight="bold">Premium Paint</Typography>
+                    <Typography variant="caption" align="center">
+                      Top-tier paint with superior finish, longevity, and stain
+                      resistance.
+                    </Typography>
+                  </Box>
+                }
               />
             </RadioGroup>
           </>
