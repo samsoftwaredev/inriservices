@@ -17,7 +17,7 @@ import Image from "next/image";
 
 const EstimateStepper: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
-  const [disabledNextBtn, setDisabledNextBtn] = useState(false);
+  const [disabledNextBtn] = useState(false);
   const defaultSquareFootage = 3000;
   const [formData, setFormData] = useState({
     name: "",

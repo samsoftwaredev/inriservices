@@ -81,11 +81,13 @@ export default function ExteriorPaintForm() {
     field: string,
     value: string | number | boolean
   ) => {
+    // @ts-expect-error: TypeScript doesn't know formData[field] is an array
     const current = formData[field];
     setFormData({
       ...formData,
       [field]: current.includes(value)
-        ? current.filter((v) => v !== value)
+        ? // @ts-expect-error: TypeScript doesn't know formData[field] is an array
+          current.filter((v) => v !== value)
         : [...current, value],
     });
   };

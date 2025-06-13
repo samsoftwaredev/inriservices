@@ -69,7 +69,7 @@ const InteriorPaintForm = () => {
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
-  const handleChange = (field: string) => (e) => {
+  const handleChange = (field: string) => (e: any) => {
     const value =
       e.target.type === "checkbox" ? e.target.checked : e.target.value;
     setFormData({ ...formData, [field]: value });
@@ -81,9 +81,13 @@ const InteriorPaintForm = () => {
   ) => {
     setFormData({
       ...formData,
+
+      // @ts-expect-error: TypeScript doesn't know formData[field] is an array
       [field]: formData[field].includes(value)
-        ? formData[field].filter((item) => item !== value)
-        : [...formData[field], value],
+        ? // @ts-expect-error: TypeScript doesn't know formData[field] is an array
+          formData[field].filter((item) => item !== value)
+        : // @ts-expect-error: TypeScript doesn't know formData[field] is an array
+          [...formData[field], value],
     });
   };
 
