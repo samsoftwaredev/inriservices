@@ -17,6 +17,7 @@ import Image from "next/image";
 
 const EstimateStepper: React.FC = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const [disabledNextBtn, setDisabledNextBtn] = useState(false);
   const defaultSquareFootage = 3000;
   const [formData, setFormData] = useState({
     name: "",
@@ -488,6 +489,7 @@ const EstimateStepper: React.FC = () => {
           <>
             <TextField
               label="Name"
+              required
               name="name"
               value={formData.name}
               onChange={handleChange}
@@ -495,6 +497,7 @@ const EstimateStepper: React.FC = () => {
               margin="normal"
             />
             <TextField
+              required
               label="Phone Number"
               name="phone"
               value={formData.phone}
@@ -605,7 +608,11 @@ const EstimateStepper: React.FC = () => {
           >
             Back
           </Button>
-          <Button variant="contained" onClick={handleNext}>
+          <Button
+            disabled={disabledNextBtn}
+            variant="contained"
+            onClick={handleNext}
+          >
             Next
           </Button>
         </Box>
