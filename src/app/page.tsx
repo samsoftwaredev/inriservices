@@ -163,9 +163,9 @@ export default function Home() {
         <Hero />
         <ObjectionsBusters cards={cards} />
         <Pricing pricingData={pricingData} />
+        <PatchSpecial />
         <TestimonialSection testimonials={testimonials} />
         <SampleWork services={services} />
-        <PatchSpecial />
         <HoursOperation />
         <MapServices />
         {/* Discount & Call to Action Section */}

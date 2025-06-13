@@ -13,9 +13,7 @@ interface Props {
   }[];
 }
 
-const Pricing = ({
-  pricingData = []
-}: Props) => {
+const Pricing = ({ pricingData = [] }: Props) => {
   return (
     <>
       <Box
@@ -45,7 +43,7 @@ const Pricing = ({
       <Box sx={{ my: { xs: 4, md: 6 } }}>
         <Grid container spacing={4}>
           {pricingData.map((item, index) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
+            <Grid size={{ xs: 12, sm: 4, md: 4 }} key={index}>
               <Box
                 sx={{
                   position: "relative",
