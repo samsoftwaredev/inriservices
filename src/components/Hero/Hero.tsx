@@ -3,7 +3,7 @@ import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { Box, Button, Typography } from "@mui/material";
 import Image from "next/image";
 import ImagesearchRollerIcon from "@mui/icons-material/ImagesearchRoller";
-import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
+// import CardGiftcardIcon from "@mui/icons-material/CardGiftcard";
 
 interface Props {
   services?: string;
@@ -14,8 +14,8 @@ interface Props {
 const Hero = ({
   services = "Expert Painting & Drywall Repair",
   heroImage = "/workers.png",
-  freeEstimateURL = "/get-painting-estimate-in-minutes",
-}: Props) => {
+}: // freeEstimateURL = "/get-painting-estimate-in-minutes",
+Props) => {
   return (
     <Box
       component="header" // Use semantic HTML
