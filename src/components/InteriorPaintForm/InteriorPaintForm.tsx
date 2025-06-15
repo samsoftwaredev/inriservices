@@ -21,8 +21,8 @@ import {
   Grid,
   Paper,
 } from "@mui/material";
-import PackageSelector from "./Steps/PackageSelector";
-import ReviewInformation from "./Steps/ReviewInformation";
+import PackageSelector from "./Stepper/PackageSelector";
+import ReviewInformation from "./Stepper/ReviewInformation";
 
 const steps = [
   "Contact Info",
