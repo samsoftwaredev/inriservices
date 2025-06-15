@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import PackageSelector from "./Stepper/PackageSelector";
+import ReviewInformation from "./Stepper/ReviewInformation";
 
 const steps = [
   "Customer Info",
@@ -106,6 +107,7 @@ export default function ExteriorPaintForm() {
               margin="normal"
               value={formData.name}
               onChange={(e) => handleChange("name", e.target.value)}
+              size={isMobile ? "small" : "medium"}
             />
             <TextField
               label="Email"
@@ -113,6 +115,7 @@ export default function ExteriorPaintForm() {
               margin="normal"
               value={formData.email}
               onChange={(e) => handleChange("email", e.target.value)}
+              size={isMobile ? "small" : "medium"}
             />
             <TextField
               label="Phone Number"
@@ -120,6 +123,7 @@ export default function ExteriorPaintForm() {
               margin="normal"
               value={formData.phone}
               onChange={(e) => handleChange("phone", e.target.value)}
+              size={isMobile ? "small" : "medium"}
             />
             <TextField
               label="Project Address"
@@ -127,13 +131,16 @@ export default function ExteriorPaintForm() {
               margin="normal"
               value={formData.address}
               onChange={(e) => handleChange("address", e.target.value)}
+              size={isMobile ? "small" : "medium"}
             />
           </Box>
         );
       case 1:
         return (
           <Box>
-            <Typography gutterBottom>Approx. Square Footage</Typography>
+            <Typography gutterBottom fontSize={isMobile ? 16 : 20}>
+              Approx. Square Footage
+            </Typography>
             <Slider
               min={500}
               max={5000}
@@ -141,10 +148,11 @@ export default function ExteriorPaintForm() {
               value={formData.squareFootage}
               onChange={(e, val) => handleChange("squareFootage", val)}
               valueLabelDisplay="on"
+              sx={{ mx: isMobile ? 1 : 3 }}
             />
-            <Typography>Stories</Typography>
+            <Typography fontSize={isMobile ? 16 : 20}>Stories</Typography>
             <RadioGroup
-              row
+              row={!isMobile}
               value={formData.stories}
               onChange={(e) => handleChange("stories", e.target.value)}
             >
@@ -152,13 +160,16 @@ export default function ExteriorPaintForm() {
                 <FormControlLabel
                   key={val}
                   value={val}
-                  control={<Radio />}
+                  control={<Radio size={isMobile ? "small" : "medium"} />}
                   label={val}
                 />
               ))}
             </RadioGroup>
-            <Typography>Exterior Material</Typography>
+            <Typography fontSize={isMobile ? 16 : 20}>
+              Exterior Material
+            </Typography>
             <RadioGroup
+              row={!isMobile}
               value={formData.material}
               onChange={(e) => handleChange("material", e.target.value)}
             >
@@ -166,7 +177,7 @@ export default function ExteriorPaintForm() {
                 <FormControlLabel
                   key={mat}
                   value={mat}
-                  control={<Radio />}
+                  control={<Radio size={isMobile ? "small" : "medium"} />}
                   label={mat}
                 />
               ))}
@@ -177,12 +188,13 @@ export default function ExteriorPaintForm() {
               margin="normal"
               value={formData.lastPainted}
               onChange={(e) => handleChange("lastPainted", e.target.value)}
+              size={isMobile ? "small" : "medium"}
             />
           </Box>
         );
       case 2:
         return (
-          <FormGroup>
+          <FormGroup sx={{ flexDirection: isMobile ? "column" : "row" }}>
             {["Walls", "Trim", "Fascia", "Soffit", "Doors", "Garage Door"].map(
               (area) => (
                 <FormControlLabel
@@ -191,9 +203,11 @@ export default function ExteriorPaintForm() {
                     <Checkbox
                       checked={formData.areas.includes(area)}
                       onChange={() => handleMultiChange("areas", area)}
+                      size={isMobile ? "small" : "medium"}
                     />
                   }
                   label={area}
+                  sx={{ minWidth: isMobile ? "unset" : 150 }}
                 />
               )
             )}
@@ -201,7 +215,7 @@ export default function ExteriorPaintForm() {
         );
       case 3:
         return (
-          <FormGroup>
+          <FormGroup sx={{ flexDirection: isMobile ? "column" : "row" }}>
             {[
               "Peeling Paint",
               "Cracks/Holes",
@@ -214,9 +228,11 @@ export default function ExteriorPaintForm() {
                   <Checkbox
                     checked={formData.issues.includes(issue)}
                     onChange={() => handleMultiChange("issues", issue)}
+                    size={isMobile ? "small" : "medium"}
                   />
                 }
                 label={issue}
+                sx={{ minWidth: isMobile ? "unset" : 200 }}
               />
             ))}
           </FormGroup>
@@ -224,8 +240,9 @@ export default function ExteriorPaintForm() {
       case 4:
         return (
           <Box>
-            <Typography>Paint Quality</Typography>
+            <Typography fontSize={isMobile ? 16 : 20}>Paint Quality</Typography>
             <RadioGroup
+              row={!isMobile}
               value={formData.paintType}
               onChange={(e) => handleChange("paintType", e.target.value)}
             >
@@ -233,7 +250,7 @@ export default function ExteriorPaintForm() {
                 <FormControlLabel
                   key={type}
                   value={type}
-                  control={<Radio />}
+                  control={<Radio size={isMobile ? "small" : "medium"} />}
                   label={type}
                 />
               ))}
@@ -245,6 +262,7 @@ export default function ExteriorPaintForm() {
                   onChange={(e) =>
                     handleChange("colorsSelected", e.target.checked)
                   }
+                  size={isMobile ? "small" : "medium"}
                 />
               }
               label="I have selected my paint colors."
@@ -262,21 +280,23 @@ export default function ExteriorPaintForm() {
               InputLabelProps={{ shrink: true }}
               value={formData.startDate}
               onChange={(e) => handleChange("startDate", e.target.value)}
+              size={isMobile ? "small" : "medium"}
             />
             <TextField
               label="Access Instructions"
               fullWidth
               margin="normal"
               multiline
-              rows={3}
+              rows={isMobile ? 2 : 3}
               value={formData.accessInfo}
               onChange={(e) => handleChange("accessInfo", e.target.value)}
+              size={isMobile ? "small" : "medium"}
             />
           </Box>
         );
       case 6:
         return (
-          <FormGroup>
+          <FormGroup sx={{ flexDirection: isMobile ? "column" : "row" }}>
             {[
               "Caulking",
               "Minor Repairs",
@@ -289,9 +309,11 @@ export default function ExteriorPaintForm() {
                   <Checkbox
                     checked={formData.extras.includes(extra)}
                     onChange={() => handleMultiChange("extras", extra)}
+                    size={isMobile ? "small" : "medium"}
                   />
                 }
                 label={extra}
+                sx={{ minWidth: isMobile ? "unset" : 180 }}
               />
             ))}
           </FormGroup>
@@ -301,30 +323,32 @@ export default function ExteriorPaintForm() {
           <PackageSelector formData={formData} handleChange={handleChange} />
         );
       case 8:
-        return (
-          <Box>
-            <Typography variant="h6">Review Your Info</Typography>
-            <pre style={{ whiteSpace: "pre-wrap" }}>
-              {JSON.stringify(formData, null, 2)}
-            </pre>
-            <Button
-              variant="contained"
-              color="success"
-              onClick={() => alert("Submitted! (Connect to DB here)")}
-            >
-              Submit
-            </Button>
-          </Box>
-        );
+        return <ReviewInformation formData={formData} />;
     }
   };
 
   return (
-    <Box sx={{ maxWidth: 600, mx: "auto", p: 2 }}>
+    <Box
+      sx={{
+        maxWidth: isMobile ? "100%" : 600,
+        mx: "auto",
+        p: isMobile ? 1 : 2,
+        width: "100%",
+      }}
+    >
       <Stepper
         activeStep={activeStep}
         alternativeLabel={!isMobile}
         orientation={isMobile ? "vertical" : "horizontal"}
+        sx={{
+          "& .MuiStepLabel-label": {
+            fontSize: isMobile ? 12 : 16,
+            wordBreak: "break-word",
+          },
+          "& .MuiStepConnector-root": {
+            minHeight: isMobile ? 16 : 24,
+          },
+        }}
       >
         {steps.map((label) => (
           <Step key={label}>
@@ -333,14 +357,31 @@ export default function ExteriorPaintForm() {
         ))}
       </Stepper>
 
-      <Box mt={3}>{renderStep()}</Box>
+      <Box mt={isMobile ? 2 : 3}>{renderStep()}</Box>
 
-      <Box mt={2} display="flex" justifyContent="space-between">
-        <Button disabled={activeStep === 0} onClick={handleBack}>
+      <Box
+        mt={isMobile ? 1 : 2}
+        display="flex"
+        flexDirection={isMobile ? "column" : "row"}
+        justifyContent="space-between"
+        gap={isMobile ? 1 : 0}
+      >
+        <Button
+          disabled={activeStep === 0}
+          onClick={handleBack}
+          fullWidth={isMobile}
+          size={isMobile ? "small" : "medium"}
+        >
           Back
         </Button>
         {activeStep < steps.length - 1 && (
-          <Button variant="contained" onClick={handleNext}>
+          <Button
+            variant="contained"
+            onClick={handleNext}
+            fullWidth={isMobile}
+            size={isMobile ? "small" : "medium"}
+            sx={isMobile ? { mt: 1 } : {}}
+          >
             Next
           </Button>
         )}
