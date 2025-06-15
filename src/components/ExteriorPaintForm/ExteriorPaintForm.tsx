@@ -17,7 +17,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import PackageSelector from "./Steps/PackageSelector";
+import PackageSelector from "./Stepper/PackageSelector";
 
 const steps = [
   "Customer Info",
