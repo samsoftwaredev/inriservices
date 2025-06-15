@@ -16,8 +16,13 @@ import {
   FormLabel,
   Typography,
   MenuItem,
+  useMediaQuery,
+  useTheme,
+  Grid,
+  Paper,
 } from "@mui/material";
 import PackageSelector from "./Steps/PackageSelector";
+import ReviewInformation from "./Steps/ReviewInformation";
 
 const steps = [
   "Contact Info",
@@ -72,6 +77,9 @@ const InteriorPaintForm = () => {
     package: "",
   });
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const handleNext = () => setActiveStep((prev) => prev + 1);
   const handleBack = () => setActiveStep((prev) => prev - 1);
 
@@ -100,7 +108,7 @@ const InteriorPaintForm = () => {
     switch (step) {
       case 0:
         return (
-          <Box>
+          <Grid container spacing={2}>
             <TextField
               fullWidth
               label="Full Name"
@@ -129,24 +137,30 @@ const InteriorPaintForm = () => {
               value={formData.address}
               onChange={handleChange("address")}
             />
-          </Box>
+          </Grid>
         );
       case 1:
         return (
-          <Box>
+          <Grid container spacing={2}>
             <FormGroup>
-              {roomOptions.map((room) => (
-                <FormControlLabel
-                  key={room}
-                  control={
-                    <Checkbox
-                      checked={formData.selectedRooms.includes(room)}
-                      onChange={() => handleMultiChange("selectedRooms", room)}
+              <FormLabel>Project Areas:</FormLabel>
+              <Grid container spacing={1}>
+                {roomOptions.map((room) => (
+                  <Grid size={{ sm: 12, md: 4 }} key={room}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={formData.selectedRooms.includes(room)}
+                          onChange={() =>
+                            handleMultiChange("selectedRooms", room)
+                          }
+                        />
+                      }
+                      label={room}
                     />
-                  }
-                  label={room}
-                />
-              ))}
+                  </Grid>
+                ))}
+              </Grid>
             </FormGroup>
             <TextField
               fullWidth
@@ -156,14 +170,15 @@ const InteriorPaintForm = () => {
               value={formData.numRooms}
               onChange={handleChange("numRooms")}
             />
-          </Box>
+          </Grid>
         );
       case 2:
         return (
-          <Box>
+          <Grid container spacing={2} display={"flex"} flexDirection="column">
+            <FormLabel>Size & Ceilings:</FormLabel>
             <Typography gutterBottom>
-              Total Square Footage of Wall and Ceiling: {formData.squareFootage}{" "}
-              sq ft
+              Total Square Footage of Wall and Ceiling:{" "}
+              <b>{formData.squareFootage} sq ft</b>
             </Typography>
             <Slider
               value={formData.squareFootage}
@@ -174,9 +189,9 @@ const InteriorPaintForm = () => {
                 setFormData({ ...formData, squareFootage: val })
               }
             />
-            <FormLabel>Ceiling Height</FormLabel>
+            <FormLabel>Ceiling Height:</FormLabel>
             <RadioGroup
-              row
+              row={!isMobile}
               value={formData.ceilingHeight}
               onChange={handleChange("ceilingHeight")}
             >
@@ -187,16 +202,16 @@ const InteriorPaintForm = () => {
                 label="9–10 ft"
               />
               <FormControlLabel
-                value="8 ft"
+                value=">10 ft"
                 control={<Radio />}
-                label=">10 ft"
+                label="&gt;10 ft"
               />
             </RadioGroup>
-          </Box>
+          </Grid>
         );
       case 3:
         return (
-          <Box>
+          <Grid container spacing={2}>
             <TextField
               select
               fullWidth
@@ -227,11 +242,11 @@ const InteriorPaintForm = () => {
               }
               label="Use Eco-Friendly or Low-VOC Paint"
             />
-          </Box>
+          </Grid>
         );
       case 4:
         return (
-          <Box>
+          <Grid container spacing={2} display={"flex"} flexDirection="column">
             <FormControlLabel
               control={
                 <Checkbox
@@ -241,31 +256,37 @@ const InteriorPaintForm = () => {
               }
               label="Walls are currently painted"
             />
-            <FormLabel>Repairs Needed</FormLabel>
+            <FormLabel sx={{ display: "block" }}>Repairs Needed</FormLabel>
             <FormGroup>
-              {[
-                "Small holes",
-                "Cracks",
-                "Drywall repair",
-                "Nail pops",
-                "Water stains",
-              ].map((item) => (
-                <FormControlLabel
-                  key={item}
-                  control={
-                    <Checkbox
-                      checked={formData.repairsNeeded.includes(item)}
-                      onChange={() => handleMultiChange("repairsNeeded", item)}
+              <Grid container spacing={1}>
+                {[
+                  "Small holes",
+                  "Cracks",
+                  "Drywall repair",
+                  "Nail pops",
+                  "Water stains",
+                ].map((item) => (
+                  <Grid size={{ md: 6, sm: 12 }} key={item}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={formData.repairsNeeded.includes(item)}
+                          onChange={() =>
+                            handleMultiChange("repairsNeeded", item)
+                          }
+                        />
+                      }
+                      label={item}
                     />
-                  }
-                  label={item}
-                />
-              ))}
+                  </Grid>
+                ))}
+              </Grid>
             </FormGroup>
             <FormLabel>Furniture Help</FormLabel>
             <RadioGroup
               value={formData.furnitureHelp}
               onChange={handleChange("furnitureHelp")}
+              row={!isMobile}
             >
               <FormControlLabel
                 value="handle"
@@ -278,11 +299,11 @@ const InteriorPaintForm = () => {
                 label="The Client will need need help ($100 - $300 fee)"
               />
             </RadioGroup>
-          </Box>
+          </Grid>
         );
       case 5:
         return (
-          <Box>
+          <Grid container spacing={2} display={"flex"} flexDirection="column">
             <TextField
               fullWidth
               label="Preferred Completion Date"
@@ -313,7 +334,7 @@ const InteriorPaintForm = () => {
             </TextField>
             <FormLabel>Project Type</FormLabel>
             <RadioGroup
-              row
+              row={!isMobile}
               value={formData.isRemodel}
               onChange={handleChange("isRemodel")}
             >
@@ -333,15 +354,15 @@ const InteriorPaintForm = () => {
                 label="Other"
               />
             </RadioGroup>
-          </Box>
+          </Grid>
         );
       case 6:
         return (
-          <Box>
+          <Grid container spacing={2} display={"flex"} flexDirection="column">
             <TextField
               fullWidth
               multiline
-              rows={4}
+              rows={5}
               label="Additional Notes"
               margin="normal"
               value={formData.notes}
@@ -356,7 +377,7 @@ const InteriorPaintForm = () => {
               }
               label="Email me the estimate"
             />
-          </Box>
+          </Grid>
         );
       case 7:
         return (
@@ -366,49 +387,69 @@ const InteriorPaintForm = () => {
           />
         );
       case 8:
-        return (
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Review Your Information
-            </Typography>
-            <pre>{JSON.stringify(formData, null, 2)}</pre>
-          </Box>
-        );
+        return <ReviewInformation formData={formData} />;
       default:
         return "Unknown step";
     }
   };
 
   return (
-    <Box sx={{ p: 2, maxWidth: 600, mx: "auto" }}>
-      <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
+    <Box
+      sx={{
+        p: isMobile ? 1 : 2,
+        maxWidth: 600,
+        mx: "auto",
+        width: "100%",
+      }}
+    >
+      <Paper elevation={isMobile ? 0 : 2} sx={{ p: isMobile ? 1 : 3 }}>
+        <Stepper
+          activeStep={activeStep}
+          alternativeLabel={!isMobile}
+          orientation={isMobile ? "vertical" : "horizontal"}
+        >
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
 
-      <Box my={4}>{renderStepContent(activeStep)}</Box>
+        <Box my={isMobile ? 2 : 4}>{renderStepContent(activeStep)}</Box>
 
-      <Box display="flex" justifyContent="space-between">
-        <Button disabled={activeStep === 0} onClick={handleBack}>
-          Back
-        </Button>
-        {activeStep < steps.length - 1 ? (
-          <Button variant="contained" onClick={handleNext}>
-            Next
-          </Button>
-        ) : (
+        <Box
+          display="flex"
+          flexDirection={isMobile ? "column" : "row"}
+          justifyContent="space-between"
+          gap={2}
+        >
           <Button
-            variant="contained"
-            color="success"
-            onClick={() => console.log("Submit", formData)}
+            disabled={activeStep === 0}
+            onClick={handleBack}
+            fullWidth={isMobile}
           >
-            Submit
+            Back
           </Button>
-        )}
-      </Box>
+          {activeStep < steps.length - 1 ? (
+            <Button
+              variant="contained"
+              onClick={handleNext}
+              fullWidth={isMobile}
+            >
+              Next
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="success"
+              onClick={() => console.log("Submit", formData)}
+              fullWidth={isMobile}
+            >
+              Submit
+            </Button>
+          )}
+        </Box>
+      </Paper>
     </Box>
   );
 };
