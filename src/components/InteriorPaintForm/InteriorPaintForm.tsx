@@ -17,7 +17,7 @@ import {
   Typography,
   MenuItem,
 } from "@mui/material";
-import PackageSelector from "./steps/PackageSelector";
+import PackageSelector from "./Steps/PackageSelector";
 
 const steps = [
   "Contact Info",
@@ -28,6 +28,7 @@ const steps = [
   "Timing & Budget",
   "Extras",
   "Choose a Package",
+  "Review & Submit",
 ];
 
 const roomOptions = [
@@ -161,7 +162,8 @@ const InteriorPaintForm = () => {
         return (
           <Box>
             <Typography gutterBottom>
-              Square Footage: {formData.squareFootage} sq ft
+              Total Square Footage of Wall and Ceiling: {formData.squareFootage}{" "}
+              sq ft
             </Typography>
             <Slider
               value={formData.squareFootage}
@@ -178,18 +180,14 @@ const InteriorPaintForm = () => {
               value={formData.ceilingHeight}
               onChange={handleChange("ceilingHeight")}
             >
+              <FormControlLabel value="8 ft" control={<Radio />} label="8 ft" />
               <FormControlLabel
-                value="Standard"
-                control={<Radio />}
-                label="8 ft"
-              />
-              <FormControlLabel
-                value="Tall"
+                value="9–10 ft"
                 control={<Radio />}
                 label="9–10 ft"
               />
               <FormControlLabel
-                value="Vaulted"
+                value="8 ft"
                 control={<Radio />}
                 label=">10 ft"
               />
@@ -272,12 +270,12 @@ const InteriorPaintForm = () => {
               <FormControlLabel
                 value="handle"
                 control={<Radio />}
-                label="I’ll handle it"
+                label="The Client can handle it"
               />
               <FormControlLabel
                 value="need_help"
                 control={<Radio />}
-                label="I’ll need help"
+                label="The Client will need need help ($100 - $300 fee)"
               />
             </RadioGroup>
           </Box>
@@ -366,6 +364,15 @@ const InteriorPaintForm = () => {
             formData={formData}
             handleMultiChange={handleMultiChange}
           />
+        );
+      case 8:
+        return (
+          <Box>
+            <Typography variant="h6" gutterBottom>
+              Review Your Information
+            </Typography>
+            <pre>{JSON.stringify(formData, null, 2)}</pre>
+          </Box>
         );
       default:
         return "Unknown step";
