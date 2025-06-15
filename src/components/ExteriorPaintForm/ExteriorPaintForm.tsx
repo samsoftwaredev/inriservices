@@ -17,6 +17,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import PackageSelector from "./Steps/PackageSelector";
 
 const steps = [
   "Customer Info",
@@ -26,6 +27,7 @@ const steps = [
   "Paint Preferences",
   "Timeline & Access",
   "Additional Services",
+  "Select Package",
   "Review & Submit",
 ];
 
@@ -50,6 +52,7 @@ export default function ExteriorPaintForm() {
     startDate: string;
     accessInfo: string;
     extras: string[];
+    package: string;
   };
 
   const [formData, setFormData] = useState<FormData>({
@@ -68,6 +71,7 @@ export default function ExteriorPaintForm() {
     startDate: "",
     accessInfo: "",
     extras: [],
+    package: "basic",
   });
 
   const handleChange = (field: string, value: string | number | boolean) => {
@@ -81,13 +85,12 @@ export default function ExteriorPaintForm() {
     field: string,
     value: string | number | boolean
   ) => {
-    // @ts-expect-error: TypeScript doesn't know formData[field] is an array
+    // @ts-expect-error
     const current = formData[field];
     setFormData({
       ...formData,
       [field]: current.includes(value)
-        ? // @ts-expect-error: TypeScript doesn't know formData[field] is an array
-          current.filter((v) => v !== value)
+        ? current.filter((v: string) => v !== value)
         : [...current, value],
     });
   };
@@ -294,6 +297,10 @@ export default function ExteriorPaintForm() {
           </FormGroup>
         );
       case 7:
+        return (
+          <PackageSelector formData={formData} handleChange={handleChange} />
+        );
+      case 8:
         return (
           <Box>
             <Typography variant="h6">Review Your Info</Typography>

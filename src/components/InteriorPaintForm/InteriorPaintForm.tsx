@@ -17,6 +17,7 @@ import {
   Typography,
   MenuItem,
 } from "@mui/material";
+import PackageSelector from "./steps/PackageSelector";
 
 const steps = [
   "Contact Info",
@@ -26,6 +27,7 @@ const steps = [
   "Prep Work",
   "Timing & Budget",
   "Extras",
+  "Choose a Package",
 ];
 
 const roomOptions = [
@@ -38,6 +40,8 @@ const roomOptions = [
   "Trim/Baseboards",
   "Doors & Frames",
   "Cabinets",
+  "Accent Walls",
+  "Garage",
 ];
 
 const finishOptions = ["Matte", "Eggshell", "Satin", "Semi-gloss", "Gloss"];
@@ -64,6 +68,7 @@ const InteriorPaintForm = () => {
     isRemodel: "",
     notes: "",
     emailEstimate: false,
+    package: "",
   });
 
   const handleNext = () => setActiveStep((prev) => prev + 1);
@@ -81,7 +86,6 @@ const InteriorPaintForm = () => {
   ) => {
     setFormData({
       ...formData,
-
       // @ts-expect-error: TypeScript doesn't know formData[field] is an array
       [field]: formData[field].includes(value)
         ? // @ts-expect-error: TypeScript doesn't know formData[field] is an array
@@ -355,6 +359,13 @@ const InteriorPaintForm = () => {
               label="Email me the estimate"
             />
           </Box>
+        );
+      case 7:
+        return (
+          <PackageSelector
+            formData={formData}
+            handleMultiChange={handleMultiChange}
+          />
         );
       default:
         return "Unknown step";
