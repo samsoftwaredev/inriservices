@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://inripaintwall.com
+
+# Sitemaps
+Sitemap: https://inripaintwall.com/sitemap.xml
