@@ -21,15 +21,13 @@ async function fetchMyDataOnce(path: string) {
     throw error;
   }
 }
-
-export default async function Service({
-  params,
-}: {
-  params: { slugName: string };
-}) {
+interface Props {
+  params: Promise<{ slugName: string }>;
+}
+// eslint-disable-next-line
+export default async function Service({ params }: Props) {
   const { slugName } = await params;
   const data = await fetchMyDataOnce(slugName);
-  console.log("Fetched data:", data);
 
   if (!data) {
     return (

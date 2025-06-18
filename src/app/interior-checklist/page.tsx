@@ -1,4 +1,4 @@
-import { Container, Paper } from "@mui/material";
+import { Container } from "@mui/material";
 import { Footer, TopNavbar } from "@/components";
 import InteriorPaintForm from "@/components/InteriorPaintForm";
 

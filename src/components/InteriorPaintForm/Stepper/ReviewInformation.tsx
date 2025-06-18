@@ -7,7 +7,6 @@ import {
   Typography,
   Box,
   Button,
-  Container,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -182,9 +181,7 @@ const displayOrder: (keyof Props["formData"])[] = [
 
 const formatFormData = (formData: Props["formData"]) =>
   displayOrder
-    .map(
-      (key) => `${fieldLabels[key]}: ${formatValue(key, formData[key] as any)}`
-    )
+    .map((key) => `${fieldLabels[key]}: ${formatValue(key, formData[key])}`)
     .join("\n");
 
 const ReviewInformation = ({ formData }: Props) => {

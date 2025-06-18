@@ -54,6 +54,7 @@ export default function ExteriorPaintForm() {
     accessInfo: string;
     extras: string[];
     package: string;
+    [key: string]: any;
   };
 
   const [formData, setFormData] = useState<FormData>({
@@ -86,7 +87,6 @@ export default function ExteriorPaintForm() {
     field: string,
     value: string | number | boolean
   ) => {
-    // @ts-expect-error
     const current = formData[field];
     setFormData({
       ...formData,
