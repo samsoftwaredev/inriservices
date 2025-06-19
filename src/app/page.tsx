@@ -23,7 +23,7 @@ import {
   PatchSpecial,
 } from "@/components";
 import { MetaProps } from "@/interfaces";
-import { companyName } from "@/constants";
+import { companyName, companyWebsiteURL } from "@/constants";
 
 const cards = [
   {
@@ -172,9 +172,9 @@ const metaProps: MetaProps = {
       name: "keywords",
       content: `${location} painting services, drywall repair ${location}, inri paint wall, inri paint and wall, paint wall, paint and wall, home painting, INRI Paint & Wall, house painters Texas, affordable painting, local drywall contractors`,
     },
-    { name: "author", content: "INRI Paint & Wall" },
+    { name: "author", content: companyName },
     { property: "og:type", content: "website" },
-    { property: "og:url", content: "https://inripaintwall.com/" },
+    { property: "og:url", content: companyWebsiteURL },
     {
       property: "og:title",
       content: `INRI Paint & Wall LLC | Expert Painting & Drywall Repair in ${location}`,

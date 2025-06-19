@@ -10,6 +10,11 @@ import {
   LinkedIn,
   YouTube,
 } from "@mui/icons-material";
+import {
+  companyPhone,
+  companyPhoneFormatted,
+  companyWebsiteURL,
+} from "@/constants";
 
 const Footer = () => {
   const pages = [
@@ -177,7 +182,7 @@ const Footer = () => {
           color="text.secondary"
           sx={{ fontSize: { xs: "0.8rem", md: "1rem" } }}
         >
-          © {new Date().getFullYear()} INRIpaintwall.com. All rights reserved.
+          © {new Date().getFullYear()} {companyWebsiteURL}. All rights reserved.
         </Typography>
         <Typography
           variant="body2"
@@ -186,13 +191,13 @@ const Footer = () => {
         >
           Phone:{" "}
           <a
-            href="tel:+12144001397"
+            href={`tel:${companyPhone}`}
             style={{
               color: theme.palette.primary.main,
               textDecoration: "none",
             }}
           >
-            +1 (214) 400-1397
+            {companyPhoneFormatted}
           </a>
         </Typography>
       </Box>

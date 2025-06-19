@@ -25,8 +25,8 @@ Props) => {
       flexDirection="column"
     >
       <Typography
-        variant="h1"
-        component="h3" // Use h1 for the main heading
+        variant="h3"
+        component="h1" // Use h1 for the main heading
         color="primary.main"
         sx={{
           fontSize: { xs: "2rem", sm: "2.5rem", md: "2.8rem" },
@@ -122,6 +122,14 @@ Props) => {
         >
           <ImagesearchRollerIcon /> Appointment Request
         </Button>
+        <Box sx={{ my: 1, px: 2, py: 1.5 }}>
+          <script
+            defer
+            async
+            src="https://cdn.trustindex.io/loader.js?9c4fe2c48f9d53516306caaf762"
+          ></script>
+        </Box>
+
         {/* <Button
           href={freeEstimateURL}
           color="primary"

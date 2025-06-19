@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { companyName } from "@/constants";
+import { companyName, companyWebsiteURL } from "@/constants";
 import Script from "next/script";
 
 export const metadata: Metadata = {
@@ -54,14 +54,14 @@ export const metadata: Metadata = {
   authors: [
     {
       name: companyName,
-      url: "https://inripaintwall.com",
+      url: companyWebsiteURL,
     },
   ],
   creator: companyName,
   openGraph: {
     title: companyName,
     description: "Expert Painting & Drywall Repair Services",
-    url: "https://inripaintwall.com",
+    url: companyWebsiteURL,
     siteName: companyName,
     images: [
       {

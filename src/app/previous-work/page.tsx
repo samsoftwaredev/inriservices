@@ -183,6 +183,7 @@ export default function OurPreviousWorkPage() {
           <Box sx={{ zIndex: 1, flex: 1, minWidth: 0 }}>
             <Typography
               variant="h1"
+              component="h3"
               fontSize={{ xs: "2.4rem", md: "3.4rem" }}
               fontWeight={900}
               gutterBottom

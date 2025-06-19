@@ -2,12 +2,10 @@ import { Grid, List, ListItem, Typography } from "@mui/material";
 
 const HoursOperation = () => {
   return (
-    <Grid
-      size={{ xs: 12, md: 6 }}
-    >
+    <Grid size={{ xs: 12, md: 6 }}>
       <article>
         <Typography
-          variant="h1"
+          variant="h2"
           component="h3"
           sx={{
             textAlign: "center",
