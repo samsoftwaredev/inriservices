@@ -48,7 +48,7 @@ const Footer = () => {
     },
     {
       name: "LinkedIn",
-      url: "https://www.linkedin.com/company/inri-paint-wall?trk=public_post_feed-actor-name",
+      url: "https://www.linkedin.com/company/inri-paint-wall/",
       icon: <LinkedIn color="primary" />,
     },
     {

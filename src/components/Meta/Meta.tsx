@@ -1,6 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import { MetaProps } from "@/interfaces";
+import schemaPaintBusiness from "@/tools/schemaPaintBusiness";
 
 const Meta = ({ title, metaTags = [], linkTags = [], children }: MetaProps) => {
   return (
@@ -29,6 +30,12 @@ const Meta = ({ title, metaTags = [], linkTags = [], children }: MetaProps) => {
         <link key={idx} rel={tag.rel} href={tag.href} />
       ))}
       {children}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(schemaPaintBusiness),
+        }}
+      />
     </Head>
   );
 };
