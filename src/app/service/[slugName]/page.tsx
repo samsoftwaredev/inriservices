@@ -56,7 +56,15 @@ export default async function Service({ params }: Props) {
             component="img"
             src={data.cover_image_url}
             alt={data.title}
-            sx={{ width: "100%", borderRadius: 2, mb: 3 }}
+            sx={{
+              maxWidth: "200px",
+              width: "100%",
+              borderRadius: 2,
+              mb: 3,
+              display: "flex",
+              alignSelf: "center",
+              justifySelf: "center",
+            }}
           />
         )}
 
@@ -98,7 +106,53 @@ export default async function Service({ params }: Props) {
 
         {/* Content */}
         <Box sx={{ mt: 4 }}>
-          <ReactMarkdown>{data.content}</ReactMarkdown>
+          <ReactMarkdown
+            components={{
+              p: ({ children }) => (
+                <Typography variant="body1" sx={{ mb: 2 }}>
+                  {children}
+                </Typography>
+              ),
+              h1: ({ children }) => (
+                <Typography
+                  variant="h4"
+                  sx={{ mt: 4, mb: 2, fontWeight: "bold" }}
+                >
+                  {children}
+                </Typography>
+              ),
+              h2: ({ children }) => (
+                <Typography
+                  variant="h5"
+                  sx={{ mt: 3, mb: 1.5, fontWeight: "bold" }}
+                >
+                  {children}
+                </Typography>
+              ),
+              li: ({ children }) => (
+                <li style={{ marginBottom: "0.5rem", marginLeft: "1rem" }}>
+                  <Typography variant="body2" component="span">
+                    {children}
+                  </Typography>
+                </li>
+              ),
+              blockquote: ({ children }) => (
+                <Box
+                  sx={{
+                    borderLeft: "4px solid #ccc",
+                    pl: 2,
+                    my: 2,
+                    color: "text.secondary",
+                    fontStyle: "italic",
+                  }}
+                >
+                  {children}
+                </Box>
+              ),
+            }}
+          >
+            {data.content}
+          </ReactMarkdown>
         </Box>
       </Container>
       <Footer />
