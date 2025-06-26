@@ -19,8 +19,6 @@ const ContactForm = () => {
     name: "",
     phone: "",
     message: "",
-    address: "",
-    zipcode: "",
   });
 
   const [errors, setErrors] = useState({
@@ -54,19 +52,6 @@ const ContactForm = () => {
       valid = false;
     }
 
-    if (!formData.address.trim()) {
-      newErrors.address = "Address is required.";
-      valid = false;
-    }
-
-    if (!formData.zipcode.trim()) {
-      newErrors.zipcode = "Zipcode is required.";
-      valid = false;
-    } else if (!/^\d{5}(-\d{4})?$/.test(formData.zipcode)) {
-      newErrors.zipcode = "Invalid zipcode format.";
-      valid = false;
-    }
-
     setErrors(newErrors);
     return valid;
   };
@@ -77,14 +62,7 @@ const ContactForm = () => {
     const textarea = document.querySelector('textarea[name="message"]');
     if (textarea) {
       // @ts-expect-error passing form data
-      textarea.value =
-        formData.message +
-        "\n\n\nPHONE:" +
-        formData.phone +
-        "\n\n\nADDRESS:" +
-        formData.address +
-        "\n\n\nZIPCODE:" +
-        formData.zipcode;
+      textarea.value = formData.message + "\n\n\nPHONE:" + formData.phone;
     }
     emailjs
       .sendForm(
@@ -109,8 +87,6 @@ const ContactForm = () => {
           name: "",
           phone: "",
           message: "",
-          address: "",
-          zipcode: "",
         });
         setIsLoading(false);
       });
@@ -161,34 +137,12 @@ const ContactForm = () => {
       />
 
       <TextField
-        label="Address"
-        name="address"
-        value={formData.address}
-        onChange={handleChange}
-        fullWidth
-        margin="normal"
-        error={!!errors.address}
-        helperText={errors.address}
-      />
-
-      <TextField
-        label="Zipcode"
-        name="zipcode"
-        value={formData.zipcode}
-        onChange={handleChange}
-        fullWidth
-        margin="normal"
-        error={!!errors.zipcode}
-        helperText={errors.zipcode}
-      />
-
-      <TextField
         label="Notes/Service Details"
         name="message"
         value={formData.message}
         onChange={handleChange}
         multiline
-        rows={1}
+        rows={5}
         fullWidth
         margin="normal"
         error={!!errors.message}

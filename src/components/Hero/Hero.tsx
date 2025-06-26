@@ -122,14 +122,6 @@ Props) => {
         >
           <ImagesearchRollerIcon /> Appointment Request
         </Button>
-        <Box sx={{ my: 1, px: 2, py: 1.5 }}>
-          <script
-            defer
-            async
-            src="https://cdn.trustindex.io/loader.js?9c4fe2c48f9d53516306caaf762"
-          ></script>
-        </Box>
-
         {/* <Button
           href={freeEstimateURL}
           color="primary"
