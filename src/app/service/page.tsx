@@ -8,15 +8,15 @@ import {
   Chip,
   Box,
 } from "@mui/material";
-import { Footer, Meta, TopNavbar } from "@/components";
+import { ErrorPage, Footer, Meta, TopNavbar } from "@/components";
 import { ref, child, get, getDatabase } from "firebase/database";
 import { app } from "@/app/firebaseConfig";
 
 async function fetchMyDataOnce() {
-  const database = getDatabase(app);
-  const dbRef = ref(database);
-  const dataPath = `/service`;
   try {
+    const database = getDatabase(app);
+    const dbRef = ref(database);
+    const dataPath = `/service`;
     const snapshot = await get(child(dbRef, dataPath));
     if (snapshot.exists()) {
       return snapshot.val();
@@ -25,7 +25,6 @@ async function fetchMyDataOnce() {
     }
   } catch (error) {
     console.error("Error fetching data:", error);
-    throw error;
   }
 }
 
@@ -34,11 +33,12 @@ export default async function Service() {
 
   if (!data) {
     return (
-      <Container maxWidth="md" sx={{ py: 8 }}>
-        <Typography variant="h3" color="error">
-          Service not found.
-        </Typography>
-      </Container>
+      <>
+        <Meta />
+        <TopNavbar />
+        <ErrorPage />
+        <Footer />
+      </>
     );
   }
 

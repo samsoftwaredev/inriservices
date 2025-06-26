@@ -9,7 +9,6 @@ import {
   companyWebsiteURL,
 } from "@/constants";
 
-// lib/seo/schemaPaintBusiness.ts
 const schemaPaintBusiness = {
   "@context": "https://schema.org",
   "@type": "PaintingContractor",
@@ -49,7 +48,7 @@ const schemaPaintBusiness = {
   ],
   priceRange: "$$",
   description:
-    "INRI Paint & Wall LLC offers professional interior and exterior painting, drywall repair, texture matching, and cabinet refinishing services in Dallas, TX.",
+    "INRI Paint & Wall LLC offers professional interior and exterior painting, drywall repair, texture matching, and cabinet refinishing services in Garland, TX.",
   areaServed: {
     "@type": "Place",
     name: "Dallas-Fort Worth Metroplex",

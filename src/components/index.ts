@@ -15,3 +15,4 @@ export { default as SocialProof } from "./SocialProof";
 export { default as PatchSpecial } from "./PatchSpecial";
 export { default as Pricing } from "./Pricing";
 export { default as EstimateStepper } from "./EstimateStepper";
+export { default as ErrorPage } from "./ErrorPage";

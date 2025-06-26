@@ -1,15 +1,15 @@
 import { Box, Container, Typography, Stack, Avatar, Chip } from "@mui/material";
-import { Footer, Meta, TopNavbar } from "@/components";
+import { ErrorPage, Footer, Meta, TopNavbar } from "@/components";
 import { MetaProps } from "@/interfaces";
 import { ref, child, get, getDatabase } from "firebase/database";
 import { app } from "@/app/firebaseConfig";
 import ReactMarkdown from "react-markdown";
 
 async function fetchMyDataOnce(path: string) {
-  const database = getDatabase(app);
-  const dbRef = ref(database);
-  const dataPath = `/service/${path}`;
   try {
+    const database = getDatabase(app);
+    const dbRef = ref(database);
+    const dataPath = `/service/${path}`;
     const snapshot = await get(child(dbRef, dataPath));
     if (snapshot.exists()) {
       return snapshot.val();
@@ -18,7 +18,6 @@ async function fetchMyDataOnce(path: string) {
     }
   } catch (error) {
     console.error("Error fetching data:", error);
-    throw error;
   }
 }
 interface Props {
@@ -33,11 +32,7 @@ export default async function Service({ params }: Props) {
     return (
       <>
         <TopNavbar />
-        <Container maxWidth="md" sx={{ py: 8 }}>
-          <Typography variant="h3" color="error">
-            Service not found.
-          </Typography>
-        </Container>
+        <ErrorPage />
         <Footer />
       </>
     );

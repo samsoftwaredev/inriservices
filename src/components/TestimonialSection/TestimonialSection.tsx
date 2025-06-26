@@ -53,11 +53,39 @@ const TestimonialSection = ({ testimonials }: Props) => {
         what they have to say about their experiences with us.
       </Typography>
       <Grid container spacing={4} justifyContent="center">
-        <script
-          defer
-          async
-          src="https://cdn.trustindex.io/loader.js?d2086234817353468d669f7bf89"
-        ></script>
+        {testimonials.map((t, idx) => (
+          <Grid size={{ xs: 12, sm: 6, md: 5, lg: 5 }} key={idx}>
+            <Card
+              elevation={4}
+              sx={{
+                height: "100%",
+                borderRadius: 3,
+              }}
+            >
+              <CardContent>
+                <Stack direction="row" spacing={2} alignItems="center" mb={1}>
+                  <Avatar src={t.image} alt={t.name} />
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight="bold"
+                    color="primary"
+                  >
+                    {t.name}
+                  </Typography>
+                </Stack>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  mb={2}
+                  sx={{ fontSize: { xs: "0.8rem", sm: "0.9rem" } }}
+                >
+                  {t.text}
+                </Typography>
+                <Rating value={t.rating} precision={0.5} readOnly />
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
       </Grid>
     </Box>
   );

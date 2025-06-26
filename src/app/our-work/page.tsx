@@ -90,7 +90,7 @@ const metaProps: MetaProps = {
     { property: "og:type", content: "website" },
     {
       property: "og:url",
-      content: "https://inripaintwall.com/our-previous-work",
+      content: "https://inripaintwall.com/our-work",
     },
     {
       property: "og:title",
@@ -107,7 +107,7 @@ const metaProps: MetaProps = {
     { name: "twitter:card", content: "summary_large_image" },
     {
       name: "twitter:title",
-      content: `Our Previous Work | INRI Paint & Wall | Project Gallery in ${location}`,
+      content: `Our Work | INRI Paint & Wall | Project Gallery in ${location}`,
     },
     {
       name: "twitter:description",

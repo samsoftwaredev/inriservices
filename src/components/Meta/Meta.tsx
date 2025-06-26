@@ -3,7 +3,7 @@ import Head from "next/head";
 import { MetaProps } from "@/interfaces";
 import schemaPaintBusiness from "@/tools/schemaPaintBusiness";
 
-const Meta = ({ title, metaTags = [], linkTags = [], children }: MetaProps) => {
+const Meta = ({ title, children, metaTags = [], linkTags = [] }: MetaProps) => {
   return (
     <Head>
       {title && <title>{title}</title>}
