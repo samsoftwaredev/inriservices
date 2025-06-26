@@ -69,7 +69,7 @@ const services = [
 
 const location =
   "Garland, Plano, Dallas, Rockwall, Richardson, and surrounding areas";
-const pageName = "Our Previous Work - Painting & Drywall Projects";
+const pageName = "Our Work - Painting & Drywall Projects";
 
 const metaProps: MetaProps = {
   // ...same as before
