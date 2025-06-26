@@ -174,6 +174,27 @@ const TopNavbar = () => {
                 <ListItemText primary={item.text} />
               </ListItem>
             ))}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Button
+                href={`tel:${companyPhone}`}
+                component="a"
+                startIcon={<PhoneIcon />}
+                variant="contained"
+                color="error"
+                sx={{
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                {companyPhoneFormatted}
+              </Button>
+            </Box>
           </List>
         </Box>
       </Drawer>
