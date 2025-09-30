@@ -36,7 +36,7 @@ interface LocationData {
   sections: Section[];
 }
 
-const InteriorEstimateStepper = () => {
+const ProInteriorEstimate = () => {
   const measurementUnitList: MeasurementUnit[] = ["ft", "m", "in"];
 
   const [locationData, setLocationData] = useState<LocationData>({
@@ -242,4 +242,4 @@ const InteriorEstimateStepper = () => {
   );
 };
 
-export default InteriorEstimateStepper;
+export default ProInteriorEstimate;
