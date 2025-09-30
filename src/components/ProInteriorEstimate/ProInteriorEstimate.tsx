@@ -1,49 +1,72 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
-  Box,
-  Typography,
-  Divider,
-  Grid,
-  Button,
-} from "@mui/material";
+import { Box, Typography, Divider, Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+
+import CustomerHeader from "./CustomerHeader";
+import CustomerInfoCard from "./CustomerInfoCard";
+import CustomerSelectionMenu from "./CustomerSelectionMenu";
+import NewCustomerDialog from "./NewCustomerDialog";
+import ProjectSettings from "./ProjectSettings";
 import Room from "./Room";
-import { floorOptions } from "./laborData";
-
-type MeasurementUnit = "ft" | "m" | "in";
-
-interface Section {
-  id: string;
-  name: string;
-  description: string;
-  floorNumber: number;
-}
-
-interface LocationData {
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  measurementUnit: MeasurementUnit;
-  floorPlan: number;
-  sections: Section[];
-}
+import { Customer, LocationData, Section } from "./laborTypes";
 
 const ProInteriorEstimate = () => {
-  const measurementUnitList: MeasurementUnit[] = ["ft", "m", "in"];
+  // Sample previous customers data
+  const [previousCustomers, setPreviousCustomers] = useState<Customer[]>([
+    {
+      id: "1",
+      name: "John Doe",
+      contact: "Jane Smith",
+      phone: "(123) 456-7890",
+      email: "jane.smith@example.com",
+      address: "123 Main St",
+      city: "Anytown",
+      state: "CA",
+      zipCode: "12345",
+    },
+    {
+      id: "2",
+      name: "Alice Johnson",
+      contact: "Bob Wilson",
+      phone: "(555) 123-4567",
+      email: "bob.wilson@email.com",
+      address: "456 Oak Avenue",
+      city: "Springfield",
+      state: "TX",
+      zipCode: "67890",
+    },
+    {
+      id: "3",
+      name: "Michael Brown",
+      contact: "Sarah Brown",
+      phone: "(333) 555-7777",
+      email: "sarah.brown@gmail.com",
+      address: "789 Pine Street",
+      city: "Riverside",
+      state: "FL",
+      zipCode: "54321",
+    },
+  ]);
 
-  const [locationData, setLocationData] = useState<LocationData>({
+  const [currentCustomer, setCurrentCustomer] = useState<Customer>({
+    id: "1",
+    name: "John Doe",
+    contact: "Jane Smith",
+    phone: "(123) 456-7890",
+    email: "jane.smith@example.com",
     address: "123 Main St",
     city: "Anytown",
     state: "CA",
     zipCode: "12345",
+  });
+
+  const [locationData, setLocationData] = useState<LocationData>({
+    address: "123 Main St",
+    city: "Garland",
+    state: "TX",
+    zipCode: "75040",
     measurementUnit: "ft",
     floorPlan: 1,
     sections: [
@@ -62,26 +85,58 @@ const ProInteriorEstimate = () => {
     ],
   });
 
-  const handleMeasurementUnitChange = (
-    event: SelectChangeEvent<MeasurementUnit>
-  ) => {
+  // Menu and dialog states
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [newCustomerDialogOpen, setNewCustomerDialogOpen] = useState(false);
+
+  const handleSelectPreviousCustomer = (customer: Customer) => {
+    setCurrentCustomer(customer);
     setLocationData({
       ...locationData,
-      measurementUnit: event.target.value as MeasurementUnit,
+      address: customer.address,
+      city: customer.city,
+      state: customer.state,
+      zipCode: customer.zipCode,
+    });
+    setAnchorEl(null);
+  };
+
+  const handleSaveNewCustomer = (newCustomerData: Omit<Customer, "id">) => {
+    const newCustomer: Customer = {
+      ...newCustomerData,
+      id: Date.now().toString(),
+    };
+
+    setCurrentCustomer(newCustomer);
+    setPreviousCustomers([...previousCustomers, newCustomer]);
+    setLocationData({
+      ...locationData,
+      address: newCustomer.address,
+      city: newCustomer.city,
+      state: newCustomer.state,
+      zipCode: newCustomer.zipCode,
     });
   };
 
-  const handleFloorPlanChange = (event: SelectChangeEvent<number>) => {
-    const newFloorCount = event.target.value as number;
+  const handleCustomerUpdate = (updatedCustomer: Customer) => {
+    setCurrentCustomer(updatedCustomer);
+    setPreviousCustomers(
+      previousCustomers.map((customer) =>
+        customer.id === updatedCustomer.id ? updatedCustomer : customer
+      )
+    );
     setLocationData({
       ...locationData,
-      floorPlan: newFloorCount,
+      address: updatedCustomer.address,
+      city: updatedCustomer.city,
+      state: updatedCustomer.state,
+      zipCode: updatedCustomer.zipCode,
     });
   };
 
   const addNewSection = () => {
     const newSection: Section = {
-      id: Date.now().toString(), // Simple ID generation
+      id: Date.now().toString(),
       name: `Room ${locationData.sections.length + 1}`,
       description: "New room section",
       floorNumber: 1,
@@ -91,19 +146,6 @@ const ProInteriorEstimate = () => {
       ...locationData,
       sections: [...locationData.sections, newSection],
     });
-  };
-
-  const getMeasurementUnitLabel = (unit: MeasurementUnit): string => {
-    switch (unit) {
-      case "ft":
-        return "Feet (ft)";
-      case "m":
-        return "Meters (m)";
-      case "in":
-        return "Inches (in)";
-      default:
-        return unit;
-    }
   };
 
   const onRoomUpdate = (updates: {
@@ -130,61 +172,38 @@ const ProInteriorEstimate = () => {
     });
   };
 
-  const getFloorLabel = (floorCount: number): string => {
-    return floorCount === 1 ? "1 Floor" : `${floorCount} Floors`;
-  };
-
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Interior Estimate for {locationData.address}
-      </Typography>
+      <CustomerHeader
+        locationData={locationData}
+        onAddCustomerClick={setAnchorEl}
+      />
 
-      <Typography variant="body1" color="text.secondary" gutterBottom>
-        {locationData.city}, {locationData.state} {locationData.zipCode}
-      </Typography>
+      <CustomerInfoCard
+        currentCustomer={currentCustomer}
+        onCustomerUpdate={handleCustomerUpdate}
+      />
 
-      <Grid container spacing={3} sx={{ my: 2 }}>
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <FormControl fullWidth>
-            <InputLabel id="measurement-unit-label">
-              Measurement Unit
-            </InputLabel>
-            <Select
-              labelId="measurement-unit-label"
-              id="measurement-unit-select"
-              value={locationData.measurementUnit}
-              label="Measurement Unit"
-              onChange={handleMeasurementUnitChange}
-            >
-              {measurementUnitList.map((unit) => (
-                <MenuItem key={unit} value={unit}>
-                  {getMeasurementUnitLabel(unit)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
+      <CustomerSelectionMenu
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        previousCustomers={previousCustomers}
+        onSelectCustomer={handleSelectPreviousCustomer}
+        onCreateNewCustomer={() => setNewCustomerDialogOpen(true)}
+      />
 
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <FormControl fullWidth>
-            <InputLabel id="floor-plan-label">Number of Floors</InputLabel>
-            <Select
-              labelId="floor-plan-label"
-              id="floor-plan-select"
-              value={locationData.floorPlan}
-              label="Number of Floors"
-              onChange={handleFloorPlanChange}
-            >
-              {floorOptions.map((floorCount) => (
-                <MenuItem key={floorCount} value={floorCount}>
-                  {getFloorLabel(floorCount)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-      </Grid>
+      <NewCustomerDialog
+        open={newCustomerDialogOpen}
+        onClose={() => setNewCustomerDialogOpen(false)}
+        onSaveCustomer={handleSaveNewCustomer}
+      />
+
+      <Divider sx={{ my: 3 }} />
+
+      <ProjectSettings
+        locationData={locationData}
+        setLocationData={setLocationData}
+      />
 
       <Divider sx={{ my: 3 }} />
 
@@ -226,18 +245,6 @@ const ProInteriorEstimate = () => {
           />
         </Box>
       ))}
-
-      {/* Alternative: Floating Action Button */}
-      {/* 
-      <Fab
-        color="primary"
-        aria-label="add section"
-        sx={{ position: 'fixed', bottom: 16, right: 16 }}
-        onClick={addNewSection}
-      >
-        <AddIcon />
-      </Fab>
-      */}
     </Box>
   );
 };

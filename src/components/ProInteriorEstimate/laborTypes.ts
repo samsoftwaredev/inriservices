@@ -56,3 +56,34 @@ export interface Props {
 }
 
 export type FeatureType = keyof RoomData["features"];
+
+export type MeasurementUnit = "ft" | "m" | "in";
+
+export interface Section {
+  id: string;
+  name: string;
+  description: string;
+  floorNumber: number;
+}
+
+export interface Customer {
+  id: string;
+  name: string;
+  contact: string;
+  phone: string;
+  email: string;
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
+
+export interface LocationData {
+  address: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  measurementUnit: MeasurementUnit;
+  floorPlan: number;
+  sections: Section[];
+}
