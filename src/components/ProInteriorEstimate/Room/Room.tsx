@@ -199,9 +199,20 @@ const Room = ({
             }}
           >
             <Box sx={{ flex: 1 }}>
-              <Typography variant="h5" component="h2" gutterBottom>
-                {displayRoomName}
-              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Typography variant="h5" component="h2" gutterBottom>
+                  {displayRoomName}
+                </Typography>
+                <IconButton
+                  onClick={handleEditClick}
+                  color="primary"
+                  aria-label="edit room"
+                  sx={{ mb: 0.7, display: "inline-flex" }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Box>
+
               <Typography variant="body2" color="text.secondary" gutterBottom>
                 {displayRoomDescription}
               </Typography>
@@ -209,14 +220,6 @@ const Room = ({
                 Floor: {displayFloorNumber} | Room ID: {id}
               </Typography>
             </Box>
-            <IconButton
-              onClick={handleEditClick}
-              color="primary"
-              aria-label="edit room"
-              sx={{ mt: 0.5 }}
-            >
-              <EditIcon />
-            </IconButton>
           </Box>
         )}
 

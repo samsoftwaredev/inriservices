@@ -1,8 +1,21 @@
 "use client";
 
 import React, { useState } from "react";
-import { Box, Typography, Divider, Button } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Divider,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+  IconButton,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
+import WarningIcon from "@mui/icons-material/Warning";
 
 import CustomerHeader from "./CustomerHeader";
 import CustomerInfoCard from "./CustomerInfoCard";
@@ -11,6 +24,12 @@ import NewCustomerDialog from "./NewCustomerDialog";
 import ProjectSettings from "./ProjectSettings";
 import Room from "./Room";
 import { Customer, LocationData, Section } from "./laborTypes";
+
+interface DeleteConfirmationState {
+  open: boolean;
+  sectionId: string | null;
+  sectionName: string | null;
+}
 
 const ProInteriorEstimate = () => {
   // Sample previous customers data
@@ -88,6 +107,12 @@ const ProInteriorEstimate = () => {
   // Menu and dialog states
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [newCustomerDialogOpen, setNewCustomerDialogOpen] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] =
+    useState<DeleteConfirmationState>({
+      open: false,
+      sectionId: null,
+      sectionName: null,
+    });
 
   const handleSelectPreviousCustomer = (customer: Customer) => {
     setCurrentCustomer(customer);
@@ -146,6 +171,34 @@ const ProInteriorEstimate = () => {
       ...locationData,
       sections: [...locationData.sections, newSection],
     });
+  };
+
+  const handleDeleteSectionClick = (sectionId: string, sectionName: string) => {
+    setDeleteConfirmation({
+      open: true,
+      sectionId,
+      sectionName,
+    });
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirmation({
+      open: false,
+      sectionId: null,
+      sectionName: null,
+    });
+  };
+
+  const handleDeleteConfirm = () => {
+    if (deleteConfirmation.sectionId) {
+      setLocationData({
+        ...locationData,
+        sections: locationData.sections.filter(
+          (section) => section.id !== deleteConfirmation.sectionId
+        ),
+      });
+    }
+    handleDeleteCancel();
   };
 
   const onRoomUpdate = (updates: {
@@ -234,7 +287,33 @@ const ProInteriorEstimate = () => {
       )}
 
       {locationData.sections.map((section) => (
-        <Box key={section.id} sx={{ mb: 2 }}>
+        <Box key={section.id} sx={{ mb: 2, position: "relative" }}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              zIndex: 1,
+            }}
+          >
+            <IconButton
+              size="small"
+              color="error"
+              onClick={() => handleDeleteSectionClick(section.id, section.name)}
+              sx={{
+                bgcolor: "background.paper",
+                boxShadow: 1,
+                "&:hover": {
+                  bgcolor: "error.light",
+                  color: "white",
+                },
+              }}
+              title="Delete Section"
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          </Box>
+
           <Room
             onRoomUpdate={onRoomUpdate}
             roomName={section.name}
@@ -245,6 +324,48 @@ const ProInteriorEstimate = () => {
           />
         </Box>
       ))}
+
+      {/* Delete Section Confirmation Dialog */}
+      <Dialog
+        open={deleteConfirmation.open}
+        onClose={handleDeleteCancel}
+        aria-labelledby="delete-section-dialog-title"
+        aria-describedby="delete-section-dialog-description"
+      >
+        <DialogTitle
+          id="delete-section-dialog-title"
+          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+        >
+          <WarningIcon color="warning" />
+          Confirm Section Deletion
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-section-dialog-description">
+            Are you sure you want to delete the section "
+            {deleteConfirmation.sectionName}"?
+            <br />
+            <br />
+            <Typography component="span" variant="body2" color="error">
+              This action cannot be undone. All room features, dimensions, labor
+              tasks, and cost calculations for this section will be permanently
+              removed.
+            </Typography>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            color="error"
+            variant="contained"
+            startIcon={<DeleteIcon />}
+          >
+            Delete Section
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
