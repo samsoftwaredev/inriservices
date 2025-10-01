@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -118,7 +118,7 @@ const LaborTaskDialog = ({
             <ListItem
               key={task.name}
               dense
-              button
+              component={"div"}
               onClick={() => handleLaborTaskToggle(task.name)}
             >
               <ListItemIcon>
