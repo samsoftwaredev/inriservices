@@ -15,6 +15,7 @@ export interface LaborTask {
 
 export type RoomFeature = {
   id: string;
+  type: string;
   dimensions: string;
   name?: string;
   description?: string;

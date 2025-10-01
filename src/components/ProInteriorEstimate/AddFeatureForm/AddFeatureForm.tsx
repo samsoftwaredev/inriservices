@@ -36,6 +36,7 @@ const AddFeatureForm = ({ measurementUnit, roomData, setRoomData }: Props) => {
 
     const feature: RoomFeature = {
       id: Date.now().toString(),
+      type: newFeature.type,
       name: newFeature.name,
       description: newFeature.description,
       dimensions: newFeature.dimensions,
@@ -128,6 +129,8 @@ const AddFeatureForm = ({ measurementUnit, roomData, setRoomData }: Props) => {
       </Grid>
       <TextField
         fullWidth
+        multiline
+        minRows={2}
         size="small"
         label="Description (Optional)"
         value={newFeature.description}
@@ -135,7 +138,7 @@ const AddFeatureForm = ({ measurementUnit, roomData, setRoomData }: Props) => {
           setNewFeature({ ...newFeature, description: e.target.value })
         }
         sx={{ mt: 2 }}
-        placeholder="Additional details about this feature"
+        placeholder="Additional details (e.g., Type of window, material, scratched, broken, etc.)"
       />
     </Box>
   );

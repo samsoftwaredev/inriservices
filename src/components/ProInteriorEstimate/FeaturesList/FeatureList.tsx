@@ -1,9 +1,22 @@
 "use client";
 
-import React from "react";
-import { Box, Typography, Paper, IconButton, Chip } from "@mui/material";
+import React, { useState } from "react";
+import {
+  Box,
+  Typography,
+  Paper,
+  IconButton,
+  Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  DialogContentText,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import WarningIcon from "@mui/icons-material/Warning";
 import { RoomData, FeatureType, RoomFeature } from "../laborTypes";
 import { featureTypes } from "../laborData";
 
@@ -13,7 +26,54 @@ interface Props {
   onOpenLaborDialog: (featureType: FeatureType, featureId: string) => void;
 }
 
+interface DeleteConfirmationState {
+  open: boolean;
+  featureType: FeatureType | null;
+  featureId: string | null;
+  featureName: string | null;
+}
+
 const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
+  const [deleteConfirmation, setDeleteConfirmation] =
+    useState<DeleteConfirmationState>({
+      open: false,
+      featureType: null,
+      featureId: null,
+      featureName: null,
+    });
+
+  const handleDeleteClick = (
+    featureType: FeatureType,
+    featureId: string,
+    featureName: string
+  ) => {
+    setDeleteConfirmation({
+      open: true,
+      featureType,
+      featureId,
+      featureName,
+    });
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirmation({
+      open: false,
+      featureType: null,
+      featureId: null,
+      featureName: null,
+    });
+  };
+
+  const handleDeleteConfirm = () => {
+    if (deleteConfirmation.featureType && deleteConfirmation.featureId) {
+      removeFeature(
+        deleteConfirmation.featureType,
+        deleteConfirmation.featureId
+      );
+    }
+    handleDeleteCancel();
+  };
+
   const removeFeature = (featureType: FeatureType, featureId: string) => {
     setRoomData({
       ...roomData,
@@ -43,6 +103,11 @@ const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
       (total, featureArray) => total + (featureArray?.length || 0),
       0
     );
+  };
+
+  const getFeatureTypeLabel = (featureType: FeatureType): string => {
+    const type = featureTypes.find((ft) => ft.value === featureType);
+    return type?.label || featureType;
   };
 
   return (
@@ -151,7 +216,11 @@ const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
                         size="small"
                         color="error"
                         onClick={() =>
-                          removeFeature(featureType.value, feature.id)
+                          handleDeleteClick(
+                            featureType.value,
+                            feature.id,
+                            feature.name || "this feature"
+                          )
                         }
                         title="Delete Feature"
                       >
@@ -171,6 +240,59 @@ const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
           No features added yet. Use the form above to add room features.
         </Typography>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteConfirmation.open}
+        onClose={handleDeleteCancel}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle
+          id="delete-dialog-title"
+          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+        >
+          <WarningIcon color="warning" />
+          Confirm Delete
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            Are you sure you want to delete the feature "
+            {deleteConfirmation.featureName}"?
+            {deleteConfirmation.featureType && (
+              <>
+                <br />
+                <Typography
+                  component="span"
+                  variant="body2"
+                  color="text.secondary"
+                >
+                  Type: {getFeatureTypeLabel(deleteConfirmation.featureType)}
+                </Typography>
+              </>
+            )}
+            <br />
+            <br />
+            <Typography component="span" variant="body2" color="error">
+              This action cannot be undone. All associated labor tasks and cost
+              calculations will also be removed.
+            </Typography>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            color="error"
+            variant="contained"
+            startIcon={<DeleteIcon />}
+          >
+            Delete Feature
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

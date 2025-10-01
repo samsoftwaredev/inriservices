@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -88,18 +88,27 @@ const LaborTaskDialog = ({
     setSelectedLaborTasks([]);
   };
 
+  const getFeatureData = useCallback(
+    (selectedFeature: { type: FeatureType; id: string }) => {
+      const feature = roomData.features[selectedFeature.type].find(
+        (f) => f.id === selectedFeature.id
+      );
+      return {
+        name: feature?.name || "Unknown Feature",
+        type: feature?.type.toUpperCase() || "Unknown Type",
+      };
+    },
+    [roomData.features]
+  );
+
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle>
         Assign Labor Tasks
         {selectedFeature && (
           <Typography variant="subtitle2" color="text.secondary">
-            Feature:{" "}
-            {
-              roomData.features[selectedFeature.type].find(
-                (f) => f.id === selectedFeature.id
-              )?.name
-            }
+            {getFeatureData(selectedFeature).name} (
+            {getFeatureData(selectedFeature).type})
           </Typography>
         )}
       </DialogTitle>
