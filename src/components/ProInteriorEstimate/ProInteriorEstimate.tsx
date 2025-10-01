@@ -24,6 +24,7 @@ import NewCustomerDialog from "./NewCustomerDialog";
 import ProjectSettings from "./ProjectSettings";
 import Room from "./Room";
 import { Customer, LocationData, Section } from "./laborTypes";
+import CustomerExpectations from "./CustomerExpectations";
 
 interface DeleteConfirmationState {
   open: boolean;
@@ -225,6 +226,12 @@ const ProInteriorEstimate = () => {
     });
   };
 
+  const [baseCost, setBaseCost] = useState(1000);
+
+  const handleCostChange = (newBaseCost: number) => {
+    // setBaseCost(newBaseCost);
+  };
+
   return (
     <Box sx={{ p: 3 }}>
       <CustomerHeader
@@ -324,6 +331,11 @@ const ProInteriorEstimate = () => {
           />
         </Box>
       ))}
+
+      <CustomerExpectations
+        baseCost={baseCost}
+        onCostChange={handleCostChange}
+      />
 
       {/* Delete Section Confirmation Dialog */}
       <Dialog
