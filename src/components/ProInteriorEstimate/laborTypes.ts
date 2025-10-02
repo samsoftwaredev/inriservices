@@ -4,6 +4,10 @@ export interface LaborMaterial {
   price: number;
 }
 
+export interface TaskHours {
+  [taskName: string]: number;
+}
+
 export interface LaborTask {
   name: string;
   description?: string;

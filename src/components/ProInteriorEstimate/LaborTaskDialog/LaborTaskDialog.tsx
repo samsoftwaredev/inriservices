@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -9,17 +9,28 @@ import {
   Button,
   Typography,
   List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Checkbox,
   Box,
   TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
   Grid,
+  IconButton,
+  Chip,
+  Divider,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import EditIcon from "@mui/icons-material/Edit";
+import CheckIcon from "@mui/icons-material/Check";
+import CancelIcon from "@mui/icons-material/Cancel";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+
+import TaskItem from "../TaskItem";
 import { RoomData, FeatureType, LaborTask } from "../laborTypes";
-import { availableLaborTasks } from "../laborData";
+import { availableLaborTasks, featureTypes } from "../laborData";
+import { TaskHours } from "../laborTypes";
 
 interface Props {
   open: boolean;
@@ -34,10 +45,6 @@ interface Props {
   >;
 }
 
-interface TaskHours {
-  [taskName: string]: number;
-}
-
 const LaborTaskDialog = ({
   open,
   onClose,
@@ -49,6 +56,9 @@ const LaborTaskDialog = ({
   setSelectedFeature,
 }: Props) => {
   const [taskHours, setTaskHours] = useState<TaskHours>({});
+  const [isEditingFeature, setIsEditingFeature] = useState(false);
+  const [editFeatureName, setEditFeatureName] = useState("");
+  const [editFeatureType, setEditFeatureType] = useState<FeatureType>("walls");
 
   // Initialize task hours when dialog opens or selected feature changes
   useEffect(() => {
@@ -68,8 +78,18 @@ const LaborTaskDialog = ({
       });
 
       setTaskHours(initialHours);
+
+      // Initialize edit fields
+      setEditFeatureName(feature?.name || "");
+      setEditFeatureType(selectedFeature.type);
+
+      // Initialize selected tasks based on existing work labor
+      if (feature?.workLabor) {
+        const existingTaskNames = feature.workLabor.map((task) => task.name);
+        setSelectedLaborTasks(existingTaskNames);
+      }
     }
-  }, [selectedFeature, open, roomData.features]);
+  }, [selectedFeature, open, roomData.features, setSelectedLaborTasks]);
 
   const handleLaborTaskToggle = (taskName: string) => {
     setSelectedLaborTasks((prev) =>
@@ -86,6 +106,137 @@ const LaborTaskDialog = ({
     }));
   };
 
+  const calculateTotalCost = () => {
+    return selectedLaborTasks.reduce((total, taskName) => {
+      const task = availableLaborTasks.find((t) => t.name === taskName);
+      if (!task) return total;
+
+      const hours = taskHours[taskName] || task.hours;
+      const laborCost = hours * task.rate;
+      const materialCost =
+        task.laborMaterials?.reduce(
+          (matTotal, material) => matTotal + material.quantity * material.price,
+          0
+        ) || 0;
+
+      return total + laborCost + materialCost;
+    }, 0);
+  };
+
+  const getTaskBreakdown = () => {
+    return selectedLaborTasks
+      .map((taskName) => {
+        const task = availableLaborTasks.find((t) => t.name === taskName);
+        if (!task) return null;
+
+        const hours = taskHours[taskName] || task.hours;
+        const laborCost = hours * task.rate;
+        const materialCost =
+          task.laborMaterials?.reduce(
+            (matTotal, material) =>
+              matTotal + material.quantity * material.price,
+            0
+          ) || 0;
+
+        return {
+          name: taskName,
+          hours,
+          laborCost,
+          materialCost,
+          totalCost: laborCost + materialCost,
+        };
+      })
+      .filter(Boolean);
+  };
+
+  const handleEditFeature = () => {
+    setIsEditingFeature(true);
+  };
+
+  const handleSaveFeatureEdit = () => {
+    if (!selectedFeature) return;
+
+    // Update the feature in roomData
+    const updatedFeatures = roomData.features[selectedFeature.type].map(
+      (feature) => {
+        if (feature.id === selectedFeature.id) {
+          return {
+            ...feature,
+            name: editFeatureName,
+          };
+        }
+        return feature;
+      }
+    );
+
+    // If feature type changed, move the feature to the new type
+    if (editFeatureType !== selectedFeature.type) {
+      const featureToMove = roomData.features[selectedFeature.type].find(
+        (f) => f.id === selectedFeature.id
+      );
+
+      if (featureToMove) {
+        const updatedFeatureToMove = {
+          ...featureToMove,
+          name: editFeatureName,
+        };
+
+        // Remove from old type
+        const oldTypeFeatures = roomData.features[selectedFeature.type].filter(
+          (f) => f.id !== selectedFeature.id
+        );
+
+        // Add to new type
+        const newTypeFeatures = [
+          ...(roomData.features[editFeatureType] || []),
+          updatedFeatureToMove,
+        ];
+
+        setRoomData({
+          ...roomData,
+          features: {
+            ...roomData.features,
+            [selectedFeature.type]: oldTypeFeatures,
+            [editFeatureType]: newTypeFeatures,
+          },
+        });
+
+        // Update selectedFeature to reflect the new type
+        setSelectedFeature({
+          type: editFeatureType,
+          id: selectedFeature.id,
+        });
+      }
+    } else {
+      // Same type, just update the name
+      setRoomData({
+        ...roomData,
+        features: {
+          ...roomData.features,
+          [selectedFeature.type]: updatedFeatures,
+        },
+      });
+    }
+
+    setIsEditingFeature(false);
+  };
+
+  const handleCancelFeatureEdit = () => {
+    if (!selectedFeature) return;
+
+    const feature = roomData.features[selectedFeature.type].find(
+      (f) => f.id === selectedFeature.id
+    );
+
+    setEditFeatureName(feature?.name || "");
+    setEditFeatureType(selectedFeature.type);
+    setIsEditingFeature(false);
+  };
+
+  const handleFeatureTypeChange = (event: SelectChangeEvent<FeatureType>) => {
+    setEditFeatureType(event.target.value as FeatureType);
+  };
+
   const saveLaborTasks = () => {
     if (!selectedFeature) return;
 
@@ -98,7 +249,8 @@ const LaborTaskDialog = ({
           taskHours[task.name] * task.rate || task.hours * task.rate,
       }));
 
-    const updatedFeatures = roomData.features[selectedFeature.type].map(
+    const currentFeatureType = selectedFeature.type;
+    const updatedFeatures = roomData.features[currentFeatureType].map(
       (feature) => {
         if (feature.id === selectedFeature.id) {
           return {
@@ -114,13 +266,11 @@ const LaborTaskDialog = ({
       ...roomData,
       features: {
         ...roomData.features,
-        [selectedFeature.type]: updatedFeatures,
+        [currentFeatureType]: updatedFeatures,
       },
     });
 
-    onClose();
-    setSelectedFeature(null);
-    setSelectedLaborTasks([]);
+    handleClose();
   };
 
   const handleClose = () => {
@@ -128,169 +278,265 @@ const LaborTaskDialog = ({
     setSelectedFeature(null);
     setSelectedLaborTasks([]);
     setTaskHours({});
+    setIsEditingFeature(false);
   };
 
-  const getFeatureData = useCallback(
-    (selectedFeature: { type: FeatureType; id: string }) => {
-      const feature = roomData.features[selectedFeature.type].find(
-        (f) => f.id === selectedFeature.id
-      );
-      return {
-        name: feature?.name || "Unknown Feature",
-        type:
-          selectedFeature.type.charAt(0).toUpperCase() +
-          selectedFeature.type.slice(1),
-      };
-    },
-    [roomData.features]
-  );
+  const getFeatureData = () => {
+    if (!selectedFeature) return { name: "", type: "" };
 
-  const calculateTaskCost = (task: LaborTask, hours: number) => {
-    const laborCost = hours * task.rate;
-    const materialCost =
-      task.laborMaterials?.reduce(
-        (total, material) => total + material.quantity * material.price,
-        0
-      ) || 0;
-    return laborCost + materialCost;
+    const feature = roomData.features[selectedFeature.type].find(
+      (f) => f.id === selectedFeature.id
+    );
+    return {
+      name: feature?.name || "Unknown Feature",
+      type:
+        selectedFeature.type.charAt(0).toUpperCase() +
+        selectedFeature.type.slice(1),
+    };
   };
+
+  const featureData = getFeatureData();
+  const getFeatureTypeLabel = (type: FeatureType) => {
+    const featureType = featureTypes.find((ft) => ft.value === type);
+    return featureType?.label || type;
+  };
+
+  const totalCost = calculateTotalCost();
+  const taskBreakdown = getTaskBreakdown();
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+    <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
       <DialogTitle>
         Assign Labor Tasks
         {selectedFeature && (
-          <Typography variant="subtitle2" color="text.secondary">
-            {getFeatureData(selectedFeature).name} (
-            {getFeatureData(selectedFeature).type})
-          </Typography>
+          <Box sx={{ mt: 1 }}>
+            {isEditingFeature ? (
+              <Grid container spacing={2} alignItems="center">
+                <Grid size={{ xs: 12, sm: 5 }}>
+                  <TextField
+                    fullWidth
+                    label="Feature Name"
+                    value={editFeatureName}
+                    onChange={(e) => setEditFeatureName(e.target.value)}
+                    size="small"
+                  />
+                </Grid>
+                <Grid size={{ xs: 12, sm: 4 }}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel>Feature Type</InputLabel>
+                    <Select
+                      value={editFeatureType}
+                      label="Feature Type"
+                      onChange={handleFeatureTypeChange}
+                    >
+                      {featureTypes.map((type) => (
+                        <MenuItem key={type.value} value={type.value}>
+                          {type.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 3 }}>
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <IconButton
+                      size="small"
+                      color="primary"
+                      onClick={handleSaveFeatureEdit}
+                      disabled={!editFeatureName.trim()}
+                    >
+                      <CheckIcon />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      color="error"
+                      onClick={handleCancelFeatureEdit}
+                    >
+                      <CancelIcon />
+                    </IconButton>
+                  </Box>
+                </Grid>
+              </Grid>
+            ) : (
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <Typography variant="subtitle2" color="text.secondary">
+                  {featureData.name} (
+                  {getFeatureTypeLabel(selectedFeature.type)})
+                </Typography>
+                <IconButton size="small" onClick={handleEditFeature}>
+                  <EditIcon fontSize="small" />
+                </IconButton>
+              </Box>
+            )}
+          </Box>
         )}
       </DialogTitle>
       <DialogContent>
-        <List>
-          {availableLaborTasks.map((task) => {
-            const currentHours = taskHours[task.name] || task.hours;
-            const isSelected = selectedLaborTasks.includes(task.name);
-            const totalCost = calculateTaskCost(task, currentHours);
+        <Grid container spacing={3}>
+          {/* Labor Task Selection */}
+          <Grid size={{ xs: 12, md: 7 }}>
+            <Typography variant="h6" gutterBottom>
+              Available Labor Tasks
+            </Typography>
+            <List>
+              {availableLaborTasks.map((task) => (
+                <TaskItem
+                  key={task.name}
+                  task={task}
+                  currentHours={taskHours[task.name] || task.hours}
+                  isSelected={selectedLaborTasks.includes(task.name)}
+                  onToggle={handleLaborTaskToggle}
+                  onHoursChange={handleHoursChange}
+                />
+              ))}
+            </List>
+          </Grid>
 
-            return (
-              <ListItem
-                key={task.name}
-                dense
-                component={"div"}
-                sx={{
-                  flexDirection: "column",
-                  alignItems: "stretch",
-                  border: isSelected ? "1px solid" : "1px solid transparent",
-                  borderColor: isSelected ? "primary.main" : "transparent",
-                  borderRadius: 1,
-                  mb: 1,
-                  bgcolor: isSelected ? "primary.50" : "transparent",
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    width: "100%",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => handleLaborTaskToggle(task.name)}
-                >
-                  <ListItemIcon sx={{ minWidth: 42 }}>
-                    <Checkbox
-                      edge="start"
-                      checked={isSelected}
-                      tabIndex={-1}
-                      disableRipple
-                    />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={task.name}
-                    secondary={
-                      <Typography variant="body2" color="text.secondary">
-                        {task.description}
-                      </Typography>
-                    }
-                    sx={{ flex: 1 }}
-                  />
-                </Box>
+          {/* Cost Summary */}
+          <Grid size={{ xs: 12, md: 5 }}>
+            <Box
+              sx={{
+                position: "sticky",
+                top: 0,
+                bgcolor: "background.paper",
+                p: 2,
+                borderRadius: 1,
+                border: "1px solid",
+                borderColor: "divider",
+              }}
+            >
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <AttachMoneyIcon sx={{ mr: 1, color: "primary.main" }} />
+                <Typography variant="h6">Cost Summary</Typography>
+              </Box>
 
-                {isSelected && (
-                  <Box sx={{ mt: 2, pl: 6 }}>
-                    <Grid container spacing={2} alignItems="center">
-                      <Grid size={{ xs: 12, sm: 3 }}>
-                        <TextField
-                          label="Hours"
-                          type="number"
-                          value={currentHours}
-                          onChange={(e) =>
-                            handleHoursChange(
-                              task.name,
-                              parseFloat(e.target.value) || 0
-                            )
-                          }
-                          inputProps={{
-                            min: 0,
-                            step: 0.5,
-                          }}
+              {selectedLaborTasks.length === 0 ? (
+                <Typography variant="body2" color="text.secondary">
+                  No labor tasks selected
+                </Typography>
+              ) : (
+                <>
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="subtitle2" gutterBottom>
+                      Selected Tasks ({selectedLaborTasks.length}):
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: 0.5,
+                        mb: 2,
+                      }}
+                    >
+                      {selectedLaborTasks.map((taskName) => (
+                        <Chip
+                          key={taskName}
+                          label={taskName}
                           size="small"
-                          fullWidth
-                        />
-                      </Grid>
-                      <Grid size={{ xs: 12, sm: 3 }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Rate: ${task.rate}/hr
-                        </Typography>
-                      </Grid>
-                      <Grid size={{ xs: 12, sm: 6 }}>
-                        <Typography
-                          variant="body2"
                           color="primary"
-                          fontWeight="medium"
-                        >
-                          Labor: ${(currentHours * task.rate).toFixed(2)}
-                          {task.laborMaterials &&
-                            task.laborMaterials.length > 0 && (
-                              <span>
-                                {" + Materials: $"}
-                                {task.laborMaterials
-                                  .reduce(
-                                    (total, material) =>
-                                      total +
-                                      material.quantity * material.price,
-                                    0
-                                  )
-                                  .toFixed(2)}
-                              </span>
-                            )}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="success.main"
-                          fontWeight="bold"
-                        >
-                          Total: ${totalCost.toFixed(2)}
-                        </Typography>
-                      </Grid>
-                    </Grid>
+                          variant="outlined"
+                        />
+                      ))}
+                    </Box>
                   </Box>
-                )}
-              </ListItem>
-            );
-          })}
-        </List>
+
+                  <Divider sx={{ my: 2 }} />
+
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="subtitle2" gutterBottom>
+                      Cost Breakdown:
+                    </Typography>
+                    {taskBreakdown.map((task) => (
+                      <Box
+                        key={task?.name}
+                        sx={{ mb: 1, fontSize: "0.875rem" }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Typography variant="body2">
+                            {task?.name} ({task?.hours}h)
+                          </Typography>
+                          <Typography variant="body2" fontWeight="medium">
+                            ${task?.totalCost.toFixed(2)}
+                          </Typography>
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            ml: 2,
+                          }}
+                        >
+                          <Typography variant="caption" color="text.secondary">
+                            Labor: ${task?.laborCost.toFixed(2)}
+                            {(task?.materialCost || 0) > 0 &&
+                              ` + Materials: $${task?.materialCost?.toFixed(
+                                2
+                              )}`}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    ))}
+                  </Box>
+
+                  <Divider sx={{ my: 2 }} />
+
+                  <Box
+                    sx={{
+                      p: 2,
+                      bgcolor: "primary.50",
+                      borderRadius: 1,
+                      textAlign: "center",
+                    }}
+                  >
+                    <Typography variant="h6" color="primary.main">
+                      Total Labor Cost
+                    </Typography>
+                    <Typography
+                      variant="h4"
+                      color="primary.main"
+                      fontWeight="bold"
+                    >
+                      ${totalCost.toLocaleString()}
+                    </Typography>
+                  </Box>
+                </>
+              )}
+            </Box>
+          </Grid>
+        </Grid>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button
-          onClick={saveLaborTasks}
-          variant="contained"
-          color="primary"
-          startIcon={<SaveIcon />}
-        >
-          Save Tasks ({selectedLaborTasks.length})
-        </Button>
+      <DialogActions sx={{ justifyContent: "space-between", px: 3, py: 2 }}>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          {selectedLaborTasks.length > 0 && (
+            <Typography
+              variant="body2"
+              color="primary.main"
+              fontWeight="medium"
+            >
+              Total: ${totalCost.toLocaleString()}
+            </Typography>
+          )}
+        </Box>
+        <Box sx={{ display: "flex", gap: 1 }}>
+          <Button onClick={handleClose} size="large">
+            Cancel
+          </Button>
+          <Button
+            onClick={saveLaborTasks}
+            variant="contained"
+            color="primary"
+            startIcon={<SaveIcon />}
+            size="large"
+            disabled={selectedLaborTasks.length === 0}
+          >
+            Save Tasks ({selectedLaborTasks.length})
+          </Button>
+        </Box>
       </DialogActions>
     </Dialog>
   );
