@@ -15,18 +15,9 @@ export const calculateWallPerimeter = (
   dimensions: string,
   roomHeight: number
 ): number => {
-  const dims = dimensions.split(" ").map((d) => parseFloat(d.trim()));
-  if (dims.length === 1 && dims.every((d) => !isNaN(d))) {
-    return (dims[0] + dims[0] + dims[0] + dims[0]) * roomHeight;
-  }
+  const dims = dimensions.split("x").map((d) => parseFloat(d.trim()));
   if (dims.length === 2 && dims.every((d) => !isNaN(d))) {
     return (dims[0] + dims[0] + dims[1] + dims[1]) * roomHeight;
-  }
-  if (dims.length === 3 && dims.every((d) => !isNaN(d))) {
-    return (dims[0] + dims[1] + dims[2]) * roomHeight;
-  }
-  if (dims.length === 4 && dims.every((d) => !isNaN(d))) {
-    return (dims[0] + dims[1] + dims[2] + dims[3]) * roomHeight;
   }
   return 0;
 };

@@ -25,6 +25,7 @@ interface Props {
   roomData: RoomData;
   editData: {
     ceilingArea: string;
+    floorArea: string;
     wallPerimeter: string;
     roomHeight: number;
     roomName: string;
@@ -35,6 +36,7 @@ interface Props {
   setEditData: React.Dispatch<
     React.SetStateAction<{
       ceilingArea: string;
+      floorArea: string;
       wallPerimeter: string;
       roomHeight: number;
       roomName: string;
@@ -65,25 +67,12 @@ const RoomDimensions = ({
     (field: keyof typeof editData) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = parseFloat(event.target.value);
-      const area = calculateArea(editData.ceilingArea);
-
-      if (field === "ceilingArea") {
-        setEditData({
-          ...editData,
-          ceilingArea: event.target.value,
-        });
-        setRoomData({
-          ...roomData,
-          ceilingAreaCalculated: area,
-        });
-      } else if (field === "wallPerimeter") {
+      const area = calculateArea(editData.wallPerimeter);
+      if (field === "wallPerimeter") {
         const perimeter = calculateWallPerimeter(
           editData.wallPerimeter,
           roomData.roomHeight
         );
-        console.log("Calculated perimeter:", perimeter);
-        console.log("Wall Perimeter Input:", editData.wallPerimeter);
-        console.log("Room Height Input:", value);
         setEditData({
           ...editData,
           wallPerimeter: event.target.value,
@@ -91,6 +80,8 @@ const RoomDimensions = ({
         setRoomData({
           ...roomData,
           wallPerimeterCalculated: perimeter,
+          ceilingAreaCalculated: area,
+          floorAreaCalculated: area,
         });
       } else if (field === "roomHeight") {
         const perimeter = calculateWallPerimeter(editData.wallPerimeter, value);
@@ -147,14 +138,16 @@ const RoomDimensions = ({
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }}>
-            <TextField
-              fullWidth
-              label={`Ceiling Area (${measurementUnit}²)`}
-              value={editData.ceilingArea}
-              onChange={handleInputChange("ceilingArea")}
-              inputProps={{ min: 0, step: 0.1 }}
-              size="small"
-            />
+            <Typography variant="body1">
+              <strong>Ceiling Area:</strong> {roomData.ceilingAreaCalculated}{" "}
+              {measurementUnit}²
+            </Typography>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 3 }}>
+            <Typography variant="body1">
+              <strong>Floor Area:</strong> {roomData.floorAreaCalculated}{" "}
+              {measurementUnit}²
+            </Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 3 }}>
             <TextField
@@ -198,6 +191,12 @@ const RoomDimensions = ({
           <Grid size={{ xs: 12, sm: 3 }}>
             <Typography variant="body1">
               <strong>Ceiling Area:</strong> {roomData.ceilingAreaCalculated}{" "}
+              {measurementUnit}²
+            </Typography>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 3 }}>
+            <Typography variant="body1">
+              <strong>Floor Area:</strong> {roomData.floorAreaCalculated}{" "}
               {measurementUnit}²
             </Typography>
           </Grid>

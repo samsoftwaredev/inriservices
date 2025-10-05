@@ -359,6 +359,20 @@ export const availableLaborTasks: LaborTask[] = [
     ],
   },
   {
+    name: "Wood Root Repair",
+    description: "Repairing wood rot on trim or other wood surfaces",
+    hours: 3,
+    rate: 30,
+    amountOfLabor: 3,
+    laborMaterials: [
+      laborMaterials.puttyKnife,
+      laborMaterials.drywallCompound,
+      laborMaterials.sandpaper,
+      laborMaterials.dustMask,
+      laborMaterials.gloves,
+    ],
+  },
+  {
     name: "Popcorn Removal",
     description: "Removing popcorn ceiling texture",
     hours: 4,
@@ -417,6 +431,32 @@ export const availableLaborTasks: LaborTask[] = [
       laborMaterials.extensionPole,
       laborMaterials.ladder,
       laborMaterials.gloves,
+    ],
+  },
+  {
+    name: "Paint Doors",
+    description: "Applying paint to doors",
+    hours: 2,
+    rate: 30,
+    amountOfLabor: 1,
+    laborMaterials: [
+      laborMaterials.paint,
+      laborMaterials.paintBrushes,
+      laborMaterials.gloves,
+      laborMaterials.dropCloths,
+    ],
+  },
+  {
+    name: "Paint Closets",
+    description: "Applying paint to closet interiors",
+    hours: 2,
+    rate: 30,
+    amountOfLabor: 1,
+    laborMaterials: [
+      laborMaterials.paint,
+      laborMaterials.paintBrushes,
+      laborMaterials.gloves,
+      laborMaterials.dropCloths,
     ],
   },
   {
