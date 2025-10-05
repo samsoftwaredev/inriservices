@@ -20,12 +20,15 @@ import {
   IconButton,
   Chip,
   Divider,
+  FormControlLabel,
+  Switch,
 } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import CheckIcon from "@mui/icons-material/Check";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import BuildIcon from "@mui/icons-material/Build";
 
 import TaskItem from "../TaskItem";
 import { RoomData, FeatureType, LaborTask } from "../laborTypes";
@@ -59,6 +62,7 @@ const LaborTaskDialog = ({
   const [isEditingFeature, setIsEditingFeature] = useState(false);
   const [editFeatureName, setEditFeatureName] = useState("");
   const [editFeatureType, setEditFeatureType] = useState<FeatureType>("walls");
+  const [includeMaterialCosts, setIncludeMaterialCosts] = useState(true);
 
   // Initialize task hours when dialog opens or selected feature changes
   useEffect(() => {
@@ -88,6 +92,9 @@ const LaborTaskDialog = ({
         const existingTaskNames = feature.workLabor.map((task) => task.name);
         setSelectedLaborTasks(existingTaskNames);
       }
+
+      // Initialize material costs toggle from feature data
+      setIncludeMaterialCosts(feature?.includeMaterialCosts !== false);
     }
   }, [selectedFeature, open, roomData.features, setSelectedLaborTasks]);
 
@@ -106,6 +113,12 @@ const LaborTaskDialog = ({
     }));
   };
 
+  const handleMaterialCostsToggle = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setIncludeMaterialCosts(event.target.checked);
+  };
+
   const calculateTotalCost = () => {
     return selectedLaborTasks.reduce((total, taskName) => {
       const task = availableLaborTasks.find((t) => t.name === taskName);
@@ -113,13 +126,42 @@ const LaborTaskDialog = ({
 
       const hours = taskHours[taskName] || task.hours;
       const laborCost = hours * task.rate;
+      const materialCost = includeMaterialCosts
+        ? task.laborMaterials?.reduce(
+            (matTotal, material) =>
+              matTotal + material.quantity * material.price,
+            0
+          ) || 0
+        : 0;
+
+      return total + laborCost + materialCost;
+    }, 0);
+  };
+
+  const calculateTotalMaterialCost = () => {
+    return selectedLaborTasks.reduce((total, taskName) => {
+      const task = availableLaborTasks.find((t) => t.name === taskName);
+      if (!task) return total;
+
       const materialCost =
         task.laborMaterials?.reduce(
           (matTotal, material) => matTotal + material.quantity * material.price,
           0
         ) || 0;
 
-      return total + laborCost + materialCost;
+      return total + materialCost;
+    }, 0);
+  };
+
+  const calculateTotalLaborCost = () => {
+    return selectedLaborTasks.reduce((total, taskName) => {
+      const task = availableLaborTasks.find((t) => t.name === taskName);
+      if (!task) return total;
+
+      const hours = taskHours[taskName] || task.hours;
+      const laborCost = hours * task.rate;
+
+      return total + laborCost;
     }, 0);
   };
 
@@ -131,12 +173,13 @@ const LaborTaskDialog = ({
 
         const hours = taskHours[taskName] || task.hours;
         const laborCost = hours * task.rate;
-        const materialCost =
-          task.laborMaterials?.reduce(
-            (matTotal, material) =>
-              matTotal + material.quantity * material.price,
-            0
-          ) || 0;
+        const materialCost = includeMaterialCosts
+          ? task.laborMaterials?.reduce(
+              (matTotal, material) =>
+                matTotal + material.quantity * material.price,
+              0
+            ) || 0
+          : 0;
 
         return {
           name: taskName,
@@ -163,6 +206,7 @@ const LaborTaskDialog = ({
           return {
             ...feature,
             name: editFeatureName,
+            includeMaterialCosts,
           };
         }
         return feature;
@@ -179,6 +223,7 @@ const LaborTaskDialog = ({
         const updatedFeatureToMove = {
           ...featureToMove,
           name: editFeatureName,
+          includeMaterialCosts,
         };
 
         // Remove from old type
@@ -208,7 +253,7 @@ const LaborTaskDialog = ({
         });
       }
     } else {
-      // Same type, just update the name
+      // Same type, just update the name and material costs setting
       setRoomData({
         ...roomData,
         features: {
@@ -230,6 +275,7 @@ const LaborTaskDialog = ({
 
     setEditFeatureName(feature?.name || "");
     setEditFeatureType(selectedFeature.type);
+    setIncludeMaterialCosts(feature?.includeMaterialCosts !== false);
     setIsEditingFeature(false);
   };
 
@@ -256,6 +302,7 @@ const LaborTaskDialog = ({
           return {
             ...feature,
             workLabor: selectedTasks,
+            includeMaterialCosts,
           };
         }
         return feature;
@@ -279,6 +326,7 @@ const LaborTaskDialog = ({
     setSelectedLaborTasks([]);
     setTaskHours({});
     setIsEditingFeature(false);
+    setIncludeMaterialCosts(true);
   };
 
   const getFeatureData = () => {
@@ -302,6 +350,8 @@ const LaborTaskDialog = ({
   };
 
   const totalCost = calculateTotalCost();
+  const totalLaborCost = calculateTotalLaborCost();
+  const totalMaterialCost = calculateTotalMaterialCost();
   const taskBreakdown = getTaskBreakdown();
 
   return (
@@ -372,6 +422,45 @@ const LaborTaskDialog = ({
         )}
       </DialogTitle>
       <DialogContent>
+        {/* Material Costs Toggle */}
+        <Box sx={{ mb: 3, p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={includeMaterialCosts}
+                onChange={handleMaterialCostsToggle}
+                color="primary"
+              />
+            }
+            label={
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <BuildIcon fontSize="small" />
+                <Typography variant="body1">
+                  Include Material Costs in Estimate
+                </Typography>
+              </Box>
+            }
+          />
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 1, ml: 4 }}
+          >
+            {includeMaterialCosts
+              ? "Material costs will be included in the total project cost"
+              : "Only labor costs will be calculated (customer provides materials)"}
+          </Typography>
+          {!includeMaterialCosts && totalMaterialCost > 0 && (
+            <Typography
+              variant="body2"
+              color="warning.main"
+              sx={{ mt: 1, ml: 4 }}
+            >
+              Materials excluded: -${totalMaterialCost.toLocaleString()}
+            </Typography>
+          )}
+        </Box>
+
         <Grid container spacing={3}>
           {/* Labor Task Selection */}
           <Grid size={{ xs: 12, md: 7 }}>
@@ -387,6 +476,7 @@ const LaborTaskDialog = ({
                   isSelected={selectedLaborTasks.includes(task.name)}
                   onToggle={handleLaborTaskToggle}
                   onHoursChange={handleHoursChange}
+                  includeMaterialCosts={includeMaterialCosts}
                 />
               ))}
             </List>
@@ -442,6 +532,44 @@ const LaborTaskDialog = ({
 
                   <Divider sx={{ my: 2 }} />
 
+                  {/* Cost Breakdown Summary */}
+                  <Box
+                    sx={{ mb: 2, p: 2, bgcolor: "grey.50", borderRadius: 1 }}
+                  >
+                    <Grid container spacing={1}>
+                      <Grid size={{ xs: 6 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          Labor Cost:
+                        </Typography>
+                        <Typography variant="body1" fontWeight="medium">
+                          ${totalLaborCost.toLocaleString()}
+                        </Typography>
+                      </Grid>
+                      <Grid size={{ xs: 6 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          Material Cost:
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          fontWeight="medium"
+                          sx={{
+                            textDecoration: !includeMaterialCosts
+                              ? "line-through"
+                              : "none",
+                            color: !includeMaterialCosts
+                              ? "text.disabled"
+                              : "inherit",
+                          }}
+                        >
+                          $
+                          {includeMaterialCosts
+                            ? totalMaterialCost.toLocaleString()
+                            : "0"}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Box>
+
                   <Box sx={{ mb: 2 }}>
                     <Typography variant="subtitle2" gutterBottom>
                       Cost Breakdown:
@@ -474,6 +602,7 @@ const LaborTaskDialog = ({
                           <Typography variant="caption" color="text.secondary">
                             Labor: ${task?.laborCost.toFixed(2)}
                             {(task?.materialCost || 0) > 0 &&
+                              includeMaterialCosts &&
                               ` + Materials: $${task?.materialCost?.toFixed(
                                 2
                               )}`}
@@ -494,7 +623,7 @@ const LaborTaskDialog = ({
                     }}
                   >
                     <Typography variant="h6" color="primary.main">
-                      Total Labor Cost
+                      Total {includeMaterialCosts ? "Project" : "Labor"} Cost
                     </Typography>
                     <Typography
                       variant="h4"
@@ -503,6 +632,11 @@ const LaborTaskDialog = ({
                     >
                       ${totalCost.toLocaleString()}
                     </Typography>
+                    {!includeMaterialCosts && (
+                      <Typography variant="caption" color="text.secondary">
+                        Materials not included
+                      </Typography>
+                    )}
                   </Box>
                 </>
               )}
@@ -519,6 +653,11 @@ const LaborTaskDialog = ({
               fontWeight="medium"
             >
               Total: ${totalCost.toLocaleString()}
+              {!includeMaterialCosts && (
+                <Typography component="span" variant="caption" sx={{ ml: 1 }}>
+                  (Labor only)
+                </Typography>
+              )}
             </Typography>
           )}
         </Box>

@@ -19,6 +19,7 @@ interface Props {
   isSelected: boolean;
   onToggle: (taskName: string) => void;
   onHoursChange: (taskName: string, hours: number) => void;
+  includeMaterialCosts: boolean;
 }
 
 const TaskItem = ({
@@ -27,6 +28,7 @@ const TaskItem = ({
   isSelected,
   onToggle,
   onHoursChange,
+  includeMaterialCosts,
 }: Props) => {
   const handleToggle = () => {
     onToggle(task.name);
@@ -34,11 +36,12 @@ const TaskItem = ({
 
   const calculateTaskCost = () => {
     const laborCost = currentHours * task.rate;
-    const materialCost =
-      task.laborMaterials?.reduce(
-        (total, material) => total + material.quantity * material.price,
-        0
-      ) || 0;
+    const materialCost = includeMaterialCosts
+      ? task.laborMaterials?.reduce(
+          (total, material) => total + material.quantity * material.price,
+          0
+        ) || 0
+      : 0;
     return laborCost + materialCost;
   };
 

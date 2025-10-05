@@ -1,4 +1,6 @@
 export interface LaborMaterial {
+  description?: string;
+  name?: string;
   quantity: number;
   unit: string;
   price: number;
@@ -24,6 +26,7 @@ export type RoomFeature = {
   name?: string;
   description?: string;
   picture: string | null;
+  includeMaterialCosts?: boolean;
   workLabor?: LaborTask[];
 };
 
@@ -34,6 +37,7 @@ export interface RoomData {
   wallPerimeterCalculated: number;
   floorNumber?: number;
   roomHeight: number;
+  paintCoats: number;
   features: {
     windows: RoomFeature[];
     doors: RoomFeature[];

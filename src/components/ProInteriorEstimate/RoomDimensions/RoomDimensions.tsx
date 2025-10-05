@@ -1,7 +1,16 @@
 "use client";
 
 import React from "react";
-import { Typography, TextField, Grid } from "@mui/material";
+import {
+  Typography,
+  TextField,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+} from "@mui/material";
 import { RoomData } from "../laborTypes";
 import InfoTooltip from "../InfoTooltip";
 import {
@@ -21,6 +30,7 @@ interface Props {
     roomName: string;
     roomDescription?: string;
     floorNumber?: number;
+    paintCoats?: number;
   };
   setEditData: React.Dispatch<
     React.SetStateAction<{
@@ -30,6 +40,7 @@ interface Props {
       roomName: string;
       roomDescription?: string;
       floorNumber?: number;
+      paintCoats?: number;
     }>
   >;
   setRoomData: React.Dispatch<React.SetStateAction<RoomData>>;
@@ -43,6 +54,13 @@ const RoomDimensions = ({
   setEditData,
   setRoomData,
 }: Props) => {
+  const paintCoatOptions = [
+    { value: 1, label: "1 Coat" },
+    { value: 2, label: "2 Coats (Standard)" },
+    { value: 3, label: "3 Coats (Premium)" },
+    { value: 4, label: "4 Coats (High Coverage)" },
+  ];
+
   const handleInputChange =
     (field: keyof typeof editData) =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,6 +105,29 @@ const RoomDimensions = ({
       }
     };
 
+  const handlePaintCoatsChange = (event: SelectChangeEvent<number>) => {
+    const coats = event.target.value as number;
+    setEditData({
+      ...editData,
+      paintCoats: coats,
+    });
+    setRoomData({
+      ...roomData,
+      paintCoats: coats,
+    });
+  };
+
+  const calculatePaintGallons = () => {
+    const baseGallons = numberOfPaintGallons(roomData.wallPerimeterCalculated);
+    const coats = roomData.paintCoats || editData.paintCoats || 2; // Default to 2 coats
+    return baseGallons * coats;
+  };
+
+  const getPaintCoatLabel = (coats: number) => {
+    const option = paintCoatOptions.find((opt) => opt.value === coats);
+    return option?.label || `${coats} Coats`;
+  };
+
   return (
     <>
       <Typography variant="h6" gutterBottom>
@@ -95,7 +136,7 @@ const RoomDimensions = ({
       </Typography>
       {isEditMode ? (
         <Grid container spacing={2}>
-          <Grid size={{ xs: 12, sm: 4 }}>
+          <Grid size={{ xs: 12, sm: 3 }}>
             <TextField
               fullWidth
               label={`Wall Perimeter (${measurementUnit})`}
@@ -105,7 +146,7 @@ const RoomDimensions = ({
               size="small"
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>
+          <Grid size={{ xs: 12, sm: 3 }}>
             <TextField
               fullWidth
               label={`Ceiling Area (${measurementUnit}²)`}
@@ -115,7 +156,7 @@ const RoomDimensions = ({
               size="small"
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>
+          <Grid size={{ xs: 12, sm: 3 }}>
             <TextField
               fullWidth
               label={`Room Height (${measurementUnit})`}
@@ -126,10 +167,26 @@ const RoomDimensions = ({
               size="small"
             />
           </Grid>
+          <Grid size={{ xs: 12, sm: 3 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel>Paint Coats</InputLabel>
+              <Select
+                value={editData.paintCoats || roomData.paintCoats || 2}
+                label="Paint Coats"
+                onChange={handlePaintCoatsChange}
+              >
+                {paintCoatOptions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
         </Grid>
       ) : (
         <Grid container spacing={2}>
-          <Grid size={{ xs: 12, sm: 4 }}>
+          <Grid size={{ xs: 12, sm: 3 }}>
             <Typography variant="body1">
               <strong>
                 Wall Perimeter:
@@ -137,25 +194,47 @@ const RoomDimensions = ({
               </strong>{" "}
               {roomData.wallPerimeterCalculated} {measurementUnit}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              (Requires {numberOfPaintGallons(roomData.wallPerimeterCalculated)}{" "}
-              gallons of paint)
-            </Typography>
           </Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>
+          <Grid size={{ xs: 12, sm: 3 }}>
             <Typography variant="body1">
               <strong>Ceiling Area:</strong> {roomData.ceilingAreaCalculated}{" "}
               {measurementUnit}²
             </Typography>
           </Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>
+          <Grid size={{ xs: 12, sm: 3 }}>
             <Typography variant="body1">
               <strong>Room Height:</strong> {roomData.roomHeight}{" "}
               {measurementUnit}
             </Typography>
           </Grid>
+          <Grid size={{ xs: 12, sm: 3 }}>
+            <Typography variant="body1">
+              <strong>Paint Coats:</strong>{" "}
+              {getPaintCoatLabel(roomData.paintCoats || 2)}
+            </Typography>
+          </Grid>
         </Grid>
       )}
+
+      {/* Paint Calculation Display */}
+      <Grid container spacing={2} sx={{ mt: 1 }}>
+        <Grid size={{ xs: 12 }}>
+          <Typography variant="body2" color="text.secondary">
+            <strong>Paint Required:</strong>{" "}
+            {calculatePaintGallons().toFixed(1)} gallons
+            {roomData.paintCoats && roomData.paintCoats > 1 && (
+              <span>
+                {" "}
+                (
+                {numberOfPaintGallons(roomData.wallPerimeterCalculated).toFixed(
+                  1
+                )}{" "}
+                gallons × {roomData.paintCoats || 2} coats)
+              </span>
+            )}
+          </Typography>
+        </Grid>
+      </Grid>
     </>
   );
 };
