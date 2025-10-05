@@ -21,13 +21,6 @@ export const laborMaterials: Record<string, LaborMaterial> = {
     unit: "tube",
     price: 6,
   },
-  cleaningSupplies: {
-    name: "Cleaning Supplies",
-    description: "General cleaning supplies for surface preparation",
-    quantity: 1,
-    unit: "set",
-    price: 20,
-  },
   dropCloths: {
     name: "Drop Cloths",
     description: "Large drop cloth to protect floors and furniture",
@@ -219,7 +212,11 @@ export const availableLaborTasks: LaborTask[] = [
     hours: 1,
     rate: 30,
     amountOfLabor: 0,
-    laborMaterials: [laborMaterials.cleaningSupplies, laborMaterials.gloves],
+    laborMaterials: [
+      laborMaterials.gloves,
+      laborMaterials.detergentOrSoap,
+      laborMaterials.ragsAndMicrofiberCloths,
+    ],
   },
   {
     name: "Remove Old Paint or Wallpaper",
@@ -441,6 +438,6 @@ export const availableLaborTasks: LaborTask[] = [
     hours: 1,
     rate: 30,
     amountOfLabor: 0,
-    laborMaterials: [laborMaterials.cleaningSupplies, laborMaterials.gloves],
+    laborMaterials: [laborMaterials.gloves],
   },
 ];
