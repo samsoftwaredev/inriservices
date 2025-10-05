@@ -10,6 +10,7 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
+  Chip,
 } from "@mui/material";
 import { RoomData } from "../laborTypes";
 import InfoTooltip from "../InfoTooltip";
@@ -217,15 +218,18 @@ const RoomDimensions = ({
         <Grid size={{ xs: 12 }}>
           <Typography variant="body2" color="text.secondary">
             <strong>Paint Required:</strong>{" "}
-            {calculatePaintGallons().toFixed(1)} gallons
+            <Chip label={`${calculatePaintGallons().toFixed(1)} gallons`} /> =
             {roomData.paintCoats && roomData.paintCoats > 1 && (
               <span>
                 {" "}
                 (
-                {numberOfPaintGallons(roomData.wallPerimeterCalculated).toFixed(
-                  1
-                )}{" "}
-                gallons × {roomData.paintCoats || 2} coats)
+                <Chip
+                  label={`${numberOfPaintGallons(
+                    roomData.wallPerimeterCalculated
+                  ).toFixed(1)} gallons`}
+                />
+                ×
+                <Chip label={`${roomData.paintCoats || 2} coats`} /> )
               </span>
             )}
           </Typography>

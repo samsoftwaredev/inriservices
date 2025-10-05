@@ -17,13 +17,16 @@ import {
   Build,
   Security,
   AttachMoney,
+  AccountBalance,
 } from "@mui/icons-material";
+import InfoTooltip from "../InfoTooltip";
 
 interface ProjectExpectations {
   materialQuality: number;
   velocity: number;
   projectDetails: number;
   workmanshipMonths: number;
+  budgetRange: number[];
 }
 
 interface Props {
@@ -40,6 +43,7 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
     velocity: 0, // 0: Standard, 1: Fast, 2: Super Fast
     projectDetails: 1, // 0: Low, 1: Medium, 2: High
     workmanshipMonths: 2, // Index in warranty months array
+    budgetRange: [0, 30000], // Min and max budget in dollars
   });
 
   // Configuration for each slider
@@ -92,6 +96,12 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
     );
   };
 
+  // Check if adjusted cost is within budget range
+  const isWithinBudget = (cost: number) => {
+    const [minBudget, maxBudget] = expectations.budgetRange;
+    return cost >= minBudget && cost <= maxBudget;
+  };
+
   // Update cost whenever expectations change
   useEffect(() => {
     const adjustedCost = calculateAdjustedCost(expectations);
@@ -102,16 +112,35 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
     field: keyof ProjectExpectations,
     value: number | number[]
   ) => {
-    const newValue = Array.isArray(value) ? value[0] : value;
-    setExpectations((prev) => ({
-      ...prev,
-      [field]: newValue,
-    }));
+    if (field === "budgetRange") {
+      setExpectations((prev) => ({
+        ...prev,
+        [field]: value as number[],
+      }));
+    } else {
+      const newValue = Array.isArray(value) ? value[0] : value;
+      setExpectations((prev) => ({
+        ...prev,
+        [field]: newValue,
+      }));
+    }
   };
 
   const adjustedCost = calculateAdjustedCost(expectations);
   const costDifference = adjustedCost - baseCost;
   const percentageChange = (costDifference / baseCost) * 100;
+  const withinBudget = isWithinBudget(adjustedCost);
+
+  // Budget slider marks for key values
+  const budgetMarks = [
+    { value: 0, label: "$0" },
+    { value: 5000, label: "$5K" },
+    { value: 10000, label: "$10K" },
+    { value: 15000, label: "$15K" },
+    { value: 20000, label: "$20K" },
+    { value: 25000, label: "$25K" },
+    { value: 30000, label: "$30K" },
+  ];
 
   return (
     <Card sx={{ mt: 3 }}>
@@ -123,16 +152,50 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
           </Typography>
         </Box>
 
+        {/* Budget Range Slider */}
+        <Box sx={{ mb: 3, p: 2, bgcolor: "info.50", borderRadius: 1 }}>
+          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+            <AccountBalance sx={{ mr: 1, fontSize: 20, color: "info.main" }} />
+            <Typography variant="subtitle1" gutterBottom>
+              Project Budget Range
+              <InfoTooltip message="Ask the customers for the minimum and maximum budget for your project." />
+            </Typography>
+            <Chip
+              label={`$${expectations.budgetRange[0].toLocaleString()} - $${expectations.budgetRange[1].toLocaleString()}`}
+              size="small"
+              sx={{
+                ml: 2,
+                bgcolor: "info.main",
+                color: "white",
+              }}
+            />
+          </Box>
+          <Slider
+            value={expectations.budgetRange}
+            onChange={(_, value) => handleSliderChange("budgetRange", value)}
+            valueLabelDisplay="auto"
+            valueLabelFormat={(value) => `$${value.toLocaleString()}`}
+            min={0}
+            max={30000}
+            step={100}
+            marks={budgetMarks}
+            sx={{ mt: 2 }}
+          />
+          <Typography variant="caption" color="text.secondary">
+            Set your minimum and maximum budget range for this project
+          </Typography>
+        </Box>
+
         {/* Cost Summary */}
         <Box sx={{ mb: 3, p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
           <Grid container spacing={2} alignItems="center">
-            <Grid size={{ xs: 12, sm: 4 }}>
+            <Grid size={{ xs: 12, sm: 3 }}>
               <Typography variant="body2" color="text.secondary">
                 Base Cost
               </Typography>
               <Typography variant="h6">${baseCost.toLocaleString()}</Typography>
             </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
+            <Grid size={{ xs: 12, sm: 3 }}>
               <Typography variant="body2" color="text.secondary">
                 Adjustment
               </Typography>
@@ -148,13 +211,27 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
                 </Typography>
               </Typography>
             </Grid>
-            <Grid size={{ xs: 12, sm: 4 }}>
+            <Grid size={{ xs: 12, sm: 3 }}>
               <Typography variant="body2" color="text.secondary">
                 Final Cost
               </Typography>
-              <Typography variant="h6" color="primary.main">
+              <Typography
+                variant="h6"
+                color={withinBudget ? "primary.main" : "error.main"}
+              >
                 ${adjustedCost.toLocaleString()}
               </Typography>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 3 }}>
+              <Typography variant="body2" color="text.secondary">
+                Budget Status
+              </Typography>
+              <Chip
+                label={withinBudget ? "Within Budget" : "Over Budget"}
+                size="small"
+                color={withinBudget ? "success" : "error"}
+                variant={withinBudget ? "filled" : "outlined"}
+              />
             </Grid>
           </Grid>
         </Box>
@@ -167,6 +244,7 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
                 <Build sx={{ mr: 1, fontSize: 20 }} />
                 <Typography variant="subtitle1" gutterBottom>
                   Material Quality
+                  <InfoTooltip message="Select the quality of materials for the project." />
                 </Typography>
                 <Chip
                   label={
@@ -216,6 +294,7 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
                 <Speed sx={{ mr: 1, fontSize: 20 }} />
                 <Typography variant="subtitle1" gutterBottom>
                   Project Velocity
+                  <InfoTooltip message="Select the desired speed of project completion." />
                 </Typography>
                 <Chip
                   label={velocityOptions[expectations.velocity].label}
@@ -257,6 +336,7 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
                 <AttachMoney sx={{ mr: 1, fontSize: 20 }} />
                 <Typography variant="subtitle1" gutterBottom>
                   Project Details
+                  <InfoTooltip message="Select the desired level of detail for project specifications." />
                 </Typography>
                 <Chip
                   label={
@@ -305,6 +385,7 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
                 <Security sx={{ mr: 1, fontSize: 20 }} />
                 <Typography variant="subtitle1" gutterBottom>
                   Workmanship Warranty
+                  <InfoTooltip message="Select the duration of the workmanship warranty for the project." />
                 </Typography>
                 <Chip
                   label={
@@ -352,7 +433,15 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
         <Divider sx={{ my: 2 }} />
 
         {/* Summary */}
-        <Box sx={{ p: 2, bgcolor: "primary.50", borderRadius: 1 }}>
+        <Box
+          sx={{
+            p: 2,
+            bgcolor: withinBudget ? "primary.50" : "error.50",
+            borderRadius: 1,
+            border: withinBudget ? "none" : "1px solid",
+            borderColor: withinBudget ? "transparent" : "error.main",
+          }}
+        >
           <Typography variant="subtitle2" gutterBottom>
             Project Configuration Summary:
           </Typography>
@@ -368,6 +457,12 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
             {workmanshipMonthsOptions[expectations.workmanshipMonths].label}{" "}
             workmanship warranty
           </Typography>
+          {!withinBudget && (
+            <Typography variant="body2" color="error.main" sx={{ mt: 1 }}>
+              ⚠️ Current configuration exceeds your budget range. Consider
+              adjusting your expectations to stay within budget.
+            </Typography>
+          )}
         </Box>
       </CardContent>
     </Card>
