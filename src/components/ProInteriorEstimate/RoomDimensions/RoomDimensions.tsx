@@ -24,8 +24,7 @@ interface Props {
   isEditMode: boolean;
   roomData: RoomData;
   editData: {
-    ceilingArea: string;
-    floorArea: string;
+    area: string;
     wallPerimeter: string;
     roomHeight: number;
     roomName: string;
@@ -35,8 +34,7 @@ interface Props {
   };
   setEditData: React.Dispatch<
     React.SetStateAction<{
-      ceilingArea: string;
-      floorArea: string;
+      area: string;
       wallPerimeter: string;
       roomHeight: number;
       roomName: string;
@@ -80,8 +78,7 @@ const RoomDimensions = ({
         setRoomData({
           ...roomData,
           wallPerimeterCalculated: perimeter,
-          ceilingAreaCalculated: area,
-          floorAreaCalculated: area,
+          areaCalculated: area,
         });
       } else if (field === "roomHeight") {
         const perimeter = calculateWallPerimeter(editData.wallPerimeter, value);
@@ -127,7 +124,7 @@ const RoomDimensions = ({
       </Typography>
       {isEditMode ? (
         <Grid container spacing={2}>
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <TextField
               fullWidth
               label={`Wall Perimeter (${measurementUnit})`}
@@ -137,19 +134,19 @@ const RoomDimensions = ({
               size="small"
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="body1">
-              <strong>Ceiling Area:</strong> {roomData.ceilingAreaCalculated}{" "}
+              <strong>Ceiling Area:</strong> {roomData.areaCalculated}{" "}
               {measurementUnit}²
             </Typography>
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="body1">
-              <strong>Floor Area:</strong> {roomData.floorAreaCalculated}{" "}
+              <strong>Floor Area:</strong> {roomData.areaCalculated}{" "}
               {measurementUnit}²
             </Typography>
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <TextField
               fullWidth
               label={`Room Height (${measurementUnit})`}
@@ -160,7 +157,7 @@ const RoomDimensions = ({
               size="small"
             />
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <FormControl fullWidth size="small">
               <InputLabel>Paint Coats</InputLabel>
               <Select
@@ -179,7 +176,7 @@ const RoomDimensions = ({
         </Grid>
       ) : (
         <Grid container spacing={2}>
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="body1">
               <strong>
                 Wall Perimeter:
@@ -188,25 +185,25 @@ const RoomDimensions = ({
               {roomData.wallPerimeterCalculated} {measurementUnit}
             </Typography>
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="body1">
-              <strong>Ceiling Area:</strong> {roomData.ceilingAreaCalculated}{" "}
+              <strong>Ceiling Area:</strong> {roomData.areaCalculated}{" "}
               {measurementUnit}²
             </Typography>
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="body1">
-              <strong>Floor Area:</strong> {roomData.floorAreaCalculated}{" "}
+              <strong>Floor Area:</strong> {roomData.areaCalculated}{" "}
               {measurementUnit}²
             </Typography>
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="body1">
               <strong>Room Height:</strong> {roomData.roomHeight}{" "}
               {measurementUnit}
             </Typography>
           </Grid>
-          <Grid size={{ xs: 12, sm: 3 }}>
+          <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="body1">
               <strong>Paint Coats:</strong>{" "}
               {getPaintCoatLabel(roomData.paintCoats || 2)}

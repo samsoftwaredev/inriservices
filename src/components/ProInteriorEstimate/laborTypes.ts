@@ -31,10 +31,8 @@ export type RoomFeature = {
 };
 
 export interface RoomData {
-  ceilingArea: string;
-  floorArea: string;
-  ceilingAreaCalculated: number;
-  floorAreaCalculated: number;
+  area: string;
+  areaCalculated: number;
   wallPerimeter: string;
   wallPerimeterCalculated: number;
   floorNumber?: number;

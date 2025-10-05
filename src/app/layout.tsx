@@ -7,7 +7,6 @@ export const metadata: Metadata = {
   title: companyName,
   description:
     "Expert Painting, Drywall Repair & Cleaning Services in Garland, TX",
-  themeColor: "#ffffff",
   keywords: [
     "painting",
     "drywall repair",

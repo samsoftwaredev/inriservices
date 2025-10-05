@@ -38,9 +38,10 @@ const Room = ({
 }: Props) => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [roomData, setRoomData] = useState<RoomData>({
-    ceilingArea: "0x0",
-    ceilingAreaCalculated: 0,
-    wallPerimeter: "5 4",
+    area: "5x4",
+    paintCoats: 1,
+    areaCalculated: 0,
+    wallPerimeter: "5x4",
     wallPerimeterCalculated: 0,
     roomHeight: 10,
     floorNumber: floorNumber,
@@ -57,14 +58,14 @@ const Room = ({
   });
 
   const [editData, setEditData] = useState<{
-    ceilingArea: string;
+    area: string;
     wallPerimeter: string;
     roomHeight: number;
     roomName: string;
     roomDescription?: string;
     floorNumber?: number;
   }>({
-    ceilingArea: roomData.ceilingArea,
+    area: roomData.area,
     wallPerimeter: roomData.wallPerimeter,
     roomHeight: roomData.roomHeight,
     roomName: roomName,
@@ -74,7 +75,7 @@ const Room = ({
 
   const handleEditClick = () => {
     setEditData({
-      ceilingArea: roomData.ceilingArea,
+      area: roomData.area,
       wallPerimeter: roomData.wallPerimeter,
       roomHeight: roomData.roomHeight,
       roomName: roomName,
@@ -87,9 +88,9 @@ const Room = ({
   const handleSave = () => {
     setRoomData({
       ...roomData,
-      ceilingArea: editData.ceilingArea,
+      area: editData.area,
       wallPerimeter: editData.wallPerimeter,
-      ceilingAreaCalculated: calculateArea(editData.ceilingArea),
+      areaCalculated: calculateArea(editData.area),
       wallPerimeterCalculated: calculateWallPerimeter(
         editData.wallPerimeter,
         editData.roomHeight
@@ -112,7 +113,7 @@ const Room = ({
 
   const handleCancel = () => {
     setEditData({
-      ceilingArea: roomData.ceilingArea,
+      area: roomData.area,
       wallPerimeter: roomData.wallPerimeter,
       roomHeight: roomData.roomHeight,
       roomName: roomName,
