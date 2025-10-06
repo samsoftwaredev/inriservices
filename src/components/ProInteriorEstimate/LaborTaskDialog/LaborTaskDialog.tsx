@@ -113,6 +113,7 @@ const LaborTaskDialog = ({
           filteredLaborTasks={filteredLaborTasks}
           taskHours={taskHours}
           selectedLaborTasks={selectedLaborTasks}
+          setSelectedLaborTasks={setSelectedLaborTasks}
           onLaborTaskToggle={handleLaborTaskToggle}
           onHoursChange={handleHoursChange}
           includeMaterialCosts={includeMaterialCosts}

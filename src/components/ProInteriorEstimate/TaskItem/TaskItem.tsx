@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 
 import TaskDetails from "../TaskDetails";
-import { LaborTask } from "../laborTypes";
+import { LaborMaterial, LaborTask } from "../laborTypes";
 
 interface Props {
   task: LaborTask;
@@ -20,6 +20,10 @@ interface Props {
   onToggle: (taskName: string) => void;
   onHoursChange: (taskName: string, hours: number) => void;
   includeMaterialCosts: boolean;
+  onMaterialSelectionChange?: (
+    taskName: string,
+    selectedMaterials: LaborMaterial[]
+  ) => void;
 }
 
 const TaskItem = ({
@@ -29,6 +33,7 @@ const TaskItem = ({
   onToggle,
   onHoursChange,
   includeMaterialCosts,
+  onMaterialSelectionChange,
 }: Props) => {
   const handleToggle = () => {
     onToggle(task.name);
@@ -95,6 +100,8 @@ const TaskItem = ({
           currentHours={currentHours}
           totalCost={totalCost}
           onHoursChange={onHoursChange}
+          includeMaterialCosts={includeMaterialCosts}
+          onMaterialSelectionChange={onMaterialSelectionChange}
         />
       )}
     </ListItem>

@@ -334,6 +334,7 @@ const ProInteriorEstimate = () => {
 
       <CustomerExpectations
         baseCost={baseCost}
+        setBaseCost={setBaseCost}
         onCostChange={handleCostChange}
       />
 

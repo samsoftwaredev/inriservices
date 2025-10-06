@@ -218,21 +218,21 @@ const RoomDimensions = ({
         <Grid size={{ xs: 12 }}>
           <Typography variant="body2" color="text.secondary">
             <strong>Paint Required:</strong>{" "}
-            <Chip label={`${calculatePaintGallons().toFixed(1)} gallons`} /> =
-            {roomData.paintCoats && roomData.paintCoats > 1 && (
-              <span>
-                {" "}
-                (
-                <Chip
-                  label={`${numberOfPaintGallons(
-                    roomData.wallPerimeterCalculated
-                  ).toFixed(1)} gallons`}
-                />
-                ×
-                <Chip label={`${roomData.paintCoats || 2} coats`} /> )
-              </span>
-            )}
           </Typography>
+          <Chip label={`${calculatePaintGallons().toFixed(1)} gallons`} /> =
+          {roomData.paintCoats && roomData.paintCoats > 1 && (
+            <span>
+              {" "}
+              (
+              <Chip
+                label={`${numberOfPaintGallons(
+                  roomData.wallPerimeterCalculated
+                ).toFixed(1)} gallons`}
+              />
+              ×
+              <Chip label={`${roomData.paintCoats || 2} coats`} /> )
+            </span>
+          )}
         </Grid>
       </Grid>
     </>

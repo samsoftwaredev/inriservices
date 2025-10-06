@@ -35,15 +35,20 @@ interface Props {
     adjustedCost: number,
     expectations: ProjectExpectations
   ) => void;
+  setBaseCost: (cost: number) => void;
 }
 
-const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
+const CustomerExpectations = ({
+  baseCost,
+  onCostChange,
+  setBaseCost,
+}: Props) => {
   const [expectations, setExpectations] = useState<ProjectExpectations>({
     materialQuality: 1, // 0: Low, 1: Medium, 2: High
     velocity: 0, // 0: Standard, 1: Fast, 2: Super Fast
     projectDetails: 1, // 0: Low, 1: Medium, 2: High
     workmanshipMonths: 2, // Index in warranty months array
-    budgetRange: [0, 30000], // Min and max budget in dollars
+    budgetRange: [100, 30000], // Min and max budget in dollars
   });
 
   // Configuration for each slider
@@ -113,6 +118,9 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
     value: number | number[]
   ) => {
     if (field === "budgetRange") {
+      if (setBaseCost && typeof value === "object") {
+        setBaseCost(value[0]);
+      }
       setExpectations((prev) => ({
         ...prev,
         [field]: value as number[],

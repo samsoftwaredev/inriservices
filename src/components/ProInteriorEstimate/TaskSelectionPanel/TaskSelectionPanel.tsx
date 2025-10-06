@@ -13,7 +13,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import TaskItem from "../TaskItem";
-import { LaborTask, TaskHours } from "../laborTypes";
+import { LaborMaterial, LaborTask, TaskHours } from "../laborTypes";
 import { availableLaborTasks } from "../laborData";
 
 interface Props {
@@ -26,6 +26,7 @@ interface Props {
   onLaborTaskToggle: (taskName: string) => void;
   onHoursChange: (taskName: string, hours: number) => void;
   includeMaterialCosts: boolean;
+  setSelectedLaborTasks: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const TaskSelectionPanel = ({
@@ -38,7 +39,15 @@ const TaskSelectionPanel = ({
   onLaborTaskToggle,
   onHoursChange,
   includeMaterialCosts,
+  setSelectedLaborTasks,
 }: Props) => {
+  const onMaterialSelectionChange = (
+    taskName: string,
+    selectedMaterials: LaborMaterial[]
+  ) => {
+    console.log(`Selected materials for ${taskName}:`, selectedMaterials);
+  };
+
   return (
     <Grid size={{ xs: 12, md: 7 }}>
       <Box
@@ -117,6 +126,7 @@ const TaskSelectionPanel = ({
               onToggle={onLaborTaskToggle}
               onHoursChange={onHoursChange}
               includeMaterialCosts={includeMaterialCosts}
+              onMaterialSelectionChange={onMaterialSelectionChange}
             />
           ))
         )}
