@@ -136,18 +136,6 @@ const RoomDimensions = ({
             />
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
-            <Typography variant="body1">
-              <strong>Ceiling Area:</strong> {roomData.areaCalculated}{" "}
-              {measurementUnit}²
-            </Typography>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <Typography variant="body1">
-              <strong>Floor Area:</strong> {roomData.areaCalculated}{" "}
-              {measurementUnit}²
-            </Typography>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>
             <TextField
               fullWidth
               label={`Room Height (${measurementUnit})`}
@@ -174,6 +162,18 @@ const RoomDimensions = ({
               </Select>
             </FormControl>
           </Grid>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <Typography variant="body1">
+              <strong>Ceiling Area:</strong> {roomData.areaCalculated}{" "}
+              {measurementUnit}²
+            </Typography>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <Typography variant="body1">
+              <strong>Floor Area:</strong> {roomData.areaCalculated}{" "}
+              {measurementUnit}²
+            </Typography>
+          </Grid>
         </Grid>
       ) : (
         <Grid container spacing={2}>
@@ -188,18 +188,6 @@ const RoomDimensions = ({
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="body1">
-              <strong>Ceiling Area:</strong> {roomData.areaCalculated}{" "}
-              {measurementUnit}²
-            </Typography>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <Typography variant="body1">
-              <strong>Floor Area:</strong> {roomData.areaCalculated}{" "}
-              {measurementUnit}²
-            </Typography>
-          </Grid>
-          <Grid size={{ xs: 12, sm: 4 }}>
-            <Typography variant="body1">
               <strong>Room Height:</strong> {roomData.roomHeight}{" "}
               {measurementUnit}
             </Typography>
@@ -208,6 +196,18 @@ const RoomDimensions = ({
             <Typography variant="body1">
               <strong>Paint Coats:</strong>{" "}
               {getPaintCoatLabel(roomData.paintCoats || 2)}
+            </Typography>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <Typography variant="body1">
+              <strong>Ceiling Area:</strong> {roomData.areaCalculated}{" "}
+              {measurementUnit}²
+            </Typography>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <Typography variant="body1">
+              <strong>Floor Area:</strong> {roomData.areaCalculated}{" "}
+              {measurementUnit}²
             </Typography>
           </Grid>
         </Grid>

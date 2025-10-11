@@ -8,6 +8,7 @@ import {
   MenuItem,
   SelectChangeEvent,
   Grid,
+  Paper,
 } from "@mui/material";
 import { LocationData, MeasurementUnit } from "../laborTypes";
 import { floorOptions } from "../laborData";
@@ -55,45 +56,49 @@ const ProjectSettings = ({ locationData, setLocationData }: Props) => {
   };
 
   return (
-    <Grid container spacing={3} sx={{ my: 2 }}>
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <FormControl fullWidth>
-          <InputLabel id="measurement-unit-label">Measurement Unit</InputLabel>
-          <Select
-            labelId="measurement-unit-label"
-            id="measurement-unit-select"
-            value={locationData.measurementUnit}
-            label="Measurement Unit"
-            onChange={handleMeasurementUnitChange}
-          >
-            {measurementUnitList.map((unit) => (
-              <MenuItem key={unit} value={unit}>
-                {getMeasurementUnitLabel(unit)}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Grid>
+    <Paper elevation={2} sx={{ p: 2, mb: 2 }}>
+      <Grid container spacing={3} sx={{ my: 2 }}>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <FormControl fullWidth>
+            <InputLabel id="measurement-unit-label">
+              Measurement Unit
+            </InputLabel>
+            <Select
+              labelId="measurement-unit-label"
+              id="measurement-unit-select"
+              value={locationData.measurementUnit}
+              label="Measurement Unit"
+              onChange={handleMeasurementUnitChange}
+            >
+              {measurementUnitList.map((unit) => (
+                <MenuItem key={unit} value={unit}>
+                  {getMeasurementUnitLabel(unit)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
 
-      <Grid size={{ xs: 12, sm: 6 }}>
-        <FormControl fullWidth>
-          <InputLabel id="floor-plan-label">Number of Floors</InputLabel>
-          <Select
-            labelId="floor-plan-label"
-            id="floor-plan-select"
-            value={locationData.floorPlan}
-            label="Number of Floors"
-            onChange={handleFloorPlanChange}
-          >
-            {floorOptions.map((floorCount) => (
-              <MenuItem key={floorCount} value={floorCount}>
-                {getFloorLabel(floorCount)}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <FormControl fullWidth>
+            <InputLabel id="floor-plan-label">Number of Floors</InputLabel>
+            <Select
+              labelId="floor-plan-label"
+              id="floor-plan-select"
+              value={locationData.floorPlan}
+              label="Number of Floors"
+              onChange={handleFloorPlanChange}
+            >
+              {floorOptions.map((floorCount) => (
+                <MenuItem key={floorCount} value={floorCount}>
+                  {getFloorLabel(floorCount)}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
       </Grid>
-    </Grid>
+    </Paper>
   );
 };
 

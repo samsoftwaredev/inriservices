@@ -1,5 +1,20 @@
 import { createTheme } from "@mui/material";
 
+declare module "@mui/material/styles" {
+  interface Palette {
+    gradient: {
+      subtle: string;
+      colorful: string;
+    };
+  }
+  interface PaletteOptions {
+    gradient?: {
+      subtle?: string;
+      colorful?: string;
+    };
+  }
+}
+
 // Create a custom theme with your specified color palette
 export const theme = createTheme({
   typography: {
@@ -30,6 +45,10 @@ export const theme = createTheme({
       main: "#49b5fe", // Bright Blue
       contrastText: "#fff", // Black text for contrast
     },
+    gradient: {
+      subtle: "linear-gradient(to right, #00D4FF, #090979)",
+      colorful: "radial-gradient(circle, #090979, #258CA1)",
+    },
     secondary: {
       main: "#ff3131", // Bold Red
     },
@@ -52,12 +71,27 @@ export const theme = createTheme({
     },
   },
   components: {
+    // all input fields from have white background
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#ffffff",
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#f9f9f9", // Light grey background for Paper components
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
           cursor: "pointer",
           textTransform: "uppercase",
-          borderRadius: "8px", // Add rounded corners
+          borderRadius: "20px", // Add rounded corners
           padding: "8px 16px", // Add padding for better touch targets
           fontWeight: "bold", // Make button text bold
         },

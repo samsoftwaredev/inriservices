@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { companyName, companyWebsiteURL } from "@/constants";
 import Script from "next/script";
+import { theme } from "./theme";
 
 export const metadata: Metadata = {
   title: companyName,

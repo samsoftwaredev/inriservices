@@ -27,6 +27,8 @@ import RoomFeatures from "../RoomFeatures";
 import { RoomData, Props } from "../laborTypes";
 import { floorOptions } from "../laborData";
 import { calculateArea, calculateWallPerimeter } from "../laborCalc";
+import { theme } from "@/app/theme";
+import { blue, lightBlue } from "@mui/material/colors";
 
 const Room = ({
   measurementUnit,
@@ -45,6 +47,7 @@ const Room = ({
     wallPerimeterCalculated: 0,
     roomHeight: 10,
     floorNumber: floorNumber,
+    totalCost: 0,
     features: {
       walls: [],
       windows: [],
@@ -146,7 +149,7 @@ const Room = ({
   const displayFloorNumber = isEditMode ? editData.floorNumber : floorNumber;
 
   return (
-    <Card elevation={2} sx={{ mb: 2 }}>
+    <Card elevation={2} sx={{ mb: 2, backgroundColor: "#f4f9fb" }}>
       <CardContent>
         {/* Room Header Section */}
         {isEditMode ? (

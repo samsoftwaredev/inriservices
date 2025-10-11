@@ -15,12 +15,14 @@ import {
   MenuItem,
   SelectChangeEvent,
   InputLabel,
+  Divider,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { Customer } from "../laborTypes";
 import { usa_states } from "@/constants";
+import { Person2Outlined, PersonPinCircleOutlined } from "@mui/icons-material";
 
 interface Props {
   currentCustomer: Customer;
@@ -152,11 +154,11 @@ const CustomerInfoCard = ({ currentCustomer, onCustomerUpdate }: Props) => {
             <Box
               sx={{
                 display: "flex",
-                justifyContent: "space-between",
                 alignItems: "flex-start",
                 mb: 1,
               }}
             >
+              <Person2Outlined fontSize="large" />
               <Typography variant="h6">Customer Information</Typography>
               <IconButton
                 size="small"
@@ -167,6 +169,8 @@ const CustomerInfoCard = ({ currentCustomer, onCustomerUpdate }: Props) => {
                 <EditIcon fontSize="small" />
               </IconButton>
             </Box>
+
+            <Divider sx={{ mb: 1 }} />
 
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 6 }}>

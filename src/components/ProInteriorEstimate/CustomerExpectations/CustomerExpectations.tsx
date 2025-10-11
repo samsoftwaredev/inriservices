@@ -35,14 +35,9 @@ interface Props {
     adjustedCost: number,
     expectations: ProjectExpectations
   ) => void;
-  setBaseCost: (cost: number) => void;
 }
 
-const CustomerExpectations = ({
-  baseCost,
-  onCostChange,
-  setBaseCost,
-}: Props) => {
+const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
   const [expectations, setExpectations] = useState<ProjectExpectations>({
     materialQuality: 1, // 0: Low, 1: Medium, 2: High
     velocity: 0, // 0: Standard, 1: Fast, 2: Super Fast
@@ -118,9 +113,6 @@ const CustomerExpectations = ({
     value: number | number[]
   ) => {
     if (field === "budgetRange") {
-      if (setBaseCost && typeof value === "object") {
-        setBaseCost(value[0]);
-      }
       setExpectations((prev) => ({
         ...prev,
         [field]: value as number[],
@@ -154,16 +146,16 @@ const CustomerExpectations = ({
     <Card sx={{ mt: 3 }}>
       <CardContent>
         <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-          <TrendingUp sx={{ mr: 1, color: "primary.main" }} />
-          <Typography variant="h6">
-            Project Expectations & Cost Adjustments
-          </Typography>
+          <TrendingUp fontSize="large" sx={{ mr: 1 }} />
+          <Typography variant="h6">Cost Adjustments</Typography>
         </Box>
+
+        <Divider sx={{ mb: 3 }} />
 
         {/* Budget Range Slider */}
         <Box sx={{ mb: 3, p: 2, bgcolor: "info.50", borderRadius: 1 }}>
           <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <AccountBalance sx={{ mr: 1, fontSize: 20, color: "info.main" }} />
+            <AccountBalance sx={{ mr: 1, fontSize: 20, color: "info.dark" }} />
             <Typography variant="subtitle1" gutterBottom>
               Project Budget Range
               <InfoTooltip message="Ask the customers for the minimum and maximum budget for your project." />
@@ -173,7 +165,7 @@ const CustomerExpectations = ({
               size="small"
               sx={{
                 ml: 2,
-                bgcolor: "info.main",
+                bgcolor: "info.dark",
                 color: "white",
               }}
             />
@@ -195,7 +187,17 @@ const CustomerExpectations = ({
         </Box>
 
         {/* Cost Summary */}
-        <Box sx={{ mb: 3, p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
+        <Box
+          sx={{
+            mb: 3,
+            p: 2,
+            bgcolor: "grey.100",
+            borderRadius: 5,
+            borderColor: "grey.300",
+            borderWidth: 1,
+            borderStyle: "solid",
+          }}
+        >
           <Grid container spacing={2} alignItems="center">
             <Grid size={{ xs: 12, sm: 3 }}>
               <Typography variant="body2" color="text.secondary">
@@ -235,7 +237,7 @@ const CustomerExpectations = ({
                 Budget Status
               </Typography>
               <Chip
-                label={withinBudget ? "Within Budget" : "Over Budget"}
+                label={withinBudget ? "Within Budget" : "Out of Budget"}
                 size="small"
                 color={withinBudget ? "success" : "error"}
                 variant={withinBudget ? "filled" : "outlined"}

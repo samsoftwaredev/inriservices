@@ -33,6 +33,7 @@ export type RoomFeature = {
 export interface RoomData {
   area: string;
   areaCalculated: number;
+  totalCost: number;
   wallPerimeter: string;
   wallPerimeterCalculated: number;
   floorNumber?: number;
