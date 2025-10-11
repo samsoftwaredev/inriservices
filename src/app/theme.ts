@@ -42,12 +42,12 @@ export const theme = createTheme({
   },
   palette: {
     primary: {
-      main: "#49b5fe", // Bright Blue
+      main: "#3b82f6", // Bright Blue
       contrastText: "#fff", // Black text for contrast
     },
     gradient: {
-      subtle: "linear-gradient(to right, #00D4FF, #090979)",
-      colorful: "radial-gradient(circle, #090979, #258CA1)",
+      subtle: "linear-gradient(to right, #0554e7ff, #3b82f6)",
+      colorful: "radial-gradient(circle, #3b82f6, #0554e7ff)",
     },
     secondary: {
       main: "#ff3131", // Bold Red

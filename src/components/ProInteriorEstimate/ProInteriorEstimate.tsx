@@ -10,6 +10,7 @@ import { useProInteriorEstimate } from "@/hooks/useProInteriorEstimate";
 import { blue } from "@mui/material/colors";
 import { theme } from "@/app/theme";
 import { ThemeRegistry } from "@/app/ThemeRegistry";
+import EstimateSummary from "./EstimateSummary";
 
 const drawerWidth = 280;
 
@@ -86,6 +87,7 @@ const ProInteriorEstimate = () => {
             baseCost={baseCost}
             onCostChange={handleCostChange}
           />
+          <EstimateSummary />
         </Container>
 
         <DeleteSectionDialog

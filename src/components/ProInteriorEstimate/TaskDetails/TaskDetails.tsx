@@ -133,15 +133,20 @@ const TaskDetails = ({
             value={currentHours}
             onChange={handleHoursChange}
             inputProps={{
-              step: 0.5,
+              min: 0,
+              step: 0.1,
             }}
             size="small"
             fullWidth
+            helperText="Minimum 0.1 hours"
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 3 }}>
           <Typography variant="body2" color="text.secondary">
             Rate: ${task.rate}/hr
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {currentHours} × ${task.rate} = ${laborCost.toFixed(2)}
           </Typography>
         </Grid>
 
@@ -214,7 +219,7 @@ const TaskDetails = ({
                     task.laborMaterials.length - selectedMaterials.length
                   } Materials Excluded`}
                   size="small"
-                  color="info"
+                  color="primary"
                   variant="outlined"
                 />
               )}
