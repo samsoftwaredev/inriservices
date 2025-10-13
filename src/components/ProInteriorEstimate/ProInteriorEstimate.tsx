@@ -3,12 +3,10 @@
 import React from "react";
 import { Box, Container, CssBaseline } from "@mui/material";
 
-import TopAppBar from "./TopAppBar";
+import TopAppBar from "../TopAppBar";
 import MainContent from "./MainContent";
 import DeleteSectionDialog from "./DeleteSectionDialog";
 import { useProInteriorEstimate } from "@/hooks/useProInteriorEstimate";
-import { blue } from "@mui/material/colors";
-import { theme } from "@/app/theme";
 import { ThemeRegistry } from "@/app/ThemeRegistry";
 import EstimateSummary from "./EstimateSummary";
 
@@ -48,55 +46,40 @@ const ProInteriorEstimate = () => {
     handleCostChange,
   } = useProInteriorEstimate();
 
+  // Data Structure Ideas
+  // customer - address, city, state, zip, phone, email, full name
+  // section - name, description, floor number, rooms[], features, dimensions, height, floor number
+  // project - name, description, budget range, timeline, expectations, cost adjustments, base cost
+
   return (
-    <ThemeRegistry>
-      <Box
-        sx={{
-          display: "flex",
-          backgroundColor: "#eaf3f6",
-        }}
-      >
-        <CssBaseline />
+    <>
+      <MainContent
+        drawerWidth={drawerWidth}
+        locationData={locationData}
+        setLocationData={setLocationData}
+        currentCustomer={currentCustomer}
+        previousCustomers={previousCustomers}
+        anchorEl={anchorEl}
+        setAnchorEl={setAnchorEl}
+        newCustomerDialogOpen={newCustomerDialogOpen}
+        setNewCustomerDialogOpen={setNewCustomerDialogOpen}
+        onSelectPreviousCustomer={handleSelectPreviousCustomer}
+        onSaveNewCustomer={handleSaveNewCustomer}
+        onCustomerUpdate={handleCustomerUpdate}
+        onAddNewSection={addNewSection}
+        onDeleteSectionClick={handleDeleteSectionClick}
+        onRoomUpdate={onRoomUpdate}
+        baseCost={baseCost}
+        onCostChange={handleCostChange}
+      />
+      <EstimateSummary />
 
-        <TopAppBar
-          drawerWidth={drawerWidth}
-          mobileOpen={mobileOpen}
-          onDrawerToggle={handleDrawerToggle}
-          onNavigation={handleNavigation}
-          onLogoClick={handleLogoClick}
-          currentCustomer={currentCustomer}
-        />
-
-        <Container maxWidth={"md"}>
-          <MainContent
-            drawerWidth={drawerWidth}
-            locationData={locationData}
-            setLocationData={setLocationData}
-            currentCustomer={currentCustomer}
-            previousCustomers={previousCustomers}
-            anchorEl={anchorEl}
-            setAnchorEl={setAnchorEl}
-            newCustomerDialogOpen={newCustomerDialogOpen}
-            setNewCustomerDialogOpen={setNewCustomerDialogOpen}
-            onSelectPreviousCustomer={handleSelectPreviousCustomer}
-            onSaveNewCustomer={handleSaveNewCustomer}
-            onCustomerUpdate={handleCustomerUpdate}
-            onAddNewSection={addNewSection}
-            onDeleteSectionClick={handleDeleteSectionClick}
-            onRoomUpdate={onRoomUpdate}
-            baseCost={baseCost}
-            onCostChange={handleCostChange}
-          />
-          <EstimateSummary />
-        </Container>
-
-        <DeleteSectionDialog
-          deleteConfirmation={deleteConfirmation}
-          onCancel={handleDeleteCancel}
-          onConfirm={handleDeleteConfirm}
-        />
-      </Box>
-    </ThemeRegistry>
+      <DeleteSectionDialog
+        deleteConfirmation={deleteConfirmation}
+        onCancel={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+      />
+    </>
   );
 };
 

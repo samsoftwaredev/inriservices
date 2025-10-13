@@ -17,7 +17,7 @@ import {
   People as PeopleIcon,
   Assessment as AssessmentIcon,
 } from "@mui/icons-material";
-import { Customer } from "../laborTypes";
+import { Customer } from "../ProInteriorEstimate/laborTypes";
 
 interface Props {
   drawerWidth: number;
@@ -50,7 +50,7 @@ const NavigationDrawer = ({
     {
       text: "New Estimate",
       icon: <AssessmentIcon />,
-      path: "/estimates/new",
+      path: "/estimates",
     },
   ];
 
@@ -84,15 +84,15 @@ const NavigationDrawer = ({
           }}
         >
           <Typography variant="h6" color="white" fontWeight="bold">
-            IN
+            INRI
           </Typography>
         </Box>
         <Box>
           <Typography variant="h6" fontWeight="bold" color="primary.main">
-            INRI Services
+            INRI Estimator
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            Interior Solutions
+            Estimation Software
           </Typography>
         </Box>
       </Box>

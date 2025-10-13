@@ -15,7 +15,7 @@ import {
   HomeRepairServiceOutlined,
 } from "@mui/icons-material";
 
-import CustomerHeader from "../CustomerHeader";
+import CustomerHeader from "@/components/CustomerHeader";
 import CustomerInfoCard from "../CustomerInfoCard";
 import CustomerSelectionMenu from "../CustomerSelectionMenu";
 import NewCustomerDialog from "../NewCustomerDialog";
@@ -69,9 +69,29 @@ const MainContent = ({
   baseCost,
   onCostChange,
 }: Props) => {
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
   return (
     <Box component="main" my={2}>
-      <CustomerHeader onAddCustomerClick={setAnchorEl} />
+      <CustomerHeader
+        headerName="Edit Estimate"
+        headerDescription="Fill in the details to generate a professional quote"
+      >
+        <IconButton
+          color="primary"
+          onClick={handleClick}
+          sx={{
+            background: theme.palette.gradient.subtle,
+            bgcolor: "primary.main",
+            color: "white",
+            "&:hover": { bgcolor: "primary.dark" },
+          }}
+        >
+          <AddIcon />
+        </IconButton>
+      </CustomerHeader>
 
       <CustomerInfoCard
         currentCustomer={currentCustomer}

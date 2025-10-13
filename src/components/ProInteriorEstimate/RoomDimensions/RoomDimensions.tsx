@@ -215,15 +215,14 @@ const RoomDimensions = ({
 
       {/* Paint Calculation Display */}
       <Grid container spacing={2} sx={{ mt: 1 }}>
-        <Grid size={{ xs: 12 }}>
+        <Grid size={{ xs: 12 }} sx={{ display: "flex", alignItems: "center" }}>
           <Typography variant="body2" color="text.secondary">
             <strong>Paint Required:</strong>{" "}
           </Typography>
-          <Chip label={`${calculatePaintGallons().toFixed(1)} gallons`} /> =
+          <Chip label={`${calculatePaintGallons().toFixed(1)} gallons`} />
           {roomData.paintCoats && roomData.paintCoats > 1 && (
             <span>
-              {" "}
-              (
+              = (
               <Chip
                 label={`${numberOfPaintGallons(
                   roomData.wallPerimeterCalculated

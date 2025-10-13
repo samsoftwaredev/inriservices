@@ -12,12 +12,12 @@ import {
   Divider,
 } from "@mui/material";
 import {
-  TrendingUp,
   Speed,
   Build,
   Security,
   AttachMoney,
   AccountBalance,
+  TrendingDown,
 } from "@mui/icons-material";
 import InfoTooltip from "../InfoTooltip";
 
@@ -146,7 +146,7 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
     <Card sx={{ mt: 3 }}>
       <CardContent>
         <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-          <TrendingUp fontSize="large" sx={{ mr: 1 }} />
+          <TrendingDown fontSize="large" sx={{ mr: 1 }} />
           <Typography variant="h6">Cost Adjustments</Typography>
         </Box>
 
@@ -156,9 +156,9 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
         <Box sx={{ mb: 3, p: 2, bgcolor: "info.50", borderRadius: 1 }}>
           <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
             <AccountBalance sx={{ mr: 1, fontSize: 20, color: "info.dark" }} />
-            <Typography variant="subtitle1" gutterBottom>
+            <Typography variant="subtitle1">
               Project Budget Range
-              <InfoTooltip message="Ask the customers for the minimum and maximum budget for your project." />
+              <InfoTooltip message="Ask the customers for the minimum and maximum budget for the project." />
             </Typography>
             <Chip
               label={`$${expectations.budgetRange[0].toLocaleString()} - $${expectations.budgetRange[1].toLocaleString()}`}

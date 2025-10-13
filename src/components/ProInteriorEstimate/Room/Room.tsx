@@ -27,8 +27,6 @@ import RoomFeatures from "../RoomFeatures";
 import { RoomData, Props } from "../laborTypes";
 import { floorOptions } from "../laborData";
 import { calculateArea, calculateWallPerimeter } from "../laborCalc";
-import { theme } from "@/app/theme";
-import { blue, lightBlue } from "@mui/material/colors";
 
 const Room = ({
   measurementUnit,
