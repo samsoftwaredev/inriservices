@@ -6,10 +6,11 @@ import { Box, Container, CssBaseline } from "@mui/material";
 import TopAppBar from "@/components/TopAppBar";
 import { useProInteriorEstimate } from "@/hooks/useProInteriorEstimate";
 import { ThemeRegistry } from "@/app/ThemeRegistry";
+import ClientsPage from "@/components/ClientsPage";
 
 const drawerWidth = 280;
 
-const ClientsPage = () => {
+const Clients = () => {
   const {
     // State
     mobileOpen,
@@ -44,10 +45,12 @@ const ClientsPage = () => {
           currentCustomer={currentCustomer}
         />
 
-        <Container maxWidth="md">new clients</Container>
+        <Container maxWidth="md">
+          <ClientsPage />
+        </Container>
       </Box>
     </ThemeRegistry>
   );
 };
 
-export default ClientsPage;
+export default Clients;
