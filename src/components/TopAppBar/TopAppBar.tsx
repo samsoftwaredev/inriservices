@@ -17,7 +17,7 @@ import {
   People as PeopleIcon,
   Assessment as AssessmentIcon,
 } from "@mui/icons-material";
-import { Customer } from "../ProInteriorEstimate/laborTypes";
+import { Customer } from "../../interfaces/laborTypes";
 
 interface Props {
   drawerWidth: number;

@@ -1,13 +1,10 @@
 "use client";
 
 import React from "react";
-import { Box, Container, CssBaseline } from "@mui/material";
 
-import TopAppBar from "../TopAppBar";
 import MainContent from "./MainContent";
 import DeleteSectionDialog from "./DeleteSectionDialog";
 import { useProInteriorEstimate } from "@/hooks/useProInteriorEstimate";
-import { ThemeRegistry } from "@/app/ThemeRegistry";
 import EstimateSummary from "./EstimateSummary";
 
 const drawerWidth = 280;

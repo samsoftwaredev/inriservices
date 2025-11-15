@@ -17,7 +17,11 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import WarningIcon from "@mui/icons-material/Warning";
-import { RoomData, FeatureType, RoomFeature } from "../laborTypes";
+import {
+  RoomData,
+  FeatureType,
+  RoomFeature,
+} from "../../../interfaces/laborTypes";
 import { featureTypes } from "../laborData";
 
 interface Props {

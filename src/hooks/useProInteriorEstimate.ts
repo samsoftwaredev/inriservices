@@ -1,10 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Customer,
-  LocationData,
-  Section,
-} from "../components/ProInteriorEstimate/laborTypes";
+import { Customer, LocationData, Section } from "../interfaces/laborTypes";
 
 interface DeleteConfirmationState {
   open: boolean;

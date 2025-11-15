@@ -13,10 +13,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddFeatureForm from "../AddFeatureForm";
 import FeaturesList from "../FeaturesList";
 import LaborTaskDialog from "../LaborTaskDialog";
-import { RoomData, FeatureType } from "../laborTypes";
+import {
+  RoomData,
+  FeatureType,
+  MeasurementUnit,
+} from "../../../interfaces/laborTypes";
 
 interface Props {
-  measurementUnit: string;
+  measurementUnit: MeasurementUnit;
   roomData: RoomData;
   setRoomData: React.Dispatch<React.SetStateAction<RoomData>>;
 }

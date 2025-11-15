@@ -2,12 +2,12 @@
 
 import React from "react";
 import { Typography, Grid, Chip } from "@mui/material";
-import { RoomData } from "../laborTypes";
+import { MeasurementUnit, RoomData } from "../../../interfaces/laborTypes";
 import InfoTooltip from "../InfoTooltip";
 import { numberOfPaintGallons } from "../laborCalc";
 
 interface Props {
-  measurementUnit: string;
+  measurementUnit: MeasurementUnit;
   roomData: RoomData;
 }
 
@@ -28,7 +28,7 @@ const RoomWallDimensionsDisplay = ({ measurementUnit, roomData }: Props) => {
     const baseGallons = numberOfPaintGallons(
       roomData.wallPerimeterCalculated || 0
     );
-    const coats = roomData.paintCoats || 2;
+    const coats = roomData.wallPaintCoats || 2;
     return baseGallons * coats;
   };
 
@@ -82,7 +82,7 @@ const RoomWallDimensionsDisplay = ({ measurementUnit, roomData }: Props) => {
               Paint Coats
             </Typography>
             <Chip
-              label={getPaintCoatLabel(roomData.paintCoats || 2)}
+              label={getPaintCoatLabel(roomData.wallPaintCoats || 2)}
               color="primary"
               variant="outlined"
             />
@@ -155,7 +155,7 @@ const RoomWallDimensionsDisplay = ({ measurementUnit, roomData }: Props) => {
                 variant="filled"
                 sx={{ fontWeight: "bold" }}
               />
-              {(roomData.paintCoats || 2) > 1 && (
+              {(roomData.wallPaintCoats || 2) > 1 && (
                 <>
                   <Typography variant="body2" color="text.secondary">
                     =
@@ -171,7 +171,7 @@ const RoomWallDimensionsDisplay = ({ measurementUnit, roomData }: Props) => {
                     ×
                   </Typography>
                   <Chip
-                    label={`${roomData.paintCoats || 2} coats`}
+                    label={`${roomData.wallPaintCoats || 2} coats`}
                     size="small"
                     variant="outlined"
                   />

@@ -9,7 +9,7 @@ import {
   FeatureType,
   LaborTask,
   TaskHours,
-} from "../components/ProInteriorEstimate/laborTypes";
+} from "../interfaces/laborTypes";
 
 interface UseLaborTaskDialogProps {
   open: boolean;

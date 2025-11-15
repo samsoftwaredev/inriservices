@@ -14,11 +14,16 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { RoomData, FeatureType, RoomFeature } from "../laborTypes";
+import {
+  RoomData,
+  FeatureType,
+  RoomFeature,
+  MeasurementUnit,
+} from "../../../interfaces/laborTypes";
 import { featureTypes } from "../laborData";
 
 interface Props {
-  measurementUnit: string;
+  measurementUnit: MeasurementUnit;
   roomData: RoomData;
   setRoomData: React.Dispatch<React.SetStateAction<RoomData>>;
 }

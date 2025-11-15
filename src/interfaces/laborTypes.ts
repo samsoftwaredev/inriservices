@@ -19,15 +19,25 @@ export interface LaborTask {
   laborMaterials?: LaborMaterial[];
 }
 
-export type RoomDimensionsOverview = {
-  area: string;
+type BaseboardDimensions = {
+  baseboardPerimeter: string;
+  baseboardHeight: number;
+  baseboardPaintCoats?: number;
+};
+
+type WallDimensions = {
   wallPerimeter: string;
   roomHeight: number;
+  wallPaintCoats?: number;
+};
+
+export type RoomDimensionsOverview = {
+  area: string;
   roomName: string;
   roomDescription?: string;
   floorNumber?: number;
-  paintCoats?: number;
-};
+} & WallDimensions &
+  BaseboardDimensions;
 
 export type RoomFeature = {
   id: string;
@@ -40,15 +50,14 @@ export type RoomFeature = {
   workLabor?: LaborTask[];
 };
 
-export interface RoomData {
+export type RoomData = {
   area: string;
   areaCalculated: number;
   totalCost: number;
-  wallPerimeter: string;
   wallPerimeterCalculated: number;
+  baseboardPerimeterCalculated: number;
   floorNumber?: number;
   roomHeight: number;
-  paintCoats: number;
   features: {
     windows: RoomFeature[];
     doors: RoomFeature[];
@@ -59,10 +68,11 @@ export interface RoomData {
     baseboard: RoomFeature[];
     wainscoting: RoomFeature[];
   };
-}
+} & WallDimensions &
+  BaseboardDimensions;
 
 export interface Props {
-  measurementUnit: string;
+  measurementUnit: MeasurementUnit;
   floorNumber: number;
   id: string;
   roomName: string;

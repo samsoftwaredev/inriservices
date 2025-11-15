@@ -1,14 +1,18 @@
 "use client";
 
 import React from "react";
-import { RoomData, RoomDimensionsOverview } from "../laborTypes";
-import RoomDimensionsEdit from "./RoomWallDimensionsEdit";
-import RoomDimensionsDisplay from "./RoomWallDimensionsDisplay";
+import {
+  MeasurementUnit,
+  RoomData,
+  RoomDimensionsOverview,
+} from "../../../interfaces/laborTypes";
+import RoomDimensionsEdit from "./RoomDimensionsEdit";
+import RoomDimensionsDisplay from "./RoomDimensionsDisplay";
 import InfoTooltip from "../InfoTooltip";
 import { Typography } from "@mui/material";
 
 interface Props {
-  measurementUnit: string;
+  measurementUnit: MeasurementUnit;
   isEditMode: boolean;
   roomData: RoomData;
   editData: RoomDimensionsOverview;

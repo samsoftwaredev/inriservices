@@ -15,7 +15,7 @@ import {
   MenuItem,
   SelectChangeEvent,
 } from "@mui/material";
-import { Customer } from "../laborTypes";
+import { Customer } from "../../../interfaces/laborTypes";
 
 import { usa_states } from "@/constants";
 

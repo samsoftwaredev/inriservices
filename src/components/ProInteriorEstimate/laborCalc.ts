@@ -11,7 +11,7 @@ export const numberOfPaintGallons = (area: number): number => {
   return Math.ceil(area / coveragePerGallon);
 };
 
-export const calculateWallPerimeter = (
+export const calculatePerimeter = (
   dimensions: string,
   roomHeight: number
 ): number => {

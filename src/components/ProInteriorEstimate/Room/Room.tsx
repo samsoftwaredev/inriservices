@@ -24,9 +24,13 @@ import CancelIcon from "@mui/icons-material/Cancel";
 
 import RoomDimensions from "../RoomDimensions";
 import RoomFeatures from "../RoomFeatures";
-import { RoomData, Props, RoomDimensionsOverview } from "../laborTypes";
+import {
+  RoomData,
+  Props,
+  RoomDimensionsOverview,
+} from "../../../interfaces/laborTypes";
 import { floorOptions } from "../laborData";
-import { calculateArea, calculateWallPerimeter } from "../laborCalc";
+import { calculateArea, calculatePerimeter } from "../laborCalc";
 
 const Room = ({
   measurementUnit,
@@ -38,13 +42,17 @@ const Room = ({
 }: Props) => {
   const [isEditMode, setIsEditMode] = useState(true);
   const [roomData, setRoomData] = useState<RoomData>({
-    area: "5x4",
-    paintCoats: 1,
-    areaCalculated: 0,
-    wallPerimeter: "5x4",
+    area: "",
+    wallPaintCoats: 1,
+    baseboardHeight: 0,
+    baseboardPaintCoats: 1,
+    baseboardPerimeter: "",
+    areaCalculated: 10,
+    wallPerimeter: "",
     wallPerimeterCalculated: 0,
-    roomHeight: 10,
+    roomHeight: 0,
     floorNumber: floorNumber,
+    baseboardPerimeterCalculated: 0,
     totalCost: 0,
     features: {
       walls: [],
@@ -65,6 +73,10 @@ const Room = ({
     roomName: roomName,
     roomDescription: roomDescription,
     floorNumber: floorNumber,
+    baseboardHeight: 0,
+    wallPaintCoats: 1,
+    baseboardPaintCoats: 1,
+    baseboardPerimeter: "",
   });
 
   const handleEditClick = () => {
@@ -75,6 +87,10 @@ const Room = ({
       roomName: roomName,
       roomDescription: roomDescription,
       floorNumber: floorNumber,
+      baseboardPerimeter: roomData.baseboardPerimeter,
+      baseboardHeight: roomData.baseboardHeight,
+      wallPaintCoats: roomData.wallPaintCoats,
+      baseboardPaintCoats: roomData.baseboardPaintCoats,
     });
     setIsEditMode(true);
   };
@@ -85,7 +101,7 @@ const Room = ({
       area: editData.area,
       wallPerimeter: editData.wallPerimeter,
       areaCalculated: calculateArea(editData.area),
-      wallPerimeterCalculated: calculateWallPerimeter(
+      wallPerimeterCalculated: calculatePerimeter(
         editData.wallPerimeter,
         editData.roomHeight
       ),
@@ -110,9 +126,11 @@ const Room = ({
       area: roomData.area,
       wallPerimeter: roomData.wallPerimeter,
       roomHeight: roomData.roomHeight,
+      baseboardPerimeter: roomData.baseboardPerimeter,
       roomName: roomName,
       roomDescription: roomDescription,
       floorNumber: floorNumber,
+      baseboardHeight: roomData.baseboardHeight,
     });
     setIsEditMode(false);
   };

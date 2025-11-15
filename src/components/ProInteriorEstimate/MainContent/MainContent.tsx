@@ -22,7 +22,7 @@ import NewCustomerDialog from "../NewCustomerDialog";
 import ProjectSettings from "../ProjectSettings";
 import Room from "../Room";
 import CustomerExpectations from "../CustomerExpectations";
-import { Customer, LocationData } from "../laborTypes";
+import { Customer, LocationData } from "../../../interfaces/laborTypes";
 import { theme } from "@/app/theme";
 
 interface Props {

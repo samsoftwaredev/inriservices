@@ -10,17 +10,17 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
-  Chip,
 } from "@mui/material";
-import { RoomData, RoomDimensionsOverview } from "../laborTypes";
 import {
-  calculateArea,
-  calculateWallPerimeter,
-  numberOfPaintGallons,
-} from "../laborCalc";
+  MeasurementUnit,
+  RoomData,
+  RoomDimensionsOverview,
+} from "../../../interfaces/laborTypes";
+import { calculateArea, calculatePerimeter } from "../laborCalc";
+import GallonsCalc from "./GallonsCalc";
 
 interface Props {
-  measurementUnit: string;
+  measurementUnit: MeasurementUnit;
   roomData: RoomData;
   editData: RoomDimensionsOverview;
   setEditData: React.Dispatch<React.SetStateAction<RoomDimensionsOverview>>;
@@ -48,7 +48,7 @@ const RoomDimensionsEdit = ({
       const area = calculateArea(editData.wallPerimeter);
 
       if (field === "wallPerimeter") {
-        const perimeter = calculateWallPerimeter(
+        const perimeter = calculatePerimeter(
           editData.wallPerimeter,
           roomData.roomHeight
         );
@@ -61,8 +61,32 @@ const RoomDimensionsEdit = ({
           wallPerimeterCalculated: perimeter,
           areaCalculated: area,
         });
+      }
+      if (field === "baseboardPerimeter") {
+        const perimeter = calculatePerimeter(
+          editData.baseboardPerimeter,
+          roomData.baseboardHeight
+        );
+        setEditData({
+          ...editData,
+          baseboardPerimeter: event.target.value,
+        });
+        setRoomData({
+          ...roomData,
+          baseboardPerimeterCalculated: perimeter,
+        });
+      } else if (field === "baseboardHeight") {
+        const perimeter = calculatePerimeter(editData.wallPerimeter, value);
+        setEditData({
+          ...editData,
+          baseboardHeight: value,
+        });
+        setRoomData({
+          ...roomData,
+          baseboardPerimeterCalculated: perimeter,
+        });
       } else if (field === "roomHeight") {
-        const perimeter = calculateWallPerimeter(editData.wallPerimeter, value);
+        const perimeter = calculatePerimeter(editData.wallPerimeter, value);
         setEditData({
           ...editData,
           roomHeight: value,
@@ -78,18 +102,26 @@ const RoomDimensionsEdit = ({
     const coats = event.target.value as number;
     setEditData({
       ...editData,
-      paintCoats: coats,
+      wallPaintCoats: coats,
     });
     setRoomData({
       ...roomData,
-      paintCoats: coats,
+      wallPaintCoats: coats,
     });
   };
 
-  const calculatePaintGallons = () => {
-    const baseGallons = numberOfPaintGallons(roomData.wallPerimeterCalculated);
-    const coats = roomData.paintCoats || editData.paintCoats || 2;
-    return baseGallons * coats;
+  const handleBaseboardPaintCoatsChange = (
+    event: SelectChangeEvent<number>
+  ) => {
+    const coats = event.target.value as number;
+    setEditData({
+      ...editData,
+      baseboardPaintCoats: coats,
+    });
+    setRoomData({
+      ...roomData,
+      baseboardPaintCoats: coats,
+    });
   };
 
   return (
@@ -124,9 +156,54 @@ const RoomDimensionsEdit = ({
           <FormControl fullWidth size="small">
             <InputLabel>Paint Coats</InputLabel>
             <Select
-              value={editData.paintCoats || roomData.paintCoats || 2}
+              value={editData.wallPaintCoats || roomData.wallPaintCoats || 2}
               label="Paint Coats"
               onChange={handlePaintCoatsChange}
+            >
+              {paintCoatOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <TextField
+            fullWidth
+            label={`Baseboard Perimeter (${measurementUnit})`}
+            value={editData.baseboardPerimeter}
+            onChange={handleInputChange("baseboardPerimeter")}
+            inputProps={{ min: 0, step: 0.1 }}
+            size="small"
+            helperText="Enter baseboard lengths separated by spaces"
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <TextField
+            fullWidth
+            label={`Baseboard Height (${measurementUnit})`}
+            value={editData.baseboardHeight}
+            onChange={handleInputChange("baseboardHeight")}
+            inputProps={{ min: 0, step: 0.1 }}
+            size="small"
+            helperText="Enter baseboard height"
+          />
+        </Grid>
+
+        <Grid size={{ xs: 12, sm: 4 }}>
+          <FormControl fullWidth size="small">
+            <InputLabel>Baseboard Paint Coats</InputLabel>
+            <Select
+              value={
+                editData.baseboardPaintCoats ||
+                roomData.baseboardPaintCoats ||
+                2
+              }
+              label="Baseboard Paint Coats"
+              onChange={handleBaseboardPaintCoatsChange}
             >
               {paintCoatOptions.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
@@ -157,49 +234,11 @@ const RoomDimensionsEdit = ({
           </Typography>
         </Grid>
       </Grid>
-
-      {/* Paint Calculation Display */}
-      <Grid container spacing={2} sx={{ mt: 1 }}>
-        <Grid size={{ xs: 12 }}>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
-            <strong>Paint Required Calculation:</strong>
-          </Typography>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              flexWrap: "wrap",
-            }}
-          >
-            <Chip
-              label={`${calculatePaintGallons().toFixed(1)} gallons`}
-              color="primary"
-              variant="filled"
-            />
-            {(roomData.paintCoats || editData.paintCoats || 2) > 1 && (
-              <>
-                <span>=</span>
-                <Chip
-                  label={`${numberOfPaintGallons(
-                    roomData.wallPerimeterCalculated || 0
-                  ).toFixed(1)} gallons`}
-                  size="small"
-                  variant="outlined"
-                />
-                <span>×</span>
-                <Chip
-                  label={`${
-                    roomData.paintCoats || editData.paintCoats || 2
-                  } coats`}
-                  size="small"
-                  variant="outlined"
-                />
-              </>
-            )}
-          </div>
-        </Grid>
-      </Grid>
+      <GallonsCalc
+        roomData={roomData}
+        editData={editData}
+        measurementUnit={measurementUnit}
+      />
     </>
   );
 };
