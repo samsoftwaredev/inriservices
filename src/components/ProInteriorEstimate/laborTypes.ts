@@ -19,6 +19,16 @@ export interface LaborTask {
   laborMaterials?: LaborMaterial[];
 }
 
+export type RoomDimensionsOverview = {
+  area: string;
+  wallPerimeter: string;
+  roomHeight: number;
+  roomName: string;
+  roomDescription?: string;
+  floorNumber?: number;
+  paintCoats?: number;
+};
+
 export type RoomFeature = {
   id: string;
   type: string;

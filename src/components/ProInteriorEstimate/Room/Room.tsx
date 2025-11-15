@@ -24,7 +24,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 
 import RoomDimensions from "../RoomDimensions";
 import RoomFeatures from "../RoomFeatures";
-import { RoomData, Props } from "../laborTypes";
+import { RoomData, Props, RoomDimensionsOverview } from "../laborTypes";
 import { floorOptions } from "../laborData";
 import { calculateArea, calculateWallPerimeter } from "../laborCalc";
 
@@ -36,7 +36,7 @@ const Room = ({
   roomDescription = "A standard room",
   onRoomUpdate,
 }: Props) => {
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(true);
   const [roomData, setRoomData] = useState<RoomData>({
     area: "5x4",
     paintCoats: 1,
@@ -58,14 +58,7 @@ const Room = ({
     },
   });
 
-  const [editData, setEditData] = useState<{
-    area: string;
-    wallPerimeter: string;
-    roomHeight: number;
-    roomName: string;
-    roomDescription?: string;
-    floorNumber?: number;
-  }>({
+  const [editData, setEditData] = useState<RoomDimensionsOverview>({
     area: roomData.area,
     wallPerimeter: roomData.wallPerimeter,
     roomHeight: roomData.roomHeight,
