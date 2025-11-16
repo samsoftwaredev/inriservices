@@ -4,16 +4,12 @@ import React from "react";
 
 import MainContent from "./MainContent";
 import DeleteSectionDialog from "./DeleteSectionDialog";
-import { useProInteriorEstimate } from "@/hooks/useProInteriorEstimate";
+import { useProInteriorEstimate } from "@/context/useProInteriorEstimate";
 import EstimateSummary from "./EstimateSummary";
-
-const drawerWidth = 280;
 
 const ProInteriorEstimate = () => {
   const {
     // State
-    mobileOpen,
-    setMobileOpen,
     previousCustomers,
     setPreviousCustomers,
     currentCustomer,
@@ -28,10 +24,6 @@ const ProInteriorEstimate = () => {
     setDeleteConfirmation,
     baseCost,
 
-    // Handlers
-    handleDrawerToggle,
-    handleNavigation,
-    handleLogoClick,
     handleSelectPreviousCustomer,
     handleSaveNewCustomer,
     handleCustomerUpdate,
@@ -43,15 +35,9 @@ const ProInteriorEstimate = () => {
     handleCostChange,
   } = useProInteriorEstimate();
 
-  // Data Structure Ideas
-  // customer - address, city, state, zip, phone, email, full name
-  // section - name, description, floor number, rooms[], features, dimensions, height, floor number
-  // project - name, description, budget range, timeline, expectations, cost adjustments, base cost
-
   return (
     <>
       <MainContent
-        drawerWidth={drawerWidth}
         locationData={locationData}
         setLocationData={setLocationData}
         currentCustomer={currentCustomer}

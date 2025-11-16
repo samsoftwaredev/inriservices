@@ -102,11 +102,11 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
     return cost >= minBudget && cost <= maxBudget;
   };
 
-  // Update cost whenever expectations change
-  useEffect(() => {
-    const adjustedCost = calculateAdjustedCost(expectations);
-    onCostChange(adjustedCost, expectations);
-  }, [expectations, baseCost, onCostChange]);
+  // TODO: Update cost whenever expectations change
+  // useEffect(() => {
+  //   const adjustedCost = calculateAdjustedCost(expectations);
+  //   onCostChange(adjustedCost, expectations);
+  // }, [expectations, baseCost, onCostChange]);
 
   const handleSliderChange = (
     field: keyof ProjectExpectations,

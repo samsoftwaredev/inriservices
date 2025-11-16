@@ -1,7 +1,19 @@
+"use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export const useNavigation = () => {
+interface UseAppNavigationReturn {
+  // State
+  mobileOpen: boolean;
+
+  // Handlers
+  handleDrawerToggle: () => void;
+  handleNavigation: (path: string) => void;
+  handleLogoClick: () => void;
+}
+
+export const useAppNavigation = (): UseAppNavigationReturn => {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -18,19 +30,13 @@ export const useNavigation = () => {
     router.push("/dashboard");
   };
 
-  const closeMobileDrawer = () => {
-    setMobileOpen(false);
-  };
-
   return {
     // State
     mobileOpen,
-    setMobileOpen,
 
     // Handlers
     handleDrawerToggle,
     handleNavigation,
     handleLogoClick,
-    closeMobileDrawer,
   };
 };

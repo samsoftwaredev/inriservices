@@ -26,7 +26,6 @@ import { Customer, LocationData } from "../../../interfaces/laborTypes";
 import { theme } from "@/app/theme";
 
 interface Props {
-  drawerWidth: number;
   locationData: LocationData;
   setLocationData: React.Dispatch<React.SetStateAction<LocationData>>;
   currentCustomer: Customer;
@@ -51,7 +50,6 @@ interface Props {
 }
 
 const MainContent = ({
-  drawerWidth,
   locationData,
   setLocationData,
   currentCustomer,

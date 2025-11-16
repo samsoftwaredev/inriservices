@@ -42,17 +42,30 @@ const Room = ({
 }: Props) => {
   const [isEditMode, setIsEditMode] = useState(true);
   const [roomData, setRoomData] = useState<RoomData>({
-    area: "",
+    // WallDimensions
     wallPaintCoats: 1,
+    wallPerimeter: "",
+    roomHeight: 0,
+    wallPerimeterCalculated: 0,
+    // BaseboardDimensions
     baseboardHeight: 0,
     baseboardPaintCoats: 1,
     baseboardPerimeter: "",
-    areaCalculated: 10,
-    wallPerimeter: "",
-    wallPerimeterCalculated: 0,
-    roomHeight: 0,
-    floorNumber: floorNumber,
     baseboardPerimeterCalculated: 0,
+    // chairRailDimensions
+    chairRailPerimeter: "",
+    chairRailHeight: 0,
+    chairRailPaintCoats: 1,
+    chairRailPerimeterCalculated: 0,
+    // crownMoldingDimensions
+    crownMoldingPerimeter: "",
+    crownMoldingHeight: 0,
+    crownMoldingPaintCoats: 1,
+    crownMoldingPerimeterCalculated: 0,
+
+    area: "",
+    areaCalculated: 10,
+    floorNumber: floorNumber,
     totalCost: 0,
     features: {
       walls: [],
@@ -77,6 +90,12 @@ const Room = ({
     wallPaintCoats: 1,
     baseboardPaintCoats: 1,
     baseboardPerimeter: "",
+    chairRailPerimeter: "",
+    chairRailHeight: 0,
+    chairRailPaintCoats: 1,
+    crownMoldingPerimeter: "",
+    crownMoldingHeight: 0,
+    crownMoldingPaintCoats: 1,
   });
 
   const handleEditClick = () => {
@@ -91,6 +110,12 @@ const Room = ({
       baseboardHeight: roomData.baseboardHeight,
       wallPaintCoats: roomData.wallPaintCoats,
       baseboardPaintCoats: roomData.baseboardPaintCoats,
+      chairRailPerimeter: roomData.chairRailPerimeter,
+      chairRailHeight: roomData.chairRailHeight,
+      chairRailPaintCoats: roomData.chairRailPaintCoats,
+      crownMoldingPerimeter: roomData.crownMoldingPerimeter,
+      crownMoldingHeight: roomData.crownMoldingHeight,
+      crownMoldingPaintCoats: roomData.crownMoldingPaintCoats,
     });
     setIsEditMode(true);
   };
@@ -131,6 +156,14 @@ const Room = ({
       roomDescription: roomDescription,
       floorNumber: floorNumber,
       baseboardHeight: roomData.baseboardHeight,
+      wallPaintCoats: roomData.wallPaintCoats,
+      baseboardPaintCoats: roomData.baseboardPaintCoats,
+      chairRailPerimeter: roomData.chairRailPerimeter,
+      chairRailHeight: roomData.chairRailHeight,
+      chairRailPaintCoats: roomData.chairRailPaintCoats,
+      crownMoldingPerimeter: roomData.crownMoldingPerimeter,
+      crownMoldingHeight: roomData.crownMoldingHeight,
+      crownMoldingPaintCoats: roomData.crownMoldingPaintCoats,
     });
     setIsEditMode(false);
   };

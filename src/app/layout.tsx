@@ -3,6 +3,7 @@ import "./globals.css";
 import { companyName, companyWebsiteURL } from "@/constants";
 import Script from "next/script";
 import { theme } from "./theme";
+import { ProInteriorEstimateProvider } from "@/context";
 
 export const metadata: Metadata = {
   title: companyName,
@@ -95,7 +96,9 @@ export default function RootLayout({
           gtag('config', 'G-PVWSHF17ED');
         `}
       </Script>
-      <body>{children}</body>
+      <ProInteriorEstimateProvider>
+        <body>{children}</body>
+      </ProInteriorEstimateProvider>
     </html>
   );
 }

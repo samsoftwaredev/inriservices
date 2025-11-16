@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+"use client";
+
+import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Customer, LocationData, Section } from "../interfaces/laborTypes";
 
 interface DeleteConfirmationState {
@@ -8,10 +9,56 @@ interface DeleteConfirmationState {
   sectionName: string | null;
 }
 
-export const useProInteriorEstimate = () => {
-  const router = useRouter();
-  const [mobileOpen, setMobileOpen] = useState(false);
+interface ProInteriorEstimateContextType {
+  // State
+  previousCustomers: Customer[];
+  setPreviousCustomers: React.Dispatch<React.SetStateAction<Customer[]>>;
+  currentCustomer: Customer;
+  setCurrentCustomer: React.Dispatch<React.SetStateAction<Customer>>;
+  locationData: LocationData;
+  setLocationData: React.Dispatch<React.SetStateAction<LocationData>>;
+  anchorEl: null | HTMLElement;
+  setAnchorEl: React.Dispatch<React.SetStateAction<null | HTMLElement>>;
+  newCustomerDialogOpen: boolean;
+  setNewCustomerDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  deleteConfirmation: DeleteConfirmationState;
+  setDeleteConfirmation: React.Dispatch<
+    React.SetStateAction<DeleteConfirmationState>
+  >;
+  baseCost: number;
+  setBaseCost: React.Dispatch<React.SetStateAction<number>>;
 
+  // Handlers
+  handleSelectPreviousCustomer: (customer: Customer) => void;
+  handleSaveNewCustomer: (newCustomerData: Omit<Customer, "id">) => void;
+  handleCustomerUpdate: (updatedCustomer: Customer) => void;
+  addNewSection: () => void;
+  handleDeleteSectionClick: (sectionId: string, sectionName: string) => void;
+  handleDeleteCancel: () => void;
+  handleDeleteConfirm: () => void;
+  onRoomUpdate: (updates: {
+    id: string;
+    roomName: string;
+    roomDescription: string;
+    floorNumber: number;
+  }) => void;
+  handleCostChange: (newBaseCost: number) => void;
+  closeNewCustomerDialog: () => void;
+  openNewCustomerDialog: () => void;
+  closeCustomerMenu: () => void;
+}
+
+const ProInteriorEstimateContext = createContext<
+  ProInteriorEstimateContextType | undefined
+>(undefined);
+
+interface ProInteriorEstimateProviderProps {
+  children: ReactNode;
+}
+
+export const ProInteriorEstimateProvider = ({
+  children,
+}: ProInteriorEstimateProviderProps) => {
   // Sample previous customers data
   const [previousCustomers, setPreviousCustomers] = useState<Customer[]>([
     {
@@ -96,29 +143,15 @@ export const useProInteriorEstimate = () => {
 
   const [baseCost, setBaseCost] = useState(1000);
 
-  // Event handlers
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
-  const handleNavigation = (path: string) => {
-    router.push(path);
-    setMobileOpen(false);
-  };
-
-  const handleLogoClick = () => {
-    router.push("/dashboard");
-  };
-
   const handleSelectPreviousCustomer = (customer: Customer) => {
     setCurrentCustomer(customer);
-    setLocationData({
-      ...locationData,
+    setLocationData((prev) => ({
+      ...prev,
       address: customer.address,
       city: customer.city,
       state: customer.state,
       zipCode: customer.zipCode,
-    });
+    }));
     setAnchorEl(null);
   };
 
@@ -130,13 +163,13 @@ export const useProInteriorEstimate = () => {
 
     setCurrentCustomer(newCustomer);
     setPreviousCustomers([...previousCustomers, newCustomer]);
-    setLocationData({
-      ...locationData,
+    setLocationData((prev) => ({
+      ...prev,
       address: newCustomer.address,
       city: newCustomer.city,
       state: newCustomer.state,
       zipCode: newCustomer.zipCode,
-    });
+    }));
   };
 
   const handleCustomerUpdate = (updatedCustomer: Customer) => {
@@ -146,13 +179,13 @@ export const useProInteriorEstimate = () => {
         customer.id === updatedCustomer.id ? updatedCustomer : customer
       )
     );
-    setLocationData({
-      ...locationData,
+    setLocationData((prev) => ({
+      ...prev,
       address: updatedCustomer.address,
       city: updatedCustomer.city,
       state: updatedCustomer.state,
       zipCode: updatedCustomer.zipCode,
-    });
+    }));
   };
 
   const addNewSection = () => {
@@ -163,10 +196,10 @@ export const useProInteriorEstimate = () => {
       floorNumber: 1,
     };
 
-    setLocationData({
-      ...locationData,
-      sections: [...locationData.sections, newSection],
-    });
+    setLocationData((prev) => ({
+      ...prev,
+      sections: [...prev.sections, newSection],
+    }));
   };
 
   const handleDeleteSectionClick = (sectionId: string, sectionName: string) => {
@@ -187,12 +220,12 @@ export const useProInteriorEstimate = () => {
 
   const handleDeleteConfirm = () => {
     if (deleteConfirmation.sectionId) {
-      setLocationData({
-        ...locationData,
-        sections: locationData.sections.filter(
+      setLocationData((prev) => ({
+        ...prev,
+        sections: prev.sections.filter(
           (section) => section.id !== deleteConfirmation.sectionId
         ),
-      });
+      }));
     }
     handleDeleteCancel();
   };
@@ -222,13 +255,24 @@ export const useProInteriorEstimate = () => {
   };
 
   const handleCostChange = (newBaseCost: number) => {
-    // setBaseCost(newBaseCost);
+    setBaseCost(newBaseCost);
   };
 
-  return {
+  const closeNewCustomerDialog = () => {
+    setNewCustomerDialogOpen(false);
+  };
+
+  const openNewCustomerDialog = () => {
+    setNewCustomerDialogOpen(true);
+    setAnchorEl(null);
+  };
+
+  const closeCustomerMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const value: ProInteriorEstimateContextType = {
     // State
-    mobileOpen,
-    setMobileOpen,
     previousCustomers,
     setPreviousCustomers,
     currentCustomer,
@@ -242,11 +286,9 @@ export const useProInteriorEstimate = () => {
     deleteConfirmation,
     setDeleteConfirmation,
     baseCost,
+    setBaseCost,
 
     // Handlers
-    handleDrawerToggle,
-    handleNavigation,
-    handleLogoClick,
     handleSelectPreviousCustomer,
     handleSaveNewCustomer,
     handleCustomerUpdate,
@@ -256,5 +298,25 @@ export const useProInteriorEstimate = () => {
     handleDeleteConfirm,
     onRoomUpdate,
     handleCostChange,
+    closeNewCustomerDialog,
+    openNewCustomerDialog,
+    closeCustomerMenu,
   };
+
+  return React.createElement(
+    ProInteriorEstimateContext.Provider,
+    { value },
+    children
+  );
+};
+
+// Custom hook to use the context
+export const useProInteriorEstimate = (): ProInteriorEstimateContextType => {
+  const context = useContext(ProInteriorEstimateContext);
+  if (context === undefined) {
+    throw new Error(
+      "useProInteriorEstimate must be used within a ProInteriorEstimateProvider"
+    );
+  }
+  return context;
 };
