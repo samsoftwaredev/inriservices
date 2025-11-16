@@ -126,6 +126,18 @@ const Room = ({
       area: editData.area,
       wallPerimeter: editData.wallPerimeter,
       areaCalculated: calculateArea(editData.area),
+      baseboardPerimeterCalculated: calculatePerimeter(
+        editData.baseboardPerimeter,
+        editData.roomHeight
+      ),
+      chairRailPerimeterCalculated: calculatePerimeter(
+        editData.chairRailPerimeter,
+        editData.roomHeight
+      ),
+      crownMoldingPerimeterCalculated: calculatePerimeter(
+        editData.crownMoldingPerimeter,
+        editData.roomHeight
+      ),
       wallPerimeterCalculated: calculatePerimeter(
         editData.wallPerimeter,
         editData.roomHeight

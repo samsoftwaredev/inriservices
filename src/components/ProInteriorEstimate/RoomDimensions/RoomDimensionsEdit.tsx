@@ -512,6 +512,39 @@ const RoomDimensionsEdit = ({
           }));
           break;
 
+        case "baseboardHeight":
+          const baseboardPerim = calculatePerimeter(
+            editData.baseboardPerimeter,
+            numValue
+          );
+          setRoomData((prev) => ({
+            ...prev,
+            baseboardPerimeterCalculated: baseboardPerim,
+          }));
+          break;
+
+        case "crownMoldingHeight":
+          const crownMoldingPerim = calculatePerimeter(
+            editData.crownMoldingPerimeter,
+            numValue
+          );
+          setRoomData((prev) => ({
+            ...prev,
+            crownMoldingPerimeterCalculated: crownMoldingPerim,
+          }));
+          break;
+
+        case "chairRailHeight":
+          const chairRailPerim = calculatePerimeter(
+            editData.chairRailPerimeter,
+            numValue
+          );
+          setRoomData((prev) => ({
+            ...prev,
+            chairRailPerimeterCalculated: chairRailPerim,
+          }));
+          break;
+
         default:
           setRoomData((prev) => ({ ...prev, [fieldKey]: numValue }));
       }

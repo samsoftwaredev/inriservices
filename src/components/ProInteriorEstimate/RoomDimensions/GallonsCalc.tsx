@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Grid,
@@ -39,6 +39,10 @@ interface PaintCalculation {
 }
 
 const GallonsCalc = ({ roomData, editData, measurementUnit }: Props) => {
+  useEffect(() => {
+    console.log(roomData, editData, measurementUnit);
+  }, [roomData, editData, measurementUnit]);
+
   const [showCalculation, setShowCalculation] = useState(false);
 
   const calculatePaintGallons = (
