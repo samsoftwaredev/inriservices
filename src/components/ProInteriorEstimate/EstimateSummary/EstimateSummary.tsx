@@ -11,13 +11,17 @@ import {
   FormatPaint,
   Work,
 } from "@mui/icons-material";
+import { useGallons } from "@/context/useGallons";
 
-interface Props {}
-
-const EstimateSummary = ({}: Props) => {
+const EstimateSummary = () => {
+  const { totalGallons } = useGallons();
   const numberOfPaintGallons = {
     label: "Paint (gallons)",
-    value: 120,
+    value:
+      totalGallons.walls +
+      totalGallons.crownMolding +
+      totalGallons.chairRail +
+      totalGallons.baseboard,
     icon: <FormatColorFill />,
   };
 
@@ -90,16 +94,28 @@ const EstimateSummary = ({}: Props) => {
         </Grid>
 
         <Grid size={12} display="flex" justifyContent="space-between">
-          <Typography variant="body2">Approximately Total Hours</Typography>
-          <Typography variant="body2">{totalHours}</Typography>
+          <Typography variant="h6">Approximately Total Hours</Typography>
+          <Typography variant="h6">{totalHours}</Typography>
         </Grid>
         <Grid size={12} display="flex" justifyContent="space-between">
-          <Typography variant="body2">Paint Gallons</Typography>
-          <Typography variant="body2">{totalPaintGallons}</Typography>
+          <Typography variant="h6">Paint Gallons</Typography>
+          <Typography variant="h6">{totalPaintGallons}</Typography>
+        </Grid>
+        <Grid
+          size={12}
+          display="flex"
+          justifyContent="flex-start"
+          flexDirection="column"
+        >
+          {Object.entries(totalGallons).map(([key, value], index) => (
+            <Typography key={index} variant="body2">
+              {key}: {value} gallons
+            </Typography>
+          ))}
         </Grid>
         <Grid size={12} display="flex" justifyContent="space-between">
-          <Typography variant="body2">Rooms</Typography>
-          <Typography variant="body2">{totalRooms}</Typography>
+          <Typography variant="h6">Rooms</Typography>
+          <Typography variant="h6">{totalRooms}</Typography>
         </Grid>
       </Grid>
     </Paper>
