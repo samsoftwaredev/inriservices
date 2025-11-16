@@ -13,11 +13,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import TaskItem from "../TaskItem";
-import {
-  LaborMaterial,
-  LaborTask,
-  TaskHours,
-} from "../../../interfaces/laborTypes";
+import { LaborMaterial, LaborTask, TaskHours } from "@/interfaces/laborTypes";
 import { availableLaborTasks } from "../laborData";
 
 interface Props {

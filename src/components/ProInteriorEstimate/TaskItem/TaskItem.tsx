@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 
 import TaskDetails from "../TaskDetails";
-import { LaborMaterial, LaborTask } from "../../../interfaces/laborTypes";
+import { LaborMaterial, LaborTask } from "@/interfaces/laborTypes";
 
 interface Props {
   task: LaborTask;

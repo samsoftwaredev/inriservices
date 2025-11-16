@@ -20,7 +20,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { Customer } from "../../../interfaces/laborTypes";
+import { Customer } from "@/interfaces/laborTypes";
 import { usa_states } from "@/constants";
 import { Person2Outlined, PersonPinCircleOutlined } from "@mui/icons-material";
 

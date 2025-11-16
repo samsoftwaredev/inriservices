@@ -14,7 +14,7 @@ import TaskSelectionPanel from "../TaskSelectionPanel";
 import CostSummaryPanel from "../CostSummaryPanel";
 import DialogFooter from "../DialogFooter";
 import { useLaborTaskDialog } from "@/hooks/useLaborTaskDialog";
-import { RoomData, FeatureType } from "../../../interfaces/laborTypes";
+import { RoomData, FeatureType } from "@/interfaces/laborTypes";
 
 interface Props {
   open: boolean;

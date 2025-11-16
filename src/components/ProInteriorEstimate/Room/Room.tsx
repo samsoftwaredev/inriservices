@@ -28,7 +28,7 @@ import {
   RoomData,
   Props,
   RoomDimensionsOverview,
-} from "../../../interfaces/laborTypes";
+} from "@/interfaces/laborTypes";
 import { floorOptions } from "../laborData";
 import { calculateArea, calculatePerimeter } from "../laborCalc";
 

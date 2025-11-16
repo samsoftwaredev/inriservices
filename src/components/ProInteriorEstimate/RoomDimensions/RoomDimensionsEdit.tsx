@@ -43,7 +43,7 @@ import {
   MeasurementUnit,
   RoomData,
   RoomDimensionsOverview,
-} from "../../../interfaces/laborTypes";
+} from "@/interfaces/laborTypes";
 import { calculateArea, calculatePerimeter } from "../laborCalc";
 import GallonsCalc from "./GallonsCalc";
 

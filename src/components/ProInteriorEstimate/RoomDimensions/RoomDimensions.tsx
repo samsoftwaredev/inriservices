@@ -5,7 +5,7 @@ import {
   MeasurementUnit,
   RoomData,
   RoomDimensionsOverview,
-} from "../../../interfaces/laborTypes";
+} from "@/interfaces/laborTypes";
 import RoomDimensionsEdit from "./RoomDimensionsEdit";
 import RoomDimensionsDisplay from "./RoomDimensionsDisplay";
 import InfoTooltip from "../InfoTooltip";

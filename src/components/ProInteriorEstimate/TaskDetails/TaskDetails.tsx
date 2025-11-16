@@ -14,7 +14,7 @@ import {
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
-import { LaborTask, LaborMaterial } from "../../../interfaces/laborTypes";
+import { LaborTask, LaborMaterial } from "@/interfaces/laborTypes";
 
 interface Props {
   task: LaborTask;

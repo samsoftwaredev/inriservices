@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import { Customer } from "../../../interfaces/laborTypes";
+import { Customer } from "@/interfaces/laborTypes";
 import { theme } from "@/app/theme";
 
 interface Props {

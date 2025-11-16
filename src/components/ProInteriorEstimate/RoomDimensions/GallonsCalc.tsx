@@ -21,7 +21,7 @@ import {
   MeasurementUnit,
   RoomData,
   RoomDimensionsOverview,
-} from "../../../interfaces/laborTypes";
+} from "@/interfaces/laborTypes";
 import { convertMeasurement } from "@/tools/convertMeasurement";
 
 interface Props {

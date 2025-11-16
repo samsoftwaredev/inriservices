@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Typography, Grid, Chip } from "@mui/material";
-import { MeasurementUnit, RoomData } from "../../../interfaces/laborTypes";
+import { MeasurementUnit, RoomData } from "@/interfaces/laborTypes";
 import InfoTooltip from "../InfoTooltip";
 import { numberOfPaintGallons } from "../laborCalc";
 

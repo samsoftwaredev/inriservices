@@ -10,7 +10,7 @@ import {
   Grid,
   Paper,
 } from "@mui/material";
-import { LocationData, MeasurementUnit } from "../../../interfaces/laborTypes";
+import { LocationData, MeasurementUnit } from "@/interfaces/laborTypes";
 import { floorOptions } from "../laborData";
 
 interface Props {
