@@ -40,7 +40,7 @@ interface Props {
   onAddNewSection: () => void;
   onDeleteSectionClick: (sectionId: string, sectionName: string) => void;
   onRoomUpdate: (updates: {
-    id: string;
+    roomId: string;
     roomName: string;
     roomDescription: string;
     floorNumber: number;
@@ -169,7 +169,7 @@ const MainContent = ({
               roomDescription={section.description}
               measurementUnit={locationData.measurementUnit}
               floorNumber={section.floorNumber}
-              id={section.id}
+              roomId={section.id}
             />
           </Box>
         ))}

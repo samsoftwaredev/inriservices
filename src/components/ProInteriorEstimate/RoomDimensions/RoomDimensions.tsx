@@ -12,6 +12,7 @@ import InfoTooltip from "../InfoTooltip";
 import { Typography } from "@mui/material";
 
 interface Props {
+  roomId: string;
   measurementUnit: MeasurementUnit;
   isEditMode: boolean;
   roomData: RoomData;
@@ -21,6 +22,7 @@ interface Props {
 }
 
 const RoomDimensions = ({
+  roomId,
   measurementUnit,
   isEditMode,
   roomData,
@@ -36,6 +38,7 @@ const RoomDimensions = ({
           <InfoTooltip message="You record a measurement of '3x5' by stating the units and dimensions, most commonly as '3 by 5'. This means the item is 3 units wide by 5 units long." />
         </Typography>
         <RoomDimensionsEdit
+          roomId={roomId}
           measurementUnit={measurementUnit}
           roomData={roomData}
           editData={editData}

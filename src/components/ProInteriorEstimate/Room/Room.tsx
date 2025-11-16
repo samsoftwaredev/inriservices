@@ -35,7 +35,7 @@ import { calculateArea, calculatePerimeter } from "../laborCalc";
 const Room = ({
   measurementUnit,
   floorNumber,
-  id,
+  roomId,
   roomName = "Room",
   roomDescription = "A standard room",
   onRoomUpdate,
@@ -150,7 +150,7 @@ const Room = ({
 
     if (onRoomUpdate) {
       onRoomUpdate({
-        id: id,
+        roomId: roomId,
         roomName: editData.roomName,
         roomDescription: editData.roomDescription!,
         floorNumber: editData.floorNumber!,
@@ -275,7 +275,7 @@ const Room = ({
                 {displayRoomDescription}
               </Typography>
               <Typography variant="body2" color="text.secondary" gutterBottom>
-                Floor: {displayFloorNumber} | Room ID: {id}
+                Floor: {displayFloorNumber} | Room ID: {roomId}
               </Typography>
             </Box>
           </Box>
@@ -284,6 +284,7 @@ const Room = ({
         <Divider sx={{ my: 2 }} />
 
         <RoomDimensions
+          roomId={roomId}
           measurementUnit={measurementUnit}
           isEditMode={isEditMode}
           roomData={roomData}

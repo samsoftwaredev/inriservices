@@ -57,6 +57,7 @@ interface Props {
   editData: RoomDimensionsOverview;
   setEditData: React.Dispatch<React.SetStateAction<RoomDimensionsOverview>>;
   setRoomData: React.Dispatch<React.SetStateAction<RoomData>>;
+  roomId: string;
 }
 
 interface SectionConfig {
@@ -402,6 +403,7 @@ const RoomDimensionsEdit = ({
   editData,
   setEditData,
   setRoomData,
+  roomId,
 }: Props) => {
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
@@ -814,6 +816,7 @@ const RoomDimensionsEdit = ({
       {/* Paint Calculation Results */}
       <Box sx={{ mt: 4 }}>
         <GallonsCalc
+          roomId={roomId}
           roomData={roomData}
           editData={editData}
           measurementUnit={measurementUnit}

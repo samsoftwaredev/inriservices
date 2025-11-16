@@ -4,6 +4,7 @@ import { companyName, companyWebsiteURL } from "@/constants";
 import Script from "next/script";
 import { theme } from "./theme";
 import { ProInteriorEstimateProvider } from "@/context";
+import { GallonsProvider } from "@/context/useGallons";
 
 export const metadata: Metadata = {
   title: companyName,
@@ -97,7 +98,9 @@ export default function RootLayout({
         `}
       </Script>
       <ProInteriorEstimateProvider>
-        <body>{children}</body>
+        <GallonsProvider>
+          <body>{children}</body>{" "}
+        </GallonsProvider>
       </ProInteriorEstimateProvider>
     </html>
   );

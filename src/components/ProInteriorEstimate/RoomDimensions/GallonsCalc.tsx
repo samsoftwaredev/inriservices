@@ -23,8 +23,10 @@ import {
   RoomDimensionsOverview,
 } from "@/interfaces/laborTypes";
 import { convertMeasurement } from "@/tools/convertMeasurement";
+import { useGallons } from "@/context/useGallons";
 
 interface Props {
+  roomId: string;
   measurementUnit: MeasurementUnit;
   roomData: RoomData;
   editData: RoomDimensionsOverview;
@@ -38,12 +40,23 @@ interface PaintCalculation {
   hasData: boolean;
 }
 
-const GallonsCalc = ({ roomData, editData, measurementUnit }: Props) => {
-  useEffect(() => {
-    console.log(roomData, editData, measurementUnit);
-  }, [roomData, editData, measurementUnit]);
-
+const GallonsCalc = ({
+  roomData,
+  editData,
+  measurementUnit,
+  roomId,
+}: Props) => {
   const [showCalculation, setShowCalculation] = useState(false);
+  const {
+    walls,
+    setWalls,
+    crownMolding,
+    setCrownMolding,
+    chairRail,
+    setChairRail,
+    baseboard,
+    setBaseboard,
+  } = useGallons();
 
   const calculatePaintGallons = (
     perimeter: number | string,
@@ -129,6 +142,53 @@ const GallonsCalc = ({ roomData, editData, measurementUnit }: Props) => {
   const handleToggleCalculation = () => {
     setShowCalculation(!showCalculation);
   };
+
+  useEffect(() => {
+    setWalls({
+      ...walls,
+      [roomId]: {
+        height: editData.roomHeight || roomData.roomHeight || null,
+        ...calculatePaintGallons(
+          roomData.wallPerimeterCalculated,
+          roomData.wallPaintCoats,
+          editData.wallPaintCoats
+        ),
+      },
+    });
+    setCrownMolding({
+      ...crownMolding,
+      [roomId]: {
+        height: editData.roomHeight || roomData.roomHeight || null,
+        ...calculatePaintGallons(
+          roomData.crownMoldingPerimeterCalculated,
+          roomData.crownMoldingPaintCoats,
+          editData.crownMoldingPaintCoats
+        ),
+      },
+    });
+    setChairRail({
+      ...chairRail,
+      [roomId]: {
+        height: editData.roomHeight || roomData.roomHeight || null,
+        ...calculatePaintGallons(
+          roomData.chairRailPerimeterCalculated,
+          roomData.chairRailPaintCoats,
+          editData.chairRailPaintCoats
+        ),
+      },
+    });
+    setBaseboard({
+      ...baseboard,
+      [roomId]: {
+        height: editData.roomHeight || roomData.roomHeight || null,
+        ...calculatePaintGallons(
+          roomData.baseboardPerimeterCalculated,
+          roomData.baseboardPaintCoats,
+          editData.baseboardPaintCoats
+        ),
+      },
+    });
+  }, [roomData, editData]);
 
   return (
     <Grid container spacing={2} sx={{ mt: 1 }}>

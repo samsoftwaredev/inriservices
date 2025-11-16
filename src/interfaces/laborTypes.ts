@@ -92,11 +92,11 @@ export type RoomData = {
 export interface Props {
   measurementUnit: MeasurementUnit;
   floorNumber: number;
-  id: string;
+  roomId: string;
   roomName: string;
   roomDescription?: string;
   onRoomUpdate?: (updates: {
-    id: string;
+    roomId: string;
     roomName: string;
     roomDescription: string;
     floorNumber: number;
