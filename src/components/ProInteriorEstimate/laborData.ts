@@ -1,8 +1,4 @@
-import {
-  LaborTask,
-  LaborMaterial,
-  FeatureType,
-} from "../../interfaces/laborTypes";
+import { LaborTask, LaborMaterial, FeatureType } from "@/interfaces/laborTypes";
 
 export const floorOptions = [1, 2, 3, 4];
 

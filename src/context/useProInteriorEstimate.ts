@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import { Customer, LocationData, Section } from "../interfaces/laborTypes";
+import { Customer, LocationData, Section } from "@/interfaces/laborTypes";
 
 interface DeleteConfirmationState {
   open: boolean;

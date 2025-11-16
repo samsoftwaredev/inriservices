@@ -1,4 +1,4 @@
-import { MeasurementUnit } from "../interfaces/laborTypes";
+import { MeasurementUnit } from "@/interfaces/laborTypes";
 
 /**
  * Converts a measurement value from the specified unit to feet
