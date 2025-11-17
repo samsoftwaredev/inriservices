@@ -32,7 +32,8 @@ type GallonsContextType = {
   setCeiling: React.Dispatch<React.SetStateAction<RoomCollection>>;
   floor: RoomCollection;
   setFloor: React.Dispatch<React.SetStateAction<RoomCollection>>;
-  totalGallons: {
+  totalGallons: number;
+  totalGallonsBySection: {
     walls: number;
     crownMolding: number;
     chairRail: number;
@@ -63,13 +64,53 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
   const [ceiling, setCeiling] = useState<RoomCollection>({});
   const [floor, setFloor] = useState<RoomCollection>({});
 
+  const calculatePaintArea = () => {
+    const wallsValues = Object.values(walls).reduce((total, item) => {
+      return total + (item.gallons || 0);
+    }, 0);
+    const crownMoldingValues = Object.values(crownMolding).reduce(
+      (total, item) => {
+        return total + (item.gallons || 0);
+      },
+      0
+    );
+    const chairRailValues = Object.values(chairRail).reduce((total, item) => {
+      return total + (item.gallons || 0);
+    }, 0);
+    const baseboardValues = Object.values(baseboard).reduce((total, item) => {
+      return total + (item.gallons || 0);
+    }, 0);
+    const wainscotingValues = Object.values(wainscoting).reduce(
+      (total, item) => {
+        return total + (item.gallons || 0);
+      },
+      0
+    );
+    const ceilingValues = Object.values(ceiling).reduce((total, item) => {
+      return total + (item.gallons || 0);
+    }, 0);
+    const floorValues = Object.values(floor).reduce((total, item) => {
+      return total + (item.gallons || 0);
+    }, 0);
+    return (
+      wallsValues -
+      crownMoldingValues -
+      chairRailValues -
+      baseboardValues -
+      wainscotingValues +
+      ceilingValues +
+      floorValues
+    );
+  };
+
   const projectTotalGallons = (collection: RoomCollection) => {
+    calculatePaintArea();
     return Object.values(collection).reduce((total, item) => {
       return total + (item.gallons || 0);
     }, 0);
   };
 
-  const totalGallons = {
+  const totalGallonsBySection = {
     walls: projectTotalGallons(walls),
     crownMolding: projectTotalGallons(crownMolding),
     chairRail: projectTotalGallons(chairRail),
@@ -94,7 +135,8 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     setCeiling,
     floor,
     setFloor,
-    totalGallons,
+    totalGallons: calculatePaintArea(),
+    totalGallonsBySection,
     mappingNames,
   };
 

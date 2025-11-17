@@ -550,9 +550,10 @@ const RoomDimensionsEdit = ({
     if (!editData.wallPerimeter) return;
 
     const trimUpdates = {
-      baseboardPerimeter: editData.wallPerimeter,
-      crownMoldingPerimeter: editData.wallPerimeter,
-      chairRailPerimeter: editData.wallPerimeter,
+      baseboardPerimeter: editData.baseboardPerimeter,
+      crownMoldingPerimeter: editData.crownMoldingPerimeter,
+      chairRailPerimeter: editData.chairRailPerimeter,
+      wainscotingPerimeter: editData.wainscotingPerimeter,
     };
 
     setEditData((prev) => ({ ...prev, ...trimUpdates }));
@@ -565,16 +566,20 @@ const RoomDimensionsEdit = ({
         editData.roomHeight || roomData.roomHeight || 8
       ),
       baseboardPerimeter: calculatePerimeter(
-        editData.wallPerimeter,
+        editData.baseboardPerimeter,
         editData.baseboardHeight || roomData.baseboardHeight || 0.29
       ),
       crownMoldingPerimeter: calculatePerimeter(
-        editData.wallPerimeter,
+        editData.crownMoldingPerimeter,
         editData.crownMoldingHeight || roomData.crownMoldingHeight || 0.29
       ),
       chairRailPerimeter: calculatePerimeter(
-        editData.wallPerimeter,
+        editData.chairRailPerimeter,
         editData.chairRailHeight || roomData.chairRailHeight || 0.25
+      ),
+      wainscotingPerimeter: calculatePerimeter(
+        editData.wainscotingPerimeter,
+        editData.wainscotingHeight || roomData.wainscotingHeight || 3
       ),
     };
 
@@ -585,6 +590,7 @@ const RoomDimensionsEdit = ({
       baseboardPerimeterCalculated: calculations.baseboardPerimeter,
       crownMoldingPerimeterCalculated: calculations.crownMoldingPerimeter,
       chairRailPerimeterCalculated: calculations.chairRailPerimeter,
+      wainscotingPerimeterCalculated: calculations.wainscotingPerimeter,
     }));
   };
 
@@ -657,6 +663,17 @@ const RoomDimensionsEdit = ({
           }));
           break;
 
+        case "wainscotingHeight":
+          const wainscotingPerim = calculatePerimeter(
+            editData.wainscotingPerimeter,
+            numValue
+          );
+          setRoomData((prev) => ({
+            ...prev,
+            wainscotingPerimeterCalculated: wainscotingPerim,
+          }));
+          break;
+
         default:
           setRoomData((prev) => ({ ...prev, [fieldKey]: numValue }));
       }
@@ -702,6 +719,13 @@ const RoomDimensionsEdit = ({
           measurementUnit,
           handleInputChange
         ),
+      wainscotingPerimeter: () =>
+        renderPerimeterField(
+          fieldKey,
+          currentValue,
+          measurementUnit,
+          handleInputChange
+        ),
       baseboardHeight: () =>
         renderHeightField(
           fieldKey,
@@ -717,6 +741,13 @@ const RoomDimensionsEdit = ({
           handleInputChange
         ),
       chairRailHeight: () =>
+        renderHeightField(
+          fieldKey,
+          currentValue,
+          measurementUnit,
+          handleInputChange
+        ),
+      wainscotingHeight: () =>
         renderHeightField(
           fieldKey,
           currentValue,

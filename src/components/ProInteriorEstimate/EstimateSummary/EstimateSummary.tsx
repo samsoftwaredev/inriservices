@@ -15,18 +15,11 @@ import { useGallons } from "@/context/useGallons";
 import { useBuilding } from "@/context";
 
 const EstimateSummary = () => {
-  const { totalGallons, mappingNames } = useGallons();
+  const { totalGallonsBySection, totalGallons, mappingNames } = useGallons();
   const { buildingData } = useBuilding();
   const numberOfPaintGallons = {
     label: "Paint (gallons)",
-    value:
-      totalGallons.walls +
-      totalGallons.crownMolding +
-      totalGallons.chairRail +
-      totalGallons.baseboard +
-      totalGallons.wainscoting +
-      totalGallons.ceiling +
-      totalGallons.floor,
+    value: totalGallons,
     icon: <FormatColorFill />,
   };
 
@@ -113,7 +106,7 @@ const EstimateSummary = () => {
           flexDirection="column"
           textAlign="right"
         >
-          {Object.entries(totalGallons).map(([key, value], index) => (
+          {Object.entries(totalGallonsBySection).map(([key, value], index) => (
             <Typography key={index} variant="body2">
               {mappingNames[key]}: {value} gallons
             </Typography>

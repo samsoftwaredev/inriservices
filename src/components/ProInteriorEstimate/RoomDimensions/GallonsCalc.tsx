@@ -30,8 +30,8 @@ interface Props {
   measurementUnit: MeasurementUnit;
   roomData: RoomData;
   editData: RoomDimensionsOverview;
-  includeCeiling?: boolean;
-  includeFloor?: boolean;
+  includeCeiling: boolean;
+  includeFloor: boolean;
 }
 
 interface PaintCalculation {
@@ -47,8 +47,8 @@ const GallonsCalc = ({
   editData,
   measurementUnit,
   roomId,
-  includeCeiling,
-  includeFloor,
+  includeCeiling = false,
+  includeFloor = false,
 }: Props) => {
   const [showCalculation, setShowCalculation] = useState(false);
   const {
@@ -163,7 +163,7 @@ const GallonsCalc = ({
         roomData.wainscotingPaintCoats,
         editData.wainscotingPaintCoats
       ),
-      hasData: !!includeCeiling,
+      hasData: includeCeiling,
     },
     {
       name: "Floor",
@@ -173,7 +173,7 @@ const GallonsCalc = ({
         roomData.wainscotingPaintCoats,
         editData.wainscotingPaintCoats
       ),
-      hasData: !!includeFloor,
+      hasData: includeFloor,
     },
   ].filter((calc) => calc.hasData); // Only show items with data
 
@@ -242,28 +242,32 @@ const GallonsCalc = ({
         ),
       },
     });
-    setCeiling({
-      ...ceiling,
-      [roomId]: {
-        height: editData.roomHeight || roomData.roomHeight || null,
-        ...calculatePaintGallons(
-          roomData.areaCalculated,
-          roomData.ceilingPaintCoats,
-          editData.ceilingPaintCoats
-        ),
-      },
-    });
-    setFloor({
-      ...floor,
-      [roomId]: {
-        height: editData.roomHeight || roomData.roomHeight || null,
-        ...calculatePaintGallons(
-          roomData.areaCalculated,
-          roomData.floorPaintCoats,
-          editData.floorPaintCoats
-        ),
-      },
-    });
+    if (includeCeiling) {
+      setCeiling({
+        ...ceiling,
+        [roomId]: {
+          height: editData.roomHeight || roomData.roomHeight || null,
+          ...calculatePaintGallons(
+            roomData.areaCalculated,
+            roomData.ceilingPaintCoats,
+            editData.ceilingPaintCoats
+          ),
+        },
+      });
+    }
+    if (includeFloor) {
+      setFloor({
+        ...floor,
+        [roomId]: {
+          height: editData.roomHeight || roomData.roomHeight || null,
+          ...calculatePaintGallons(
+            roomData.areaCalculated,
+            roomData.floorPaintCoats,
+            editData.floorPaintCoats
+          ),
+        },
+      });
+    }
   }, [roomData, editData, includeCeiling, includeFloor]);
 
   return (
