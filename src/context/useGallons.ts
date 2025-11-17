@@ -17,6 +17,7 @@ type RoomCollection = {
 };
 
 type GallonsContextType = {
+  mappingNames: { [key: string]: string };
   walls: RoomCollection;
   setWalls: React.Dispatch<React.SetStateAction<RoomCollection>>;
   crownMolding: RoomCollection;
@@ -36,6 +37,12 @@ type GallonsContextType = {
 const GallonsContext = createContext<GallonsContextType | undefined>(undefined);
 
 export const GallonsProvider = ({ children }: GallonsProviderProps) => {
+  const mappingNames = {
+    walls: "Walls",
+    crownMolding: "Crown Molding",
+    chairRail: "Chair Rail",
+    baseboard: "Baseboard",
+  };
   const [walls, setWalls] = useState<RoomCollection>({});
   const [crownMolding, setCrownMolding] = useState<RoomCollection>({});
   const [chairRail, setChairRail] = useState<RoomCollection>({});
@@ -64,6 +71,7 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     baseboard,
     setBaseboard,
     totalGallons,
+    mappingNames,
   };
 
   return React.createElement(GallonsContext.Provider, { value }, children);

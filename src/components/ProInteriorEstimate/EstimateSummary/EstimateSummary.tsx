@@ -14,7 +14,7 @@ import {
 import { useGallons } from "@/context/useGallons";
 
 const EstimateSummary = () => {
-  const { totalGallons } = useGallons();
+  const { totalGallons, mappingNames } = useGallons();
   const numberOfPaintGallons = {
     label: "Paint (gallons)",
     value:
@@ -104,12 +104,13 @@ const EstimateSummary = () => {
         <Grid
           size={12}
           display="flex"
-          justifyContent="flex-start"
+          justifyContent="flex-end"
           flexDirection="column"
+          textAlign="right"
         >
           {Object.entries(totalGallons).map(([key, value], index) => (
             <Typography key={index} variant="body2">
-              {key}: {value} gallons
+              {mappingNames[key]}: {value} gallons
             </Typography>
           ))}
         </Grid>
