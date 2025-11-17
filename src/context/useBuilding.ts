@@ -9,10 +9,10 @@ interface DeleteConfirmationState {
   sectionName: string | null;
 }
 
-interface ProInteriorEstimateContextType {
+interface BuildingContextType {
   // State
-  locationData: LocationData;
-  setLocationData: React.Dispatch<React.SetStateAction<LocationData>>;
+  buildingData: LocationData;
+  setBuildingData: React.Dispatch<React.SetStateAction<LocationData>>;
   anchorEl: null | HTMLElement;
   setAnchorEl: React.Dispatch<React.SetStateAction<null | HTMLElement>>;
   deleteConfirmation: DeleteConfirmationState;
@@ -36,18 +36,16 @@ interface ProInteriorEstimateContextType {
   handleCostChange: (newBaseCost: number) => void;
 }
 
-const ProInteriorEstimateContext = createContext<
-  ProInteriorEstimateContextType | undefined
->(undefined);
+const BuildingContext = createContext<BuildingContextType | undefined>(
+  undefined
+);
 
-interface ProInteriorEstimateProviderProps {
+interface BuildingProviderProps {
   children: ReactNode;
 }
 
-export const ProInteriorEstimateProvider = ({
-  children,
-}: ProInteriorEstimateProviderProps) => {
-  const [locationData, setLocationData] = useState<LocationData>({
+export const BuildingProvider = ({ children }: BuildingProviderProps) => {
+  const [buildingData, setBuildingData] = useState<LocationData>({
     address: "123 Main St",
     city: "Garland",
     state: "TX",
@@ -84,12 +82,12 @@ export const ProInteriorEstimateProvider = ({
   const addNewSection = () => {
     const newSection: Section = {
       id: Date.now().toString(),
-      name: `Room ${locationData.sections.length + 1}`,
+      name: `Room ${buildingData.sections.length + 1}`,
       description: "New room section",
       floorNumber: 1,
     };
 
-    setLocationData((prev) => ({
+    setBuildingData((prev) => ({
       ...prev,
       sections: [...prev.sections, newSection],
     }));
@@ -113,7 +111,7 @@ export const ProInteriorEstimateProvider = ({
 
   const handleDeleteConfirm = () => {
     if (deleteConfirmation.sectionId) {
-      setLocationData((prev) => ({
+      setBuildingData((prev) => ({
         ...prev,
         sections: prev.sections.filter(
           (section) => section.id !== deleteConfirmation.sectionId
@@ -129,7 +127,7 @@ export const ProInteriorEstimateProvider = ({
     roomDescription: string;
     floorNumber: number;
   }) => {
-    setLocationData((prevData) => {
+    setBuildingData((prevData) => {
       const updatedSections = prevData.sections.map((section) =>
         section.id === updates.roomId
           ? {
@@ -151,10 +149,10 @@ export const ProInteriorEstimateProvider = ({
     setBaseCost(newBaseCost);
   };
 
-  const value: ProInteriorEstimateContextType = {
+  const value: BuildingContextType = {
     // State
-    locationData,
-    setLocationData,
+    buildingData,
+    setBuildingData,
     anchorEl,
     setAnchorEl,
     deleteConfirmation,
@@ -171,20 +169,14 @@ export const ProInteriorEstimateProvider = ({
     handleCostChange,
   };
 
-  return React.createElement(
-    ProInteriorEstimateContext.Provider,
-    { value },
-    children
-  );
+  return React.createElement(BuildingContext.Provider, { value }, children);
 };
 
 // Custom hook to use the context
-export const useProInteriorEstimate = (): ProInteriorEstimateContextType => {
-  const context = useContext(ProInteriorEstimateContext);
+export const useBuilding = (): BuildingContextType => {
+  const context = useContext(BuildingContext);
   if (context === undefined) {
-    throw new Error(
-      "useProInteriorEstimate must be used within a ProInteriorEstimateProvider"
-    );
+    throw new Error("useBuilding must be used within a BuildingProvider");
   }
   return context;
 };

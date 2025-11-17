@@ -26,8 +26,8 @@ import { Customer, LocationData } from "@/interfaces/laborTypes";
 import { theme } from "@/app/theme";
 
 interface Props {
-  locationData: LocationData;
-  setLocationData: React.Dispatch<React.SetStateAction<LocationData>>;
+  buildingData: LocationData;
+  setBuildingData: React.Dispatch<React.SetStateAction<LocationData>>;
   currentCustomer: Customer;
   previousCustomers: Customer[];
   anchorEl: HTMLElement | null;
@@ -50,8 +50,8 @@ interface Props {
 }
 
 const MainContent = ({
-  locationData,
-  setLocationData,
+  buildingData,
+  setBuildingData,
   currentCustomer,
   previousCustomers,
   anchorEl,
@@ -111,8 +111,8 @@ const MainContent = ({
       />
 
       <ProjectSettings
-        locationData={locationData}
-        setLocationData={setLocationData}
+        buildingData={buildingData}
+        setBuildingData={setBuildingData}
       />
 
       <Paper elevation={3} sx={{ p: 2, mb: 3 }}>
@@ -129,13 +129,13 @@ const MainContent = ({
 
         <Divider sx={{ mb: 2 }} />
 
-        {locationData.sections.length === 0 && (
+        {buildingData.sections.length === 0 && (
           <Typography variant="body2" color="text.secondary">
             No sections added yet.
           </Typography>
         )}
 
-        {locationData.sections.map((section) => (
+        {buildingData.sections.map((section) => (
           <Box key={section.id} sx={{ mb: 2, position: "relative" }}>
             <Box
               sx={{
@@ -167,7 +167,7 @@ const MainContent = ({
               onRoomUpdate={onRoomUpdate}
               roomName={section.name}
               roomDescription={section.description}
-              measurementUnit={locationData.measurementUnit}
+              measurementUnit={buildingData.measurementUnit}
               floorNumber={section.floorNumber}
               roomId={section.id}
             />

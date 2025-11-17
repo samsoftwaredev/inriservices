@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { companyName, companyWebsiteURL } from "@/constants";
 import Script from "next/script";
-import { ProInteriorEstimateProvider } from "@/context";
+import { BuildingProvider } from "@/context";
 import { GallonsProvider } from "@/context/useGallons";
 import { CustomerProvider } from "@/context/useCustomer";
 
@@ -97,13 +97,13 @@ export default function RootLayout({
           gtag('config', 'G-PVWSHF17ED');
         `}
       </Script>
-      <ProInteriorEstimateProvider>
+      <BuildingProvider>
         <GallonsProvider>
           <CustomerProvider>
             <body>{children}</body>
           </CustomerProvider>
         </GallonsProvider>
-      </ProInteriorEstimateProvider>
+      </BuildingProvider>
     </html>
   );
 }

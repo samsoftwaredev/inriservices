@@ -14,26 +14,26 @@ import { LocationData, MeasurementUnit } from "@/interfaces/laborTypes";
 import { floorOptions } from "../laborData";
 
 interface Props {
-  locationData: LocationData;
-  setLocationData: React.Dispatch<React.SetStateAction<LocationData>>;
+  buildingData: LocationData;
+  setBuildingData: React.Dispatch<React.SetStateAction<LocationData>>;
 }
 
-const ProjectSettings = ({ locationData, setLocationData }: Props) => {
+const ProjectSettings = ({ buildingData, setBuildingData }: Props) => {
   const measurementUnitList: MeasurementUnit[] = ["ft", "m", "in"];
 
   const handleMeasurementUnitChange = (
     event: SelectChangeEvent<MeasurementUnit>
   ) => {
-    setLocationData({
-      ...locationData,
+    setBuildingData({
+      ...buildingData,
       measurementUnit: event.target.value as MeasurementUnit,
     });
   };
 
   const handleFloorPlanChange = (event: SelectChangeEvent<number>) => {
     const newFloorCount = event.target.value as number;
-    setLocationData({
-      ...locationData,
+    setBuildingData({
+      ...buildingData,
       floorPlan: newFloorCount,
     });
   };
@@ -66,7 +66,7 @@ const ProjectSettings = ({ locationData, setLocationData }: Props) => {
             <Select
               labelId="measurement-unit-label"
               id="measurement-unit-select"
-              value={locationData.measurementUnit}
+              value={buildingData.measurementUnit}
               label="Measurement Unit"
               onChange={handleMeasurementUnitChange}
             >
@@ -85,7 +85,7 @@ const ProjectSettings = ({ locationData, setLocationData }: Props) => {
             <Select
               labelId="floor-plan-label"
               id="floor-plan-select"
-              value={locationData.floorPlan}
+              value={buildingData.floorPlan}
               label="Number of Floors"
               onChange={handleFloorPlanChange}
             >

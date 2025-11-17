@@ -4,11 +4,11 @@ import React from "react";
 
 import MainContent from "./MainContent";
 import DeleteSectionDialog from "./DeleteSectionDialog";
-import { useProInteriorEstimate } from "@/context/useProInteriorEstimate";
+import { useBuilding } from "@/context/useBuilding";
 import EstimateSummary from "./EstimateSummary";
 import { useCustomer } from "@/context/useCustomer";
 
-const ProInteriorEstimate = () => {
+const Building = () => {
   const {
     previousCustomers,
     setPreviousCustomers,
@@ -21,8 +21,8 @@ const ProInteriorEstimate = () => {
     handleCustomerUpdate,
   } = useCustomer();
   const {
-    locationData,
-    setLocationData,
+    buildingData,
+    setBuildingData,
     anchorEl,
     setAnchorEl,
     deleteConfirmation,
@@ -34,13 +34,13 @@ const ProInteriorEstimate = () => {
     handleDeleteConfirm,
     onRoomUpdate,
     handleCostChange,
-  } = useProInteriorEstimate();
+  } = useBuilding();
 
   return (
     <>
       <MainContent
-        locationData={locationData}
-        setLocationData={setLocationData}
+        buildingData={buildingData}
+        setBuildingData={setBuildingData}
         currentCustomer={currentCustomer}
         previousCustomers={previousCustomers}
         anchorEl={anchorEl}
@@ -67,4 +67,4 @@ const ProInteriorEstimate = () => {
   );
 };
 
-export default ProInteriorEstimate;
+export default Building;
