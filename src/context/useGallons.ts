@@ -26,11 +26,14 @@ type GallonsContextType = {
   setChairRail: React.Dispatch<React.SetStateAction<RoomCollection>>;
   baseboard: RoomCollection;
   setBaseboard: React.Dispatch<React.SetStateAction<RoomCollection>>;
+  wainscoting: RoomCollection;
+  setWainscoting: React.Dispatch<React.SetStateAction<RoomCollection>>;
   totalGallons: {
     walls: number;
     crownMolding: number;
     chairRail: number;
     baseboard: number;
+    wainscoting: number;
   };
 };
 
@@ -42,11 +45,13 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     crownMolding: "Crown Molding",
     chairRail: "Chair Rail",
     baseboard: "Baseboard",
+    wainscoting: "Wainscoting",
   };
   const [walls, setWalls] = useState<RoomCollection>({});
   const [crownMolding, setCrownMolding] = useState<RoomCollection>({});
   const [chairRail, setChairRail] = useState<RoomCollection>({});
   const [baseboard, setBaseboard] = useState<RoomCollection>({});
+  const [wainscoting, setWainscoting] = useState<RoomCollection>({});
 
   const projectTotalGallons = (collection: RoomCollection) => {
     return Object.values(collection).reduce((total, item) => {
@@ -59,6 +64,7 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     crownMolding: projectTotalGallons(crownMolding),
     chairRail: projectTotalGallons(chairRail),
     baseboard: projectTotalGallons(baseboard),
+    wainscoting: projectTotalGallons(wainscoting),
   };
 
   const value: GallonsContextType = {
@@ -70,6 +76,8 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     setChairRail,
     baseboard,
     setBaseboard,
+    wainscoting,
+    setWainscoting,
     totalGallons,
     mappingNames,
   };

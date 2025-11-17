@@ -56,6 +56,8 @@ const GallonsCalc = ({
     setChairRail,
     baseboard,
     setBaseboard,
+    wainscoting,
+    setWainscoting,
   } = useGallons();
 
   const calculatePaintGallons = (
@@ -198,6 +200,17 @@ const GallonsCalc = ({
           roomData.baseboardPerimeterCalculated,
           roomData.baseboardPaintCoats,
           editData.baseboardPaintCoats
+        ),
+      },
+    });
+    setWainscoting({
+      ...wainscoting,
+      [roomId]: {
+        height: editData.roomHeight || roomData.roomHeight || null,
+        ...calculatePaintGallons(
+          roomData.wainscotingPerimeterCalculated,
+          roomData.wainscotingPaintCoats,
+          editData.wainscotingPaintCoats
         ),
       },
     });
