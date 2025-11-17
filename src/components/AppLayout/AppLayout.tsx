@@ -6,14 +6,14 @@ import { Box, Container, CssBaseline } from "@mui/material";
 import TopAppBar from "@/components/TopAppBar";
 import { ThemeRegistry } from "@/app/ThemeRegistry";
 import { useAppNavigation } from "@/hooks";
-import { useProInteriorEstimate } from "@/context";
+import { useCustomer } from "@/context/useCustomer";
 
 const drawerWidth = 280;
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const { mobileOpen, handleDrawerToggle, handleNavigation, handleLogoClick } =
     useAppNavigation();
-  const { currentCustomer } = useProInteriorEstimate();
+  const { currentCustomer } = useCustomer();
 
   return (
     <ThemeRegistry>

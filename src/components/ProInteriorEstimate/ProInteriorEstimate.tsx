@@ -6,27 +6,28 @@ import MainContent from "./MainContent";
 import DeleteSectionDialog from "./DeleteSectionDialog";
 import { useProInteriorEstimate } from "@/context/useProInteriorEstimate";
 import EstimateSummary from "./EstimateSummary";
+import { useCustomer } from "@/context/useCustomer";
 
 const ProInteriorEstimate = () => {
   const {
-    // State
     previousCustomers,
     setPreviousCustomers,
     currentCustomer,
     setCurrentCustomer,
+    newCustomerDialogOpen,
+    setNewCustomerDialogOpen,
+    handleSelectPreviousCustomer,
+    handleSaveNewCustomer,
+    handleCustomerUpdate,
+  } = useCustomer();
+  const {
     locationData,
     setLocationData,
     anchorEl,
     setAnchorEl,
-    newCustomerDialogOpen,
-    setNewCustomerDialogOpen,
     deleteConfirmation,
     setDeleteConfirmation,
     baseCost,
-
-    handleSelectPreviousCustomer,
-    handleSaveNewCustomer,
-    handleCustomerUpdate,
     addNewSection,
     handleDeleteSectionClick,
     handleDeleteCancel,

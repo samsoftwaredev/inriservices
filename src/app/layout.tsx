@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { companyName, companyWebsiteURL } from "@/constants";
 import Script from "next/script";
-import { theme } from "./theme";
 import { ProInteriorEstimateProvider } from "@/context";
 import { GallonsProvider } from "@/context/useGallons";
+import { CustomerProvider } from "@/context/useCustomer";
 
 export const metadata: Metadata = {
   title: companyName,
@@ -99,7 +99,9 @@ export default function RootLayout({
       </Script>
       <ProInteriorEstimateProvider>
         <GallonsProvider>
-          <body>{children}</body>{" "}
+          <CustomerProvider>
+            <body>{children}</body>
+          </CustomerProvider>
         </GallonsProvider>
       </ProInteriorEstimateProvider>
     </html>
