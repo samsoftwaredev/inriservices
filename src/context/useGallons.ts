@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  convertHoursToDays,
+  estimatePaintingHours,
+} from "@/tools/estimatePaintingHours";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 type GallonsProviderProps = {
@@ -17,6 +21,7 @@ type RoomCollection = {
 };
 
 type GallonsContextType = {
+  totalDays: number;
   mappingNames: { [key: string]: string };
   walls: RoomCollection;
   setWalls: React.Dispatch<React.SetStateAction<RoomCollection>>;
@@ -32,6 +37,7 @@ type GallonsContextType = {
   setCeiling: React.Dispatch<React.SetStateAction<RoomCollection>>;
   floor: RoomCollection;
   setFloor: React.Dispatch<React.SetStateAction<RoomCollection>>;
+  totalHours: number;
   totalGallons: number;
   totalGallonsBySection: {
     walls: number;
@@ -64,42 +70,80 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
   const [ceiling, setCeiling] = useState<RoomCollection>({});
   const [floor, setFloor] = useState<RoomCollection>({});
 
+  const wallGallons = Object.values(walls).reduce((total, item) => {
+    return total + (item.gallons || 0);
+  }, 0);
+
+  const wallCoats = Object.values(walls).reduce((total, item) => {
+    return total + (item.coats || 0);
+  }, 0);
+
+  const crownMoldingGallons = Object.values(crownMolding).reduce(
+    (total, item) => {
+      return total + (item.gallons || 0);
+    },
+    0
+  );
+
+  const crownMoldingCoats = Object.values(crownMolding).reduce(
+    (total, item) => {
+      return total + (item.coats || 0);
+    },
+    0
+  );
+
+  const chairRailGallons = Object.values(chairRail).reduce((total, item) => {
+    return total + (item.gallons || 0);
+  }, 0);
+
+  const chairRailCoats = Object.values(chairRail).reduce((total, item) => {
+    return total + (item.coats || 0);
+  }, 0);
+
+  const baseboardGallons = Object.values(baseboard).reduce((total, item) => {
+    return total + (item.gallons || 0);
+  }, 0);
+
+  const baseboardCoats = Object.values(baseboard).reduce((total, item) => {
+    return total + (item.coats || 0);
+  }, 0);
+
+  const wainscotingGallons = Object.values(wainscoting).reduce(
+    (total, item) => {
+      return total + (item.gallons || 0);
+    },
+    0
+  );
+
+  const wainscotingCoats = Object.values(wainscoting).reduce((total, item) => {
+    return total + (item.coats || 0);
+  }, 0);
+
+  const ceilingCoats = Object.values(ceiling).reduce((total, item) => {
+    return total + (item.coats || 0);
+  }, 0);
+
+  const ceilingGallons = Object.values(ceiling).reduce((total, item) => {
+    return total + (item.gallons || 0);
+  }, 0);
+
+  const floorGallons = Object.values(floor).reduce((total, item) => {
+    return total + (item.gallons || 0);
+  }, 0);
+
+  const floorCoats = Object.values(floor).reduce((total, item) => {
+    return total + (item.coats || 0);
+  }, 0);
+
   const calculatePaintArea = () => {
-    const wallsValues = Object.values(walls).reduce((total, item) => {
-      return total + (item.gallons || 0);
-    }, 0);
-    const crownMoldingValues = Object.values(crownMolding).reduce(
-      (total, item) => {
-        return total + (item.gallons || 0);
-      },
-      0
-    );
-    const chairRailValues = Object.values(chairRail).reduce((total, item) => {
-      return total + (item.gallons || 0);
-    }, 0);
-    const baseboardValues = Object.values(baseboard).reduce((total, item) => {
-      return total + (item.gallons || 0);
-    }, 0);
-    const wainscotingValues = Object.values(wainscoting).reduce(
-      (total, item) => {
-        return total + (item.gallons || 0);
-      },
-      0
-    );
-    const ceilingValues = Object.values(ceiling).reduce((total, item) => {
-      return total + (item.gallons || 0);
-    }, 0);
-    const floorValues = Object.values(floor).reduce((total, item) => {
-      return total + (item.gallons || 0);
-    }, 0);
     return Math.abs(
-      wallsValues -
-        crownMoldingValues -
-        chairRailValues -
-        baseboardValues -
-        wainscotingValues +
-        ceilingValues +
-        floorValues
+      wallGallons -
+        crownMoldingGallons -
+        chairRailGallons -
+        baseboardGallons -
+        wainscotingGallons +
+        ceilingGallons +
+        floorGallons
     );
   };
 
@@ -120,6 +164,20 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     floor: projectTotalGallons(floor),
   };
 
+  const totalHours = estimatePaintingHours({
+    wallSqFt: wallGallons,
+    ceilingSqFt: ceilingGallons,
+    trimLinearFt:
+      crownMoldingGallons +
+      chairRailGallons +
+      baseboardGallons +
+      wainscotingGallons,
+    wallCoats: wallCoats,
+    ceilingCoats: ceilingCoats,
+    trimCoats:
+      baseboardCoats + chairRailCoats + crownMoldingCoats + wainscotingCoats,
+  });
+
   const value: GallonsContextType = {
     walls,
     setWalls,
@@ -138,6 +196,8 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     totalGallons: calculatePaintArea(),
     totalGallonsBySection,
     mappingNames,
+    totalHours,
+    totalDays: convertHoursToDays(totalHours),
   };
 
   return React.createElement(GallonsContext.Provider, { value }, children);

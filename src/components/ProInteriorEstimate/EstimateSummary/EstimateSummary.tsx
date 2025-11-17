@@ -15,7 +15,13 @@ import { useGallons } from "@/context/useGallons";
 import { useBuilding } from "@/context";
 
 const EstimateSummary = () => {
-  const { totalGallonsBySection, totalGallons, mappingNames } = useGallons();
+  const {
+    totalGallonsBySection,
+    totalGallons,
+    mappingNames,
+    totalHours,
+    totalDays,
+  } = useGallons();
   const { buildingData } = useBuilding();
   const numberOfPaintGallons = {
     label: "Paint (gallons)",
@@ -33,7 +39,7 @@ const EstimateSummary = () => {
     (acc, item) => acc + item.cost,
     0
   );
-  const totalHours = "36 hrs";
+
   const totalPaintGallons = numberOfPaintGallons.value;
   const totalRooms = buildingData.sections.length;
 
@@ -92,9 +98,12 @@ const EstimateSummary = () => {
         </Grid>
 
         <Grid size={12} display="flex" justifyContent="space-between">
-          <Typography variant="h6">Approximately Total Hours</Typography>
-          <Typography variant="h6">{totalHours}</Typography>
+          <Typography variant="h6">Approximately Total</Typography>
+          <Typography variant="h6">
+            {totalHours} | {totalDays} day {totalDays !== 1 ? "s" : ""}
+          </Typography>
         </Grid>
+
         <Grid size={12} display="flex" justifyContent="space-between">
           <Typography variant="h6">Paint Gallons</Typography>
           <Typography variant="h6">{totalPaintGallons}</Typography>
