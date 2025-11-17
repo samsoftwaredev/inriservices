@@ -259,6 +259,7 @@ const getStandardHeight = (fieldKey: string): string => {
   if (fieldKey.includes("baseboard") || fieldKey.includes("crown"))
     return '3.5"';
   if (fieldKey.includes("chair")) return '3"';
+  if (fieldKey.includes("wainscoting")) return '36"';
   return "";
 };
 

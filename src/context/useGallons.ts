@@ -92,14 +92,14 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     const floorValues = Object.values(floor).reduce((total, item) => {
       return total + (item.gallons || 0);
     }, 0);
-    return (
+    return Math.abs(
       wallsValues -
-      crownMoldingValues -
-      chairRailValues -
-      baseboardValues -
-      wainscotingValues +
-      ceilingValues +
-      floorValues
+        crownMoldingValues -
+        chairRailValues -
+        baseboardValues -
+        wainscotingValues +
+        ceilingValues +
+        floorValues
     );
   };
 
