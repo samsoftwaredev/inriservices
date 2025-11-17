@@ -455,7 +455,7 @@ const renderAreaField = (
             color={fieldKey === "ceilingArea" ? "primary" : "success"}
           />
         }
-        label=""
+        label="Paint"
         sx={{ margin: 0 }}
       />
     </Box>

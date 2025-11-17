@@ -24,7 +24,9 @@ const EstimateSummary = () => {
       totalGallons.crownMolding +
       totalGallons.chairRail +
       totalGallons.baseboard +
-      totalGallons.wainscoting,
+      totalGallons.wainscoting +
+      totalGallons.ceiling +
+      totalGallons.floor,
     icon: <FormatColorFill />,
   };
 

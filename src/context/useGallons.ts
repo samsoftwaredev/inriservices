@@ -38,8 +38,8 @@ type GallonsContextType = {
     chairRail: number;
     baseboard: number;
     wainscoting: number;
-    ceiling?: number;
-    floor?: number;
+    ceiling: number;
+    floor: number;
   };
 };
 
@@ -75,6 +75,8 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     chairRail: projectTotalGallons(chairRail),
     baseboard: projectTotalGallons(baseboard),
     wainscoting: projectTotalGallons(wainscoting),
+    ceiling: projectTotalGallons(ceiling),
+    floor: projectTotalGallons(floor),
   };
 
   const value: GallonsContextType = {
