@@ -19,6 +19,18 @@ export interface LaborTask {
   laborMaterials?: LaborMaterial[];
 }
 
+type pictureRailDimensions = {
+  pictureRailPerimeter: string;
+  pictureRailHeight: number;
+  pictureRailPaintCoats?: number;
+};
+
+type wainscotingDimensions = {
+  wainscotingPerimeter: string;
+  wainscotingHeight: number;
+  wainscotingPaintCoats?: number;
+};
+
 type chairRailDimensions = {
   chairRailPerimeter: string;
   chairRailHeight: number;
@@ -51,7 +63,8 @@ export type RoomDimensionsOverview = {
 } & WallDimensions &
   BaseboardDimensions &
   chairRailDimensions &
-  crownMoldingDimensions;
+  crownMoldingDimensions &
+  wainscotingDimensions;
 
 export type RoomFeature = {
   id: string;
@@ -72,6 +85,7 @@ export type RoomData = {
   baseboardPerimeterCalculated: number;
   chairRailPerimeterCalculated: number;
   crownMoldingPerimeterCalculated: number;
+  wainscotingPerimeterCalculated: number;
   floorNumber?: number;
   roomHeight: number;
   features: {
@@ -83,11 +97,13 @@ export type RoomData = {
     chairRail: RoomFeature[];
     baseboard: RoomFeature[];
     wainscoting: RoomFeature[];
+    other: RoomFeature[];
   };
 } & WallDimensions &
   BaseboardDimensions &
   chairRailDimensions &
-  crownMoldingDimensions;
+  crownMoldingDimensions &
+  wainscotingDimensions;
 
 export interface Props {
   measurementUnit: MeasurementUnit;

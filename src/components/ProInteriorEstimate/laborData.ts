@@ -11,6 +11,7 @@ export const featureTypes: { value: FeatureType; label: string }[] = [
   { value: "chairRail", label: "Chair Rail" },
   { value: "baseboard", label: "Baseboard" },
   { value: "wainscoting", label: "Wainscoting" },
+  { value: "other", label: "Other" },
 ];
 
 export const laborMaterials: Record<string, LaborMaterial> = {

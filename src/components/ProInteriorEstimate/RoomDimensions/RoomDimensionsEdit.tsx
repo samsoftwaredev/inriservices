@@ -36,7 +36,8 @@ import {
   Brush as BrushIcon,
   ViewInAr as ViewInArIcon,
   Speed as SpeedIcon,
-  Rectangle as CrownMoldingIcon,
+  VerticalAlignTop as CrownMoldingIcon,
+  Rectangle as WainscotingIcon,
   Chair as ChairIcon,
 } from "@mui/icons-material";
 import {
@@ -162,7 +163,8 @@ const createSections = (): SectionConfig[] => [
     id: "baseboard",
     title: "Baseboard",
     icon: <ArchitectureIcon />,
-    description: "Baseboard trim",
+    description:
+      "A narrow wooden board running along the base of an interior wall.",
     color: "secondary",
     fields: ["baseboardPerimeter", "baseboardHeight"],
   },
@@ -170,15 +172,26 @@ const createSections = (): SectionConfig[] => [
     id: "crownMolding",
     title: "Crown Molding",
     icon: <CrownMoldingIcon />,
-    description: "Crown molding trim",
+    description:
+      "A decorative trim installed where an interior wall meets the ceiling",
     color: "secondary",
     fields: ["crownMoldingPerimeter", "crownMoldingHeight"],
+  },
+  {
+    id: "wainscoting",
+    title: "Wainscoting",
+    icon: <WainscotingIcon />,
+    description:
+      "Wooden paneling that lines the lower part of the walls of a room.",
+    color: "secondary",
+    fields: ["wainscotingPerimeter", "wainscotingHeight"],
   },
   {
     id: "chairRail",
     title: "Chair Rail",
     icon: <ChairIcon />,
-    description: "Chair rail trim",
+    description:
+      "A horizontal trim installed typically between 32 and 36 inches from the floor",
     color: "secondary",
     fields: ["chairRailPerimeter", "chairRailHeight"],
   },
@@ -193,6 +206,7 @@ const createSections = (): SectionConfig[] => [
       "baseboardPaintCoats",
       "crownMoldingPaintCoats",
       "chairRailPaintCoats",
+      "wainscotingPaintCoats",
     ],
   },
   {
@@ -213,8 +227,10 @@ const getFieldIcon = (field: string): React.ReactNode => {
     baseboardHeight: "🏠",
     crownMoldingPerimeter: "👑",
     crownMoldingHeight: "👑",
-    chairRailPerimeter: "📏",
-    chairRailHeight: "📏",
+    chairRailPerimeter: "🪑",
+    chairRailHeight: "🪑",
+    wainscotingPerimeter: "📏",
+    wainscotingHeight: "📏",
   };
 
   return iconMap[field] || <BrushIcon sx={{ color: "action.active" }} />;
@@ -228,6 +244,8 @@ const getFieldDisplayName = (fieldKey: string): string => {
     crownMoldingHeight: "Crown Molding",
     chairRailPerimeter: "Chair Rail",
     chairRailHeight: "Chair Rail",
+    wainscotingPerimeter: "Wainscoting",
+    wainscotingHeight: "Wainscoting",
   };
 
   return nameMap[fieldKey] || fieldKey;

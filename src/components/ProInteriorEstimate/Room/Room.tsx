@@ -62,7 +62,12 @@ const Room = ({
     crownMoldingHeight: 0,
     crownMoldingPaintCoats: 1,
     crownMoldingPerimeterCalculated: 0,
-
+    // wainscotingDimensions
+    wainscotingPerimeter: "",
+    wainscotingHeight: 0,
+    wainscotingPaintCoats: 1,
+    wainscotingPerimeterCalculated: 0,
+    // RoomData
     area: "",
     areaCalculated: 10,
     floorNumber: floorNumber,
@@ -76,6 +81,7 @@ const Room = ({
       chairRail: [],
       baseboard: [],
       wainscoting: [],
+      other: [],
     },
   });
 
@@ -96,6 +102,9 @@ const Room = ({
     crownMoldingPerimeter: "",
     crownMoldingHeight: 0,
     crownMoldingPaintCoats: 1,
+    wainscotingPerimeter: "",
+    wainscotingHeight: 0,
+    wainscotingPaintCoats: 1,
   });
 
   const handleEditClick = () => {
@@ -116,6 +125,9 @@ const Room = ({
       crownMoldingPerimeter: roomData.crownMoldingPerimeter,
       crownMoldingHeight: roomData.crownMoldingHeight,
       crownMoldingPaintCoats: roomData.crownMoldingPaintCoats,
+      wainscotingPerimeter: roomData.wainscotingPerimeter,
+      wainscotingHeight: roomData.wainscotingHeight,
+      wainscotingPaintCoats: roomData.wainscotingPaintCoats,
     });
     setIsEditMode(true);
   };
@@ -176,6 +188,9 @@ const Room = ({
       crownMoldingPerimeter: roomData.crownMoldingPerimeter,
       crownMoldingHeight: roomData.crownMoldingHeight,
       crownMoldingPaintCoats: roomData.crownMoldingPaintCoats,
+      wainscotingPerimeter: roomData.wainscotingPerimeter,
+      wainscotingHeight: roomData.wainscotingHeight,
+      wainscotingPaintCoats: roomData.wainscotingPaintCoats,
     });
     setIsEditMode(false);
   };

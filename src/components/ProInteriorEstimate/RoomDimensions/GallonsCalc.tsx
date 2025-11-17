@@ -132,6 +132,19 @@ const GallonsCalc = ({
         roomData.baseboardPerimeterCalculated > 0
       ),
     },
+    {
+      name: "Wainscoting",
+      perimeter: roomData.wainscotingPerimeterCalculated || 0,
+      ...calculatePaintGallons(
+        roomData.wainscotingPerimeterCalculated,
+        roomData.wainscotingPaintCoats,
+        editData.wainscotingPaintCoats
+      ),
+      hasData: !!(
+        roomData.wainscotingPerimeterCalculated &&
+        roomData.wainscotingPerimeterCalculated > 0
+      ),
+    },
   ].filter((calc) => calc.hasData); // Only show items with data
 
   const totalPaintGallons = paintCalculations.reduce(
