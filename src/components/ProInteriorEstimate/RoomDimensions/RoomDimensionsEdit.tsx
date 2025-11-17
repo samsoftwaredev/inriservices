@@ -22,6 +22,8 @@ import {
   Avatar,
   Paper,
   Tooltip,
+  Switch,
+  FormControlLabel,
 } from "@mui/material";
 import {
   ExpandMore as ExpandMoreIcon,
@@ -207,13 +209,15 @@ const createSections = (): SectionConfig[] => [
       "crownMoldingPaintCoats",
       "chairRailPaintCoats",
       "wainscotingPaintCoats",
+      "ceilingPaintCoats",
+      "floorPaintCoats",
     ],
   },
   {
     id: "calculated",
     title: "Calculated Areas",
     icon: <CalculateIcon />,
-    description: "Auto-calculated measurements",
+    description: "Auto-calculated measurements with optional ceiling/floor",
     color: "success",
     fields: ["ceilingArea", "floorArea"],
   },
@@ -388,26 +392,110 @@ const renderPaintCoatsField = (
 const renderAreaField = (
   fieldKey: string,
   roomData: RoomData,
-  measurementUnit: MeasurementUnit
+  measurementUnit: MeasurementUnit,
+  includeInEstimate: boolean,
+  onToggleInclude: (include: boolean) => void
 ) => (
   <Paper
     sx={{
       p: 2,
-      bgcolor: "success.50",
+      bgcolor: includeInEstimate
+        ? fieldKey === "ceilingArea"
+          ? "primary.50"
+          : "success.50"
+        : "grey.50",
       borderRadius: 2,
-      border: "1px solid",
-      borderColor: "success.200",
+      border: "2px solid",
+      borderColor: includeInEstimate
+        ? fieldKey === "ceilingArea"
+          ? "primary.200"
+          : "success.200"
+        : "grey.200",
+      transition: "all 0.3s ease",
     }}
   >
-    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-      <SquareFootIcon sx={{ color: "success.main", mr: 1 }} />
-      <Typography variant="subtitle2" color="success.main">
-        {fieldKey === "ceilingArea" ? "Ceiling Area" : "Floor Area"}
-      </Typography>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        mb: 1,
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <SquareFootIcon
+          sx={{
+            color: includeInEstimate
+              ? fieldKey === "ceilingArea"
+                ? "primary.main"
+                : "success.main"
+              : "text.disabled",
+            mr: 1,
+          }}
+        />
+        <Typography
+          variant="subtitle2"
+          color={
+            includeInEstimate
+              ? fieldKey === "ceilingArea"
+                ? "primary.main"
+                : "success.main"
+              : "text.disabled"
+          }
+        >
+          {fieldKey === "ceilingArea" ? "Ceiling Area" : "Floor Area"}
+        </Typography>
+      </Box>
+      <FormControlLabel
+        control={
+          <Switch
+            checked={includeInEstimate}
+            onChange={(e) => onToggleInclude(e.target.checked)}
+            size="small"
+            color={fieldKey === "ceilingArea" ? "primary" : "success"}
+          />
+        }
+        label=""
+        sx={{ margin: 0 }}
+      />
     </Box>
-    <Typography variant="h5" fontWeight="bold" color="success.main">
+
+    <Typography
+      variant="h5"
+      fontWeight="bold"
+      color={
+        includeInEstimate
+          ? fieldKey === "ceilingArea"
+            ? "primary.main"
+            : "success.main"
+          : "text.disabled"
+      }
+      gutterBottom
+    >
       {roomData.areaCalculated?.toFixed(1) || 0} {measurementUnit}²
     </Typography>
+
+    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+      <Chip
+        label={includeInEstimate ? "Included" : "Not included"}
+        size="small"
+        color={
+          includeInEstimate
+            ? fieldKey === "ceilingArea"
+              ? "primary"
+              : "success"
+            : "default"
+        }
+        variant={includeInEstimate ? "filled" : "outlined"}
+      />
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        sx={{ fontStyle: "italic" }}
+      >
+        in estimate
+      </Typography>
+    </Box>
   </Paper>
 );
 
@@ -426,6 +514,10 @@ const RoomDimensionsEdit = ({
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
   >(DEFAULT_SECTION_STATE);
+
+  // State for ceiling and floor inclusion
+  const [includeCeiling, setIncludeCeiling] = useState(false);
+  const [includeFloor, setIncludeFloor] = useState(false);
 
   const presets = createPresets(measurementUnit);
   const sections = createSections();
@@ -637,10 +729,30 @@ const RoomDimensionsEdit = ({
         renderPaintCoatsField(fieldKey, currentValue, handleInputChange),
       crownMoldingPaintCoats: () =>
         renderPaintCoatsField(fieldKey, currentValue, handleInputChange),
+      wainscotingPaintCoats: () =>
+        renderPaintCoatsField(fieldKey, currentValue, handleInputChange),
       chairRailPaintCoats: () =>
         renderPaintCoatsField(fieldKey, currentValue, handleInputChange),
-      ceilingArea: () => renderAreaField(fieldKey, roomData, measurementUnit),
-      floorArea: () => renderAreaField(fieldKey, roomData, measurementUnit),
+      ceilingPaintCoats: () =>
+        renderPaintCoatsField(fieldKey, currentValue, handleInputChange),
+      floorPaintCoats: () =>
+        renderPaintCoatsField(fieldKey, currentValue, handleInputChange),
+      ceilingArea: () =>
+        renderAreaField(
+          fieldKey,
+          roomData,
+          measurementUnit,
+          includeCeiling,
+          setIncludeCeiling
+        ),
+      floorArea: () =>
+        renderAreaField(
+          fieldKey,
+          roomData,
+          measurementUnit,
+          includeFloor,
+          setIncludeFloor
+        ),
     };
 
     return fieldMap[fieldKey]?.() || null;
@@ -821,7 +933,17 @@ const RoomDimensionsEdit = ({
                 <Collapse in={expandedSections[section.id]} timeout={300}>
                   <CardContent sx={{ pt: 0 }}>
                     {section.fields.map((field) => (
-                      <Box key={field}>{renderField(field)}</Box>
+                      <Box
+                        key={field}
+                        sx={{
+                          mb:
+                            field === section.fields[section.fields.length - 1]
+                              ? 0
+                              : 2,
+                        }}
+                      >
+                        {renderField(field)}
+                      </Box>
                     ))}
                   </CardContent>
                 </Collapse>
@@ -834,6 +956,8 @@ const RoomDimensionsEdit = ({
       {/* Paint Calculation Results */}
       <Box sx={{ mt: 4 }}>
         <GallonsCalc
+          includeCeiling={includeCeiling}
+          includeFloor={includeFloor}
           roomId={roomId}
           roomData={roomData}
           editData={editData}

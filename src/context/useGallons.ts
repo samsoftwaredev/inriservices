@@ -28,12 +28,18 @@ type GallonsContextType = {
   setBaseboard: React.Dispatch<React.SetStateAction<RoomCollection>>;
   wainscoting: RoomCollection;
   setWainscoting: React.Dispatch<React.SetStateAction<RoomCollection>>;
+  ceiling: RoomCollection;
+  setCeiling: React.Dispatch<React.SetStateAction<RoomCollection>>;
+  floor: RoomCollection;
+  setFloor: React.Dispatch<React.SetStateAction<RoomCollection>>;
   totalGallons: {
     walls: number;
     crownMolding: number;
     chairRail: number;
     baseboard: number;
     wainscoting: number;
+    ceiling?: number;
+    floor?: number;
   };
 };
 
@@ -46,12 +52,16 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     chairRail: "Chair Rail",
     baseboard: "Baseboard",
     wainscoting: "Wainscoting",
+    ceiling: "Ceiling",
+    floor: "Floor",
   };
   const [walls, setWalls] = useState<RoomCollection>({});
   const [crownMolding, setCrownMolding] = useState<RoomCollection>({});
   const [chairRail, setChairRail] = useState<RoomCollection>({});
   const [baseboard, setBaseboard] = useState<RoomCollection>({});
   const [wainscoting, setWainscoting] = useState<RoomCollection>({});
+  const [ceiling, setCeiling] = useState<RoomCollection>({});
+  const [floor, setFloor] = useState<RoomCollection>({});
 
   const projectTotalGallons = (collection: RoomCollection) => {
     return Object.values(collection).reduce((total, item) => {
@@ -78,6 +88,10 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     setBaseboard,
     wainscoting,
     setWainscoting,
+    ceiling,
+    setCeiling,
+    floor,
+    setFloor,
     totalGallons,
     mappingNames,
   };

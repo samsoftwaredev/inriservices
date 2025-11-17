@@ -55,6 +55,14 @@ type WallDimensions = {
   wallPaintCoats?: number;
 };
 
+type FloorDimensions = {
+  floorPaintCoats?: number;
+};
+
+type CeilingDimensions = {
+  ceilingPaintCoats?: number;
+};
+
 export type RoomDimensionsOverview = {
   area: string;
   roomName: string;
@@ -64,7 +72,9 @@ export type RoomDimensionsOverview = {
   BaseboardDimensions &
   chairRailDimensions &
   crownMoldingDimensions &
-  wainscotingDimensions;
+  wainscotingDimensions &
+  FloorDimensions &
+  CeilingDimensions;
 
 export type RoomFeature = {
   id: string;
@@ -103,7 +113,9 @@ export type RoomData = {
   BaseboardDimensions &
   chairRailDimensions &
   crownMoldingDimensions &
-  wainscotingDimensions;
+  wainscotingDimensions &
+  FloorDimensions &
+  CeilingDimensions;
 
 export interface Props {
   measurementUnit: MeasurementUnit;

@@ -12,9 +12,11 @@ import {
   Work,
 } from "@mui/icons-material";
 import { useGallons } from "@/context/useGallons";
+import { useBuilding } from "@/context";
 
 const EstimateSummary = () => {
   const { totalGallons, mappingNames } = useGallons();
+  const { buildingData } = useBuilding();
   const numberOfPaintGallons = {
     label: "Paint (gallons)",
     value:
@@ -38,7 +40,7 @@ const EstimateSummary = () => {
   );
   const totalHours = "36 hrs";
   const totalPaintGallons = numberOfPaintGallons.value;
-  const totalRooms = "3";
+  const totalRooms = buildingData.sections.length;
 
   return (
     <Paper

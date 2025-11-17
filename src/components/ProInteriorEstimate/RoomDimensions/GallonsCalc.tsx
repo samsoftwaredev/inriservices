@@ -30,6 +30,8 @@ interface Props {
   measurementUnit: MeasurementUnit;
   roomData: RoomData;
   editData: RoomDimensionsOverview;
+  includeCeiling?: boolean;
+  includeFloor?: boolean;
 }
 
 interface PaintCalculation {
@@ -45,6 +47,8 @@ const GallonsCalc = ({
   editData,
   measurementUnit,
   roomId,
+  includeCeiling,
+  includeFloor,
 }: Props) => {
   const [showCalculation, setShowCalculation] = useState(false);
   const {
@@ -58,6 +62,10 @@ const GallonsCalc = ({
     setBaseboard,
     wainscoting,
     setWainscoting,
+    ceiling,
+    setCeiling,
+    floor,
+    setFloor,
   } = useGallons();
 
   const calculatePaintGallons = (
@@ -147,6 +155,26 @@ const GallonsCalc = ({
         roomData.wainscotingPerimeterCalculated > 0
       ),
     },
+    {
+      name: "Ceiling",
+      perimeter: roomData.areaCalculated || 0,
+      ...calculatePaintGallons(
+        roomData.areaCalculated,
+        roomData.wainscotingPaintCoats,
+        editData.wainscotingPaintCoats
+      ),
+      hasData: !!includeCeiling,
+    },
+    {
+      name: "Floor",
+      perimeter: roomData.areaCalculated || 0,
+      ...calculatePaintGallons(
+        roomData.areaCalculated,
+        roomData.wainscotingPaintCoats,
+        editData.wainscotingPaintCoats
+      ),
+      hasData: !!includeFloor,
+    },
   ].filter((calc) => calc.hasData); // Only show items with data
 
   const totalPaintGallons = paintCalculations.reduce(
@@ -214,7 +242,29 @@ const GallonsCalc = ({
         ),
       },
     });
-  }, [roomData, editData]);
+    setCeiling({
+      ...ceiling,
+      [roomId]: {
+        height: editData.roomHeight || roomData.roomHeight || null,
+        ...calculatePaintGallons(
+          roomData.areaCalculated,
+          roomData.ceilingPaintCoats,
+          editData.ceilingPaintCoats
+        ),
+      },
+    });
+    setFloor({
+      ...floor,
+      [roomId]: {
+        height: editData.roomHeight || roomData.roomHeight || null,
+        ...calculatePaintGallons(
+          roomData.areaCalculated,
+          roomData.floorPaintCoats,
+          editData.floorPaintCoats
+        ),
+      },
+    });
+  }, [roomData, editData, includeCeiling, includeFloor]);
 
   return (
     <Grid container spacing={2} sx={{ mt: 1 }}>
