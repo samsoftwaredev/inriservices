@@ -1,5 +1,6 @@
 "use client";
 
+import { numberOfPaintGallons } from "@/components/ProInteriorEstimate/laborCalc";
 import {
   convertHoursToDays,
   estimatePaintingHours,
@@ -13,6 +14,7 @@ type GallonsProviderProps = {
 type FeatureDetails = {
   coats: number | null;
   gallons: number | null;
+  perimeter: number | null;
   height: number | null;
 };
 
@@ -70,17 +72,17 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
   const [ceiling, setCeiling] = useState<RoomCollection>({});
   const [floor, setFloor] = useState<RoomCollection>({});
 
-  const wallGallons = Object.values(walls).reduce((total, item) => {
-    return total + (item.gallons || 0);
+  const wallPerimeter = Object.values(walls).reduce((total, item) => {
+    return total + (item.perimeter || 0);
   }, 0);
 
   const wallCoats = Object.values(walls).reduce((total, item) => {
     return total + (item.coats || 0);
   }, 0);
 
-  const crownMoldingGallons = Object.values(crownMolding).reduce(
+  const crownMoldingPerimeter = Object.values(crownMolding).reduce(
     (total, item) => {
-      return total + (item.gallons || 0);
+      return total + (item.perimeter || 0);
     },
     0
   );
@@ -92,25 +94,25 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     0
   );
 
-  const chairRailGallons = Object.values(chairRail).reduce((total, item) => {
-    return total + (item.gallons || 0);
+  const chairRailPerimeter = Object.values(chairRail).reduce((total, item) => {
+    return total + (item.perimeter || 0);
   }, 0);
 
   const chairRailCoats = Object.values(chairRail).reduce((total, item) => {
     return total + (item.coats || 0);
   }, 0);
 
-  const baseboardGallons = Object.values(baseboard).reduce((total, item) => {
-    return total + (item.gallons || 0);
+  const baseboardPerimeter = Object.values(baseboard).reduce((total, item) => {
+    return total + (item.perimeter || 0);
   }, 0);
 
   const baseboardCoats = Object.values(baseboard).reduce((total, item) => {
     return total + (item.coats || 0);
   }, 0);
 
-  const wainscotingGallons = Object.values(wainscoting).reduce(
+  const wainscotingPerimeter = Object.values(wainscoting).reduce(
     (total, item) => {
-      return total + (item.gallons || 0);
+      return total + (item.perimeter || 0);
     },
     0
   );
@@ -123,55 +125,52 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     return total + (item.coats || 0);
   }, 0);
 
-  const ceilingGallons = Object.values(ceiling).reduce((total, item) => {
-    return total + (item.gallons || 0);
+  const ceilingPerimeter = Object.values(ceiling).reduce((total, item) => {
+    return total + (item.perimeter || 0);
   }, 0);
 
-  const floorGallons = Object.values(floor).reduce((total, item) => {
-    return total + (item.gallons || 0);
+  const floorPerimeter = Object.values(floor).reduce((total, item) => {
+    return total + (item.perimeter || 0);
   }, 0);
 
   const floorCoats = Object.values(floor).reduce((total, item) => {
     return total + (item.coats || 0);
   }, 0);
 
-  const calculatePaintArea = () => {
-    return Math.abs(
-      wallGallons -
-        crownMoldingGallons -
-        chairRailGallons -
-        baseboardGallons -
-        wainscotingGallons +
-        ceilingGallons +
-        floorGallons
-    );
+  const totalProjectGallons = (
+    areaPerimeter: number = wallPerimeter -
+      crownMoldingPerimeter -
+      chairRailPerimeter -
+      baseboardPerimeter -
+      wainscotingPerimeter +
+      ceilingPerimeter +
+      floorPerimeter
+  ) => {
+    return numberOfPaintGallons(Math.abs(areaPerimeter));
   };
 
-  const projectTotalGallons = (collection: RoomCollection) => {
-    calculatePaintArea();
-    return Object.values(collection).reduce((total, item) => {
-      return total + (item.gallons || 0);
-    }, 0);
+  const totalGallonsPerArea = (areaPerimeter: number) => {
+    return numberOfPaintGallons(areaPerimeter);
   };
 
   const totalGallonsBySection = {
-    walls: projectTotalGallons(walls),
-    crownMolding: projectTotalGallons(crownMolding),
-    chairRail: projectTotalGallons(chairRail),
-    baseboard: projectTotalGallons(baseboard),
-    wainscoting: projectTotalGallons(wainscoting),
-    ceiling: projectTotalGallons(ceiling),
-    floor: projectTotalGallons(floor),
+    walls: totalGallonsPerArea(wallPerimeter),
+    crownMolding: totalGallonsPerArea(crownMoldingPerimeter),
+    chairRail: totalGallonsPerArea(chairRailPerimeter),
+    baseboard: totalGallonsPerArea(baseboardPerimeter),
+    wainscoting: totalGallonsPerArea(wainscotingPerimeter),
+    ceiling: totalGallonsPerArea(ceilingPerimeter),
+    floor: totalGallonsPerArea(floorPerimeter),
   };
 
   const totalHours = estimatePaintingHours({
-    wallSqFt: wallGallons,
-    ceilingSqFt: ceilingGallons,
+    wallSqFt: wallPerimeter,
+    ceilingSqFt: ceilingPerimeter,
     trimLinearFt:
-      crownMoldingGallons +
-      chairRailGallons +
-      baseboardGallons +
-      wainscotingGallons,
+      crownMoldingPerimeter +
+      chairRailPerimeter +
+      baseboardPerimeter +
+      wainscotingPerimeter,
     wallCoats: wallCoats,
     ceilingCoats: ceilingCoats,
     trimCoats:
@@ -193,7 +192,7 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     setCeiling,
     floor,
     setFloor,
-    totalGallons: calculatePaintArea(),
+    totalGallons: totalProjectGallons(),
     totalGallonsBySection,
     mappingNames,
     totalHours,

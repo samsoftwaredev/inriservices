@@ -73,7 +73,7 @@ const GallonsCalc = ({
     coatsFromRoomData: number | undefined,
     coatsFromEditData: number | undefined,
     defaultCoats: number = 2
-  ) => {
+  ): { gallons: number; coats: number } => {
     const numPerimeter =
       typeof perimeter === "string" ? parseFloat(perimeter) : perimeter;
     if (!numPerimeter || numPerimeter <= 0) {
@@ -190,6 +190,7 @@ const GallonsCalc = ({
     setWalls({
       ...walls,
       [roomId]: {
+        perimeter: roomData.baseboardPerimeterCalculated || 0,
         height: editData.roomHeight || roomData.roomHeight || null,
         ...calculatePaintGallons(
           roomData.wallPerimeterCalculated,
@@ -201,6 +202,7 @@ const GallonsCalc = ({
     setCrownMolding({
       ...crownMolding,
       [roomId]: {
+        perimeter: roomData.crownMoldingPerimeterCalculated || 0,
         height: editData.roomHeight || roomData.roomHeight || null,
         ...calculatePaintGallons(
           roomData.crownMoldingPerimeterCalculated,
@@ -212,6 +214,7 @@ const GallonsCalc = ({
     setChairRail({
       ...chairRail,
       [roomId]: {
+        perimeter: roomData.chairRailPerimeterCalculated || 0,
         height: editData.roomHeight || roomData.roomHeight || null,
         ...calculatePaintGallons(
           roomData.chairRailPerimeterCalculated,
@@ -223,6 +226,7 @@ const GallonsCalc = ({
     setBaseboard({
       ...baseboard,
       [roomId]: {
+        perimeter: roomData.baseboardPerimeterCalculated || 0,
         height: editData.roomHeight || roomData.roomHeight || null,
         ...calculatePaintGallons(
           roomData.baseboardPerimeterCalculated,
@@ -234,6 +238,7 @@ const GallonsCalc = ({
     setWainscoting({
       ...wainscoting,
       [roomId]: {
+        perimeter: roomData.wainscotingPerimeterCalculated || 0,
         height: editData.roomHeight || roomData.roomHeight || null,
         ...calculatePaintGallons(
           roomData.wainscotingPerimeterCalculated,
@@ -246,6 +251,7 @@ const GallonsCalc = ({
       setCeiling({
         ...ceiling,
         [roomId]: {
+          perimeter: roomData.areaCalculated || 0,
           height: editData.roomHeight || roomData.roomHeight || null,
           ...calculatePaintGallons(
             roomData.areaCalculated,
@@ -259,6 +265,7 @@ const GallonsCalc = ({
       setFloor({
         ...floor,
         [roomId]: {
+          perimeter: roomData.areaCalculated || 0,
           height: editData.roomHeight || roomData.roomHeight || null,
           ...calculatePaintGallons(
             roomData.areaCalculated,

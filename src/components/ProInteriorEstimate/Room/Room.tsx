@@ -154,6 +154,19 @@ const Room = ({
         editData.wallPerimeter,
         editData.roomHeight
       ),
+      wainscotingPerimeterCalculated: calculatePerimeter(
+        editData.wainscotingPerimeter,
+        editData.roomHeight
+      ),
+      baseboardHeight: editData.baseboardHeight,
+      wallPaintCoats: editData.wallPaintCoats,
+      baseboardPaintCoats: editData.baseboardPaintCoats,
+      chairRailHeight: editData.chairRailHeight,
+      chairRailPaintCoats: editData.chairRailPaintCoats,
+      crownMoldingHeight: editData.crownMoldingHeight,
+      crownMoldingPaintCoats: editData.crownMoldingPaintCoats,
+      wainscotingHeight: editData.wainscotingHeight,
+      wainscotingPaintCoats: editData.wainscotingPaintCoats,
       roomHeight: editData.roomHeight,
       floorNumber: editData.floorNumber,
     });
