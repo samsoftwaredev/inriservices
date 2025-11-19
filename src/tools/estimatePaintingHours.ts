@@ -1,3 +1,7 @@
+import { MeasurementUnit } from "@/interfaces/laborTypes";
+import { convertToFeet } from "./convertMeasurement";
+import { numberOfPaintGallons } from "@/components/ProInteriorEstimate/laborCalc";
+
 export function estimatePaintingHours({
   wallSqFt = 0,
   ceilingSqFt = 0,
@@ -21,3 +25,43 @@ export function estimatePaintingHours({
 export function convertHoursToDays(hours: number, hoursPerDay: number = 8) {
   return Math.ceil(hours / hoursPerDay);
 }
+
+export const calculatePaintGallons = (
+  perimeter: number | string,
+  coatsFromEditData: number | undefined,
+  measurementUnit: MeasurementUnit,
+  defaultCoats: number = 1
+): number => {
+  const numPerimeter =
+    typeof perimeter === "string" ? parseFloat(perimeter) : perimeter;
+  if (!numPerimeter || numPerimeter <= 0) {
+    return 0;
+  }
+
+  const coats = coatsFromEditData || defaultCoats;
+  const convertedToFeet = convertToFeet(numPerimeter * coats, measurementUnit);
+  const baseGallons = numberOfPaintGallons(convertedToFeet);
+  return baseGallons;
+};
+
+export const calculatePaintGallonsForArea = (
+  area: number | string,
+  coatsFromEditData: number | undefined,
+  measurementUnit: MeasurementUnit,
+  defaultCoats: number = 1
+): number => {
+  let inchesSquared = false;
+  if (measurementUnit === "in") inchesSquared = true;
+
+  const numArea = typeof area === "string" ? parseFloat(area) : area;
+  if (!numArea || numArea <= 0) {
+    return 0;
+  }
+
+  const coats = coatsFromEditData || defaultCoats;
+
+  const convertedToFeet =
+    convertToFeet(numArea, measurementUnit, inchesSquared) * coats;
+  const baseGallons = numberOfPaintGallons(convertedToFeet);
+  return baseGallons;
+};

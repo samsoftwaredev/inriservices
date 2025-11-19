@@ -24,6 +24,10 @@ import {
 } from "@/interfaces/laborTypes";
 import { convertMeasurement, convertToFeet } from "@/tools/convertMeasurement";
 import { useGallons } from "@/context/useGallons";
+import {
+  calculatePaintGallons,
+  calculatePaintGallonsForArea,
+} from "@/tools/estimatePaintingHours";
 
 interface Props {
   roomId: string;
@@ -68,26 +72,6 @@ const GallonsCalc = ({
     setFloor,
   } = useGallons();
 
-  const calculatePaintGallons = (
-    perimeter: number | string,
-    coatsFromEditData: number | undefined,
-    defaultCoats: number = 1
-  ): number => {
-    const numPerimeter =
-      typeof perimeter === "string" ? parseFloat(perimeter) : perimeter;
-    if (!numPerimeter || numPerimeter <= 0) {
-      return 0;
-    }
-
-    const coats = coatsFromEditData || defaultCoats;
-    const convertedToFeet = convertToFeet(
-      numPerimeter * coats,
-      measurementUnit
-    );
-    const baseGallons = numberOfPaintGallons(convertedToFeet);
-    return baseGallons;
-  };
-
   const paintCalculations: PaintCalculation[] = [
     {
       name: "Walls",
@@ -96,7 +80,7 @@ const GallonsCalc = ({
       gallons: calculatePaintGallons(
         roomData.wallPerimeterCalculated,
         editData.wallPaintCoats,
-        roomData.wallPaintCoats
+        measurementUnit
       ),
       hasData: !!(
         roomData.wallPerimeterCalculated && roomData.wallPerimeterCalculated > 0
@@ -109,7 +93,7 @@ const GallonsCalc = ({
       gallons: calculatePaintGallons(
         roomData.crownMoldingPerimeterCalculated,
         editData.crownMoldingPaintCoats,
-        roomData.crownMoldingPaintCoats
+        measurementUnit
       ),
       hasData: !!(
         roomData.crownMoldingPerimeterCalculated &&
@@ -123,7 +107,7 @@ const GallonsCalc = ({
       gallons: calculatePaintGallons(
         roomData.chairRailPerimeterCalculated,
         editData.chairRailPaintCoats,
-        roomData.chairRailPaintCoats
+        measurementUnit
       ),
       hasData: !!(
         roomData.chairRailPerimeterCalculated &&
@@ -137,7 +121,7 @@ const GallonsCalc = ({
       gallons: calculatePaintGallons(
         roomData.baseboardPerimeterCalculated,
         editData.baseboardPaintCoats,
-        roomData.baseboardPaintCoats
+        measurementUnit
       ),
       hasData: !!(
         roomData.baseboardPerimeterCalculated &&
@@ -151,7 +135,7 @@ const GallonsCalc = ({
       gallons: calculatePaintGallons(
         roomData.wainscotingPerimeterCalculated,
         editData.wainscotingPaintCoats,
-        roomData.wainscotingPaintCoats
+        measurementUnit
       ),
       hasData: !!(
         roomData.wainscotingPerimeterCalculated &&
@@ -162,10 +146,10 @@ const GallonsCalc = ({
       name: "Ceiling",
       perimeter: roomData.areaCalculated || 0,
       coats: editData.ceilingPaintCoats || 1,
-      gallons: calculatePaintGallons(
+      gallons: calculatePaintGallonsForArea(
         roomData.areaCalculated,
         editData.ceilingPaintCoats,
-        roomData.ceilingPaintCoats
+        measurementUnit
       ),
       hasData: includeCeiling,
     },
@@ -173,10 +157,10 @@ const GallonsCalc = ({
       name: "Floor",
       perimeter: roomData.areaCalculated || 0,
       coats: editData.floorPaintCoats || 1,
-      gallons: calculatePaintGallons(
+      gallons: calculatePaintGallonsForArea(
         roomData.areaCalculated,
         editData.floorPaintCoats,
-        roomData.floorPaintCoats
+        measurementUnit
       ),
       hasData: includeFloor,
     },

@@ -8,7 +8,8 @@ import { MeasurementUnit } from "@/interfaces/laborTypes";
  */
 export const convertToFeet = (
   value: number,
-  fromUnit: MeasurementUnit
+  fromUnit: MeasurementUnit,
+  isSquared: boolean = false
 ): number => {
   if (value === 0) return 0;
 
@@ -18,7 +19,7 @@ export const convertToFeet = (
     case "m":
       return value * 3.28084; // 1 meter = 3.28084 feet
     case "in":
-      return value / 12; // 12 inches = 1 foot
+      return isSquared ? value / 144 : value / 12; // 12 inches = 1 foot, 144 sq inches = 1 sq foot
     default:
       throw new Error(`Unsupported measurement unit: ${fromUnit}`);
   }
