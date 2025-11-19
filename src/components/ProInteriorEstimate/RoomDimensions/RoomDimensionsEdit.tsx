@@ -564,23 +564,23 @@ const RoomDimensionsEdit = ({
       area: calculateArea(editData.wallPerimeter),
       wallPerimeter: calculatePerimeter(
         editData.wallPerimeter,
-        editData.roomHeight || roomData.roomHeight || 8
+        editData.roomHeight || 8
       ),
       baseboardPerimeter: calculatePerimeter(
         editData.baseboardPerimeter,
-        editData.baseboardHeight || roomData.baseboardHeight || 0.29
+        editData.baseboardHeight || 0.29
       ),
       crownMoldingPerimeter: calculatePerimeter(
         editData.crownMoldingPerimeter,
-        editData.crownMoldingHeight || roomData.crownMoldingHeight || 0.29
+        editData.crownMoldingHeight || 0.29
       ),
       chairRailPerimeter: calculatePerimeter(
         editData.chairRailPerimeter,
-        editData.chairRailHeight || roomData.chairRailHeight || 0.25
+        editData.chairRailHeight || 0.25
       ),
       wainscotingPerimeter: calculatePerimeter(
         editData.wainscotingPerimeter,
-        editData.wainscotingHeight || roomData.wainscotingHeight || 3
+        editData.wainscotingHeight || 3
       ),
     };
 
@@ -610,7 +610,7 @@ const RoomDimensionsEdit = ({
           const area = calculateArea(value);
           const wallPerimeter = calculatePerimeter(
             value,
-            editData.roomHeight || roomData.roomHeight || 8
+            editData.roomHeight || 8
           );
           setRoomData((prev) => ({
             ...prev,
@@ -691,14 +691,14 @@ const RoomDimensionsEdit = ({
       "";
 
     const fieldMap: Record<string, () => React.ReactNode> = {
+      roomHeight: () =>
+        renderRoomHeightField(currentValue, measurementUnit, handleInputChange),
       wallPerimeter: () =>
         renderWallPerimeterField(
           currentValue,
           measurementUnit,
           handleInputChange
         ),
-      roomHeight: () =>
-        renderRoomHeightField(currentValue, measurementUnit, handleInputChange),
       baseboardPerimeter: () =>
         renderPerimeterField(
           fieldKey,

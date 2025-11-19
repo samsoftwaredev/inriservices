@@ -9,9 +9,9 @@ export const calculateArea = (dimensions: string): number => {
   return 0;
 };
 
-export const numberOfPaintGallons = (area: number): number => {
+export const numberOfPaintGallons = (areaInFeet: number): number => {
   const coveragePerGallon = 400; // square feet per gallon
-  return Math.ceil(area / coveragePerGallon);
+  return Math.ceil(areaInFeet / coveragePerGallon);
 };
 
 export const calculatePerimeter = (

@@ -13,9 +13,7 @@ type GallonsProviderProps = {
 
 type FeatureDetails = {
   coats: number | null;
-  gallons: number | null;
   perimeter: number | null;
-  height: number | null;
 };
 
 type RoomCollection = {
@@ -73,7 +71,9 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
   const [floor, setFloor] = useState<RoomCollection>({});
 
   const wallPerimeter = Object.values(walls).reduce((total, item) => {
-    return total + (item.perimeter || 0);
+    if (item.perimeter && item.coats)
+      return total + (item.perimeter * item.coats || 0);
+    return total;
   }, 0);
 
   const wallCoats = Object.values(walls).reduce((total, item) => {
@@ -82,7 +82,9 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
 
   const crownMoldingPerimeter = Object.values(crownMolding).reduce(
     (total, item) => {
-      return total + (item.perimeter || 0);
+      if (item.perimeter && item.coats)
+        return total + (item.perimeter * item.coats || 0);
+      return total;
     },
     0
   );
@@ -95,7 +97,9 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
   );
 
   const chairRailPerimeter = Object.values(chairRail).reduce((total, item) => {
-    return total + (item.perimeter || 0);
+    if (item.perimeter && item.coats)
+      return total + (item.perimeter * item.coats || 0);
+    return total;
   }, 0);
 
   const chairRailCoats = Object.values(chairRail).reduce((total, item) => {
@@ -103,7 +107,9 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
   }, 0);
 
   const baseboardPerimeter = Object.values(baseboard).reduce((total, item) => {
-    return total + (item.perimeter || 0);
+    if (item.perimeter && item.coats)
+      return total + (item.perimeter * item.coats || 0);
+    return total;
   }, 0);
 
   const baseboardCoats = Object.values(baseboard).reduce((total, item) => {
@@ -112,7 +118,9 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
 
   const wainscotingPerimeter = Object.values(wainscoting).reduce(
     (total, item) => {
-      return total + (item.perimeter || 0);
+      if (item.perimeter && item.coats)
+        return total + (item.perimeter * item.coats || 0);
+      return total;
     },
     0
   );
@@ -126,11 +134,15 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
   }, 0);
 
   const ceilingPerimeter = Object.values(ceiling).reduce((total, item) => {
-    return total + (item.perimeter || 0);
+    if (item.perimeter && item.coats)
+      return total + (item.perimeter * item.coats || 0);
+    return total;
   }, 0);
 
   const floorPerimeter = Object.values(floor).reduce((total, item) => {
-    return total + (item.perimeter || 0);
+    if (item.perimeter && item.coats)
+      return total + (item.perimeter * item.coats || 0);
+    return total;
   }, 0);
 
   const floorCoats = Object.values(floor).reduce((total, item) => {
@@ -138,10 +150,10 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
   }, 0);
 
   const totalProjectGallons = (
-    areaPerimeter: number = wallPerimeter -
-      crownMoldingPerimeter -
-      chairRailPerimeter -
-      baseboardPerimeter -
+    areaPerimeter: number = wallPerimeter +
+      crownMoldingPerimeter +
+      chairRailPerimeter +
+      baseboardPerimeter +
       wainscotingPerimeter +
       ceilingPerimeter +
       floorPerimeter

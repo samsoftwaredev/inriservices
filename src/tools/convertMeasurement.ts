@@ -63,7 +63,7 @@ export const convertMeasurement = (
   if (fromUnit === toUnit) return value;
 
   const valueInFeet = convertToFeet(value, fromUnit);
-  return convertFromFeet(valueInFeet, toUnit);
+  return valueInFeet;
 };
 
 /**
