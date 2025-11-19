@@ -16,13 +16,11 @@ import {
   ExpandLess as ExpandLessIcon,
   Calculate as CalculateIcon,
 } from "@mui/icons-material";
-import { numberOfPaintGallons } from "../laborCalc";
 import {
   MeasurementUnit,
   RoomData,
   RoomDimensionsOverview,
 } from "@/interfaces/laborTypes";
-import { convertMeasurement, convertToFeet } from "@/tools/convertMeasurement";
 import { useGallons } from "@/context/useGallons";
 import {
   calculatePaintGallons,

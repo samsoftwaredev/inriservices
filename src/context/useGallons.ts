@@ -2,6 +2,7 @@
 
 import { numberOfPaintGallons } from "@/components/ProInteriorEstimate/laborCalc";
 import { MeasurementUnit } from "@/interfaces/laborTypes";
+import { convertToFeet } from "@/tools/convertMeasurement";
 import {
   calculatePaintGallons,
   calculatePaintGallonsForArea,
@@ -159,9 +160,9 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     const area: number = ceilingPerimeter + floorPerimeter;
     const perimeter: number =
       wallPerimeter +
-      crownMoldingPerimeter +
-      chairRailPerimeter +
-      baseboardPerimeter +
+      crownMoldingPerimeter -
+      chairRailPerimeter -
+      baseboardPerimeter -
       wainscotingPerimeter;
     const areaCoats: number = ceilingCoats + floorCoats;
     const perimeterCoats: number =
@@ -215,13 +216,13 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
   };
 
   const totalHours = estimatePaintingHours({
-    wallSqFt: wallPerimeter,
-    ceilingSqFt: ceilingPerimeter,
+    wallSqFt: convertToFeet(wallPerimeter, measurementUnit),
+    ceilingSqFt: convertToFeet(ceilingPerimeter, measurementUnit),
     trimLinearFt:
-      crownMoldingPerimeter +
-      chairRailPerimeter +
-      baseboardPerimeter +
-      wainscotingPerimeter,
+      convertToFeet(crownMoldingPerimeter, measurementUnit) +
+      convertToFeet(chairRailPerimeter, measurementUnit) +
+      convertToFeet(baseboardPerimeter, measurementUnit) +
+      convertToFeet(wainscotingPerimeter, measurementUnit),
     wallCoats: wallCoats,
     ceilingCoats: ceilingCoats,
     trimCoats:
