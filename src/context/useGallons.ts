@@ -1,7 +1,10 @@
 "use client";
 
 import { numberOfPaintGallons } from "@/components/ProInteriorEstimate/laborCalc";
+import { MeasurementUnit } from "@/interfaces/laborTypes";
 import {
+  calculatePaintGallons,
+  calculatePaintGallonsForArea,
   convertHoursToDays,
   estimatePaintingHours,
 } from "@/tools/estimatePaintingHours";
@@ -48,11 +51,14 @@ type GallonsContextType = {
     ceiling: number;
     floor: number;
   };
+  measurementUnit: MeasurementUnit;
+  setMeasurementUnit: React.Dispatch<React.SetStateAction<MeasurementUnit>>;
 };
 
 const GallonsContext = createContext<GallonsContextType | undefined>(undefined);
 
 export const GallonsProvider = ({ children }: GallonsProviderProps) => {
+  const [measurementUnit, setMeasurementUnit] = useState<MeasurementUnit>("ft");
   const mappingNames = {
     walls: "Walls",
     crownMolding: "Crown Molding",
@@ -149,30 +155,63 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     return total + (item.coats || 0);
   }, 0);
 
-  const totalProjectGallons = (
-    areaPerimeter: number = wallPerimeter +
+  const totalProjectGallons = () => {
+    const area: number = ceilingPerimeter + floorPerimeter;
+    const perimeter: number =
+      wallPerimeter +
       crownMoldingPerimeter +
       chairRailPerimeter +
       baseboardPerimeter +
-      wainscotingPerimeter +
-      ceilingPerimeter +
-      floorPerimeter
-  ) => {
-    return numberOfPaintGallons(Math.abs(areaPerimeter));
-  };
-
-  const totalGallonsPerArea = (areaPerimeter: number) => {
-    return numberOfPaintGallons(areaPerimeter);
+      wainscotingPerimeter;
+    const areaCoats: number = ceilingCoats + floorCoats;
+    const perimeterCoats: number =
+      wallCoats +
+      crownMoldingCoats +
+      chairRailCoats +
+      baseboardCoats +
+      wainscotingCoats;
+    return (
+      calculatePaintGallons(
+        Math.abs(perimeter),
+        perimeterCoats,
+        measurementUnit
+      ) +
+      calculatePaintGallonsForArea(Math.abs(area), areaCoats, measurementUnit)
+    );
   };
 
   const totalGallonsBySection = {
-    walls: totalGallonsPerArea(wallPerimeter),
-    crownMolding: totalGallonsPerArea(crownMoldingPerimeter),
-    chairRail: totalGallonsPerArea(chairRailPerimeter),
-    baseboard: totalGallonsPerArea(baseboardPerimeter),
-    wainscoting: totalGallonsPerArea(wainscotingPerimeter),
-    ceiling: totalGallonsPerArea(ceilingPerimeter),
-    floor: totalGallonsPerArea(floorPerimeter),
+    walls: calculatePaintGallons(wallPerimeter, wallCoats, measurementUnit),
+    crownMolding: calculatePaintGallons(
+      crownMoldingPerimeter,
+      crownMoldingCoats,
+      measurementUnit
+    ),
+    chairRail: calculatePaintGallons(
+      chairRailPerimeter,
+      chairRailCoats,
+      measurementUnit
+    ),
+    baseboard: calculatePaintGallons(
+      baseboardPerimeter,
+      baseboardCoats,
+      measurementUnit
+    ),
+    wainscoting: calculatePaintGallons(
+      wainscotingPerimeter,
+      wainscotingCoats,
+      measurementUnit
+    ),
+    ceiling: calculatePaintGallonsForArea(
+      ceilingPerimeter,
+      ceilingCoats,
+      measurementUnit
+    ),
+    floor: calculatePaintGallonsForArea(
+      floorPerimeter,
+      floorCoats,
+      measurementUnit
+    ),
   };
 
   const totalHours = estimatePaintingHours({
@@ -209,6 +248,8 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     mappingNames,
     totalHours,
     totalDays: convertHoursToDays(totalHours),
+    measurementUnit,
+    setMeasurementUnit,
   };
 
   return React.createElement(GallonsContext.Provider, { value }, children);

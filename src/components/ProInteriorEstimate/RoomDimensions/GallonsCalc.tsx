@@ -70,6 +70,7 @@ const GallonsCalc = ({
     setCeiling,
     floor,
     setFloor,
+    setMeasurementUnit,
   } = useGallons();
 
   const paintCalculations: PaintCalculation[] = [
@@ -179,7 +180,7 @@ const GallonsCalc = ({
     setWalls({
       ...walls,
       [roomId]: {
-        perimeter: roomData.baseboardPerimeterCalculated || 0,
+        perimeter: roomData.wallPerimeterCalculated || 0,
         coats: editData.wallPaintCoats || 1,
       },
     });
@@ -229,7 +230,8 @@ const GallonsCalc = ({
         },
       });
     }
-  }, [roomData, editData, includeCeiling, includeFloor]);
+    setMeasurementUnit(measurementUnit);
+  }, [roomData, editData, includeCeiling, includeFloor, measurementUnit]);
 
   return (
     <Grid container spacing={2} sx={{ mt: 1 }}>
