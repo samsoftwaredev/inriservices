@@ -49,6 +49,7 @@ import {
 } from "@/interfaces/laborTypes";
 import { calculateArea, calculatePerimeter } from "../laborCalc";
 import GallonsCalc from "./GallonsCalc";
+import { convertToFeet } from "@/tools/convertMeasurement";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -564,23 +565,23 @@ const RoomDimensionsEdit = ({
       area: calculateArea(editData.wallPerimeter),
       wallPerimeter: calculatePerimeter(
         editData.wallPerimeter,
-        editData.roomHeight || 8
+        convertToFeet(editData.roomHeight, measurementUnit) || 8
       ),
       baseboardPerimeter: calculatePerimeter(
         editData.baseboardPerimeter,
-        editData.baseboardHeight || 0.29
+        convertToFeet(editData.baseboardHeight, measurementUnit) || 0.29
       ),
       crownMoldingPerimeter: calculatePerimeter(
         editData.crownMoldingPerimeter,
-        editData.crownMoldingHeight || 0.29
+        convertToFeet(editData.crownMoldingHeight, measurementUnit) || 0.29
       ),
       chairRailPerimeter: calculatePerimeter(
         editData.chairRailPerimeter,
-        editData.chairRailHeight || 0.25
+        convertToFeet(editData.chairRailHeight, measurementUnit) || 0.25
       ),
       wainscotingPerimeter: calculatePerimeter(
         editData.wainscotingPerimeter,
-        editData.wainscotingHeight || 3
+        convertToFeet(editData.wainscotingHeight, measurementUnit) || 3
       ),
     };
 
@@ -610,7 +611,7 @@ const RoomDimensionsEdit = ({
           const area = calculateArea(value);
           const wallPerimeter = calculatePerimeter(
             value,
-            editData.roomHeight || 8
+            convertToFeet(editData.roomHeight, measurementUnit)
           );
           setRoomData((prev) => ({
             ...prev,
@@ -622,7 +623,7 @@ const RoomDimensionsEdit = ({
         case "roomHeight":
           const wallPerim = calculatePerimeter(
             editData.wallPerimeter,
-            numValue
+            convertToFeet(numValue, measurementUnit)
           );
           setRoomData((prev) => ({
             ...prev,
@@ -634,7 +635,7 @@ const RoomDimensionsEdit = ({
         case "baseboardHeight":
           const baseboardPerim = calculatePerimeter(
             editData.baseboardPerimeter,
-            numValue
+            convertToFeet(numValue, measurementUnit)
           );
           setRoomData((prev) => ({
             ...prev,
@@ -645,7 +646,7 @@ const RoomDimensionsEdit = ({
         case "crownMoldingHeight":
           const crownMoldingPerim = calculatePerimeter(
             editData.crownMoldingPerimeter,
-            numValue
+            convertToFeet(numValue, measurementUnit)
           );
           setRoomData((prev) => ({
             ...prev,
@@ -656,7 +657,7 @@ const RoomDimensionsEdit = ({
         case "chairRailHeight":
           const chairRailPerim = calculatePerimeter(
             editData.chairRailPerimeter,
-            numValue
+            convertToFeet(numValue, measurementUnit)
           );
           setRoomData((prev) => ({
             ...prev,
@@ -667,7 +668,7 @@ const RoomDimensionsEdit = ({
         case "wainscotingHeight":
           const wainscotingPerim = calculatePerimeter(
             editData.wainscotingPerimeter,
-            numValue
+            convertToFeet(numValue, measurementUnit)
           );
           setRoomData((prev) => ({
             ...prev,

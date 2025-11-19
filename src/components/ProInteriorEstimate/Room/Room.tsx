@@ -31,6 +31,7 @@ import {
 } from "@/interfaces/laborTypes";
 import { floorOptions } from "../laborData";
 import { calculateArea, calculatePerimeter } from "../laborCalc";
+import { convertToFeet } from "@/tools/convertMeasurement";
 
 const Room = ({
   measurementUnit,
@@ -140,23 +141,23 @@ const Room = ({
       areaCalculated: calculateArea(editData.area),
       baseboardPerimeterCalculated: calculatePerimeter(
         editData.baseboardPerimeter,
-        editData.baseboardHeight
+        convertToFeet(editData.baseboardHeight, measurementUnit)
       ),
       chairRailPerimeterCalculated: calculatePerimeter(
         editData.chairRailPerimeter,
-        editData.chairRailHeight
+        convertToFeet(editData.chairRailHeight, measurementUnit)
       ),
       crownMoldingPerimeterCalculated: calculatePerimeter(
         editData.crownMoldingPerimeter,
-        editData.crownMoldingHeight
+        convertToFeet(editData.crownMoldingHeight, measurementUnit)
       ),
       wallPerimeterCalculated: calculatePerimeter(
         editData.wallPerimeter,
-        editData.roomHeight
+        convertToFeet(editData.roomHeight, measurementUnit)
       ),
       wainscotingPerimeterCalculated: calculatePerimeter(
         editData.wainscotingPerimeter,
-        editData.wainscotingHeight
+        convertToFeet(editData.wainscotingHeight, measurementUnit)
       ),
       baseboardHeight: editData.baseboardHeight,
       wallPaintCoats: editData.wallPaintCoats,

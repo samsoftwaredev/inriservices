@@ -22,7 +22,7 @@ import {
   RoomData,
   RoomDimensionsOverview,
 } from "@/interfaces/laborTypes";
-import { convertMeasurement } from "@/tools/convertMeasurement";
+import { convertMeasurement, convertToFeet } from "@/tools/convertMeasurement";
 import { useGallons } from "@/context/useGallons";
 
 interface Props {
@@ -80,10 +80,9 @@ const GallonsCalc = ({
     }
 
     const coats = coatsFromEditData || defaultCoats;
-    const convertedToFeet = convertMeasurement(
+    const convertedToFeet = convertToFeet(
       numPerimeter * coats,
-      measurementUnit,
-      "ft"
+      measurementUnit
     );
     const baseGallons = numberOfPaintGallons(convertedToFeet);
     return baseGallons;
