@@ -6,7 +6,7 @@ export function estimatePaintingHours({
   wallSqFt = 0,
   ceilingSqFt = 0,
   trimLinearFt = 0,
-  wallCoats = 2,
+  wallCoats = 1,
   ceilingCoats = 1,
   trimCoats = 1,
   wallSpeed = 150, // sqft/hr per coat
