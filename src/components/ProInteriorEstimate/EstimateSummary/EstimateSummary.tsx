@@ -14,6 +14,9 @@ import {
 import { useGallons } from "@/context/useGallons";
 import { useBuilding } from "@/context";
 
+const hoursRate = 35; // Define the hourly rate here or import it if defined elsewhere
+const costGallons = 40; // Define the cost per gallon here or import it if defined elsewhere
+
 const EstimateSummary = () => {
   const {
     totalGallonsBySection,
@@ -22,21 +25,13 @@ const EstimateSummary = () => {
     totalHours,
     totalDays,
   } = useGallons();
-  const hoursRate = 35; // Define the hourly rate here or import it if defined elsewhere
   const { buildingData } = useBuilding();
-  const numberOfPaintGallons = {
-    label: "Paint (gallons)",
-    value: totalGallons,
-    icon: <FormatColorFill />,
-  };
-
-  const totalPaintGallons = numberOfPaintGallons.value;
   const totalRooms = buildingData.sections.length;
 
   const estimateWorkItems = [
     {
       label: "Paint Cost",
-      cost: totalPaintGallons * 40,
+      cost: totalGallons * costGallons,
       icon: <FormatPaint />,
     },
     { label: "Labor Cost", cost: totalHours * hoursRate, icon: <Work /> },
@@ -105,13 +100,13 @@ const EstimateSummary = () => {
         <Grid size={12} display="flex" justifyContent="space-between">
           <Typography variant="h6">Approximately Total</Typography>
           <Typography variant="h6">
-            {totalHours} | {totalDays} day {totalDays !== 1 ? "s" : ""}
+            {totalHours} | {totalDays} day{totalDays !== 1 ? "s" : ""}
           </Typography>
         </Grid>
 
         <Grid size={12} display="flex" justifyContent="space-between">
           <Typography variant="h6">Paint Gallons</Typography>
-          <Typography variant="h6">{totalPaintGallons}</Typography>
+          <Typography variant="h6">{totalGallons}</Typography>
         </Grid>
         <Grid
           size={12}
