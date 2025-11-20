@@ -10,6 +10,9 @@ import {
   Grid,
   Chip,
   Divider,
+  useTheme,
+  useMediaQuery,
+  Stack,
 } from "@mui/material";
 import {
   Speed,
@@ -38,6 +41,10 @@ interface Props {
 }
 
 const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
+
   const [expectations, setExpectations] = useState<ProjectExpectations>({
     materialQuality: 1, // 0: Low, 1: Medium, 2: High
     velocity: 0, // 0: Standard, 1: Fast, 2: Super Fast
@@ -102,12 +109,6 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
     return cost >= minBudget && cost <= maxBudget;
   };
 
-  // TODO: Update cost whenever expectations change
-  // useEffect(() => {
-  //   const adjustedCost = calculateAdjustedCost(expectations);
-  //   onCostChange(adjustedCost, expectations);
-  // }, [expectations, baseCost, onCostChange]);
-
   const handleSliderChange = (
     field: keyof ProjectExpectations,
     value: number | number[]
@@ -131,42 +132,95 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
   const percentageChange = (costDifference / baseCost) * 100;
   const withinBudget = isWithinBudget(adjustedCost);
 
-  // Budget slider marks for key values
-  const budgetMarks = [
-    { value: 0, label: "$0" },
-    { value: 5000, label: "$5K" },
-    { value: 10000, label: "$10K" },
-    { value: 15000, label: "$15K" },
-    { value: 20000, label: "$20K" },
-    { value: 25000, label: "$25K" },
-    { value: 30000, label: "$30K" },
-  ];
+  // Responsive budget slider marks
+  const getBudgetMarks = () => {
+    if (isMobile) {
+      return [
+        { value: 0, label: "$0" },
+        { value: 10000, label: "$10K" },
+        { value: 20000, label: "$20K" },
+        { value: 30000, label: "$30K" },
+      ];
+    }
+    return [
+      { value: 0, label: "$0" },
+      { value: 5000, label: "$5K" },
+      { value: 10000, label: "$10K" },
+      { value: 15000, label: "$15K" },
+      { value: 20000, label: "$20K" },
+      { value: 25000, label: "$25K" },
+      { value: 30000, label: "$30K" },
+    ];
+  };
 
   return (
     <Card sx={{ mt: 3 }}>
-      <CardContent>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-          <TrendingDown fontSize="large" sx={{ mr: 1 }} />
-          <Typography variant="h6">Cost Adjustments</Typography>
+      <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
+        {/* Header */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            mb: { xs: 2, sm: 3 },
+            flexDirection: { xs: "column", sm: "row" },
+            gap: { xs: 1, sm: 0 },
+          }}
+        >
+          <TrendingDown
+            fontSize={isMobile ? "medium" : "large"}
+            sx={{ mr: { xs: 0, sm: 1 } }}
+          />
+          <Typography
+            variant={isMobile ? "h6" : "h5"}
+            textAlign={{ xs: "center", sm: "left" }}
+          >
+            Cost Adjustments
+          </Typography>
         </Box>
 
-        <Divider sx={{ mb: 3 }} />
+        <Divider sx={{ mb: { xs: 2, sm: 3 } }} />
 
         {/* Budget Range Slider */}
-        <Box sx={{ mb: 3, p: 2, bgcolor: "info.50", borderRadius: 1 }}>
-          <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-            <AccountBalance sx={{ mr: 1, fontSize: 20, color: "info.dark" }} />
-            <Typography variant="subtitle1">
-              Project Budget Range
-              <InfoTooltip message="Ask the customers for the minimum and maximum budget for the project." />
-            </Typography>
+        <Box
+          sx={{
+            mb: { xs: 2, sm: 3 },
+            p: { xs: 1.5, sm: 2 },
+            bgcolor: "info.50",
+            borderRadius: 1,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: { xs: "flex-start", sm: "center" },
+              mb: 2,
+              flexDirection: { xs: "column", sm: "row" },
+              gap: { xs: 1, sm: 0 },
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                mb: { xs: 1, sm: 0 },
+              }}
+            >
+              <AccountBalance
+                sx={{ mr: 1, fontSize: 20, color: "info.dark" }}
+              />
+              <Typography variant={isMobile ? "body1" : "subtitle1"}>
+                Project Budget Range
+                <InfoTooltip message="Ask the customers for the minimum and maximum budget for the project." />
+              </Typography>
+            </Box>
             <Chip
               label={`$${expectations.budgetRange[0].toLocaleString()} - $${expectations.budgetRange[1].toLocaleString()}`}
-              size="small"
+              size={isMobile ? "small" : "medium"}
               sx={{
-                ml: 2,
+                ml: { xs: 0, sm: 2 },
                 bgcolor: "info.dark",
                 color: "white",
+                fontSize: { xs: "0.7rem", sm: "0.8rem" },
               }}
             />
           </Box>
@@ -178,10 +232,22 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
             min={0}
             max={30000}
             step={100}
-            marks={budgetMarks}
-            sx={{ mt: 2 }}
+            marks={getBudgetMarks()}
+            sx={{
+              mt: 2,
+              "& .MuiSlider-mark": {
+                display: { xs: "none", sm: "block" },
+              },
+              "& .MuiSlider-markLabel": {
+                fontSize: { xs: "0.65rem", sm: "0.75rem" },
+              },
+            }}
           />
-          <Typography variant="caption" color="text.secondary">
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ fontSize: { xs: "0.7rem", sm: "0.75rem" } }}
+          >
             Set your minimum and maximum budget range for this project
           </Typography>
         </Box>
@@ -189,51 +255,82 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
         {/* Cost Summary */}
         <Box
           sx={{
-            mb: 3,
-            p: 2,
+            mb: { xs: 2, sm: 3 },
+            p: { xs: 1.5, sm: 2 },
             bgcolor: "grey.100",
-            borderRadius: 5,
+            borderRadius: { xs: 2, sm: 3 },
             borderColor: "grey.300",
             borderWidth: 1,
             borderStyle: "solid",
           }}
         >
-          <Grid container spacing={2} alignItems="center">
-            <Grid size={{ xs: 12, sm: 3 }}>
-              <Typography variant="body2" color="text.secondary">
+          <Grid container spacing={{ xs: 1, sm: 2 }} alignItems="center">
+            <Grid size={{ xs: 6, sm: 3 }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: { xs: "0.7rem", sm: "0.875rem" } }}
+              >
                 Base Cost
               </Typography>
-              <Typography variant="h6">${baseCost.toLocaleString()}</Typography>
+              <Typography
+                variant={isMobile ? "body1" : "h6"}
+                sx={{ fontWeight: { xs: 600, sm: 400 } }}
+              >
+                ${baseCost.toLocaleString()}
+              </Typography>
             </Grid>
-            <Grid size={{ xs: 12, sm: 3 }}>
-              <Typography variant="body2" color="text.secondary">
+            <Grid size={{ xs: 6, sm: 3 }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: { xs: "0.7rem", sm: "0.875rem" } }}
+              >
                 Adjustment
               </Typography>
               <Typography
-                variant="h6"
+                variant={isMobile ? "body1" : "h6"}
                 color={costDifference >= 0 ? "error.main" : "success.main"}
+                sx={{ fontWeight: { xs: 600, sm: 400 } }}
               >
                 {costDifference >= 0 ? "+" : ""}$
                 {Math.abs(costDifference).toLocaleString()}
-                <Typography component="span" variant="caption" sx={{ ml: 1 }}>
+                <Typography
+                  component="span"
+                  variant="caption"
+                  sx={{
+                    ml: { xs: 0.5, sm: 1 },
+                    display: { xs: "block", sm: "inline" },
+                    fontSize: { xs: "0.65rem", sm: "0.75rem" },
+                  }}
+                >
                   ({percentageChange >= 0 ? "+" : ""}
                   {percentageChange.toFixed(1)}%)
                 </Typography>
               </Typography>
             </Grid>
-            <Grid size={{ xs: 12, sm: 3 }}>
-              <Typography variant="body2" color="text.secondary">
+            <Grid size={{ xs: 6, sm: 3 }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: { xs: "0.7rem", sm: "0.875rem" } }}
+              >
                 Final Cost
               </Typography>
               <Typography
-                variant="h6"
+                variant={isMobile ? "body1" : "h6"}
                 color={withinBudget ? "primary.main" : "error.main"}
+                sx={{ fontWeight: { xs: 600, sm: 400 } }}
               >
                 ${adjustedCost.toLocaleString()}
               </Typography>
             </Grid>
-            <Grid size={{ xs: 12, sm: 3 }}>
-              <Typography variant="body2" color="text.secondary">
+            <Grid size={{ xs: 6, sm: 3 }}>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: { xs: "0.7rem", sm: "0.875rem" } }}
+              >
                 Budget Status
               </Typography>
               <Chip
@@ -241,32 +338,57 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
                 size="small"
                 color={withinBudget ? "success" : "error"}
                 variant={withinBudget ? "filled" : "outlined"}
+                sx={{
+                  fontSize: { xs: "0.65rem", sm: "0.75rem" },
+                  height: { xs: 20, sm: 24 },
+                }}
               />
             </Grid>
           </Grid>
         </Box>
 
-        <Grid container spacing={15} mx={3}>
+        {/* Sliders Grid */}
+        <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
           {/* Material Quality */}
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 12, lg: 6 }}>
             <Box sx={{ mb: 2 }}>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                <Build sx={{ mr: 1, fontSize: 20 }} />
-                <Typography variant="subtitle1" gutterBottom>
-                  Material Quality
-                  <InfoTooltip message="Select the quality of materials for the project." />
-                </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: { xs: "flex-start", sm: "center" },
+                  mb: 1,
+                  flexDirection: { xs: "column", sm: "row" },
+                  gap: { xs: 1, sm: 0 },
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    mb: { xs: 1, sm: 0 },
+                  }}
+                >
+                  <Build sx={{ mr: 1, fontSize: { xs: 18, sm: 20 } }} />
+                  <Typography
+                    variant={isMobile ? "body1" : "subtitle1"}
+                    gutterBottom={!isMobile}
+                  >
+                    Material Quality
+                    <InfoTooltip message="Select the quality of materials for the project." />
+                  </Typography>
+                </Box>
                 <Chip
                   label={
                     materialQualityOptions[expectations.materialQuality].label
                   }
                   size="small"
                   sx={{
-                    ml: 2,
+                    ml: { xs: 0, sm: 2 },
                     bgcolor:
                       materialQualityOptions[expectations.materialQuality]
                         .color,
                     color: "white",
+                    fontSize: { xs: "0.65rem", sm: "0.75rem" },
                   }}
                 />
               </Box>
@@ -280,11 +402,20 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
                 step={1}
                 marks={materialQualityOptions.map((option, index) => ({
                   value: index,
-                  label: option.label,
+                  label: isMobile ? option.label.charAt(0) : option.label,
                 }))}
-                sx={{ mt: 2 }}
+                sx={{
+                  mt: 2,
+                  "& .MuiSlider-markLabel": {
+                    fontSize: { xs: "0.65rem", sm: "0.75rem" },
+                  },
+                }}
               />
-              <Typography variant="caption" color="text.secondary">
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ fontSize: { xs: "0.7rem", sm: "0.75rem" } }}
+              >
                 Cost impact:{" "}
                 {(
                   (materialQualityOptions[expectations.materialQuality]
@@ -298,21 +429,41 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
           </Grid>
 
           {/* Project Velocity */}
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 12, lg: 6 }}>
             <Box sx={{ mb: 2 }}>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                <Speed sx={{ mr: 1, fontSize: 20 }} />
-                <Typography variant="subtitle1" gutterBottom>
-                  Project Velocity
-                  <InfoTooltip message="Select the desired speed of project completion." />
-                </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: { xs: "flex-start", sm: "center" },
+                  mb: 1,
+                  flexDirection: { xs: "column", sm: "row" },
+                  gap: { xs: 1, sm: 0 },
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    mb: { xs: 1, sm: 0 },
+                  }}
+                >
+                  <Speed sx={{ mr: 1, fontSize: { xs: 18, sm: 20 } }} />
+                  <Typography
+                    variant={isMobile ? "body1" : "subtitle1"}
+                    gutterBottom={!isMobile}
+                  >
+                    Project Velocity
+                    <InfoTooltip message="Select the desired speed of project completion." />
+                  </Typography>
+                </Box>
                 <Chip
                   label={velocityOptions[expectations.velocity].label}
                   size="small"
                   sx={{
-                    ml: 2,
+                    ml: { xs: 0, sm: 2 },
                     bgcolor: velocityOptions[expectations.velocity].color,
                     color: "white",
+                    fontSize: { xs: "0.65rem", sm: "0.75rem" },
                   }}
                 />
               </Box>
@@ -324,11 +475,20 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
                 step={1}
                 marks={velocityOptions.map((option, index) => ({
                   value: index,
-                  label: option.label,
+                  label: isMobile ? option.label.charAt(0) : option.label,
                 }))}
-                sx={{ mt: 2 }}
+                sx={{
+                  mt: 2,
+                  "& .MuiSlider-markLabel": {
+                    fontSize: { xs: "0.65rem", sm: "0.75rem" },
+                  },
+                }}
               />
-              <Typography variant="caption" color="text.secondary">
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ fontSize: { xs: "0.7rem", sm: "0.75rem" } }}
+              >
                 Cost impact: +
                 {(
                   (velocityOptions[expectations.velocity].multiplier - 1) *
@@ -340,24 +500,44 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
           </Grid>
 
           {/* Project Details */}
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 12, lg: 6 }}>
             <Box sx={{ mb: 2 }}>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                <AttachMoney sx={{ mr: 1, fontSize: 20 }} />
-                <Typography variant="subtitle1" gutterBottom>
-                  Project Details
-                  <InfoTooltip message="Select the desired level of detail for project specifications." />
-                </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: { xs: "flex-start", sm: "center" },
+                  mb: 1,
+                  flexDirection: { xs: "column", sm: "row" },
+                  gap: { xs: 1, sm: 0 },
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    mb: { xs: 1, sm: 0 },
+                  }}
+                >
+                  <AttachMoney sx={{ mr: 1, fontSize: { xs: 18, sm: 20 } }} />
+                  <Typography
+                    variant={isMobile ? "body1" : "subtitle1"}
+                    gutterBottom={!isMobile}
+                  >
+                    Project Details
+                    <InfoTooltip message="Select the desired level of detail for project specifications." />
+                  </Typography>
+                </Box>
                 <Chip
                   label={
                     projectDetailOptions[expectations.projectDetails].label
                   }
                   size="small"
                   sx={{
-                    ml: 2,
+                    ml: { xs: 0, sm: 2 },
                     bgcolor:
                       projectDetailOptions[expectations.projectDetails].color,
                     color: "white",
+                    fontSize: { xs: "0.65rem", sm: "0.75rem" },
                   }}
                 />
               </Box>
@@ -371,11 +551,20 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
                 step={1}
                 marks={projectDetailOptions.map((option, index) => ({
                   value: index,
-                  label: option.label,
+                  label: isMobile ? option.label.charAt(0) : option.label,
                 }))}
-                sx={{ mt: 2 }}
+                sx={{
+                  mt: 2,
+                  "& .MuiSlider-markLabel": {
+                    fontSize: { xs: "0.65rem", sm: "0.75rem" },
+                  },
+                }}
               />
-              <Typography variant="caption" color="text.secondary">
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ fontSize: { xs: "0.7rem", sm: "0.75rem" } }}
+              >
                 Cost impact:{" "}
                 {(
                   (projectDetailOptions[expectations.projectDetails]
@@ -389,14 +578,33 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
           </Grid>
 
           {/* Workmanship Warranty */}
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 12, lg: 6 }}>
             <Box sx={{ mb: 2 }}>
-              <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                <Security sx={{ mr: 1, fontSize: 20 }} />
-                <Typography variant="subtitle1" gutterBottom>
-                  Workmanship Warranty
-                  <InfoTooltip message="Select the duration of the workmanship warranty for the project." />
-                </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: { xs: "flex-start", sm: "center" },
+                  mb: 1,
+                  flexDirection: { xs: "column", sm: "row" },
+                  gap: { xs: 1, sm: 0 },
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    mb: { xs: 1, sm: 0 },
+                  }}
+                >
+                  <Security sx={{ mr: 1, fontSize: { xs: 18, sm: 20 } }} />
+                  <Typography
+                    variant={isMobile ? "body1" : "subtitle1"}
+                    gutterBottom={!isMobile}
+                  >
+                    Workmanship Warranty
+                    <InfoTooltip message="Select the duration of the workmanship warranty for the project." />
+                  </Typography>
+                </Box>
                 <Chip
                   label={
                     workmanshipMonthsOptions[expectations.workmanshipMonths]
@@ -404,11 +612,12 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
                   }
                   size="small"
                   sx={{
-                    ml: 2,
+                    ml: { xs: 0, sm: 2 },
                     bgcolor:
                       workmanshipMonthsOptions[expectations.workmanshipMonths]
                         .color,
                     color: "white",
+                    fontSize: { xs: "0.65rem", sm: "0.75rem" },
                   }}
                 />
               </Box>
@@ -422,11 +631,20 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
                 step={1}
                 marks={workmanshipMonthsOptions.map((option, index) => ({
                   value: index,
-                  label: `${option.months}mo`,
+                  label: isMobile ? `${option.months}` : `${option.months}mo`,
                 }))}
-                sx={{ mt: 2 }}
+                sx={{
+                  mt: 2,
+                  "& .MuiSlider-markLabel": {
+                    fontSize: { xs: "0.65rem", sm: "0.75rem" },
+                  },
+                }}
               />
-              <Typography variant="caption" color="text.secondary">
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ fontSize: { xs: "0.7rem", sm: "0.75rem" } }}
+              >
                 Cost impact: +
                 {(
                   (workmanshipMonthsOptions[expectations.workmanshipMonths]
@@ -440,22 +658,30 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
           </Grid>
         </Grid>
 
-        <Divider sx={{ my: 2 }} />
+        <Divider sx={{ my: { xs: 2, sm: 3 } }} />
 
         {/* Summary */}
         <Box
           sx={{
-            p: 2,
+            p: { xs: 1.5, sm: 2 },
             bgcolor: withinBudget ? "primary.50" : "error.50",
             borderRadius: 1,
             border: withinBudget ? "none" : "1px solid",
             borderColor: withinBudget ? "transparent" : "error.main",
           }}
         >
-          <Typography variant="subtitle2" gutterBottom>
+          <Typography
+            variant="subtitle2"
+            gutterBottom
+            sx={{ fontSize: { xs: "0.8rem", sm: "0.875rem" } }}
+          >
             Project Configuration Summary:
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+          >
             • {materialQualityOptions[expectations.materialQuality].label}{" "}
             materials •{" "}
             {velocityOptions[expectations.velocity].label.toLowerCase()}{" "}
@@ -468,7 +694,14 @@ const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
             workmanship warranty
           </Typography>
           {!withinBudget && (
-            <Typography variant="body2" color="error.main" sx={{ mt: 1 }}>
+            <Typography
+              variant="body2"
+              color="error.main"
+              sx={{
+                mt: 1,
+                fontSize: { xs: "0.75rem", sm: "0.875rem" },
+              }}
+            >
               ⚠️ Current configuration exceeds your budget range. Consider
               adjusting your expectations to stay within budget.
             </Typography>
