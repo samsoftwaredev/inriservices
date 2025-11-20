@@ -808,7 +808,7 @@ const RoomDimensionsEdit = ({
   // ============================================================================
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: "auto", p: 3 }}>
+    <Box sx={{ maxWidth: 1200, mx: "auto", p: 0 }}>
       {/* Header */}
       <Box sx={{ mb: 4, textAlign: "center" }}>
         <Typography variant="h4" fontWeight="bold" gutterBottom>

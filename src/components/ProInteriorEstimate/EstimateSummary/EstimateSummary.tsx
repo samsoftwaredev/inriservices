@@ -22,6 +22,7 @@ const EstimateSummary = () => {
     totalHours,
     totalDays,
   } = useGallons();
+  const hoursRate = 35; // Define the hourly rate here or import it if defined elsewhere
   const { buildingData } = useBuilding();
   const numberOfPaintGallons = {
     label: "Paint (gallons)",
@@ -29,19 +30,23 @@ const EstimateSummary = () => {
     icon: <FormatColorFill />,
   };
 
+  const totalPaintGallons = numberOfPaintGallons.value;
+  const totalRooms = buildingData.sections.length;
+
   const estimateWorkItems = [
-    { label: "Paint Cost", cost: 350, icon: <FormatPaint /> },
-    { label: "Labor Cost", cost: 350, icon: <Work /> },
-    { label: "Materials", cost: 350, icon: <AddBox /> },
+    {
+      label: "Paint Cost",
+      cost: totalPaintGallons * 40,
+      icon: <FormatPaint />,
+    },
+    { label: "Labor Cost", cost: totalHours * hoursRate, icon: <Work /> },
+    { label: "Materials", cost: 0, icon: <AddBox /> },
   ];
 
   const totalEstimate = estimateWorkItems.reduce(
     (acc, item) => acc + item.cost,
     0
   );
-
-  const totalPaintGallons = numberOfPaintGallons.value;
-  const totalRooms = buildingData.sections.length;
 
   return (
     <Paper
