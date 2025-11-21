@@ -49,7 +49,7 @@ import {
 } from "@/interfaces/laborTypes";
 import { calculateArea, calculatePerimeter } from "../laborCalc";
 import GallonsCalc from "./GallonsCalc";
-import { convertToFeet } from "@/tools/convertMeasurement";
+import { convertMeasurement, convertToFeet } from "@/tools/convertMeasurement";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -292,22 +292,29 @@ const renderRoomHeightField = (
   currentValue: any,
   measurementUnit: MeasurementUnit,
   handleInputChange: (fieldKey: string) => any
-) => (
-  <TextField
-    fullWidth
-    label={`Room Height (${measurementUnit})`}
-    type="number"
-    value={currentValue}
-    onChange={handleInputChange("roomHeight")}
-    placeholder={measurementUnit === "ft" ? "8" : "2.44"}
-    helperText="Standard: 8-10 ft"
-    size="small"
-    InputProps={{
-      startAdornment: getFieldIcon("roomHeight"),
-    }}
-    sx={{ mb: 2 }}
-  />
-);
+) => {
+  const helperText = `Converted to ${convertMeasurement(
+    currentValue,
+    measurementUnit,
+    "ft"
+  )} ft | Standard height 8-10 ft`;
+  return (
+    <TextField
+      fullWidth
+      label={`Room Height (${measurementUnit})`}
+      type="number"
+      value={currentValue}
+      onChange={handleInputChange("roomHeight")}
+      placeholder={measurementUnit === "ft" ? "8" : "2.44"}
+      helperText={helperText}
+      size="small"
+      InputProps={{
+        startAdornment: getFieldIcon("roomHeight"),
+      }}
+      sx={{ mb: 2 }}
+    />
+  );
+};
 
 const renderPerimeterField = (
   fieldKey: string,

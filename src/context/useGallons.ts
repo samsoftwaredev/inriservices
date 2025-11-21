@@ -160,7 +160,7 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
 
   const totalHours = estimatePaintingHours({
     wallSqFt: convertToFeet(wallPerimeter, measurementUnit),
-    ceilingSqFt: convertToFeet(ceilingPerimeter, measurementUnit),
+    ceilingSqFt: convertToFeet(ceilingPerimeter, measurementUnit, true),
     trimLinearFt:
       convertToFeet(crownMoldingPerimeter, measurementUnit) +
       convertToFeet(chairRailPerimeter, measurementUnit) +

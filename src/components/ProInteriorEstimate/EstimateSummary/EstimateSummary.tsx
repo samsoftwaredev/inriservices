@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { Box, Divider, Grid, Paper, Typography } from "@mui/material";
+import { Box, Divider, Grid, Paper, Stack, Typography } from "@mui/material";
 import { theme } from "@/app/theme";
 import { AddBox, Calculate, FormatPaint, Work } from "@mui/icons-material";
 import { useGallons } from "@/context/useGallons";
@@ -11,6 +11,7 @@ import { useBuilding } from "@/context";
 const hoursRate = 35; // Define the hourly rate here or import it if defined elsewhere
 const costGallons = 40; // Define the cost per gallon here or import it if defined elsewhere
 const profitMargin = 0.2; // Define the profit margin here or import it if defined elsewhere
+const taxAmount = 0.0825; // Define the tax amount here or import it if defined elsewhere
 
 const EstimateSummary = () => {
   const {
@@ -39,6 +40,8 @@ const EstimateSummary = () => {
   );
   const profitAmount = totalEstimate * profitMargin;
   const totalWithProfit = totalEstimate + profitAmount;
+  const taxesToPay = totalWithProfit * taxAmount;
+  const totalWithTaxes = totalWithProfit + totalWithProfit * taxAmount;
 
   return (
     <Paper
@@ -88,22 +91,20 @@ const EstimateSummary = () => {
           justifyContent="space-between"
           sx={{ px: 1, py: 2, borderRadius: 4, opacity: 0.9 }}
         >
-          <Typography variant="h4">Total Estimate</Typography>
-          <Typography variant="h2">
-            ${totalWithProfit.toLocaleString()}
-          </Typography>
-        </Grid>
-
-        <Grid
-          size={12}
-          display="flex"
-          justifyContent="flex-end"
-          flexDirection="column"
-          textAlign="right"
-        >
-          <Typography variant="body2">
-            (Company Profit ${profitAmount.toLocaleString()})
-          </Typography>
+          <Stack>
+            <Typography variant="h4">Total Estimate</Typography>
+          </Stack>
+          <Stack spacing={0} alignItems="flex-end">
+            <Typography variant="h2">
+              ${totalWithTaxes.toLocaleString()}
+            </Typography>
+            <Typography variant="body2">
+              Profit ${profitAmount.toLocaleString()}
+            </Typography>
+            <Typography variant="body2">
+              Taxes ${taxesToPay.toLocaleString()}
+            </Typography>
+          </Stack>
         </Grid>
 
         <Grid size={12} display="flex" justifyContent="space-between">
