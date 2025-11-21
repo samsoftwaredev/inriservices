@@ -18,6 +18,7 @@ import {
 } from "@mui/icons-material";
 import {
   MeasurementUnit,
+  PaintBaseType,
   RoomData,
   RoomDimensionsOverview,
 } from "@/interfaces/laborTypes";
@@ -180,6 +181,7 @@ const GallonsCalc = ({
       [roomId]: {
         perimeter: roomData.wallPerimeterCalculated || 0,
         coats: editData.wallPaintCoats || 1,
+        paintBase: editData.wallPaintBase || PaintBaseType.Latex,
       },
     });
     setCrownMolding({
@@ -187,6 +189,7 @@ const GallonsCalc = ({
       [roomId]: {
         perimeter: roomData.crownMoldingPerimeterCalculated || 0,
         coats: editData.crownMoldingPaintCoats || 1,
+        paintBase: editData.crownMoldingPaintBase || PaintBaseType.Latex,
       },
     });
     setChairRail({
@@ -194,6 +197,7 @@ const GallonsCalc = ({
       [roomId]: {
         perimeter: roomData.chairRailPerimeterCalculated || 0,
         coats: editData.chairRailPaintCoats || 1,
+        paintBase: editData.chairRailPaintBase || PaintBaseType.Latex,
       },
     });
     setBaseboard({
@@ -201,6 +205,7 @@ const GallonsCalc = ({
       [roomId]: {
         perimeter: roomData.baseboardPerimeterCalculated || 0,
         coats: editData.baseboardPaintCoats || 1,
+        paintBase: editData.baseboardPaintBase || PaintBaseType.Latex,
       },
     });
     setWainscoting({
@@ -208,6 +213,7 @@ const GallonsCalc = ({
       [roomId]: {
         perimeter: roomData.wainscotingPerimeterCalculated || 0,
         coats: editData.wainscotingPaintCoats || 1,
+        paintBase: editData.wainscotingPaintBase || PaintBaseType.Latex,
       },
     });
     if (includeCeiling) {
@@ -216,6 +222,7 @@ const GallonsCalc = ({
         [roomId]: {
           perimeter: roomData.areaCalculated || 0,
           coats: editData.ceilingPaintCoats || 1,
+          paintBase: editData.ceilingPaintBase || PaintBaseType.Latex,
         },
       });
     }
@@ -225,6 +232,7 @@ const GallonsCalc = ({
         [roomId]: {
           perimeter: roomData.areaCalculated || 0,
           coats: editData.floorPaintCoats || 1,
+          paintBase: editData.floorPaintBase || PaintBaseType.Latex,
         },
       });
     }

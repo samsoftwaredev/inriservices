@@ -28,6 +28,7 @@ import {
   RoomData,
   Props,
   RoomDimensionsOverview,
+  PaintBaseType,
 } from "@/interfaces/laborTypes";
 import { floorOptions } from "../laborData";
 import { calculateArea, calculatePerimeter } from "../laborCalc";
@@ -48,29 +49,38 @@ const Room = ({
     wallPerimeter: "",
     roomHeight: 0,
     wallPerimeterCalculated: 0,
+    wallPaintBase: PaintBaseType.Latex,
     // BaseboardDimensions
     baseboardHeight: 0,
     baseboardPaintCoats: 1,
     baseboardPerimeter: "",
     baseboardPerimeterCalculated: 0,
+    baseboardPaintBase: PaintBaseType.Latex,
     // chairRailDimensions
     chairRailPerimeter: "",
     chairRailHeight: 0,
     chairRailPaintCoats: 1,
     chairRailPerimeterCalculated: 0,
+    chairRailPaintBase: PaintBaseType.Latex,
     // crownMoldingDimensions
     crownMoldingPerimeter: "",
     crownMoldingHeight: 0,
     crownMoldingPaintCoats: 1,
     crownMoldingPerimeterCalculated: 0,
+    crownMoldingPaintBase: PaintBaseType.Latex,
     // wainscotingDimensions
     wainscotingPerimeter: "",
     wainscotingHeight: 0,
     wainscotingPaintCoats: 1,
     wainscotingPerimeterCalculated: 0,
+    wainscotingPaintBase: PaintBaseType.Latex,
     // RoomData
     area: "",
     areaCalculated: 10,
+    ceilingPaintCoats: 1,
+    ceilingPaintBase: PaintBaseType.Latex,
+    floorPaintCoats: 1,
+    floorPaintBase: PaintBaseType.Latex,
     floorNumber: floorNumber,
     totalCost: 0,
     features: {

@@ -30,6 +30,7 @@ import {
   Home as HomeIcon,
   Straighten as StraightenIcon,
   FormatPaint as FormatPaintIcon,
+  Deblur as BasePaintIcon,
   Architecture as ArchitectureIcon,
   Calculate as CalculateIcon,
   AutoFixHigh as AutoFixHighIcon,
@@ -44,6 +45,7 @@ import {
 } from "@mui/icons-material";
 import {
   MeasurementUnit,
+  PaintBaseType,
   RoomData,
   RoomDimensionsOverview,
 } from "@/interfaces/laborTypes";
@@ -90,6 +92,13 @@ const PAINT_COAT_OPTIONS = [
   { value: 2, label: "2 Coats (Standard)" },
   { value: 3, label: "3 Coats (Premium)" },
   { value: 4, label: "4+ Coats (High Coverage)" },
+];
+
+const PAINT_BASE_OPTIONS = [
+  { value: PaintBaseType.OilBased, label: "Oil Based" },
+  { value: PaintBaseType.WaterBased, label: "Water Based" },
+  { value: PaintBaseType.Latex, label: "Latex" },
+  { value: PaintBaseType.Acrylic, label: "Acrylic" },
 ];
 
 const DEFAULT_SECTION_STATE = {
@@ -163,6 +172,14 @@ const createSections = (): SectionConfig[] => [
     defaultExpanded: true,
   },
   {
+    id: "calculated",
+    title: "Calculated Areas",
+    icon: <CalculateIcon />,
+    description: "Auto-calculated measurements with optional ceiling/floor",
+    color: "success",
+    fields: ["ceilingArea", "floorArea"],
+  },
+  {
     id: "baseboard",
     title: "Baseboard",
     icon: <ArchitectureIcon />,
@@ -215,12 +232,20 @@ const createSections = (): SectionConfig[] => [
     ],
   },
   {
-    id: "calculated",
-    title: "Calculated Areas",
-    icon: <CalculateIcon />,
-    description: "Auto-calculated measurements with optional ceiling/floor",
-    color: "success",
-    fields: ["ceilingArea", "floorArea"],
+    id: "paintBase",
+    title: "Paint Base",
+    icon: <BasePaintIcon />,
+    description: "Type of paint base for each surface",
+    color: "info",
+    fields: [
+      "wallPaintBase",
+      "baseboardPaintBase",
+      "crownMoldingPaintBase",
+      "chairRailPaintBase",
+      "wainscotingPaintBase",
+      "ceilingPaintBase",
+      "floorPaintBase",
+    ],
   },
 ];
 
@@ -369,6 +394,33 @@ const renderHeightField = (
       size="small"
     />
   </Box>
+);
+
+const renderPaintBaseField = (
+  fieldKey: string,
+  currentValue: any,
+  handleInputChange: (fieldKey: string) => any
+) => (
+  <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+    <InputLabel>
+      {fieldKey
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (str) => str.toUpperCase())}
+    </InputLabel>
+    <Select
+      value={currentValue || 2}
+      label={fieldKey
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (str) => str.toUpperCase())}
+      onChange={handleInputChange(fieldKey)}
+    >
+      {PAINT_BASE_OPTIONS.map((option) => (
+        <MenuItem key={option.value} value={option.value}>
+          {option.label}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
 );
 
 const renderPaintCoatsField = (
@@ -777,6 +829,22 @@ const RoomDimensionsEdit = ({
         renderPaintCoatsField(fieldKey, currentValue, handleInputChange),
       floorPaintCoats: () =>
         renderPaintCoatsField(fieldKey, currentValue, handleInputChange),
+
+      wallPaintBase: () =>
+        renderPaintBaseField(fieldKey, currentValue, handleInputChange),
+      baseboardPaintBase: () =>
+        renderPaintBaseField(fieldKey, currentValue, handleInputChange),
+      crownMoldingPaintBase: () =>
+        renderPaintBaseField(fieldKey, currentValue, handleInputChange),
+      wainscotingPaintBase: () =>
+        renderPaintBaseField(fieldKey, currentValue, handleInputChange),
+      chairRailPaintBase: () =>
+        renderPaintBaseField(fieldKey, currentValue, handleInputChange),
+      ceilingPaintBase: () =>
+        renderPaintBaseField(fieldKey, currentValue, handleInputChange),
+      floorPaintBase: () =>
+        renderPaintBaseField(fieldKey, currentValue, handleInputChange),
+
       ceilingArea: () =>
         renderAreaField(
           fieldKey,

@@ -19,44 +19,56 @@ export interface LaborTask {
   laborMaterials?: LaborMaterial[];
 }
 
-export type PaintBaseType = "oil-based" | "water-based" | "latex" | "acrylic";
+export enum PaintBaseType {
+  OilBased = "oil-based",
+  WaterBased = "water-based",
+  Latex = "latex",
+  Acrylic = "acrylic",
+}
 
 type WainscotingDimensions = {
   wainscotingPerimeter: string;
   wainscotingHeight: number;
   wainscotingPaintCoats?: number;
+  wainscotingPaintBase?: PaintBaseType;
 };
 
 type ChairRailDimensions = {
   chairRailPerimeter: string;
   chairRailHeight: number;
   chairRailPaintCoats?: number;
+  chairRailPaintBase?: PaintBaseType;
 };
 
 type CrownMoldingDimensions = {
   crownMoldingPerimeter: string;
   crownMoldingHeight: number;
   crownMoldingPaintCoats?: number;
+  crownMoldingPaintBase?: PaintBaseType;
 };
 
 type BaseboardDimensions = {
   baseboardPerimeter: string;
   baseboardHeight: number;
   baseboardPaintCoats?: number;
+  baseboardPaintBase?: PaintBaseType;
 };
 
 type WallDimensions = {
   wallPerimeter: string;
   roomHeight: number;
   wallPaintCoats?: number;
+  wallPaintBase?: PaintBaseType;
 };
 
 type FloorDimensions = {
   floorPaintCoats?: number;
+  floorPaintBase?: PaintBaseType;
 };
 
 type CeilingDimensions = {
   ceilingPaintCoats?: number;
+  ceilingPaintBase?: PaintBaseType;
 };
 
 export type RoomDimensionsOverview = {
