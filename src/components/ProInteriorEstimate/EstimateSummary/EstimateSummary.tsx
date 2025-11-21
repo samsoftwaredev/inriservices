@@ -4,18 +4,13 @@ import React from "react";
 
 import { Box, Divider, Grid, Paper, Typography } from "@mui/material";
 import { theme } from "@/app/theme";
-import {
-  AddBox,
-  Calculate,
-  FormatColorFill,
-  FormatPaint,
-  Work,
-} from "@mui/icons-material";
+import { AddBox, Calculate, FormatPaint, Work } from "@mui/icons-material";
 import { useGallons } from "@/context/useGallons";
 import { useBuilding } from "@/context";
 
 const hoursRate = 35; // Define the hourly rate here or import it if defined elsewhere
 const costGallons = 40; // Define the cost per gallon here or import it if defined elsewhere
+const profitMargin = 0.2; // Define the profit margin here or import it if defined elsewhere
 
 const EstimateSummary = () => {
   const {
@@ -42,6 +37,8 @@ const EstimateSummary = () => {
     (acc, item) => acc + item.cost,
     0
   );
+  const profitAmount = totalEstimate * profitMargin;
+  const totalWithProfit = totalEstimate + profitAmount;
 
   return (
     <Paper
@@ -93,7 +90,19 @@ const EstimateSummary = () => {
         >
           <Typography variant="h4">Total Estimate</Typography>
           <Typography variant="h2">
-            ${totalEstimate.toLocaleString()}
+            ${totalWithProfit.toLocaleString()}
+          </Typography>
+        </Grid>
+
+        <Grid
+          size={12}
+          display="flex"
+          justifyContent="flex-end"
+          flexDirection="column"
+          textAlign="right"
+        >
+          <Typography variant="body2">
+            (Company Profit ${profitAmount.toLocaleString()})
           </Typography>
         </Grid>
 

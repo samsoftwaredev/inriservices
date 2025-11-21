@@ -1,7 +1,6 @@
 "use client";
 
-import { numberOfPaintGallons } from "@/components/ProInteriorEstimate/laborCalc";
-import { MeasurementUnit } from "@/interfaces/laborTypes";
+import { MeasurementUnit, PaintBaseType } from "@/interfaces/laborTypes";
 import { convertToFeet } from "@/tools/convertMeasurement";
 import {
   calculatePaintGallons,
@@ -18,6 +17,7 @@ type GallonsProviderProps = {
 type FeatureDetails = {
   coats: number | null;
   perimeter: number | null;
+  paintBase: PaintBaseType | null;
 };
 
 type RoomCollection = {
@@ -92,31 +92,16 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     0
   );
 
-  const crownMoldingCoats = Object.values(crownMolding).reduce(
-    (total, item) => {
-      return total + (item.coats || 1);
-    },
-    0
-  );
-
   const chairRailPerimeter = Object.values(chairRail).reduce((total, item) => {
     if (item.perimeter && item.coats)
       return total + (item.perimeter * item.coats || 0);
     return total;
   }, 0);
 
-  const chairRailCoats = Object.values(chairRail).reduce((total, item) => {
-    return total + (item.coats || 1);
-  }, 0);
-
   const baseboardPerimeter = Object.values(baseboard).reduce((total, item) => {
     if (item.perimeter && item.coats)
       return total + (item.perimeter * item.coats || 0);
     return total;
-  }, 0);
-
-  const baseboardCoats = Object.values(baseboard).reduce((total, item) => {
-    return total + (item.coats || 1);
   }, 0);
 
   const wainscotingPerimeter = Object.values(wainscoting).reduce(
@@ -128,28 +113,16 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     0
   );
 
-  const wainscotingCoats = Object.values(wainscoting).reduce((total, item) => {
-    return total + (item.coats || 1);
-  }, 0);
-
   const ceilingPerimeter = Object.values(ceiling).reduce((total, item) => {
     if (item.perimeter && item.coats)
       return total + (item.perimeter * item.coats || 0);
     return total;
   }, 0);
 
-  const ceilingCoats = Object.values(ceiling).reduce((total, item) => {
-    return total + (item.coats || 1);
-  }, 0);
-
   const floorPerimeter = Object.values(floor).reduce((total, item) => {
     if (item.perimeter && item.coats)
       return total + (item.perimeter * item.coats || 0);
     return total;
-  }, 0);
-
-  const floorCoats = Object.values(floor).reduce((total, item) => {
-    return total + (item.coats || 1);
   }, 0);
 
   const totalProjectGallons = () => {
@@ -193,9 +166,6 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
       convertToFeet(chairRailPerimeter, measurementUnit) +
       convertToFeet(baseboardPerimeter, measurementUnit) +
       convertToFeet(wainscotingPerimeter, measurementUnit),
-    wallCoats: 1,
-    ceilingCoats: 1,
-    trimCoats: 1,
   });
 
   const value: GallonsContextType = {

@@ -19,25 +19,21 @@ export interface LaborTask {
   laborMaterials?: LaborMaterial[];
 }
 
-type pictureRailDimensions = {
-  pictureRailPerimeter: string;
-  pictureRailHeight: number;
-  pictureRailPaintCoats?: number;
-};
+export type PaintBaseType = "oil-based" | "water-based" | "latex" | "acrylic";
 
-type wainscotingDimensions = {
+type WainscotingDimensions = {
   wainscotingPerimeter: string;
   wainscotingHeight: number;
   wainscotingPaintCoats?: number;
 };
 
-type chairRailDimensions = {
+type ChairRailDimensions = {
   chairRailPerimeter: string;
   chairRailHeight: number;
   chairRailPaintCoats?: number;
 };
 
-type crownMoldingDimensions = {
+type CrownMoldingDimensions = {
   crownMoldingPerimeter: string;
   crownMoldingHeight: number;
   crownMoldingPaintCoats?: number;
@@ -70,9 +66,9 @@ export type RoomDimensionsOverview = {
   floorNumber?: number;
 } & WallDimensions &
   BaseboardDimensions &
-  chairRailDimensions &
-  crownMoldingDimensions &
-  wainscotingDimensions &
+  ChairRailDimensions &
+  CrownMoldingDimensions &
+  WainscotingDimensions &
   FloorDimensions &
   CeilingDimensions;
 
@@ -111,9 +107,9 @@ export type RoomData = {
   };
 } & WallDimensions &
   BaseboardDimensions &
-  chairRailDimensions &
-  crownMoldingDimensions &
-  wainscotingDimensions &
+  ChairRailDimensions &
+  CrownMoldingDimensions &
+  WainscotingDimensions &
   FloorDimensions &
   CeilingDimensions;
 
