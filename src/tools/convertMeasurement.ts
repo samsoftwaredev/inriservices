@@ -21,7 +21,7 @@ export const convertToFeet = (
     case "in":
       return isSquared ? value / 144 : value / 12; // 12 inches = 1 foot, 144 sq inches = 1 sq foot
     default:
-      throw new Error(`Unsupported measurement unit: ${fromUnit}`);
+      return 0;
   }
 };
 
@@ -57,9 +57,9 @@ export const convertFromFeet = (
  * @returns The value converted to the target unit
  */
 export const convertMeasurement = (
-  value: number,
-  fromUnit: MeasurementUnit,
-  toUnit: MeasurementUnit
+  value: number = 0,
+  fromUnit: MeasurementUnit = "ft",
+  toUnit: MeasurementUnit = "ft"
 ): number => {
   if (fromUnit === toUnit) return value;
 

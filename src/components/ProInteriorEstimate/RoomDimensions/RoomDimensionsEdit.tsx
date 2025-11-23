@@ -318,11 +318,8 @@ const renderRoomHeightField = (
   measurementUnit: MeasurementUnit,
   handleInputChange: (fieldKey: string) => any
 ) => {
-  const helperText = `Converted to ${convertMeasurement(
-    currentValue,
-    measurementUnit,
-    "ft"
-  ).toFixed(2)} ft | Standard height 8-10 ft`;
+  const convertedValue = convertToFeet(currentValue, measurementUnit);
+  const helperText = `Converted to ${convertedValue} ft | Standard height 8-10 ft`;
   return (
     <TextField
       fullWidth
@@ -374,11 +371,10 @@ const renderHeightField = (
   measurementUnit: MeasurementUnit,
   handleInputChange: (fieldKey: string) => any
 ) => {
-  const helperText = `Converted to ${convertMeasurement(
-    currentValue,
-    measurementUnit,
-    "ft"
-  ).toFixed(2)} ft | Standard: ${getStandardHeight(fieldKey)}`;
+  const convertedValue = convertToFeet(currentValue, measurementUnit);
+  const helperText = `Converted to ${convertedValue} ft | Standard: ${getStandardHeight(
+    fieldKey
+  )}`;
   return (
     <Box sx={{ mb: 2 }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
