@@ -171,3 +171,13 @@ export interface LocationData {
   floorPlan: number;
   sections: Section[];
 }
+
+export type FeatureDetails = {
+  coats: number | null;
+  perimeter: number | null;
+  paintBase: PaintBaseType | null;
+};
+
+export type RoomCollection = {
+  [key: string]: FeatureDetails;
+};

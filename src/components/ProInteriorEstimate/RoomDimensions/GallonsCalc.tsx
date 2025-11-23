@@ -23,10 +23,7 @@ import {
   RoomDimensionsOverview,
 } from "@/interfaces/laborTypes";
 import { useGallons } from "@/context/useGallons";
-import {
-  calculatePaintGallons,
-  calculatePaintGallonsForArea,
-} from "@/tools/estimatePaintingHours";
+import { calculatePaintGallons } from "@/tools/estimatePaintingHours";
 
 interface Props {
   roomId: string;
@@ -42,6 +39,7 @@ interface PaintCalculation {
   perimeter: number;
   gallons: number;
   coats: number;
+  paintBase: PaintBaseType;
   hasData: boolean;
 }
 
@@ -82,6 +80,7 @@ const GallonsCalc = ({
         editData.wallPaintCoats,
         measurementUnit
       ),
+      paintBase: editData.wallPaintBase || PaintBaseType.Latex,
       hasData: !!(
         roomData.wallPerimeterCalculated && roomData.wallPerimeterCalculated > 0
       ),
@@ -95,6 +94,7 @@ const GallonsCalc = ({
         editData.crownMoldingPaintCoats,
         measurementUnit
       ),
+      paintBase: editData.crownMoldingPaintBase || PaintBaseType.Latex,
       hasData: !!(
         roomData.crownMoldingPerimeterCalculated &&
         roomData.crownMoldingPerimeterCalculated > 0
@@ -109,6 +109,7 @@ const GallonsCalc = ({
         editData.chairRailPaintCoats,
         measurementUnit
       ),
+      paintBase: editData.chairRailPaintBase || PaintBaseType.Latex,
       hasData: !!(
         roomData.chairRailPerimeterCalculated &&
         roomData.chairRailPerimeterCalculated > 0
@@ -123,6 +124,7 @@ const GallonsCalc = ({
         editData.baseboardPaintCoats,
         measurementUnit
       ),
+      paintBase: editData.baseboardPaintBase || PaintBaseType.Latex,
       hasData: !!(
         roomData.baseboardPerimeterCalculated &&
         roomData.baseboardPerimeterCalculated > 0
@@ -137,6 +139,7 @@ const GallonsCalc = ({
         editData.wainscotingPaintCoats,
         measurementUnit
       ),
+      paintBase: editData.wainscotingPaintBase || PaintBaseType.Latex,
       hasData: !!(
         roomData.wainscotingPerimeterCalculated &&
         roomData.wainscotingPerimeterCalculated > 0
@@ -146,22 +149,28 @@ const GallonsCalc = ({
       name: "Ceiling",
       perimeter: roomData.areaCalculated || 0,
       coats: editData.ceilingPaintCoats || 1,
-      gallons: calculatePaintGallonsForArea(
+      gallons: calculatePaintGallons(
         roomData.areaCalculated,
         editData.ceilingPaintCoats,
-        measurementUnit
+        measurementUnit,
+        1,
+        true
       ),
+      paintBase: editData.ceilingPaintBase || PaintBaseType.Latex,
       hasData: includeCeiling,
     },
     {
       name: "Floor",
       perimeter: roomData.areaCalculated || 0,
       coats: editData.floorPaintCoats || 1,
-      gallons: calculatePaintGallonsForArea(
+      gallons: calculatePaintGallons(
         roomData.areaCalculated,
         editData.floorPaintCoats,
-        measurementUnit
+        measurementUnit,
+        1,
+        true
       ),
+      paintBase: editData.floorPaintBase || PaintBaseType.Latex,
       hasData: includeFloor,
     },
   ].filter((calc) => calc.hasData); // Only show items with data
@@ -366,10 +375,12 @@ const GallonsCalc = ({
                     <Typography variant="caption" color="text.secondary">
                       ({calc.perimeter.toFixed(1)} {measurementUnit} perimeter)
                     </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {calc.paintBase} paint
+                    </Typography>
                   </Box>
                 ))}
               </Box>
-
               {/* Total Formula */}
               <Box
                 sx={{

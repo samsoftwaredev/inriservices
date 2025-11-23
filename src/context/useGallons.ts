@@ -1,10 +1,14 @@
 "use client";
 
-import { MeasurementUnit, PaintBaseType } from "@/interfaces/laborTypes";
+import {
+  FeatureDetails,
+  MeasurementUnit,
+  PaintBaseType,
+  RoomCollection,
+} from "@/interfaces/laborTypes";
 import { convertToFeet } from "@/tools/convertMeasurement";
 import {
   calculatePaintGallons,
-  calculatePaintGallonsForArea,
   convertHoursToDays,
   estimatePaintingHours,
 } from "@/tools/estimatePaintingHours";
@@ -12,16 +16,6 @@ import React, { createContext, useContext, useState, ReactNode } from "react";
 
 type GallonsProviderProps = {
   children: ReactNode;
-};
-
-type FeatureDetails = {
-  coats: number | null;
-  perimeter: number | null;
-  paintBase: PaintBaseType | null;
-};
-
-type RoomCollection = {
-  [key: string]: FeatureDetails;
 };
 
 type GallonsContextType = {
@@ -54,9 +48,41 @@ type GallonsContextType = {
   };
   measurementUnit: MeasurementUnit;
   setMeasurementUnit: React.Dispatch<React.SetStateAction<MeasurementUnit>>;
+  totalGallonsByBasePaint: {
+    walls: { paintBase: string | null; totalPerimeter: number }[];
+    crownMolding: { paintBase: string | null; totalPerimeter: number }[];
+    chairRail: { paintBase: string | null; totalPerimeter: number }[];
+    baseboard: { paintBase: string | null; totalPerimeter: number }[];
+    wainscoting: { paintBase: string | null; totalPerimeter: number }[];
+    ceiling: { paintBase: string | null; totalPerimeter: number }[];
+    floor: { paintBase: string | null; totalPerimeter: number }[];
+  };
 };
 
 const GallonsContext = createContext<GallonsContextType | undefined>(undefined);
+
+export function aggregatePerimeterByPaintBase(features: FeatureDetails[]): {
+  paintBase: PaintBaseType | null;
+  totalPerimeter: number;
+}[] {
+  const map = new Map<PaintBaseType | null, number>();
+
+  for (const feature of features) {
+    const key = feature.paintBase; // can be null
+    const perimeter = feature.perimeter ?? 0; // treat null as 0
+
+    if (!map.has(key)) {
+      map.set(key, perimeter);
+    } else {
+      map.set(key, (map.get(key) ?? 0) + perimeter);
+    }
+  }
+
+  return Array.from(map.entries()).map(([paintBase, totalPerimeter]) => ({
+    paintBase,
+    totalPerimeter,
+  }));
+}
 
 export const GallonsProvider = ({ children }: GallonsProviderProps) => {
   const [measurementUnit, setMeasurementUnit] = useState<MeasurementUnit>("ft");
@@ -136,7 +162,7 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
 
     const total =
       calculatePaintGallons(Math.abs(perimeter), 1, measurementUnit) +
-      calculatePaintGallonsForArea(Math.abs(area), 1, measurementUnit);
+      calculatePaintGallons(Math.abs(area), 1, measurementUnit, 1, true);
     return total;
   };
 
@@ -154,8 +180,14 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
       1,
       measurementUnit
     ),
-    ceiling: calculatePaintGallonsForArea(ceilingPerimeter, 1, measurementUnit),
-    floor: calculatePaintGallonsForArea(floorPerimeter, 1, measurementUnit),
+    ceiling: calculatePaintGallons(
+      ceilingPerimeter,
+      1,
+      measurementUnit,
+      1,
+      true
+    ),
+    floor: calculatePaintGallons(floorPerimeter, 1, measurementUnit, 1, true),
   };
 
   const totalHours = estimatePaintingHours({
@@ -167,6 +199,16 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
       convertToFeet(baseboardPerimeter, measurementUnit) +
       convertToFeet(wainscotingPerimeter, measurementUnit),
   });
+
+  const totalGallonsByBasePaint = {
+    walls: aggregatePerimeterByPaintBase(Object.values(walls)),
+    crownMolding: aggregatePerimeterByPaintBase(Object.values(crownMolding)),
+    chairRail: aggregatePerimeterByPaintBase(Object.values(chairRail)),
+    baseboard: aggregatePerimeterByPaintBase(Object.values(baseboard)),
+    wainscoting: aggregatePerimeterByPaintBase(Object.values(wainscoting)),
+    ceiling: aggregatePerimeterByPaintBase(Object.values(ceiling)),
+    floor: aggregatePerimeterByPaintBase(Object.values(floor)),
+  };
 
   const value: GallonsContextType = {
     walls,
@@ -184,6 +226,7 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     floor,
     setFloor,
     totalGallons: totalProjectGallons(),
+    totalGallonsByBasePaint,
     totalGallonsBySection,
     mappingNames,
     totalHours,

@@ -7,6 +7,50 @@ import { theme } from "@/app/theme";
 import { AddBox, Calculate, FormatPaint, Work } from "@mui/icons-material";
 import { useGallons } from "@/context/useGallons";
 import { useBuilding } from "@/context";
+import { calculatePaintGallons, convertToFeet } from "@/tools";
+
+const GallonsBasePaintType = ({ roomFeature }: { roomFeature?: string }) => {
+  const { totalGallonsByBasePaint, measurementUnit } = useGallons();
+  if (
+    !roomFeature ||
+    !totalGallonsByBasePaint[
+      roomFeature as keyof typeof totalGallonsByBasePaint
+    ] ||
+    totalGallonsByBasePaint[
+      roomFeature as keyof typeof totalGallonsByBasePaint
+    ].reduce((acc, curr) => acc + curr.totalPerimeter, 0) === 0
+  ) {
+    return null;
+  }
+  return (
+    <Typography variant="body2">
+      {totalGallonsByBasePaint[
+        roomFeature as keyof typeof totalGallonsByBasePaint
+      ]?.map(({ paintBase, totalPerimeter }, index) => {
+        const isSquared = roomFeature === "ceiling" || roomFeature === "floor";
+        const gallons = calculatePaintGallons(
+          totalPerimeter,
+          1,
+          measurementUnit,
+          1,
+          isSquared
+        );
+        const feet = convertToFeet(
+          totalPerimeter,
+          measurementUnit,
+          isSquared
+        ).toFixed(2);
+
+        return (
+          <span key={index}>
+            {paintBase}: {gallons}g. ({feet}ft.)
+            {index < Object.entries(totalGallonsByBasePaint).length - 1 && ", "}
+          </span>
+        );
+      })}
+    </Typography>
+  );
+};
 
 const hoursRate = 35; // Define the hourly rate here or import it if defined elsewhere
 const costGallons = 40; // Define the cost per gallon here or import it if defined elsewhere
@@ -33,7 +77,9 @@ const EstimateSummary = () => {
     { label: "Labor Cost", cost: totalHours * hoursRate, icon: <Work /> },
     { label: "Materials", cost: 0, icon: <AddBox /> },
   ];
-
+  const totalGallonsBySectionEntries = Object.entries(
+    totalGallonsBySection
+  ).filter(([, value]) => value > 0);
   const totalEstimate = estimateWorkItems.reduce(
     (acc, item) => acc + item.cost,
     0
@@ -69,7 +115,7 @@ const EstimateSummary = () => {
             justifyContent="space-between"
             sx={{ px: 2, borderRadius: 4, opacity: 0.9 }}
           >
-            <Typography variant="h6" display="flex" alignItems="center" gap={1}>
+            <Typography variant="h5" display="flex" alignItems="center" gap={1}>
               <Box
                 component="span"
                 sx={{ display: "flex", alignItems: "center" }}
@@ -78,7 +124,7 @@ const EstimateSummary = () => {
               </Box>
               {item.label}
             </Typography>
-            <Typography variant="h6">${item.cost.toLocaleString()}</Typography>
+            <Typography variant="h5">${item.cost.toLocaleString()}</Typography>
           </Grid>
         ))}
 
@@ -96,28 +142,44 @@ const EstimateSummary = () => {
           </Stack>
           <Stack spacing={0} alignItems="flex-end">
             <Typography variant="h2">
-              ${totalWithTaxes.toLocaleString()}
+              $
+              {totalWithTaxes.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </Typography>
             <Typography variant="body2">
-              Profit ${profitAmount.toLocaleString()}
+              Profit $
+              {profitAmount.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </Typography>
             <Typography variant="body2">
-              Taxes ${taxesToPay.toLocaleString()}
+              Taxes $
+              {taxesToPay.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </Typography>
           </Stack>
         </Grid>
 
         <Grid size={12} display="flex" justifyContent="space-between">
-          <Typography variant="h6">Approximately Total</Typography>
-          <Typography variant="h6">
+          <Typography variant="h5">Approximately Total</Typography>
+          <Typography variant="h5">
             {totalHours} | {totalDays} day{totalDays !== 1 ? "s" : ""}
           </Typography>
         </Grid>
-
         <Grid size={12} display="flex" justifyContent="space-between">
-          <Typography variant="h6">Paint Gallons</Typography>
-          <Typography variant="h6">{totalGallons}</Typography>
+          <Typography variant="h5">Rooms</Typography>
+          <Typography variant="h5">{totalRooms}</Typography>
         </Grid>
+        <Grid size={12} display="flex" justifyContent="space-between">
+          <Typography variant="h5">Paint Gallons</Typography>
+          <Typography variant="h5">{totalGallons}</Typography>
+        </Grid>
+
         <Grid
           size={12}
           display="flex"
@@ -125,15 +187,14 @@ const EstimateSummary = () => {
           flexDirection="column"
           textAlign="right"
         >
-          {Object.entries(totalGallonsBySection).map(([key, value], index) => (
-            <Typography key={index} variant="body2">
-              {mappingNames[key]}: {value} gallons
-            </Typography>
+          {totalGallonsBySectionEntries.map(([key, value], index) => (
+            <Box my={1} key={index}>
+              <Typography fontWeight="900">
+                {mappingNames[key]}: {value} gallons
+              </Typography>
+              <GallonsBasePaintType roomFeature={key} />
+            </Box>
           ))}
-        </Grid>
-        <Grid size={12} display="flex" justifyContent="space-between">
-          <Typography variant="h6">Rooms</Typography>
-          <Typography variant="h6">{totalRooms}</Typography>
         </Grid>
       </Grid>
     </Paper>

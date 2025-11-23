@@ -322,7 +322,7 @@ const renderRoomHeightField = (
     currentValue,
     measurementUnit,
     "ft"
-  )} ft | Standard height 8-10 ft`;
+  ).toFixed(2)} ft | Standard height 8-10 ft`;
   return (
     <TextField
       fullWidth
@@ -373,28 +373,35 @@ const renderHeightField = (
   currentValue: any,
   measurementUnit: MeasurementUnit,
   handleInputChange: (fieldKey: string) => any
-) => (
-  <Box sx={{ mb: 2 }}>
-    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-      <Typography variant="body2" sx={{ fontSize: "1.2rem", mr: 1 }}>
-        {getFieldIcon(fieldKey)}
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        {getFieldDisplayName(fieldKey)} Height
-      </Typography>
+) => {
+  const helperText = `Converted to ${convertMeasurement(
+    currentValue,
+    measurementUnit,
+    "ft"
+  ).toFixed(2)} ft | Standard: ${getStandardHeight(fieldKey)}`;
+  return (
+    <Box sx={{ mb: 2 }}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+        <Typography variant="body2" sx={{ fontSize: "1.2rem", mr: 1 }}>
+          {getFieldIcon(fieldKey)}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {getFieldDisplayName(fieldKey)} Height
+        </Typography>
+      </Box>
+      <TextField
+        fullWidth
+        label={`Height (${measurementUnit})`}
+        type="number"
+        value={currentValue}
+        onChange={handleInputChange(fieldKey)}
+        placeholder={measurementUnit === "ft" ? "0.29" : "0.089"}
+        helperText={helperText}
+        size="small"
+      />
     </Box>
-    <TextField
-      fullWidth
-      label={`Height (${measurementUnit})`}
-      type="number"
-      value={currentValue}
-      onChange={handleInputChange(fieldKey)}
-      placeholder={measurementUnit === "ft" ? "0.29" : "0.089"}
-      helperText={`Standard: ${getStandardHeight(fieldKey)}`}
-      size="small"
-    />
-  </Box>
-);
+  );
+};
 
 const renderPaintBaseField = (
   fieldKey: string,

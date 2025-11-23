@@ -27,41 +27,26 @@ export function convertHoursToDays(hours: number, hoursPerDay: number = 8) {
 }
 
 export const calculatePaintGallons = (
-  perimeter: number | string,
+  measurement: number | string,
   coatsFromEditData: number | undefined,
   measurementUnit: MeasurementUnit,
-  defaultCoats: number = 1
+  defaultCoats: number = 1,
+  isArea: boolean = false
 ): number => {
-  const numPerimeter =
-    typeof perimeter === "string" ? parseFloat(perimeter) : perimeter;
-  if (!numPerimeter || numPerimeter <= 0) {
+  const numMeasurement =
+    typeof measurement === "string" ? parseFloat(measurement) : measurement;
+
+  if (!numMeasurement || numMeasurement <= 0) {
     return 0;
   }
 
   const coats = coatsFromEditData || defaultCoats;
-  const convertedToFeet = convertToFeet(numPerimeter * coats, measurementUnit);
-  const baseGallons = numberOfPaintGallons(convertedToFeet);
-  return baseGallons;
-};
+  const inchesSquared = measurementUnit === "in" && isArea;
 
-export const calculatePaintGallonsForArea = (
-  area: number | string,
-  coatsFromEditData: number | undefined,
-  measurementUnit: MeasurementUnit,
-  defaultCoats: number = 1
-): number => {
-  let inchesSquared = false;
-  if (measurementUnit === "in") inchesSquared = true;
+  const convertedToFeet = isArea
+    ? convertToFeet(numMeasurement, measurementUnit, inchesSquared) * coats
+    : convertToFeet(numMeasurement * coats, measurementUnit);
 
-  const numArea = typeof area === "string" ? parseFloat(area) : area;
-  if (!numArea || numArea <= 0) {
-    return 0;
-  }
-
-  const coats = coatsFromEditData || defaultCoats;
-
-  const convertedToFeet =
-    convertToFeet(numArea, measurementUnit, inchesSquared) * coats;
   const baseGallons = numberOfPaintGallons(convertedToFeet);
   return baseGallons;
 };
