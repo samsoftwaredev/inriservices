@@ -10,7 +10,6 @@ import {
   Typography,
   TextField,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
   InputAdornment,
@@ -44,28 +43,139 @@ interface DiscountConfig {
   isEditing: boolean;
 }
 
+interface CostCalculation {
+  subtotal: number;
+  discountAmount: number;
+  totalAfterDiscount: number;
+  profitAmount: number;
+  totalWithProfit: number;
+  taxesToPay: number;
+  paymentSystemFee: number;
+  companyFeesTotal: number;
+  totalWithTaxes: number;
+}
+
 // ============================================================================
-// COMPONENT DEFINITIONS
+// CONSTANTS
+// ============================================================================
+
+const BUSINESS_OPERATION_FEES = {
+  insurance: 25.0,
+  paymentSystemFeeFixed: 2.0,
+  phoneFee: 4.0,
+  promotionFee: 50.0,
+  hostWebsiteFee: 5.0,
+  domainFee: 5.0,
+  thirdPartySoftwareFee: 15.0,
+  companyRegistrationFee: 10.0,
+  estimateFee: 60.0,
+} as const;
+
+const PRICING_CONFIG = {
+  hoursRate: 35,
+  costGallons: 65,
+  profitMargin: 0.2,
+  taxAmount: 0.0825,
+  paymentFeeRate: 0.03,
+  paymentFeeFixed: 2,
+} as const;
+
+const DEFAULT_DISCOUNT: DiscountConfig = {
+  type: "percentage",
+  value: 0,
+  isEditing: false,
+};
+
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+const calculateTotalCompanyFees = (): number => {
+  return Object.values(BUSINESS_OPERATION_FEES).reduce(
+    (acc, fee) => acc + fee,
+    0
+  );
+};
+
+const calculateDiscount = (
+  subtotal: number,
+  discount: DiscountConfig
+): number => {
+  if (discount.type === "percentage") {
+    return (subtotal * discount.value) / 100;
+  }
+  return discount.value;
+};
+
+const calculateCosts = (
+  estimateItems: Array<{ cost: number }>,
+  discount: DiscountConfig
+): CostCalculation => {
+  const subtotal = estimateItems.reduce((acc, item) => acc + item.cost, 0);
+  const discountAmount = calculateDiscount(subtotal, discount);
+  const totalAfterDiscount = Math.max(0, subtotal - discountAmount);
+  const companyFeesTotal = calculateTotalCompanyFees();
+  const profitAmount = totalAfterDiscount * PRICING_CONFIG.profitMargin;
+  const totalWithProfit = totalAfterDiscount + profitAmount;
+  const taxesToPay = totalWithProfit * PRICING_CONFIG.taxAmount;
+  const paymentSystemFee =
+    totalWithProfit * PRICING_CONFIG.paymentFeeRate +
+    PRICING_CONFIG.paymentFeeFixed;
+  const totalWithTaxes =
+    companyFeesTotal + paymentSystemFee + totalWithProfit + taxesToPay;
+
+  return {
+    subtotal,
+    discountAmount,
+    totalAfterDiscount,
+    profitAmount,
+    totalWithProfit,
+    taxesToPay,
+    paymentSystemFee,
+    companyFeesTotal,
+    totalWithTaxes,
+  };
+};
+
+const formatCurrency = (amount: number): string => {
+  return amount.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+};
+
+const validateDiscountValue = (
+  value: number,
+  type: DiscountConfig["type"],
+  maxAmount: number
+): number => {
+  const maxValue = type === "percentage" ? 100 : maxAmount;
+  return Math.max(0, Math.min(value, maxValue));
+};
+
+// ============================================================================
+// SUB-COMPONENTS
 // ============================================================================
 
 const GallonsBasePaintType = ({ roomFeature }: { roomFeature?: string }) => {
   const { totalGallonsByBasePaint, measurementUnit } = useGallons();
-  if (
-    !roomFeature ||
-    !totalGallonsByBasePaint[
-      roomFeature as keyof typeof totalGallonsByBasePaint
-    ] ||
+
+  const paintData =
     totalGallonsByBasePaint[
       roomFeature as keyof typeof totalGallonsByBasePaint
-    ].reduce((acc, curr) => acc + curr.totalPerimeter, 0) === 0
+    ];
+
+  if (
+    !roomFeature ||
+    !paintData ||
+    paintData.reduce((acc, curr) => acc + curr.totalPerimeter, 0) === 0
   ) {
     return null;
   }
+
   return (
     <Typography variant="body2">
-      {totalGallonsByBasePaint[
-        roomFeature as keyof typeof totalGallonsByBasePaint
-      ]?.map(({ paintBase, totalPerimeter }, index) => {
+      {paintData.map(({ paintBase, totalPerimeter }, index) => {
         const isSquared = roomFeature === "ceiling" || roomFeature === "floor";
         const gallons = calculatePaintGallons(
           totalPerimeter,
@@ -83,7 +193,7 @@ const GallonsBasePaintType = ({ roomFeature }: { roomFeature?: string }) => {
         return (
           <span key={index}>
             {paintBase}: {gallons}g. ({feet}ft.)
-            {index < Object.entries(totalGallonsByBasePaint).length - 1 && ", "}
+            {index < paintData.length - 1 && ", "}
           </span>
         );
       })}
@@ -91,26 +201,179 @@ const GallonsBasePaintType = ({ roomFeature }: { roomFeature?: string }) => {
   );
 };
 
-// ============================================================================
-// CONSTANTS
-// ============================================================================
+const CostItem = ({
+  item,
+  isMobile,
+}: {
+  item: { label: string; cost: number; icon: React.ReactNode };
+  isMobile: boolean;
+}) => (
+  <Grid
+    size={12}
+    display="flex"
+    justifyContent="space-between"
+    alignItems="center"
+    sx={{ px: { xs: 1, sm: 2 }, borderRadius: 4, opacity: 0.9 }}
+  >
+    <Typography
+      variant={isMobile ? "subtitle1" : "h6"}
+      display="flex"
+      alignItems="center"
+      gap={1}
+    >
+      <Box component="span" sx={{ display: "flex", alignItems: "center" }}>
+        {item.icon}
+      </Box>
+      {item.label}
+    </Typography>
+    <Typography variant={isMobile ? "subtitle1" : "h6"}>
+      ${item.cost.toLocaleString()}
+    </Typography>
+  </Grid>
+);
 
-const businessOperationFees = {
-  insurance: 25.0,
-  paymentSystemFeeFixed: 2.0,
-  phoneFee: 4.0,
-  promotionFee: 50.0,
-  hostWebsiteFee: 5.0,
-  domainFee: 5.0,
-  thirdPartySoftwareFee: 15.0,
-  companyRegistrationFee: 10.0,
-  estimateFee: 60.0,
-};
+const SubtotalRow = ({
+  subtotal,
+  isMobile,
+}: {
+  subtotal: number;
+  isMobile: boolean;
+}) => (
+  <Grid
+    size={12}
+    display="flex"
+    justifyContent="space-between"
+    sx={{ px: { xs: 1, sm: 2 }, py: 1, opacity: 0.8 }}
+  >
+    <Typography variant={isMobile ? "body1" : "h6"} fontWeight="300">
+      Subtotal
+    </Typography>
+    <Typography variant={isMobile ? "body1" : "h6"} fontWeight="300">
+      ${subtotal.toLocaleString()}
+    </Typography>
+  </Grid>
+);
 
-const hoursRate = 35;
-const costGallons = 65;
-const profitMargin = 0.2;
-const taxAmount = 0.0825;
+const TotalEstimateCard = ({
+  costs,
+  discount,
+  isMobile,
+}: {
+  costs: CostCalculation;
+  discount: DiscountConfig;
+  isMobile: boolean;
+}) => (
+  <Grid
+    size={12}
+    display="flex"
+    bgcolor="primary.light"
+    justifyContent="space-between"
+    sx={{
+      px: { xs: 1, sm: 2 },
+      py: { xs: 1.5, sm: 2 },
+      borderRadius: 4,
+      opacity: 0.9,
+    }}
+  >
+    <Stack>
+      <Typography variant={isMobile ? "h6" : "h4"}>Total Estimate</Typography>
+      {costs.discountAmount > 0 && (
+        <Typography variant="caption" sx={{ opacity: 0.8 }}>
+          After{" "}
+          {discount.type === "percentage"
+            ? `${discount.value}%`
+            : `$${discount.value}`}{" "}
+          discount
+        </Typography>
+      )}
+    </Stack>
+    <Stack spacing={0} alignItems="flex-end">
+      <Typography variant={isMobile ? "h5" : "h2"}>
+        ${formatCurrency(costs.totalWithTaxes)}
+      </Typography>
+      <Typography variant={isMobile ? "caption" : "body2"}>
+        Profit ${formatCurrency(costs.profitAmount)}
+      </Typography>
+      <Typography variant={isMobile ? "caption" : "body2"}>
+        Taxes ${formatCurrency(costs.taxesToPay)}
+      </Typography>
+      <Typography variant={isMobile ? "caption" : "body2"}>
+        Payment system fee ${formatCurrency(costs.paymentSystemFee)}
+      </Typography>
+      <Typography variant={isMobile ? "caption" : "body2"}>
+        Company fees ${formatCurrency(costs.companyFeesTotal)}
+      </Typography>
+    </Stack>
+  </Grid>
+);
+
+const ProjectDetailsSection = ({
+  totalHours,
+  totalDays,
+  totalRooms,
+  totalGallons,
+  isMobile,
+}: {
+  totalHours: number;
+  totalDays: number;
+  totalRooms: number;
+  totalGallons: number;
+  isMobile: boolean;
+}) => (
+  <>
+    <Grid size={12} display="flex" justifyContent="space-between">
+      <Typography variant={isMobile ? "subtitle1" : "h6"}>
+        Approximately Total
+      </Typography>
+      <Typography variant={isMobile ? "subtitle1" : "h6"}>
+        {totalHours} hrs | {totalDays} day{totalDays !== 1 ? "s" : ""}
+      </Typography>
+    </Grid>
+
+    <Grid size={12} display="flex" justifyContent="space-between">
+      <Typography variant={isMobile ? "subtitle1" : "h6"}>Rooms</Typography>
+      <Typography variant={isMobile ? "subtitle1" : "h6"}>
+        {totalRooms}
+      </Typography>
+    </Grid>
+
+    <Grid size={12} display="flex" justifyContent="space-between">
+      <Typography variant={isMobile ? "subtitle1" : "h6"}>
+        Paint Gallons
+      </Typography>
+      <Typography variant={isMobile ? "subtitle1" : "h6"}>
+        {totalGallons}
+      </Typography>
+    </Grid>
+  </>
+);
+
+const PaintBreakdownSection = ({
+  totalGallonsBySectionEntries,
+  mappingNames,
+  isMobile,
+}: {
+  totalGallonsBySectionEntries: Array<[string, number]>;
+  mappingNames: Record<string, string>;
+  isMobile: boolean;
+}) => (
+  <Grid
+    size={12}
+    display="flex"
+    justifyContent="flex-end"
+    flexDirection="column"
+    textAlign="right"
+  >
+    {totalGallonsBySectionEntries.map(([key, value], index) => (
+      <Box my={1} key={index}>
+        <Typography fontWeight="900" variant={isMobile ? "body2" : "body1"}>
+          {mappingNames[key]}: {value} gallons
+        </Typography>
+        <GallonsBasePaintType roomFeature={key} />
+      </Box>
+    ))}
+  </Grid>
+);
 
 // ============================================================================
 // MAIN COMPONENT
@@ -133,53 +396,37 @@ const EstimateSummary = () => {
   // STATE MANAGEMENT
   // ============================================================================
 
-  const [discount, setDiscount] = useState<DiscountConfig>({
-    type: "percentage",
-    value: 0,
-    isEditing: false,
-  });
+  const [discount, setDiscount] = useState<DiscountConfig>(DEFAULT_DISCOUNT);
+
+  // ============================================================================
+  // DERIVED STATE
+  // ============================================================================
 
   const totalRooms = buildingData.sections.length;
 
   const estimateWorkItems = [
     {
       label: "Paint Cost",
-      cost: totalGallons * costGallons,
+      cost: totalGallons * PRICING_CONFIG.costGallons,
       icon: <FormatPaint />,
     },
-    { label: "Labor Cost", cost: totalHours * hoursRate, icon: <Work /> },
-    { label: "Materials", cost: 0, icon: <AddBox /> },
+    {
+      label: "Labor Cost",
+      cost: totalHours * PRICING_CONFIG.hoursRate,
+      icon: <Work />,
+    },
+    {
+      label: "Materials",
+      cost: 0,
+      icon: <AddBox />,
+    },
   ];
 
   const totalGallonsBySectionEntries = Object.entries(
     totalGallonsBySection
   ).filter(([, value]) => value > 0);
 
-  // ============================================================================
-  // CALCULATIONS
-  // ============================================================================
-
-  const subtotal = estimateWorkItems.reduce((acc, item) => acc + item.cost, 0);
-
-  // Calculate discount amount
-  const discountAmount =
-    discount.type === "percentage"
-      ? (subtotal * discount.value) / 100
-      : discount.value;
-
-  const totalAfterDiscount = Math.max(0, subtotal - discountAmount);
-
-  const companyFeesTotal = Object.values(businessOperationFees).reduce(
-    (acc, fee) => acc + fee,
-    0
-  );
-
-  const profitAmount = totalAfterDiscount * profitMargin;
-  const totalWithProfit = totalAfterDiscount + profitAmount;
-  const taxesToPay = totalWithProfit * taxAmount;
-  const paymentSystemFee = totalWithProfit * 0.03 + 2;
-  const totalWithTaxes =
-    companyFeesTotal + paymentSystemFee + totalWithProfit + taxesToPay;
+  const costs = calculateCosts(estimateWorkItems, discount);
 
   // ============================================================================
   // EVENT HANDLERS
@@ -194,7 +441,7 @@ const EstimateSummary = () => {
   };
 
   const handleDiscountCancel = () => {
-    setDiscount((prev) => ({ ...prev, isEditing: false, value: 0 }));
+    setDiscount(DEFAULT_DISCOUNT);
   };
 
   const handleDiscountTypeChange = (type: "percentage" | "amount") => {
@@ -202,9 +449,11 @@ const EstimateSummary = () => {
   };
 
   const handleDiscountValueChange = (value: number) => {
-    // Validate percentage (0-100) or amount (non-negative)
-    const maxValue = discount.type === "percentage" ? 100 : subtotal;
-    const validValue = Math.max(0, Math.min(value, maxValue));
+    const validValue = validateDiscountValue(
+      value,
+      discount.type,
+      costs.subtotal
+    );
     setDiscount((prev) => ({ ...prev, value: validValue }));
   };
 
@@ -222,24 +471,27 @@ const EstimateSummary = () => {
         px: { xs: 1, sm: 2 },
         py: 1.5,
         borderRadius: 2,
-        bgcolor: discountAmount > 0 ? "success.light" : "grey.100",
+        bgcolor: costs.discountAmount > 0 ? "success.dark" : "grey.100",
         opacity: 0.95,
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
         <LocalOffer
           sx={{
-            color: discountAmount > 0 ? "success.main" : "text.secondary",
+            color:
+              costs.discountAmount > 0 ? "success.light" : "text.secondary",
             fontSize: { xs: 20, sm: 24 },
           }}
         />
         <Typography
           variant={isMobile ? "subtitle1" : "h6"}
-          sx={{ color: discountAmount > 0 ? "success.main" : "text.primary" }}
+          sx={{
+            color: costs.discountAmount > 0 ? "success.light" : "text.primary",
+          }}
         >
           Discount
         </Typography>
-        {discountAmount > 0 && !discount.isEditing && (
+        {costs.discountAmount > 0 && !discount.isEditing && (
           <Chip
             label={
               discount.type === "percentage"
@@ -277,7 +529,7 @@ const EstimateSummary = () => {
             onChange={(e) => handleDiscountValueChange(Number(e.target.value))}
             inputProps={{
               min: 0,
-              max: discount.type === "percentage" ? 100 : subtotal,
+              max: discount.type === "percentage" ? 100 : costs.subtotal,
               step: discount.type === "percentage" ? 1 : 50,
             }}
             sx={{
@@ -309,12 +561,20 @@ const EstimateSummary = () => {
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Typography
             variant={isMobile ? "subtitle1" : "h6"}
-            color={discountAmount > 0 ? "success.main" : "text.secondary"}
+            color={
+              costs.discountAmount > 0 ? "success.light" : "text.secondary"
+            }
           >
-            -${discountAmount.toLocaleString()}
+            -${costs.discountAmount.toLocaleString()}
           </Typography>
           <IconButton size="small" onClick={handleDiscountEdit}>
-            <Edit fontSize="small" />
+            <Edit
+              fontSize="small"
+              sx={{
+                color:
+                  costs.discountAmount > 0 ? "success.light" : "text.secondary",
+              }}
+            />
           </IconButton>
         </Box>
       )}
@@ -335,6 +595,7 @@ const EstimateSummary = () => {
         mb: 2,
       }}
     >
+      {/* Header */}
       <Box
         display="flex"
         alignItems="center"
@@ -354,48 +615,11 @@ const EstimateSummary = () => {
       <Grid container spacing={{ xs: 1, sm: 2 }}>
         {/* Cost Items */}
         {estimateWorkItems.map((item, index) => (
-          <Grid
-            key={index}
-            size={12}
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            sx={{ px: { xs: 1, sm: 2 }, borderRadius: 4, opacity: 0.9 }}
-          >
-            <Typography
-              variant={isMobile ? "subtitle1" : "h6"}
-              display="flex"
-              alignItems="center"
-              gap={1}
-            >
-              <Box
-                component="span"
-                sx={{ display: "flex", alignItems: "center" }}
-              >
-                {item.icon}
-              </Box>
-              {item.label}
-            </Typography>
-            <Typography variant={isMobile ? "subtitle1" : "h6"}>
-              ${item.cost.toLocaleString()}
-            </Typography>
-          </Grid>
+          <CostItem key={index} item={item} isMobile={isMobile} />
         ))}
 
         {/* Subtotal */}
-        <Grid
-          size={12}
-          display="flex"
-          justifyContent="space-between"
-          sx={{ px: { xs: 1, sm: 2 }, py: 1, opacity: 0.8 }}
-        >
-          <Typography variant={isMobile ? "body1" : "h6"} fontWeight="300">
-            Subtotal
-          </Typography>
-          <Typography variant={isMobile ? "body1" : "h6"} fontWeight="300">
-            ${subtotal.toLocaleString()}
-          </Typography>
-        </Grid>
+        <SubtotalRow subtotal={costs.subtotal} isMobile={isMobile} />
 
         {/* Discount Section */}
         {renderDiscountSection()}
@@ -403,117 +627,27 @@ const EstimateSummary = () => {
         <Divider sx={{ my: 1, bgcolor: "white", width: "100%" }} />
 
         {/* Total Estimate */}
-        <Grid
-          size={12}
-          display="flex"
-          bgcolor="primary.light"
-          justifyContent="space-between"
-          sx={{
-            px: { xs: 1, sm: 2 },
-            py: { xs: 1.5, sm: 2 },
-            borderRadius: 4,
-            opacity: 0.9,
-          }}
-        >
-          <Stack>
-            <Typography variant={isMobile ? "h6" : "h4"}>
-              Total Estimate
-            </Typography>
-            {discountAmount > 0 && (
-              <Typography variant="caption" sx={{ opacity: 0.8 }}>
-                After{" "}
-                {discount.type === "percentage"
-                  ? `${discount.value}%`
-                  : `$${discount.value}`}{" "}
-                discount
-              </Typography>
-            )}
-          </Stack>
-          <Stack spacing={0} alignItems="flex-end">
-            <Typography variant={isMobile ? "h5" : "h2"}>
-              $
-              {totalWithTaxes.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </Typography>
-            <Typography variant={isMobile ? "caption" : "body2"}>
-              Profit $
-              {profitAmount.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </Typography>
-            <Typography variant={isMobile ? "caption" : "body2"}>
-              Taxes $
-              {taxesToPay.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </Typography>
-            <Typography variant={isMobile ? "caption" : "body2"}>
-              Payment system fee $
-              {paymentSystemFee.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </Typography>
-            <Typography variant={isMobile ? "caption" : "body2"}>
-              Company fees $
-              {companyFeesTotal.toLocaleString(undefined, {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </Typography>
-          </Stack>
-        </Grid>
+        <TotalEstimateCard
+          costs={costs}
+          discount={discount}
+          isMobile={isMobile}
+        />
 
         {/* Project Details */}
-        <Grid size={12} display="flex" justifyContent="space-between">
-          <Typography variant={isMobile ? "subtitle1" : "h6"}>
-            Approximately Total
-          </Typography>
-          <Typography variant={isMobile ? "subtitle1" : "h6"}>
-            {totalHours} | {totalDays} day{totalDays !== 1 ? "s" : ""}
-          </Typography>
-        </Grid>
-
-        <Grid size={12} display="flex" justifyContent="space-between">
-          <Typography variant={isMobile ? "subtitle1" : "h6"}>Rooms</Typography>
-          <Typography variant={isMobile ? "subtitle1" : "h6"}>
-            {totalRooms}
-          </Typography>
-        </Grid>
-
-        <Grid size={12} display="flex" justifyContent="space-between">
-          <Typography variant={isMobile ? "subtitle1" : "h6"}>
-            Paint Gallons
-          </Typography>
-          <Typography variant={isMobile ? "subtitle1" : "h6"}>
-            {totalGallons}
-          </Typography>
-        </Grid>
+        <ProjectDetailsSection
+          totalHours={totalHours}
+          totalDays={totalDays}
+          totalRooms={totalRooms}
+          totalGallons={totalGallons}
+          isMobile={isMobile}
+        />
 
         {/* Paint Breakdown */}
-        <Grid
-          size={12}
-          display="flex"
-          justifyContent="flex-end"
-          flexDirection="column"
-          textAlign="right"
-        >
-          {totalGallonsBySectionEntries.map(([key, value], index) => (
-            <Box my={1} key={index}>
-              <Typography
-                fontWeight="900"
-                variant={isMobile ? "body2" : "body1"}
-              >
-                {mappingNames[key]}: {value} gallons
-              </Typography>
-              <GallonsBasePaintType roomFeature={key} />
-            </Box>
-          ))}
-        </Grid>
+        <PaintBreakdownSection
+          totalGallonsBySectionEntries={totalGallonsBySectionEntries}
+          mappingNames={mappingNames}
+          isMobile={isMobile}
+        />
       </Grid>
     </Paper>
   );

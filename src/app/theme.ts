@@ -67,6 +67,7 @@ export const theme = createTheme({
       contrastText: "#fff", // Black text for contrast
     },
     success: {
+      light: "#a8e6a1", // Medium green
       main: "#4caf50", // Bright yellow
     },
   },
