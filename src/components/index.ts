@@ -17,3 +17,4 @@ export { default as Pricing } from "./Pricing";
 export { default as EstimateStepper } from "./EstimateStepper";
 export { default as ErrorPage } from "./ErrorPage";
 export { default as ProInteriorEstimate } from "./ProInteriorEstimate";
+export { default as ImageUpload } from "./ImageUpload";

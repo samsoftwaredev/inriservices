@@ -24,19 +24,13 @@ import Room from "../Room";
 import CustomerExpectations from "../CustomerExpectations";
 import { Customer, LocationData } from "@/interfaces/laborTypes";
 import { theme } from "@/app/theme";
+import { useCustomer } from "@/context/useCustomer";
 
 interface Props {
   buildingData: LocationData;
   setBuildingData: React.Dispatch<React.SetStateAction<LocationData>>;
-  currentCustomer: Customer;
-  previousCustomers: Customer[];
   anchorEl: HTMLElement | null;
   setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
-  newCustomerDialogOpen: boolean;
-  setNewCustomerDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  onSelectPreviousCustomer: (customer: Customer) => void;
-  onSaveNewCustomer: (newCustomerData: Omit<Customer, "id">) => void;
-  onCustomerUpdate: (updatedCustomer: Customer) => void;
   onAddNewSection: () => void;
   onDeleteSectionClick: (sectionId: string, sectionName: string) => void;
   onRoomUpdate: (updates: {
@@ -52,21 +46,26 @@ interface Props {
 const MainContent = ({
   buildingData,
   setBuildingData,
-  currentCustomer,
-  previousCustomers,
   anchorEl,
   setAnchorEl,
-  newCustomerDialogOpen,
-  setNewCustomerDialogOpen,
-  onSelectPreviousCustomer,
-  onSaveNewCustomer,
-  onCustomerUpdate,
   onAddNewSection,
   onDeleteSectionClick,
   onRoomUpdate,
   baseCost,
   onCostChange,
 }: Props) => {
+  const {
+    previousCustomers,
+    setPreviousCustomers,
+    currentCustomer,
+    setCurrentCustomer,
+    newCustomerDialogOpen,
+    setNewCustomerDialogOpen,
+    handleSelectPreviousCustomer: onSelectPreviousCustomer,
+    handleSaveNewCustomer: onSaveNewCustomer,
+    handleCustomerUpdate: onCustomerUpdate,
+  } = useCustomer();
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };

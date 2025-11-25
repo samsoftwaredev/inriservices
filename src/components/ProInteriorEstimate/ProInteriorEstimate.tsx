@@ -10,17 +10,6 @@ import { useCustomer } from "@/context/useCustomer";
 
 const Building = () => {
   const {
-    previousCustomers,
-    setPreviousCustomers,
-    currentCustomer,
-    setCurrentCustomer,
-    newCustomerDialogOpen,
-    setNewCustomerDialogOpen,
-    handleSelectPreviousCustomer,
-    handleSaveNewCustomer,
-    handleCustomerUpdate,
-  } = useCustomer();
-  const {
     buildingData,
     setBuildingData,
     anchorEl,
@@ -41,15 +30,8 @@ const Building = () => {
       <MainContent
         buildingData={buildingData}
         setBuildingData={setBuildingData}
-        currentCustomer={currentCustomer}
-        previousCustomers={previousCustomers}
         anchorEl={anchorEl}
         setAnchorEl={setAnchorEl}
-        newCustomerDialogOpen={newCustomerDialogOpen}
-        setNewCustomerDialogOpen={setNewCustomerDialogOpen}
-        onSelectPreviousCustomer={handleSelectPreviousCustomer}
-        onSaveNewCustomer={handleSaveNewCustomer}
-        onCustomerUpdate={handleCustomerUpdate}
         onAddNewSection={addNewSection}
         onDeleteSectionClick={handleDeleteSectionClick}
         onRoomUpdate={onRoomUpdate}
