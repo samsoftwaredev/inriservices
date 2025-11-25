@@ -1,14 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  Box,
-  Typography,
-  Divider,
-  Button,
-  IconButton,
-  Paper,
-} from "@mui/material";
+import { Box, Typography, Divider, Button, IconButton } from "@mui/material";
 import {
   Add as AddIcon,
   Delete as DeleteIcon,
@@ -21,8 +14,7 @@ import CustomerSelectionMenu from "../CustomerSelectionMenu";
 import NewCustomerDialog from "../NewCustomerDialog";
 import ProjectSettings from "../ProjectSettings";
 import Room from "../Room";
-import CustomerExpectations from "../CustomerExpectations";
-import { Customer, LocationData } from "@/interfaces/laborTypes";
+import { LocationData } from "@/interfaces/laborTypes";
 import { theme } from "@/app/theme";
 import { useCustomer } from "@/context/useCustomer";
 
@@ -110,82 +102,81 @@ const MainContent = ({
       />
 
       <ProjectSettings
+        currentCustomer={currentCustomer}
+        onCustomerUpdate={onCustomerUpdate}
         buildingData={buildingData}
         setBuildingData={setBuildingData}
       />
 
-      <Paper elevation={3} sx={{ p: 2, mb: 3 }}>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            mb: 2,
-          }}
-        >
-          <HomeRepairServiceOutlined fontSize="large" />
-          <Typography variant="h6">Rooms & Measurements</Typography>
-        </Box>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          mb: 2,
+        }}
+      >
+        <HomeRepairServiceOutlined fontSize="large" />
+        <Typography variant="h6">Rooms & Measurements</Typography>
+      </Box>
 
-        <Divider sx={{ mb: 2 }} />
+      <Divider sx={{ mb: 2 }} />
 
-        {buildingData.sections.length === 0 && (
-          <Typography variant="body2" color="text.secondary">
-            No sections added yet.
-          </Typography>
-        )}
+      {buildingData.sections.length === 0 && (
+        <Typography variant="body2" color="text.secondary">
+          No sections added yet.
+        </Typography>
+      )}
 
-        {buildingData.sections.map((section) => (
-          <Box key={section.id} sx={{ mb: 2, position: "relative" }}>
-            <Box
+      {buildingData.sections.map((section) => (
+        <Box key={section.id} sx={{ mb: 2, position: "relative" }}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: 8,
+              right: 8,
+              zIndex: 1,
+            }}
+          >
+            <IconButton
+              size="small"
+              color="error"
+              onClick={() => onDeleteSectionClick(section.id, section.name)}
               sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                zIndex: 1,
+                bgcolor: "background.paper",
+                boxShadow: 1,
+                "&:hover": {
+                  bgcolor: "error.light",
+                  color: "white",
+                },
               }}
+              title="Delete Section"
             >
-              <IconButton
-                size="small"
-                color="error"
-                onClick={() => onDeleteSectionClick(section.id, section.name)}
-                sx={{
-                  bgcolor: "background.paper",
-                  boxShadow: 1,
-                  "&:hover": {
-                    bgcolor: "error.light",
-                    color: "white",
-                  },
-                }}
-                title="Delete Section"
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </Box>
-
-            <Room
-              onRoomUpdate={onRoomUpdate}
-              roomName={section.name}
-              roomDescription={section.description}
-              measurementUnit={buildingData.measurementUnit}
-              floorNumber={section.floorNumber}
-              roomId={section.id}
-            />
+              <DeleteIcon fontSize="small" />
+            </IconButton>
           </Box>
-        ))}
 
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={onAddNewSection}
-          fullWidth
-          sx={{
-            ml: 2,
-            background: theme.palette.gradient.subtle,
-          }}
-        >
-          Add Room
-        </Button>
-      </Paper>
+          <Room
+            onRoomUpdate={onRoomUpdate}
+            roomName={section.name}
+            roomDescription={section.description}
+            measurementUnit={buildingData.measurementUnit}
+            floorNumber={section.floorNumber}
+            roomId={section.id}
+          />
+        </Box>
+      ))}
+
+      <Button
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={onAddNewSection}
+        fullWidth
+        sx={{
+          background: theme.palette.gradient.subtle,
+        }}
+      >
+        Add Room
+      </Button>
 
       {/* <CustomerExpectations baseCost={baseCost} onCostChange={onCostChange} /> */}
     </Box>

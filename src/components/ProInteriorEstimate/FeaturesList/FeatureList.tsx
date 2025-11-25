@@ -4,21 +4,33 @@ import React, { useState } from "react";
 import {
   Box,
   Typography,
-  Paper,
-  IconButton,
-  Chip,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Button,
   DialogContentText,
+  Grid,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Chip,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import WarningIcon from "@mui/icons-material/Warning";
+import {
+  Delete as DeleteIcon,
+  Warning as WarningIcon,
+  ExpandMore as ExpandMoreIcon,
+  Category as CategoryIcon,
+} from "@mui/icons-material";
 import { RoomData, FeatureType, RoomFeature } from "@/interfaces/laborTypes";
 import { featureTypes } from "../laborData";
+import FeatureCard from "./FeatureCard";
+
+// ============================================================================
+// TYPES & INTERFACES
+// ============================================================================
 
 interface Props {
   roomData: RoomData;
@@ -33,7 +45,60 @@ interface DeleteConfirmationState {
   featureName: string | null;
 }
 
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+const getFeatureTypeLabel = (featureType: FeatureType): string => {
+  const type = featureTypes.find((ft) => ft.value === featureType);
+  return type?.label || featureType;
+};
+
+const getFeatureTypeIcon = (featureType: FeatureType): React.ReactNode => {
+  const iconMap: Record<FeatureType, React.ReactNode> = {
+    doors: "🚪",
+    windows: "🪟",
+    outlets: "🔌",
+    switches: "💡",
+    fixtures: "🔧",
+    trim: "📐",
+    other: "📦",
+    walls: "🧱",
+    closets: "🚪",
+    crownMolding: "🎀",
+    chairRail: "🪑",
+    baseboard: "🦶",
+    wainscoting: "🪵",
+  };
+
+  return iconMap[featureType] || <CategoryIcon />;
+};
+
+const calculateTotalCostForType = (features: RoomFeature[]): number => {
+  return features.reduce((total, feature) => {
+    if (!feature.workLabor) return total;
+    return (
+      total +
+      feature.workLabor.reduce((featureTotal, task) => {
+        const laborCost = task.hours * task.rate;
+        const materialCost =
+          task.laborMaterials?.reduce((matTotal, material) => {
+            return matTotal + material.quantity * material.price;
+          }, 0) || 0;
+        return featureTotal + laborCost + materialCost;
+      }, 0)
+    );
+  }, 0);
+};
+
+// ============================================================================
+// MAIN COMPONENT
+// ============================================================================
+
 const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const [deleteConfirmation, setDeleteConfirmation] =
     useState<DeleteConfirmationState>({
       open: false,
@@ -41,6 +106,10 @@ const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
       featureId: null,
       featureName: null,
     });
+
+  // ============================================================================
+  // EVENT HANDLERS
+  // ============================================================================
 
   const handleDeleteClick = (
     featureType: FeatureType,
@@ -86,17 +155,9 @@ const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
     });
   };
 
-  const calculateFeatureCost = (feature: RoomFeature): number => {
-    if (!feature.workLabor) return 0;
-    return feature.workLabor.reduce((total, task) => {
-      const laborCost = task.hours * task.rate;
-      const materialCost =
-        task.laborMaterials?.reduce((matTotal, material) => {
-          return matTotal + material.quantity * material.price;
-        }, 0) || 0;
-      return total + laborCost + materialCost;
-    }, 0);
-  };
+  // ============================================================================
+  // DERIVED STATE
+  // ============================================================================
 
   const getTotalFeatures = () => {
     return Object.values(roomData.features).reduce(
@@ -105,141 +166,129 @@ const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
     );
   };
 
-  const getFeatureTypeLabel = (featureType: FeatureType): string => {
-    const type = featureTypes.find((ft) => ft.value === featureType);
-    return type?.label || featureType;
-  };
+  const featuresWithData = featureTypes.filter((featureType) => {
+    const features = roomData.features[featureType.value];
+    return features && features.length > 0;
+  });
+
+  // ============================================================================
+  // RENDER
+  // ============================================================================
 
   return (
-    <>
-      {featureTypes.map((featureType) => {
-        const features = roomData.features[featureType.value];
+    <Box sx={{ width: "100%" }}>
+      {/* Header */}
+      <Box sx={{ mb: 3 }}>
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            color: "primary.main",
+            fontWeight: 600,
+          }}
+        >
+          <CategoryIcon />
+          Room Features
+          {getTotalFeatures() > 0 && (
+            <Chip
+              label={`${getTotalFeatures()} total`}
+              size="small"
+              color="primary"
+              variant="outlined"
+            />
+          )}
+        </Typography>
 
-        // Add safety check to ensure features array exists
-        if (!features || features.length === 0) {
-          return null;
-        }
+        {getTotalFeatures() === 0 && (
+          <Typography variant="body2" color="text.secondary">
+            No features added yet. Use the form above to add room features.
+          </Typography>
+        )}
+      </Box>
+
+      {/* Features by Type */}
+      {featuresWithData.map((featureType) => {
+        const features = roomData.features[featureType.value];
+        const totalCost = calculateTotalCostForType(features);
 
         return (
-          <Box key={featureType.value} sx={{ mb: 2 }}>
-            <Typography variant="subtitle2" gutterBottom>
-              {featureType.label} ({features.length})
-            </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-              {features.map((feature) => (
-                <Paper
-                  key={feature.id}
-                  elevation={1}
-                  sx={{
-                    p: 2,
-                    mb: 1,
-                    minWidth: 200,
-                    border: "1px solid",
-                    borderColor: "divider",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                    }}
-                  >
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="subtitle2" gutterBottom>
-                        {feature.name}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        gutterBottom
-                      >
-                        Dimensions: {feature.dimensions}
-                      </Typography>
-                      {feature.description && (
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          gutterBottom
-                        >
-                          {feature.description}
-                        </Typography>
-                      )}
-                      {feature.workLabor && feature.workLabor.length > 0 && (
-                        <Box sx={{ mt: 1 }}>
-                          <Typography variant="caption" color="primary">
-                            Labor Tasks ({feature.workLabor.length}):
-                          </Typography>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              flexWrap: "wrap",
-                              gap: 0.5,
-                              mt: 0.5,
-                            }}
-                          >
-                            {feature.workLabor.map((task, index) => (
-                              <Chip
-                                key={index}
-                                label={task.name}
-                                size="small"
-                                variant="outlined"
-                                color="primary"
-                              />
-                            ))}
-                          </Box>
-                          <Typography variant="caption" color="success.main">
-                            Est. Cost: $
-                            {calculateFeatureCost(feature).toFixed(2)}
-                          </Typography>
-                        </Box>
-                      )}
-                    </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 0.5,
-                      }}
-                    >
-                      <IconButton
-                        size="small"
-                        color="primary"
-                        onClick={() =>
-                          onOpenLaborDialog(featureType.value, feature.id)
-                        }
-                        title="Assign Labor Tasks"
-                      >
-                        <AssignmentIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() =>
-                          handleDeleteClick(
-                            featureType.value,
-                            feature.id,
-                            feature.name || "this feature"
-                          )
-                        }
-                        title="Delete Feature"
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </Paper>
-              ))}
-            </Box>
-          </Box>
+          <Accordion
+            key={featureType.value}
+            defaultExpanded
+            sx={{
+              mb: 2,
+              "&:before": {
+                display: "none",
+              },
+              boxShadow: 1,
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls={`${featureType.value}-content`}
+              id={`${featureType.value}-header`}
+              sx={{
+                bgcolor: "grey.50",
+                "&:hover": {
+                  bgcolor: "grey.100",
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  width: "100%",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                  <Typography sx={{ fontSize: "1.2rem" }}>
+                    {getFeatureTypeIcon(featureType.value)}
+                  </Typography>
+                  <Typography variant="subtitle1" fontWeight="medium">
+                    {featureType.label}
+                  </Typography>
+                  <Chip
+                    label={features.length}
+                    size="small"
+                    color="secondary"
+                    sx={{ minWidth: "auto" }}
+                  />
+                </Box>
+
+                {totalCost > 0 && (
+                  <Chip
+                    label={`$${totalCost.toFixed(2)}`}
+                    size="small"
+                    color="success"
+                    variant="outlined"
+                  />
+                )}
+              </Box>
+            </AccordionSummary>
+
+            <AccordionDetails sx={{ pt: 2 }}>
+              <Grid container spacing={2}>
+                {features.map((feature) => (
+                  <Grid size={{ xs: 12, sm: 6, md: 4 }} key={feature.id}>
+                    <FeatureCard
+                      feature={feature}
+                      featureType={featureType.value}
+                      onOpenLaborDialog={onOpenLaborDialog}
+                      onDeleteFeature={handleDeleteClick}
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
         );
       })}
-
-      {getTotalFeatures() === 0 && (
-        <Typography variant="body2" color="text.secondary">
-          No features added yet. Use the form above to add room features.
-        </Typography>
-      )}
 
       {/* Delete Confirmation Dialog */}
       <Dialog
@@ -247,21 +296,28 @@ const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
         onClose={handleDeleteCancel}
         aria-labelledby="delete-dialog-title"
         aria-describedby="delete-dialog-description"
+        maxWidth="sm"
+        fullWidth
       >
         <DialogTitle
           id="delete-dialog-title"
-          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            color: "error.main",
+          }}
         >
           <WarningIcon color="warning" />
           Confirm Delete
         </DialogTitle>
+
         <DialogContent>
           <DialogContentText id="delete-dialog-description">
-            Are you sure you want to delete the feature "
-            {deleteConfirmation.featureName}"?
+            Are you sure you want to delete the feature{" "}
+            <strong>"{deleteConfirmation.featureName}"</strong>?
             {deleteConfirmation.featureType && (
-              <>
-                <br />
+              <Box sx={{ mt: 1 }}>
                 <Typography
                   component="span"
                   variant="body2"
@@ -269,18 +325,23 @@ const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
                 >
                   Type: {getFeatureTypeLabel(deleteConfirmation.featureType)}
                 </Typography>
-              </>
+              </Box>
             )}
-            <br />
-            <br />
-            <Typography component="span" variant="body2" color="error">
-              This action cannot be undone. All associated labor tasks and cost
-              calculations will also be removed.
-            </Typography>
+            <Box sx={{ mt: 2, p: 2, bgcolor: "error.50", borderRadius: 1 }}>
+              <Typography
+                variant="body2"
+                color="error.main"
+                fontWeight="medium"
+              >
+                ⚠️ This action cannot be undone. All associated labor tasks and
+                cost calculations will also be removed.
+              </Typography>
+            </Box>
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteCancel} color="primary">
+
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={handleDeleteCancel} variant="outlined">
             Cancel
           </Button>
           <Button
@@ -293,7 +354,7 @@ const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Box>
   );
 };
 

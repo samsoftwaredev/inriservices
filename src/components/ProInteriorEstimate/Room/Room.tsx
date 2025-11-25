@@ -84,6 +84,10 @@ const Room = ({
     floorNumber: floorNumber,
     totalCost: 0,
     features: {
+      outlets: [],
+      switches: [],
+      fixtures: [],
+      trim: [],
       walls: [],
       windows: [],
       doors: [],
@@ -242,7 +246,7 @@ const Room = ({
   const displayFloorNumber = isEditMode ? editData.floorNumber : floorNumber;
 
   return (
-    <Card elevation={2} sx={{ mb: 2, backgroundColor: "#f4f9fb" }}>
+    <Card elevation={2} sx={{ mb: 2 }}>
       <CardContent>
         {/* Room Header Section */}
         {isEditMode ? (

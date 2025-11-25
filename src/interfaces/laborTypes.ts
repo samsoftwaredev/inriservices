@@ -88,6 +88,7 @@ export type RoomFeature = {
   id: string;
   type: string;
   dimensions: string;
+  image: string;
   name?: string;
   description?: string;
   picture: string | null;
@@ -107,6 +108,10 @@ export type RoomData = {
   floorNumber?: number;
   roomHeight: number;
   features: {
+    outlets: RoomFeature[];
+    switches: RoomFeature[];
+    fixtures: RoomFeature[];
+    trim: RoomFeature[];
     windows: RoomFeature[];
     doors: RoomFeature[];
     walls: RoomFeature[];

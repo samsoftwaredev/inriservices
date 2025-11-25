@@ -21,6 +21,7 @@ import {
   MeasurementUnit,
 } from "@/interfaces/laborTypes";
 import { featureTypes } from "../laborData";
+import ImageUpload from "@/components/ImageUpload";
 
 interface Props {
   measurementUnit: MeasurementUnit;
@@ -37,7 +38,7 @@ const AddFeatureForm = ({ measurementUnit, roomData, setRoomData }: Props) => {
   });
 
   const addFeature = () => {
-    if (!newFeature.name.trim() || !newFeature.dimensions.trim()) return;
+    if (!newFeature.name.trim()) return;
 
     const feature: RoomFeature = {
       id: Date.now().toString(),
@@ -45,6 +46,7 @@ const AddFeatureForm = ({ measurementUnit, roomData, setRoomData }: Props) => {
       name: newFeature.name,
       description: newFeature.description,
       dimensions: newFeature.dimensions,
+      image: "",
       picture: null,
       workLabor: [],
     };
@@ -67,10 +69,13 @@ const AddFeatureForm = ({ measurementUnit, roomData, setRoomData }: Props) => {
   };
 
   return (
-    <Box sx={{ mb: 3, p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
+    <Box sx={{ mb: 3, bgcolor: "grey.50", borderRadius: 1 }}>
       <Typography variant="subtitle1" gutterBottom>
         Add New Feature
       </Typography>
+      <Box sx={{ mb: 2 }}>
+        <ImageUpload />
+      </Box>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, sm: 3 }}>
           <FormControl fullWidth size="small">
@@ -97,7 +102,7 @@ const AddFeatureForm = ({ measurementUnit, roomData, setRoomData }: Props) => {
           <TextField
             fullWidth
             size="small"
-            label="Name"
+            label="Title"
             value={newFeature.name}
             onChange={(e) =>
               setNewFeature({ ...newFeature, name: e.target.value })
@@ -126,7 +131,7 @@ const AddFeatureForm = ({ measurementUnit, roomData, setRoomData }: Props) => {
             variant="contained"
             startIcon={<AddIcon />}
             onClick={addFeature}
-            disabled={!newFeature.name.trim() || !newFeature.dimensions.trim()}
+            disabled={!newFeature.name.trim()}
           >
             Add
           </Button>

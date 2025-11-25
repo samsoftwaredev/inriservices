@@ -11,26 +11,16 @@ import {
   TextField,
   Grid,
   Button,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
-  InputLabel,
   Divider,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
 } from "@mui/material";
 import {
   Edit as EditIcon,
   Save as SaveIcon,
   Cancel as CancelIcon,
   Person2Outlined,
-  PersonPinCircleOutlined,
-  ExpandMore as ExpandMoreIcon,
   PhotoLibrary as PhotoLibraryIcon,
 } from "@mui/icons-material";
 import { Customer } from "@/interfaces/laborTypes";
-import { usa_states } from "@/constants";
 import { ImageUpload } from "@/components";
 
 interface Props {
@@ -46,13 +36,6 @@ const CustomerInfoCard = ({ currentCustomer, onCustomerUpdate }: Props) => {
   const handleEditClick = () => {
     setEditData({ ...currentCustomer });
     setEditMode(true);
-  };
-
-  const handleStateChange = (event: SelectChangeEvent<string>) => {
-    setEditData({
-      ...editData,
-      state: event.target.value,
-    });
   };
 
   const handleInputChange =
@@ -92,6 +75,19 @@ const CustomerInfoCard = ({ currentCustomer, onCustomerUpdate }: Props) => {
               <Typography variant="h6" gutterBottom>
                 Customer Information
               </Typography>
+
+              {/* Image Upload Section */}
+              <Box sx={{ mb: 2 }}>
+                <ImageUpload
+                  onImagesChange={handleImagesChange}
+                  maxFiles={5}
+                  maxSizeInMB={10}
+                  label="Upload Project Images"
+                  helperText="Add photos of the project area, reference images, or color samples"
+                  acceptedFormats={["image/jpeg", "image/png", "image/webp"]}
+                />
+              </Box>
+
               <Grid container spacing={2}>
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
@@ -129,62 +125,8 @@ const CustomerInfoCard = ({ currentCustomer, onCustomerUpdate }: Props) => {
                     size="small"
                   />
                 </Grid>
-                <Grid size={{ xs: 12 }}>
-                  <TextField
-                    fullWidth
-                    label="Address"
-                    value={editData.address}
-                    onChange={handleInputChange("address")}
-                    size="small"
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 4 }}>
-                  <TextField
-                    fullWidth
-                    label="City"
-                    value={editData.city}
-                    onChange={handleInputChange("city")}
-                    size="small"
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 4 }}>
-                  <Select
-                    labelId="state-select-label"
-                    id="state-select"
-                    fullWidth
-                    label="State"
-                    value={editData.state}
-                    size="small"
-                    onChange={handleStateChange}
-                  >
-                    {usa_states.map((state) => (
-                      <MenuItem key={state.value} value={state.value}>
-                        {state.value} - {state.label}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </Grid>
-                <Grid size={{ xs: 12, sm: 4 }}>
-                  <TextField
-                    fullWidth
-                    label="ZIP Code"
-                    value={editData.zipCode}
-                    onChange={handleInputChange("zipCode")}
-                    size="small"
-                  />
-                </Grid>
               </Grid>
             </Box>
-
-            {/* Image Upload Section */}
-            <ImageUpload
-              onImagesChange={handleImagesChange}
-              maxFiles={5}
-              maxSizeInMB={10}
-              label="Upload Project Images"
-              helperText="Add photos of the project area, reference images, or color samples"
-              acceptedFormats={["image/jpeg", "image/png", "image/webp"]}
-            />
           </Box>
         ) : (
           <Box>
