@@ -188,7 +188,7 @@ const MainContent = ({
         </Button>
       </Paper>
 
-      <CustomerExpectations baseCost={baseCost} onCostChange={onCostChange} />
+      {/* <CustomerExpectations baseCost={baseCost} onCostChange={onCostChange} /> */}
     </Box>
   );
 };
