@@ -1,9 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { SelectChangeEvent } from "@mui/material";
-import {
-  availableLaborTasks,
-  featureTypes,
-} from "../components/ProInteriorEstimate/laborData";
+import { availableLaborTasks, featureTypes } from "@/constants/laborData";
 import {
   RoomData,
   FeatureType,

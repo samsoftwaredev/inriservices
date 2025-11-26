@@ -25,7 +25,7 @@ import {
   Category as CategoryIcon,
 } from "@mui/icons-material";
 import { RoomData, FeatureType, RoomFeature } from "@/interfaces/laborTypes";
-import { featureTypes } from "../laborData";
+import { featureTypes } from "../../../constants/laborData";
 import FeatureCard from "./FeatureCard";
 
 // ============================================================================
@@ -56,19 +56,22 @@ const getFeatureTypeLabel = (featureType: FeatureType): string => {
 
 const getFeatureTypeIcon = (featureType: FeatureType): React.ReactNode => {
   const iconMap: Record<FeatureType, React.ReactNode> = {
-    doors: "🚪",
-    windows: "🪟",
+    ceilings: "🏢",
+    flooring: "🛋️",
+    cabinetry: "🗄️",
     outlets: "🔌",
     switches: "💡",
-    fixtures: "🔧",
-    trim: "📐",
-    other: "📦",
+    fixtures: "🚰",
+    trim: "🪚",
+    windows: "🪟",
+    doors: "🚪",
     walls: "🧱",
     closets: "🚪",
-    crownMolding: "🎀",
+    crownMolding: "👑",
     chairRail: "🪑",
-    baseboard: "🦶",
+    baseboard: "📏",
     wainscoting: "🪵",
+    other: "❓",
   };
 
   return iconMap[featureType] || <CategoryIcon />;
@@ -273,7 +276,7 @@ const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
             </AccordionSummary>
 
             <AccordionDetails sx={{ pt: 2 }}>
-              <Grid container spacing={2}>
+              <Grid container gap={5}>
                 {features.map((feature) => (
                   <Grid size={{ xs: 12, sm: 6, md: 4 }} key={feature.id}>
                     <FeatureCard

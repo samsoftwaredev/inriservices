@@ -30,7 +30,7 @@ import {
   RoomDimensionsOverview,
   PaintBaseType,
 } from "@/interfaces/laborTypes";
-import { floorOptions } from "../laborData";
+import { floorOptions } from "../../../constants/laborData";
 import { calculateArea, calculatePerimeter } from "../laborCalc";
 import { convertToFeet } from "@/tools/convertMeasurement";
 
@@ -87,6 +87,9 @@ const Room = ({
       outlets: [],
       switches: [],
       fixtures: [],
+      ceilings: [],
+      flooring: [],
+      cabinetry: [],
       trim: [],
       walls: [],
       windows: [],

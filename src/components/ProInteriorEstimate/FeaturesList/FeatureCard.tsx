@@ -53,6 +53,9 @@ const calculateFeatureCost = (feature: RoomFeature): number => {
 const getDefaultFeatureImage = (featureType: FeatureType): string => {
   const imageMap: Record<FeatureType, string> = {
     doors: "/images/features/door-default.jpg",
+    cabinetry: "/images/features/cabinetry-default.jpg",
+    flooring: "/images/features/flooring-default.jpg",
+    ceilings: "/images/features/ceiling-default.jpg",
     windows: "/images/features/window-default.jpg",
     outlets: "/images/features/outlet-default.jpg",
     switches: "/images/features/switch-default.jpg",

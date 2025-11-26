@@ -17,7 +17,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import CheckIcon from "@mui/icons-material/Check";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { FeatureType } from "@/interfaces/laborTypes";
-import { featureTypes } from "../laborData";
+import { featureTypes } from "@/constants/laborData";
 
 interface Props {
   selectedFeature: { type: FeatureType; id: string } | null;

@@ -108,6 +108,9 @@ export type RoomData = {
   floorNumber?: number;
   roomHeight: number;
   features: {
+    ceilings: RoomFeature[];
+    flooring: RoomFeature[];
+    cabinetry: RoomFeature[];
     outlets: RoomFeature[];
     switches: RoomFeature[];
     fixtures: RoomFeature[];

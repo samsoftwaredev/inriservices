@@ -20,7 +20,7 @@ import {
   RoomFeature,
   MeasurementUnit,
 } from "@/interfaces/laborTypes";
-import { featureTypes } from "../laborData";
+import { featureTypes } from "@/constants/laborData";
 import ImageUpload from "@/components/ImageUpload";
 
 interface Props {

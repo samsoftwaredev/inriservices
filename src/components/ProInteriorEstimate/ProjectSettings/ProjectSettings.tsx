@@ -18,7 +18,7 @@ import {
   LocationData,
   MeasurementUnit,
 } from "@/interfaces/laborTypes";
-import { floorOptions } from "../laborData";
+import { floorOptions } from "@/constants/laborData";
 import { usa_states } from "@/constants";
 
 interface Props {
