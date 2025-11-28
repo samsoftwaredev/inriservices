@@ -10,3 +10,24 @@ export const companyAddressLocality = "Austin";
 export const companyAddressRegion = "TX";
 export const companyPostalCode = "78731";
 export const companyAddressCountry = "US";
+
+export const BUSINESS_OPERATION_FEES = {
+  insurance: 25.0,
+  paymentSystemFeeFixed: 2.0,
+  phoneFee: 4.0,
+  promotionFee: 50.0,
+  hostWebsiteFee: 5.0,
+  domainFee: 5.0,
+  thirdPartySoftwareFee: 15.0,
+  companyRegistrationFee: 10.0,
+  estimateFee: 60.0,
+} as const;
+
+export const PRICING_CONFIG = {
+  hoursRate: 40,
+  costGallons: 65,
+  profitMargin: 0.2,
+  taxAmount: 0.0825,
+  paymentFeeRate: 0.03,
+  paymentFeeFixed: 2,
+} as const;

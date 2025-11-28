@@ -32,6 +32,7 @@ import { theme } from "@/app/theme";
 import { useGallons } from "@/context/useGallons";
 import { useBuilding } from "@/context";
 import { calculatePaintGallons, convertToFeet } from "@/tools";
+import { BUSINESS_OPERATION_FEES, PRICING_CONFIG } from "@/constants";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -58,27 +59,6 @@ interface CostCalculation {
 // ============================================================================
 // CONSTANTS
 // ============================================================================
-
-const BUSINESS_OPERATION_FEES = {
-  insurance: 25.0,
-  paymentSystemFeeFixed: 2.0,
-  phoneFee: 4.0,
-  promotionFee: 50.0,
-  hostWebsiteFee: 5.0,
-  domainFee: 5.0,
-  thirdPartySoftwareFee: 15.0,
-  companyRegistrationFee: 10.0,
-  estimateFee: 60.0,
-} as const;
-
-const PRICING_CONFIG = {
-  hoursRate: 35,
-  costGallons: 65,
-  profitMargin: 0.2,
-  taxAmount: 0.0825,
-  paymentFeeRate: 0.03,
-  paymentFeeFixed: 2,
-} as const;
 
 const DEFAULT_DISCOUNT: DiscountConfig = {
   type: "percentage",

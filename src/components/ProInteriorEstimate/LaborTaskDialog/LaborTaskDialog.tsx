@@ -15,6 +15,7 @@ import CostSummaryPanel from "../CostSummaryPanel";
 import DialogFooter from "../DialogFooter";
 import { useLaborTaskDialog } from "@/hooks/useLaborTaskDialog";
 import { RoomData, FeatureType } from "@/interfaces/laborTypes";
+import { EditFeatureDialog } from "@/components";
 
 interface Props {
   open: boolean;
@@ -84,6 +85,23 @@ const LaborTaskDialog = ({
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
       <DialogTitle>
+        {/* <EditFeatureDialog
+          open={isEditingFeature}
+          onClose={handleCancelFeatureEdit}
+          feature={
+            roomData.features[editFeatureType].find(
+              (f) => f.id === selectedFeature?.id
+            ) || {
+              id: "",
+              type: "",
+              dimensions: "",
+              image: "",
+              picture: null,
+            }
+          }
+          featureType={editFeatureType}
+          onSave={handleSaveFeatureEdit}
+        /> */}
         <DialogHeader
           selectedFeature={selectedFeature}
           isEditingFeature={isEditingFeature}

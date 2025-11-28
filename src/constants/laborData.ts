@@ -2,6 +2,8 @@ import { LaborTask, LaborMaterial, FeatureType } from "@/interfaces/laborTypes";
 
 export const floorOptions = [1, 2, 3, 4];
 
+export const hoursRate = 40;
+
 export const featureTypes: { value: FeatureType; label: string }[] = [
   { value: "windows", label: "Windows" },
   { value: "walls", label: "Walls" },
@@ -207,7 +209,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Caulking",
     description: "Caulking gaps and cracks around trim and fixtures",
     hours: 1,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 0,
     laborMaterials: [laborMaterials.caulking, laborMaterials.gloves],
   },
@@ -215,7 +217,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Cleaning",
     description: "Cleaning walls and surfaces to prepare for painting",
     hours: 1,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 0,
     laborMaterials: [
       laborMaterials.gloves,
@@ -227,7 +229,33 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Remove Old Paint or Wallpaper",
     description: "Scraping and sanding old paint from surfaces",
     hours: 2,
-    rate: 30,
+    rate: hoursRate,
+    amountOfLabor: 1,
+    laborMaterials: [
+      laborMaterials.puttyKnife,
+      laborMaterials.sandpaper,
+      laborMaterials.dustMask,
+      laborMaterials.gloves,
+    ],
+  },
+  {
+    name: "Wood Stain Removal",
+    description: "Removing old stain from wood surfaces",
+    hours: 2,
+    rate: hoursRate,
+    amountOfLabor: 1,
+    laborMaterials: [
+      laborMaterials.puttyKnife,
+      laborMaterials.sandpaper,
+      laborMaterials.dustMask,
+      laborMaterials.gloves,
+    ],
+  },
+  {
+    name: "Remove old caulking",
+    description: "Removing old caulking from surfaces",
+    hours: 2,
+    rate: hoursRate,
     amountOfLabor: 1,
     laborMaterials: [
       laborMaterials.puttyKnife,
@@ -240,7 +268,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Stain or varnish",
     description: "Applying stain or varnish to wood surfaces",
     hours: 2,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 1,
     laborMaterials: [
       laborMaterials.paintBrushes,
@@ -252,7 +280,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Drywall Tape",
     description: "Taping seams and joints in drywall",
     hours: 1,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 0,
     laborMaterials: [laborMaterials.drywallTape],
   },
@@ -260,7 +288,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Move Furniture",
     description: "Moving furniture out of the room or to the center",
     hours: 1,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 0,
     laborMaterials: [],
   },
@@ -268,7 +296,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Cover Furniture",
     description: "Covering furniture to protect it during painting",
     hours: 1,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 0,
     laborMaterials: [
       laborMaterials.dropCloths,
@@ -280,7 +308,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Remove Wall Decor",
     description: "Removing pictures, mirrors, and other wall decor",
     hours: 2,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 1,
     laborMaterials: [laborMaterials.gloves, laborMaterials.dustMask],
   },
@@ -289,7 +317,7 @@ export const availableLaborTasks: LaborTask[] = [
     description:
       "If decor can't be removed, masking off fixtures to protect them during painting",
     hours: 1,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 0,
     laborMaterials: [laborMaterials.tape, laborMaterials.plasticSheeting],
   },
@@ -297,7 +325,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Fix Small Holes",
     description: "Includes nail holes and minor imperfections",
     hours: 2,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 1,
     laborMaterials: [
       laborMaterials.puttyKnife,
@@ -310,7 +338,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Fix Large Holes",
     description: "Includes large holes and significant damage",
     hours: 3,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 3,
     laborMaterials: [
       laborMaterials.puttyKnife,
@@ -324,7 +352,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Sanding",
     description: "Sanding walls and ceilings to prepare for painting",
     hours: 2,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 1,
     laborMaterials: [
       laborMaterials.sandpaper,
@@ -337,7 +365,7 @@ export const availableLaborTasks: LaborTask[] = [
     description:
       "Includes repairing or replacing damaged drywall like replacing sections or screwing in new drywall",
     hours: 3,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 3,
     laborMaterials: [
       laborMaterials.puttyKnife,
@@ -351,7 +379,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Priming",
     description: "Applying primer to surfaces before painting",
     hours: 2,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 1,
     laborMaterials: [
       laborMaterials.primer,
@@ -367,7 +395,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Wood Root Repair",
     description: "Repairing wood rot on trim or other wood surfaces",
     hours: 3,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 3,
     laborMaterials: [
       laborMaterials.puttyKnife,
@@ -381,7 +409,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Popcorn Removal",
     description: "Removing popcorn ceiling texture",
     hours: 4,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 3,
     laborMaterials: [
       laborMaterials.dustMask,
@@ -397,7 +425,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Apply Texture",
     description: "Applying texture",
     hours: 3,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 1,
     laborMaterials: [
       laborMaterials.sandpaper,
@@ -410,7 +438,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Paint Walls",
     description: "Applying paint to walls",
     hours: 3,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 1,
     laborMaterials: [
       laborMaterials.paint,
@@ -426,7 +454,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Paint Ceilings",
     description: "Applying paint to ceilings",
     hours: 3,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 1,
     laborMaterials: [
       laborMaterials.paint,
@@ -442,7 +470,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Paint Doors",
     description: "Applying paint to doors",
     hours: 2,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 1,
     laborMaterials: [
       laborMaterials.paint,
@@ -455,7 +483,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Paint Closets",
     description: "Applying paint to closet interiors",
     hours: 2,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 1,
     laborMaterials: [
       laborMaterials.paint,
@@ -468,7 +496,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Paint Trim",
     description: "Applying paint to trim and moldings",
     hours: 2,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 1,
     laborMaterials: [
       laborMaterials.paint,
@@ -481,7 +509,7 @@ export const availableLaborTasks: LaborTask[] = [
     name: "Final Cleanup",
     description: "Cleaning up the work area after painting is complete",
     hours: 1,
-    rate: 30,
+    rate: hoursRate,
     amountOfLabor: 0,
     laborMaterials: [laborMaterials.gloves],
   },

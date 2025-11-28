@@ -15,8 +15,6 @@ import {
   AccordionSummary,
   AccordionDetails,
   Chip,
-  useTheme,
-  useMediaQuery,
 } from "@mui/material";
 import {
   Delete as DeleteIcon,
@@ -99,9 +97,6 @@ const calculateTotalCostForType = (features: RoomFeature[]): number => {
 // ============================================================================
 
 const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
   const [deleteConfirmation, setDeleteConfirmation] =
     useState<DeleteConfirmationState>({
       open: false,

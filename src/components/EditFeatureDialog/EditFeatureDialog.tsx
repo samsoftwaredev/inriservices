@@ -15,7 +15,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  IconButton,
   Alert,
   Divider,
   Card,
@@ -27,12 +26,11 @@ import {
   Save as SaveIcon,
   Cancel as CancelIcon,
   PhotoCamera as PhotoCameraIcon,
-  Delete as DeleteIcon,
-  Image as ImageIcon,
 } from "@mui/icons-material";
 import { RoomFeature, FeatureType } from "@/interfaces/laborTypes";
 import { featureTypes } from "@/constants/laborData";
 import { ImageUpload } from "@/components";
+import { getDefaultFeatureImage } from "@/tools/featureTool";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -59,29 +57,6 @@ interface EditableFeature {
 // ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
-
-const getDefaultFeatureImage = (featureType: FeatureType): string => {
-  const imageMap: Record<FeatureType, string> = {
-    doors: "/images/features/door-default.jpg",
-    windows: "/images/features/window-default.jpg",
-    outlets: "/images/features/outlet-default.jpg",
-    switches: "/images/features/switch-default.jpg",
-    fixtures: "/images/features/fixture-default.jpg",
-    trim: "/images/features/trim-default.jpg",
-    cabinetry: "/images/features/cabinetry-default.jpg",
-    flooring: "/images/features/flooring-default.jpg",
-    walls: "/images/features/walls-default.jpg",
-    ceilings: "/images/features/ceiling-default.jpg",
-    other: "/images/features/other-default.jpg",
-    closets: "/images/features/closet-default.jpg",
-    crownMolding: "/images/features/crown-molding-default.jpg",
-    chairRail: "/images/features/chair-rail-default.jpg",
-    baseboard: "/images/features/baseboard-default.jpg",
-    wainscoting: "/images/features/wainscoting-default.jpg",
-  };
-
-  return imageMap[featureType] || "/images/features/default-feature.jpg";
-};
 
 const validateFeatureData = (feature: EditableFeature): string[] => {
   const errors: string[] = [];
