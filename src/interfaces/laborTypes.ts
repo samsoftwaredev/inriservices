@@ -197,3 +197,21 @@ export type FeatureDetails = {
 export type RoomCollection = {
   [key: string]: FeatureDetails;
 };
+
+export interface DiscountConfig {
+  type: "percentage" | "amount";
+  value: number;
+  isEditing: boolean;
+}
+
+export interface CostCalculation {
+  subtotal: number;
+  discountAmount: number;
+  totalAfterDiscount: number;
+  profitAmount: number;
+  totalWithProfit: number;
+  taxesToPay: number;
+  paymentSystemFee: number;
+  companyFeesTotal: number;
+  totalWithTaxes: number;
+}
