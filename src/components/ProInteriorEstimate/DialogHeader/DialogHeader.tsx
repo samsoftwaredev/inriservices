@@ -50,7 +50,7 @@ const DialogHeader = ({
 
   return (
     <>
-      Assign Labor Tasks
+      <Typography variant="subtitle2">Assign Labor Tasks</Typography>
       {selectedFeature && (
         <Box sx={{ mt: 1 }}>
           {isEditingFeature ? (
@@ -102,7 +102,7 @@ const DialogHeader = ({
             </Grid>
           ) : (
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Typography variant="subtitle2" color="text.secondary">
+              <Typography variant="h5" color="text.secondary">
                 {featureData.name} ({getFeatureTypeLabel(selectedFeature.type)})
               </Typography>
               <IconButton size="small" onClick={onEditFeature}>

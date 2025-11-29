@@ -26,6 +26,14 @@ export enum PaintBaseType {
   Acrylic = "acrylic",
 }
 
+export type LaborTaskCostSummary = {
+  name: string;
+  hours: number;
+  laborCost: number;
+  materialCost: number;
+  totalCost: number;
+} | null;
+
 type WainscotingDimensions = {
   wainscotingPerimeter: string;
   wainscotingHeight: number;

@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 
 import DialogHeader from "../DialogHeader";
@@ -15,7 +17,7 @@ import CostSummaryPanel from "../CostSummaryPanel";
 import DialogFooter from "../DialogFooter";
 import { useLaborTaskDialog } from "@/hooks/useLaborTaskDialog";
 import { RoomData, FeatureType } from "@/interfaces/laborTypes";
-import { EditFeatureDialog } from "@/components";
+import { useProjectPrice } from "@/context";
 
 interface Props {
   open: boolean;
@@ -40,6 +42,11 @@ const LaborTaskDialog = ({
   setRoomData,
   setSelectedFeature,
 }: Props) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
+  const { setTotalProjectPrice, setTotalProjectLaborCost } = useProjectPrice();
+
   const {
     taskHours,
     setTaskHours,
@@ -82,26 +89,40 @@ const LaborTaskDialog = ({
     setSelectedFeature,
   });
 
+  useEffect(() => {
+    setTotalProjectPrice(totalCost);
+    setTotalProjectLaborCost(taskBreakdown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalCost, taskBreakdown]);
+
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="lg" fullWidth>
-      <DialogTitle>
-        {/* <EditFeatureDialog
-          open={isEditingFeature}
-          onClose={handleCancelFeatureEdit}
-          feature={
-            roomData.features[editFeatureType].find(
-              (f) => f.id === selectedFeature?.id
-            ) || {
-              id: "",
-              type: "",
-              dimensions: "",
-              image: "",
-              picture: null,
-            }
-          }
-          featureType={editFeatureType}
-          onSave={handleSaveFeatureEdit}
-        /> */}
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth={isMobile ? false : "lg"}
+      fullWidth={!isMobile}
+      fullScreen={isMobile || isTablet}
+      sx={{
+        // Custom styles for different screen sizes
+        "& .MuiDialog-paper": {
+          height: isMobile ? "100vh" : isTablet ? "95vh" : "auto",
+          margin: isMobile ? 0 : isTablet ? 1 : 2,
+          borderRadius: isMobile ? 0 : undefined,
+        },
+      }}
+    >
+      <DialogTitle
+        sx={{
+          position: isMobile ? "sticky" : "static",
+          top: 0,
+          zIndex: 1,
+          bgcolor: "background.paper",
+          borderBottom: isMobile ? "1px solid" : "none",
+          borderBottomColor: "divider",
+          px: { xs: 2, sm: 3 },
+          py: { xs: 1.5, sm: 2 },
+        }}
+      >
         <DialogHeader
           selectedFeature={selectedFeature}
           isEditingFeature={isEditingFeature}
@@ -117,7 +138,18 @@ const LaborTaskDialog = ({
         />
       </DialogTitle>
 
-      <DialogContent>
+      <DialogContent
+        sx={{
+          flex: 1,
+          px: { xs: 2, sm: 3 },
+          py: { xs: 1, sm: 2 },
+          overflow: "auto",
+          // Add padding for mobile to prevent content from touching edges
+          "&.MuiDialogContent-root": {
+            paddingTop: { xs: 1, sm: 2 },
+          },
+        }}
+      >
         <MaterialCostsToggle
           includeMaterialCosts={includeMaterialCosts}
           onToggle={handleMaterialCostsToggle}
@@ -147,7 +179,21 @@ const LaborTaskDialog = ({
         />
       </DialogContent>
 
-      <DialogActions sx={{ justifyContent: "space-between", px: 3, py: 2 }}>
+      <DialogActions
+        sx={{
+          justifyContent: "space-between",
+          px: { xs: 2, sm: 3 },
+          py: { xs: 1.5, sm: 2 },
+          position: isMobile ? "sticky" : "static",
+          bottom: 0,
+          zIndex: 1,
+          bgcolor: "background.paper",
+          borderTop: isMobile ? "1px solid" : "none",
+          borderTopColor: "divider",
+          gap: { xs: 1, sm: 2 },
+          flexDirection: { xs: "column-reverse", sm: "row" },
+        }}
+      >
         <DialogFooter
           selectedLaborTasks={selectedLaborTasks}
           totalCost={totalCost}
