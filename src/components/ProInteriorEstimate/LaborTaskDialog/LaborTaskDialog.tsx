@@ -15,6 +15,7 @@ import MaterialCostsToggle from "../MaterialCostsToggle";
 import TaskSelectionPanel from "../TaskSelectionPanel";
 import CostSummaryPanel from "../CostSummaryPanel";
 import DialogFooter from "../DialogFooter";
+import { LaborCostProvider } from "@/context/LaborCostContext";
 import { useLaborTaskDialog } from "@/hooks/useLaborTaskDialog";
 import { RoomData, FeatureType } from "@/interfaces/laborTypes";
 
@@ -47,22 +48,13 @@ const LaborTaskDialog = ({
 
   const {
     taskHours,
-    setTaskHours,
     isEditingFeature,
-    setIsEditingFeature,
     editFeatureName,
     setEditFeatureName,
     editFeatureType,
-    setEditFeatureType,
     includeMaterialCosts,
-    setIncludeMaterialCosts,
     searchTerm,
-    setSearchTerm,
     filteredLaborTasks,
-    totalCost,
-    totalLaborCost,
-    totalMaterialCost,
-    taskBreakdown,
     handleLaborTaskToggle,
     handleHoursChange,
     handleMaterialCostsToggle,
@@ -88,113 +80,113 @@ const LaborTaskDialog = ({
   });
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleClose}
-      maxWidth={isMobile ? false : "lg"}
-      fullWidth={!isMobile}
-      fullScreen={isMobile || isTablet}
-      sx={{
-        // Custom styles for different screen sizes
-        "& .MuiDialog-paper": {
-          height: isMobile ? "100vh" : isTablet ? "95vh" : "auto",
-          margin: isMobile ? 0 : isTablet ? 1 : 2,
-          borderRadius: isMobile ? 0 : undefined,
-        },
-      }}
+    <LaborCostProvider
+      selectedLaborTasks={selectedLaborTasks}
+      taskHours={taskHours}
+      includeMaterialCosts={includeMaterialCosts}
     >
-      <DialogTitle
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth={isMobile ? false : "lg"}
+        fullWidth={!isMobile}
+        fullScreen={isMobile || isTablet}
         sx={{
-          position: isMobile ? "sticky" : "static",
-          top: 0,
-          zIndex: 1,
-          bgcolor: "background.paper",
-          borderBottom: isMobile ? "1px solid" : "none",
-          borderBottomColor: "divider",
-          px: { xs: 2, sm: 3 },
-          py: { xs: 1.5, sm: 2 },
-        }}
-      >
-        <DialogHeader
-          selectedFeature={selectedFeature}
-          isEditingFeature={isEditingFeature}
-          editFeatureName={editFeatureName}
-          setEditFeatureName={setEditFeatureName}
-          editFeatureType={editFeatureType}
-          onFeatureTypeChange={handleFeatureTypeChange}
-          onEditFeature={handleEditFeature}
-          onSaveFeatureEdit={handleSaveFeatureEdit}
-          onCancelFeatureEdit={handleCancelFeatureEdit}
-          getFeatureData={getFeatureData}
-          getFeatureTypeLabel={getFeatureTypeLabel}
-        />
-      </DialogTitle>
-
-      <DialogContent
-        sx={{
-          flex: 1,
-          px: { xs: 2, sm: 3 },
-          py: { xs: 1, sm: 2 },
-          overflow: "auto",
-          // Add padding for mobile to prevent content from touching edges
-          "&.MuiDialogContent-root": {
-            paddingTop: { xs: 1, sm: 2 },
+          // Custom styles for different screen sizes
+          "& .MuiDialog-paper": {
+            height: isMobile ? "100vh" : isTablet ? "95vh" : "auto",
+            margin: isMobile ? 0 : isTablet ? 1 : 2,
+            borderRadius: isMobile ? 0 : undefined,
           },
         }}
       >
-        <MaterialCostsToggle
-          includeMaterialCosts={includeMaterialCosts}
-          onToggle={handleMaterialCostsToggle}
-          totalMaterialCost={totalMaterialCost}
-        />
+        <DialogTitle
+          sx={{
+            position: isMobile ? "sticky" : "static",
+            top: 0,
+            zIndex: 1,
+            bgcolor: "background.paper",
+            borderBottom: isMobile ? "1px solid" : "none",
+            borderBottomColor: "divider",
+            px: { xs: 2, sm: 3 },
+            py: { xs: 1.5, sm: 2 },
+          }}
+        >
+          <DialogHeader
+            selectedFeature={selectedFeature}
+            isEditingFeature={isEditingFeature}
+            editFeatureName={editFeatureName}
+            setEditFeatureName={setEditFeatureName}
+            editFeatureType={editFeatureType}
+            onFeatureTypeChange={handleFeatureTypeChange}
+            onEditFeature={handleEditFeature}
+            onSaveFeatureEdit={handleSaveFeatureEdit}
+            onCancelFeatureEdit={handleCancelFeatureEdit}
+            getFeatureData={getFeatureData}
+            getFeatureTypeLabel={getFeatureTypeLabel}
+          />
+        </DialogTitle>
 
-        <TaskSelectionPanel
-          searchTerm={searchTerm}
-          onSearchChange={handleSearchChange}
-          onClearSearch={handleClearSearch}
-          filteredLaborTasks={filteredLaborTasks}
-          taskHours={taskHours}
-          selectedLaborTasks={selectedLaborTasks}
-          setSelectedLaborTasks={setSelectedLaborTasks}
-          onLaborTaskToggle={handleLaborTaskToggle}
-          onHoursChange={handleHoursChange}
-          includeMaterialCosts={includeMaterialCosts}
-        />
+        <DialogContent
+          sx={{
+            flex: 1,
+            px: { xs: 2, sm: 3 },
+            py: { xs: 1, sm: 2 },
+            overflow: "auto",
+            // Add padding for mobile to prevent content from touching edges
+            "&.MuiDialogContent-root": {
+              paddingTop: { xs: 1, sm: 2 },
+            },
+          }}
+        >
+          <MaterialCostsToggle
+            includeMaterialCosts={includeMaterialCosts}
+            onToggle={handleMaterialCostsToggle}
+          />
 
-        <CostSummaryPanel
-          selectedLaborTasks={selectedLaborTasks}
-          totalLaborCost={totalLaborCost}
-          totalMaterialCost={totalMaterialCost}
-          totalCost={totalCost}
-          taskBreakdown={taskBreakdown}
-          includeMaterialCosts={includeMaterialCosts}
-        />
-      </DialogContent>
+          <TaskSelectionPanel
+            searchTerm={searchTerm}
+            onSearchChange={handleSearchChange}
+            onClearSearch={handleClearSearch}
+            filteredLaborTasks={filteredLaborTasks}
+            taskHours={taskHours}
+            selectedLaborTasks={selectedLaborTasks}
+            setSelectedLaborTasks={setSelectedLaborTasks}
+            onLaborTaskToggle={handleLaborTaskToggle}
+            onHoursChange={handleHoursChange}
+            includeMaterialCosts={includeMaterialCosts}
+          />
 
-      <DialogActions
-        sx={{
-          justifyContent: "space-between",
-          px: { xs: 2, sm: 3 },
-          py: { xs: 1.5, sm: 2 },
-          position: isMobile ? "sticky" : "static",
-          bottom: 0,
-          zIndex: 1,
-          bgcolor: "background.paper",
-          borderTop: isMobile ? "1px solid" : "none",
-          borderTopColor: "divider",
-          gap: { xs: 1, sm: 2 },
-          flexDirection: { xs: "column-reverse", sm: "row" },
-        }}
-      >
-        <DialogFooter
-          selectedLaborTasks={selectedLaborTasks}
-          totalCost={totalCost}
-          includeMaterialCosts={includeMaterialCosts}
-          onClose={handleClose}
-          onSave={saveLaborTasks}
-        />
-      </DialogActions>
-    </Dialog>
+          <CostSummaryPanel
+            selectedLaborTasks={selectedLaborTasks}
+            includeMaterialCosts={includeMaterialCosts}
+          />
+        </DialogContent>
+
+        <DialogActions
+          sx={{
+            justifyContent: "space-between",
+            px: { xs: 2, sm: 3 },
+            py: { xs: 1.5, sm: 2 },
+            position: isMobile ? "sticky" : "static",
+            bottom: 0,
+            zIndex: 1,
+            bgcolor: "background.paper",
+            borderTop: isMobile ? "1px solid" : "none",
+            borderTopColor: "divider",
+            gap: { xs: 1, sm: 2 },
+            flexDirection: { xs: "column-reverse", sm: "row" },
+          }}
+        >
+          <DialogFooter
+            selectedLaborTasks={selectedLaborTasks}
+            includeMaterialCosts={includeMaterialCosts}
+            onClose={handleClose}
+            onSave={saveLaborTasks}
+          />
+        </DialogActions>
+      </Dialog>
+    </LaborCostProvider>
   );
 };
 

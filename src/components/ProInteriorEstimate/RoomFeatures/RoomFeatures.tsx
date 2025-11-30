@@ -6,7 +6,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Box,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
@@ -20,12 +19,18 @@ import {
 } from "@/interfaces/laborTypes";
 
 interface Props {
+  roomId: string;
   measurementUnit: MeasurementUnit;
   roomData: RoomData;
   setRoomData: React.Dispatch<React.SetStateAction<RoomData>>;
 }
 
-const RoomFeatures = ({ measurementUnit, roomData, setRoomData }: Props) => {
+const RoomFeatures = ({
+  roomId,
+  measurementUnit,
+  roomData,
+  setRoomData,
+}: Props) => {
   const [laborDialogOpen, setLaborDialogOpen] = useState(false);
   const [selectedFeature, setSelectedFeature] = useState<{
     type: FeatureType;
@@ -63,6 +68,7 @@ const RoomFeatures = ({ measurementUnit, roomData, setRoomData }: Props) => {
         </AccordionSummary>
         <AccordionDetails>
           <AddFeatureForm
+            roomId={roomId}
             measurementUnit={measurementUnit}
             roomData={roomData}
             setRoomData={setRoomData}

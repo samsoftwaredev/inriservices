@@ -22,14 +22,21 @@ import {
 } from "@/interfaces/laborTypes";
 import { featureTypes } from "@/constants/laborData";
 import ImageUpload from "@/components/ImageUpload";
+import { uuidv4 } from "@/tools/general";
 
 interface Props {
+  roomId: string;
   measurementUnit: MeasurementUnit;
   roomData: RoomData;
   setRoomData: React.Dispatch<React.SetStateAction<RoomData>>;
 }
 
-const AddFeatureForm = ({ measurementUnit, roomData, setRoomData }: Props) => {
+const AddFeatureForm = ({
+  roomId,
+  measurementUnit,
+  roomData,
+  setRoomData,
+}: Props) => {
   const [newFeature, setNewFeature] = useState({
     type: "windows" as FeatureType,
     name: "",
@@ -41,7 +48,7 @@ const AddFeatureForm = ({ measurementUnit, roomData, setRoomData }: Props) => {
     if (!newFeature.name.trim()) return;
 
     const feature: RoomFeature = {
-      id: Date.now().toString(),
+      id: `${roomId}-${uuidv4()}`,
       type: newFeature.type,
       name: newFeature.name,
       description: newFeature.description,

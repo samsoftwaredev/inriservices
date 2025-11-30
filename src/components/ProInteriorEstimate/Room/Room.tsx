@@ -342,6 +342,7 @@ const Room = ({
         <Divider sx={{ my: 2 }} />
 
         <RoomFeatures
+          roomId={roomId}
           measurementUnit={measurementUnit}
           roomData={roomData}
           setRoomData={setRoomData}

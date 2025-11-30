@@ -3,10 +3,10 @@
 import React from "react";
 import { Box, Button, Typography } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
+import { useLaborCost } from "@/context/LaborCostContext";
 
 interface Props {
   selectedLaborTasks: string[];
-  totalCost: number;
   includeMaterialCosts: boolean;
   onClose: () => void;
   onSave: () => void;
@@ -14,11 +14,11 @@ interface Props {
 
 const DialogFooter = ({
   selectedLaborTasks,
-  totalCost,
   includeMaterialCosts,
   onClose,
   onSave,
 }: Props) => {
+  const { totalCost } = useLaborCost();
   return (
     <>
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>

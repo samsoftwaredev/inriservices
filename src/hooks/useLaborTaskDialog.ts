@@ -114,79 +114,11 @@ export const useLaborTaskDialog = ({
     setIncludeMaterialCosts(event.target.checked);
   };
 
-  // Calculations
-  const calculateTotalCost = () => {
-    return selectedLaborTasks.reduce((total, taskName) => {
-      const task = availableLaborTasks.find((t) => t.name === taskName);
-      if (!task) return total;
-
-      const hours = taskHours[taskName] || task.hours;
-      const laborCost = hours * task.rate;
-      const materialCost = includeMaterialCosts
-        ? task.laborMaterials?.reduce(
-            (matTotal, material) =>
-              matTotal + material.quantity * material.price,
-            0
-          ) || 0
-        : 0;
-
-      return total + laborCost + materialCost;
-    }, 0);
-  };
-
-  const calculateTotalMaterialCost = () => {
-    return selectedLaborTasks.reduce((total, taskName) => {
-      const task = availableLaborTasks.find((t) => t.name === taskName);
-      if (!task) return total;
-
-      const materialCost =
-        task.laborMaterials?.reduce(
-          (matTotal, material) => matTotal + material.quantity * material.price,
-          0
-        ) || 0;
-
-      return total + materialCost;
-    }, 0);
-  };
-
-  const calculateTotalLaborCost = () => {
-    return selectedLaborTasks.reduce((total, taskName) => {
-      const task = availableLaborTasks.find((t) => t.name === taskName);
-      if (!task) return total;
-
-      const hours = taskHours[taskName] || task.hours;
-      const laborCost = hours * task.rate;
-
-      return total + laborCost;
-    }, 0);
-  };
-
-  const getTaskBreakdown = () => {
-    return selectedLaborTasks
-      .map((taskName) => {
-        const task = availableLaborTasks.find((t) => t.name === taskName);
-        if (!task) return null;
-
-        const hours = taskHours[taskName] || task.hours;
-        const laborCost = hours * task.rate;
-        const materialCost = includeMaterialCosts
-          ? task.laborMaterials?.reduce(
-              (matTotal, material) =>
-                matTotal + material.quantity * material.price,
-              0
-            ) || 0
-          : 0;
-
-        return {
-          name: taskName,
-          hours,
-          laborCost,
-          materialCost,
-          totalCost: laborCost + materialCost,
-        };
-      })
-      .filter(Boolean);
-  };
+  // Return empty cost data - these values are now handled by the context
+  const totalCost = 0;
+  const totalLaborCost = 0;
+  const totalMaterialCost = 0;
+  const taskBreakdown: any[] = [];
 
   // Feature editing handlers
   const handleEditFeature = () => {
@@ -339,11 +271,6 @@ export const useLaborTaskDialog = ({
     const featureType = featureTypes.find((ft) => ft.value === type);
     return featureType?.label || type;
   };
-
-  const totalCost = calculateTotalCost();
-  const totalLaborCost = calculateTotalLaborCost();
-  const totalMaterialCost = calculateTotalMaterialCost();
-  const taskBreakdown = getTaskBreakdown();
 
   return {
     taskHours,

@@ -3,32 +3,19 @@
 import React from "react";
 import { Box, Typography, Chip, Divider, Grid } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-
-interface TaskBreakdown {
-  name: string;
-  hours: number;
-  laborCost: number;
-  materialCost: number;
-  totalCost: number;
-}
+import { useLaborCost } from "@/context/LaborCostContext";
 
 interface Props {
   selectedLaborTasks: string[];
-  totalLaborCost: number;
-  totalMaterialCost: number;
-  totalCost: number;
-  taskBreakdown: (TaskBreakdown | null)[];
   includeMaterialCosts: boolean;
 }
 
 const CostSummaryPanel = ({
   selectedLaborTasks,
-  totalLaborCost,
-  totalMaterialCost,
-  totalCost,
-  taskBreakdown,
   includeMaterialCosts,
 }: Props) => {
+  const { totalLaborCost, totalMaterialCost, totalCost, taskBreakdown } =
+    useLaborCost();
   return (
     <Grid size={{ xs: 12, md: 5 }}>
       <Box
