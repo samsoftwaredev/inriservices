@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Dialog,
   DialogTitle,
@@ -17,7 +17,6 @@ import CostSummaryPanel from "../CostSummaryPanel";
 import DialogFooter from "../DialogFooter";
 import { useLaborTaskDialog } from "@/hooks/useLaborTaskDialog";
 import { RoomData, FeatureType } from "@/interfaces/laborTypes";
-import { useProjectPrice } from "@/context";
 
 interface Props {
   open: boolean;
@@ -45,7 +44,6 @@ const LaborTaskDialog = ({
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
-  const { setTotalProjectPrice, setTotalProjectLaborCost } = useProjectPrice();
 
   const {
     taskHours,
@@ -88,12 +86,6 @@ const LaborTaskDialog = ({
     setRoomData,
     setSelectedFeature,
   });
-
-  useEffect(() => {
-    setTotalProjectPrice(totalCost);
-    setTotalProjectLaborCost(taskBreakdown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [totalCost, taskBreakdown]);
 
   return (
     <Dialog

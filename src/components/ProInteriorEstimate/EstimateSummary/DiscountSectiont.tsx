@@ -27,7 +27,6 @@ import {
   Close,
 } from "@mui/icons-material";
 import { useGallons } from "@/context/useGallons";
-import { useProjectPrice } from "@/context";
 import { PRICING_CONFIG } from "@/constants";
 import { DiscountConfig } from "@/interfaces/laborTypes";
 import { calculateCosts, validateDiscountValue } from "@/tools/costTools";
@@ -41,7 +40,6 @@ const DEFAULT_DISCOUNT: DiscountConfig = {
 const DiscountSection = () => {
   const muiTheme = useTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("sm"));
-  const { totalProjectPrice, totalProjectLaborCost } = useProjectPrice();
   const [discount, setDiscount] = useState<DiscountConfig>(DEFAULT_DISCOUNT);
 
   const { totalGallons, totalHours } = useGallons();

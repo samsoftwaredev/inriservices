@@ -13,7 +13,7 @@ import {
 import { AddBox, Calculate, FormatPaint, Work } from "@mui/icons-material";
 import { theme } from "@/app/theme";
 import { useGallons } from "@/context/useGallons";
-import { useBuilding, useProjectPrice } from "@/context";
+import { useBuilding } from "@/context";
 import { PRICING_CONFIG } from "@/constants";
 import { CostItem } from "./CostItem";
 import { SubtotalRow } from "./SubtotalRow";
@@ -33,7 +33,6 @@ const DEFAULT_DISCOUNT: DiscountConfig = {
 const EstimateSummary = () => {
   const muiTheme = useTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("sm"));
-  const { totalProjectPrice, totalProjectLaborCost } = useProjectPrice();
   const [discount, setDiscount] = useState<DiscountConfig>(DEFAULT_DISCOUNT);
 
   const {
