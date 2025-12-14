@@ -16,7 +16,7 @@ import ProjectSettings from "../ProjectSettings";
 import Room from "../Room";
 import { LocationData } from "@/interfaces/laborTypes";
 import { theme } from "@/app/theme";
-import { useCustomer } from "@/context/useCustomer";
+import { useCustomer } from "@/context/CustomerContext";
 import { RoomProvider } from "@/context/RoomContext";
 import { useProjectCost } from "@/context";
 
@@ -33,8 +33,6 @@ interface Props {
     roomDescription: string;
     floorNumber: number;
   }) => void;
-  baseCost: number;
-  onCostChange: (newBaseCost: number) => void;
 }
 
 const MainContent = ({
@@ -45,8 +43,6 @@ const MainContent = ({
   onAddNewSection,
   onDeleteSectionClick,
   onRoomUpdate,
-  baseCost,
-  onCostChange,
 }: Props) => {
   const { updateProjectCost } = useProjectCost();
   const {

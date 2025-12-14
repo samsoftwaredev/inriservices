@@ -22,7 +22,7 @@ import {
   RoomData,
   RoomDimensionsOverview,
 } from "@/interfaces/laborTypes";
-import { useGallons } from "@/context/useGallons";
+import { useGallons } from "@/context/GallonsContext";
 import { calculatePaintGallons } from "@/tools/estimatePaintingHours";
 
 interface Props {

@@ -3,8 +3,8 @@ import "./globals.css";
 import { companyName, companyWebsiteURL } from "@/constants";
 import Script from "next/script";
 import { BuildingProvider, ProjectCostProvider } from "@/context";
-import { GallonsProvider } from "@/context/useGallons";
-import { CustomerProvider } from "@/context/useCustomer";
+import { GallonsProvider } from "@/context/GallonsContext";
+import { CustomerProvider } from "@/context/CustomerContext";
 
 export const metadata: Metadata = {
   title: companyName,

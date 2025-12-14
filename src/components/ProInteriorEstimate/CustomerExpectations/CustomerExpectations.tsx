@@ -34,13 +34,9 @@ interface ProjectExpectations {
 
 interface Props {
   baseCost: number;
-  onCostChange: (
-    adjustedCost: number,
-    expectations: ProjectExpectations
-  ) => void;
 }
 
-const CustomerExpectations = ({ baseCost, onCostChange }: Props) => {
+const CustomerExpectations = ({ baseCost }: Props) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));

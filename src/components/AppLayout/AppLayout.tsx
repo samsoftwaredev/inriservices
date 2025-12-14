@@ -6,7 +6,7 @@ import { Box, Container, CssBaseline } from "@mui/material";
 import TopAppBar from "@/components/TopAppBar";
 import { ThemeRegistry } from "@/app/ThemeRegistry";
 import { useAppNavigation } from "@/hooks";
-import { useCustomer } from "@/context/useCustomer";
+import { useCustomer } from "@/context/CustomerContext";
 
 const drawerWidth = 280;
 

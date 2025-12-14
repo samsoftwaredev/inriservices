@@ -19,9 +19,6 @@ interface BuildingContextType {
   setDeleteConfirmation: React.Dispatch<
     React.SetStateAction<DeleteConfirmationState>
   >;
-  baseCost: number;
-  setBaseCost: React.Dispatch<React.SetStateAction<number>>;
-
   // Handlers
   addNewSection: () => void;
   handleDeleteSectionClick: (sectionId: string, sectionName: string) => void;
@@ -33,7 +30,6 @@ interface BuildingContextType {
     roomDescription: string;
     floorNumber: number;
   }) => void;
-  handleCostChange: (newBaseCost: number) => void;
 }
 
 const BuildingContext = createContext<BuildingContextType | undefined>(
@@ -76,8 +72,6 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
       sectionId: null,
       sectionName: null,
     });
-
-  const [baseCost, setBaseCost] = useState(1000);
 
   const addNewSection = () => {
     const newSection: Section = {
@@ -145,10 +139,6 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
     });
   };
 
-  const handleCostChange = (newBaseCost: number) => {
-    setBaseCost(newBaseCost);
-  };
-
   const value: BuildingContextType = {
     // State
     buildingData,
@@ -157,16 +147,12 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
     setAnchorEl,
     deleteConfirmation,
     setDeleteConfirmation,
-    baseCost,
-    setBaseCost,
-
     // Handlers
     addNewSection,
     handleDeleteSectionClick,
     handleDeleteCancel,
     handleDeleteConfirm,
     onRoomUpdate,
-    handleCostChange,
   };
 
   return React.createElement(BuildingContext.Provider, { value }, children);

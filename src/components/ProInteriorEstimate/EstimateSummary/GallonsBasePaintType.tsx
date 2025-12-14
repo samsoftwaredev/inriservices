@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Typography } from "@mui/material";
-import { useGallons } from "@/context/useGallons";
+import { useGallons } from "@/context/GallonsContext";
 import { calculatePaintGallons, convertToFeet } from "@/tools";
 
 export const GallonsBasePaintType = ({

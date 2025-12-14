@@ -18,7 +18,6 @@ import {
 } from "@mui/material";
 import {
   AddBox,
-  Calculate,
   FormatPaint,
   Work,
   LocalOffer,
@@ -26,7 +25,7 @@ import {
   Check,
   Close,
 } from "@mui/icons-material";
-import { useGallons } from "@/context/useGallons";
+import { useGallons } from "@/context/GallonsContext";
 import { PRICING_CONFIG } from "@/constants";
 import { DiscountConfig } from "@/interfaces/laborTypes";
 import { calculateCosts, validateDiscountValue } from "@/tools/costTools";

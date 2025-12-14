@@ -6,7 +6,7 @@ import MainContent from "./MainContent";
 import DeleteSectionDialog from "./DeleteSectionDialog";
 import { useBuilding } from "@/context/useBuilding";
 import EstimateSummary from "./EstimateSummary";
-import { useCustomer } from "@/context/useCustomer";
+import { useCustomer } from "@/context/CustomerContext";
 
 const Building = () => {
   const {
@@ -16,13 +16,11 @@ const Building = () => {
     setAnchorEl,
     deleteConfirmation,
     setDeleteConfirmation,
-    baseCost,
     addNewSection,
     handleDeleteSectionClick,
     handleDeleteCancel,
     handleDeleteConfirm,
     onRoomUpdate,
-    handleCostChange,
   } = useBuilding();
 
   return (
@@ -35,8 +33,6 @@ const Building = () => {
         onAddNewSection={addNewSection}
         onDeleteSectionClick={handleDeleteSectionClick}
         onRoomUpdate={onRoomUpdate}
-        baseCost={baseCost}
-        onCostChange={handleCostChange}
       />
       <EstimateSummary />
 
