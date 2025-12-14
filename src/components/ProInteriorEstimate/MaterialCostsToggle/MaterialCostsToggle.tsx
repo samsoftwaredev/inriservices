@@ -12,6 +12,7 @@ interface Props {
 
 const MaterialCostsToggle = ({ includeMaterialCosts, onToggle }: Props) => {
   const { totalMaterialCost } = useLaborCost();
+
   return (
     <Box sx={{ mb: 3, p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
       <FormControlLabel

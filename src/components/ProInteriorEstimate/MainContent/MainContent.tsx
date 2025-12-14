@@ -17,6 +17,8 @@ import Room from "../Room";
 import { LocationData } from "@/interfaces/laborTypes";
 import { theme } from "@/app/theme";
 import { useCustomer } from "@/context/useCustomer";
+import { RoomProvider } from "@/context/RoomContext";
+import { useProjectCost } from "@/context";
 
 interface Props {
   buildingData: LocationData;
@@ -46,6 +48,7 @@ const MainContent = ({
   baseCost,
   onCostChange,
 }: Props) => {
+  const { updateProjectCost } = useProjectCost();
   const {
     previousCustomers,
     setPreviousCustomers,
@@ -155,14 +158,16 @@ const MainContent = ({
             </IconButton>
           </Box>
 
-          <Room
-            onRoomUpdate={onRoomUpdate}
+          <RoomProvider
+            roomId={section.id}
             roomName={section.name}
             roomDescription={section.description}
             measurementUnit={buildingData.measurementUnit}
             floorNumber={section.floorNumber}
-            roomId={section.id}
-          />
+            updateProjectCost={updateProjectCost}
+          >
+            <Room onRoomUpdate={onRoomUpdate} />
+          </RoomProvider>
         </Box>
       ))}
 

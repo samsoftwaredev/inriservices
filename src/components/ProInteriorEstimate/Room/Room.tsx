@@ -33,75 +33,19 @@ import {
 import { floorOptions } from "../../../constants/laborData";
 import { calculateArea, calculatePerimeter } from "../laborCalc";
 import { convertToFeet } from "@/tools/convertMeasurement";
+import { useRoom } from "@/context/RoomContext";
 
-const Room = ({
-  measurementUnit,
-  floorNumber,
-  roomId,
-  roomName = "Room",
-  roomDescription = "A standard room",
-  onRoomUpdate,
-}: Props) => {
+const Room = ({ onRoomUpdate }: Props) => {
+  const {
+    roomId,
+    roomName,
+    roomDescription,
+    floorNumber,
+    roomData,
+    setRoomData,
+    measurementUnit,
+  } = useRoom();
   const [isEditMode, setIsEditMode] = useState(true);
-  const [roomData, setRoomData] = useState<RoomData>({
-    // WallDimensions
-    wallPaintCoats: 1,
-    wallPerimeter: "",
-    roomHeight: 0,
-    wallPerimeterCalculated: 0,
-    wallPaintBase: PaintBaseType.Latex,
-    // BaseboardDimensions
-    baseboardHeight: 0,
-    baseboardPaintCoats: 1,
-    baseboardPerimeter: "",
-    baseboardPerimeterCalculated: 0,
-    baseboardPaintBase: PaintBaseType.Latex,
-    // chairRailDimensions
-    chairRailPerimeter: "",
-    chairRailHeight: 0,
-    chairRailPaintCoats: 1,
-    chairRailPerimeterCalculated: 0,
-    chairRailPaintBase: PaintBaseType.Latex,
-    // crownMoldingDimensions
-    crownMoldingPerimeter: "",
-    crownMoldingHeight: 0,
-    crownMoldingPaintCoats: 1,
-    crownMoldingPerimeterCalculated: 0,
-    crownMoldingPaintBase: PaintBaseType.Latex,
-    // wainscotingDimensions
-    wainscotingPerimeter: "",
-    wainscotingHeight: 0,
-    wainscotingPaintCoats: 1,
-    wainscotingPerimeterCalculated: 0,
-    wainscotingPaintBase: PaintBaseType.Latex,
-    // RoomData
-    area: "",
-    areaCalculated: 10,
-    ceilingPaintCoats: 1,
-    ceilingPaintBase: PaintBaseType.Latex,
-    floorPaintCoats: 1,
-    floorPaintBase: PaintBaseType.Latex,
-    floorNumber: floorNumber,
-    totalCost: 0,
-    features: {
-      outlets: [],
-      switches: [],
-      fixtures: [],
-      ceilings: [],
-      flooring: [],
-      cabinetry: [],
-      trim: [],
-      walls: [],
-      windows: [],
-      doors: [],
-      closets: [],
-      crownMolding: [],
-      chairRail: [],
-      baseboard: [],
-      wainscoting: [],
-      other: [],
-    },
-  });
 
   const [editData, setEditData] = useState<RoomDimensionsOverview>({
     area: roomData.area,

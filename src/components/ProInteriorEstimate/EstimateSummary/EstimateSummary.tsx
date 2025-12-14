@@ -23,6 +23,7 @@ import { TotalEstimateCard } from "./TotalEstimateCard";
 import DiscountSection from "./DiscountSectiont";
 import { DiscountConfig } from "@/interfaces/laborTypes";
 import { calculateCosts } from "@/tools/costTools";
+import ProjectCostSummary from "@/components/ProjectCostSummary";
 
 const DEFAULT_DISCOUNT: DiscountConfig = {
   type: "percentage",
@@ -133,6 +134,8 @@ const EstimateSummary = () => {
           mappingNames={mappingNames}
           isMobile={isMobile}
         />
+
+        <ProjectCostSummary />
       </Grid>
     </Paper>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useMemo } from "react";
+import React, { createContext, useContext, useId, useMemo } from "react";
 import { availableLaborTasks } from "@/constants/laborData";
 import { TaskHours } from "@/interfaces/laborTypes";
 
@@ -30,12 +30,12 @@ const LaborCostContext = createContext<LaborCostContextType | undefined>(
   undefined
 );
 
-export const LaborCostProvider: React.FC<LaborCostProviderProps> = ({
+export const LaborCostProvider = ({
   children,
   selectedLaborTasks,
   taskHours,
   includeMaterialCosts,
-}) => {
+}: LaborCostProviderProps) => {
   // Calculate total cost
   const totalCost = useMemo(() => {
     return selectedLaborTasks.reduce((total, taskName) => {
@@ -102,13 +102,15 @@ export const LaborCostProvider: React.FC<LaborCostProviderProps> = ({
             ) || 0
           : 0;
 
-        return {
+        const taskBreakdownItem: TaskBreakdownItem = {
           name: taskName,
           hours,
           laborCost,
           materialCost,
           totalCost: laborCost + materialCost,
         };
+
+        return taskBreakdownItem;
       })
       .filter((item): item is TaskBreakdownItem => item !== null);
   }, [selectedLaborTasks, taskHours, includeMaterialCosts]);

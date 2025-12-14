@@ -142,11 +142,6 @@ export type RoomData = {
   CeilingDimensions;
 
 export interface Props {
-  measurementUnit: MeasurementUnit;
-  floorNumber: number;
-  roomId: string;
-  roomName: string;
-  roomDescription?: string;
   onRoomUpdate?: (updates: {
     roomId: string;
     roomName: string;
@@ -215,3 +210,21 @@ export interface CostCalculation {
   companyFeesTotal: number;
   totalWithTaxes: number;
 }
+
+export interface TaskBreakdownItem {
+  name: string;
+  hours: number;
+  laborCost: number;
+  materialCost: number;
+  totalCost: number;
+  roomId?: string;
+  featureId?: string;
+  featureType?: string;
+}
+
+export type LaborCostData = {
+  totalCost: number;
+  totalLaborCost: number;
+  totalMaterialCost: number;
+  taskBreakdown: TaskBreakdownItem[];
+};

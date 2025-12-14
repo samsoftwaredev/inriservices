@@ -19,6 +19,7 @@ const DialogFooter = ({
   onSave,
 }: Props) => {
   const { totalCost } = useLaborCost();
+
   return (
     <>
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
