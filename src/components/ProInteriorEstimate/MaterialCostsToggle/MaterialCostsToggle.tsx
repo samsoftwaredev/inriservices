@@ -3,7 +3,7 @@
 import React from "react";
 import { Box, FormControlLabel, Switch, Typography } from "@mui/material";
 import BuildIcon from "@mui/icons-material/Build";
-import { useLaborCost } from "@/context/LaborCostContext";
+import { useRoomLaborCost } from "@/context/RoomLaborCostContext";
 
 interface Props {
   includeMaterialCosts: boolean;
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const MaterialCostsToggle = ({ includeMaterialCosts, onToggle }: Props) => {
-  const { totalMaterialCost } = useLaborCost();
+  const { totalMaterialCost } = useRoomLaborCost();
 
   return (
     <Box sx={{ mb: 3, p: 2, bgcolor: "grey.50", borderRadius: 1 }}>

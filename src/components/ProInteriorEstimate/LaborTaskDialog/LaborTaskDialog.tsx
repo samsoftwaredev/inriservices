@@ -15,11 +15,9 @@ import MaterialCostsToggle from "../MaterialCostsToggle";
 import TaskSelectionPanel from "../TaskSelectionPanel";
 import CostSummaryPanel from "../CostSummaryPanel";
 import DialogFooter from "../DialogFooter";
-import { LaborCostProvider } from "@/context/LaborCostContext";
+import { RoomLaborCostProvider } from "@/context/RoomLaborCostContext";
 import { useLaborTaskDialog } from "@/hooks/useLaborTaskDialog";
 import { RoomData, FeatureType } from "@/interfaces/laborTypes";
-import { useProjectCost } from "@/context";
-import { useRoom } from "@/context/RoomContext";
 
 interface Props {
   open: boolean;
@@ -82,7 +80,7 @@ const LaborTaskDialog = ({
   });
 
   return (
-    <LaborCostProvider
+    <RoomLaborCostProvider
       selectedLaborTasks={selectedLaborTasks}
       taskHours={taskHours}
       includeMaterialCosts={includeMaterialCosts}
@@ -188,7 +186,7 @@ const LaborTaskDialog = ({
           />
         </DialogActions>
       </Dialog>
-    </LaborCostProvider>
+    </RoomLaborCostProvider>
   );
 };
 

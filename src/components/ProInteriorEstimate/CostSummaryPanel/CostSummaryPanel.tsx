@@ -3,7 +3,7 @@
 import React from "react";
 import { Box, Typography, Chip, Divider, Grid } from "@mui/material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import { useLaborCost } from "@/context/LaborCostContext";
+import { useRoomLaborCost } from "@/context/RoomLaborCostContext";
 
 interface Props {
   selectedLaborTasks: string[];
@@ -15,7 +15,7 @@ const CostSummaryPanel = ({
   includeMaterialCosts,
 }: Props) => {
   const { totalLaborCost, totalMaterialCost, totalCost, taskBreakdown } =
-    useLaborCost();
+    useRoomLaborCost();
   return (
     <Grid size={{ xs: 12, md: 5 }}>
       <Box

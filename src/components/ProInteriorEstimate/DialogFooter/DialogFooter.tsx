@@ -3,7 +3,7 @@
 import React from "react";
 import { Box, Button, Typography } from "@mui/material";
 import SaveIcon from "@mui/icons-material/Save";
-import { useLaborCost } from "@/context/LaborCostContext";
+import { useRoomLaborCost } from "@/context/RoomLaborCostContext";
 
 interface Props {
   selectedLaborTasks: string[];
@@ -18,7 +18,7 @@ const DialogFooter = ({
   onClose,
   onSave,
 }: Props) => {
-  const { totalCost } = useLaborCost();
+  const { totalCost } = useRoomLaborCost();
 
   return (
     <>

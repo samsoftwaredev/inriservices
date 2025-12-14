@@ -4,9 +4,8 @@ import React from "react";
 
 import MainContent from "./MainContent";
 import DeleteSectionDialog from "./DeleteSectionDialog";
-import { useBuilding } from "@/context/useBuilding";
+import { useBuilding } from "@/context/BuildingContext";
 import EstimateSummary from "./EstimateSummary";
-import { useCustomer } from "@/context/CustomerContext";
 
 const Building = () => {
   const {

@@ -12,30 +12,30 @@ interface TaskBreakdownItem {
   totalCost: number;
 }
 
-interface LaborCostContextType {
+interface RoomLaborCostContextType {
   totalCost: number;
   totalLaborCost: number;
   totalMaterialCost: number;
   taskBreakdown: TaskBreakdownItem[];
 }
 
-interface LaborCostProviderProps {
+interface RoomLaborCostProviderProps {
   children: React.ReactNode;
   selectedLaborTasks: string[];
   taskHours: TaskHours;
   includeMaterialCosts: boolean;
 }
 
-const LaborCostContext = createContext<LaborCostContextType | undefined>(
-  undefined
-);
+const RoomLaborCostContext = createContext<
+  RoomLaborCostContextType | undefined
+>(undefined);
 
-export const LaborCostProvider = ({
+export const RoomLaborCostProvider = ({
   children,
   selectedLaborTasks,
   taskHours,
   includeMaterialCosts,
-}: LaborCostProviderProps) => {
+}: RoomLaborCostProviderProps) => {
   // Calculate total cost
   const totalCost = useMemo(() => {
     return selectedLaborTasks.reduce((total, taskName) => {
@@ -115,7 +115,7 @@ export const LaborCostProvider = ({
       .filter((item): item is TaskBreakdownItem => item !== null);
   }, [selectedLaborTasks, taskHours, includeMaterialCosts]);
 
-  const value: LaborCostContextType = {
+  const value: RoomLaborCostContextType = {
     totalCost,
     totalLaborCost,
     totalMaterialCost,
@@ -123,16 +123,18 @@ export const LaborCostProvider = ({
   };
 
   return (
-    <LaborCostContext.Provider value={value}>
+    <RoomLaborCostContext.Provider value={value}>
       {children}
-    </LaborCostContext.Provider>
+    </RoomLaborCostContext.Provider>
   );
 };
 
-export const useLaborCost = (): LaborCostContextType => {
-  const context = useContext(LaborCostContext);
+export const useRoomLaborCost = (): RoomLaborCostContextType => {
+  const context = useContext(RoomLaborCostContext);
   if (context === undefined) {
-    throw new Error("useLaborCost must be used within a LaborCostProvider");
+    throw new Error(
+      "useRoomLaborCost must be used within a RoomLaborCostProvider"
+    );
   }
   return context;
 };
