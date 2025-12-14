@@ -5,7 +5,10 @@ import React, { createContext, useContext, useState } from "react";
 
 interface ProjectCostContextType {
   updateProjectCost: (roomId: string, roomData: RoomData) => void;
-  laborCosts: Record<string, LaborCostData>;
+  totalProjectCost: number;
+  totalProjectLaborCost: number;
+  totalProjectMaterialCost: number;
+  projectTaskBreakdown: any[];
 }
 
 interface ProjectCostProviderProps {
@@ -19,7 +22,6 @@ const ProjectCostContext = createContext<ProjectCostContextType | undefined>(
 export const ProjectCostProvider: React.FC<ProjectCostProviderProps> = ({
   children,
 }) => {
-  // Store all registered labor costs by unique ID
   const [laborCosts, setLaborCosts] = useState<Record<string, LaborCostData>>({
     // Example structure; actual data will be populated via updateProjectCost
     // [roomId]: {
@@ -70,9 +72,31 @@ export const ProjectCostProvider: React.FC<ProjectCostProviderProps> = ({
     });
   };
 
+  const totalProjectCost = Object.values(laborCosts).reduce(
+    (sum, costData) => sum + costData.totalCost,
+    0
+  );
+
+  const totalProjectLaborCost = Object.values(laborCosts).reduce(
+    (sum, costData) => sum + costData.totalLaborCost,
+    0
+  );
+
+  const totalProjectMaterialCost = Object.values(laborCosts).reduce(
+    (sum, costData) => sum + costData.totalMaterialCost,
+    0
+  );
+
+  const projectTaskBreakdown = Object.values(laborCosts).flatMap(
+    (costData) => costData.taskBreakdown
+  );
+
   const value: ProjectCostContextType = {
     updateProjectCost,
-    laborCosts,
+    totalProjectCost,
+    totalProjectLaborCost,
+    totalProjectMaterialCost,
+    projectTaskBreakdown,
   };
 
   return (
