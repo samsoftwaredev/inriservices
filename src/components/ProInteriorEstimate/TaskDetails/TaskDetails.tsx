@@ -40,11 +40,6 @@ const TaskDetails = ({
     []
   );
 
-  // Early return if task is undefined
-  if (!task) {
-    return null;
-  }
-
   // Initialize selected materials when component mounts or task changes
   useEffect(() => {
     if (task.laborMaterials) {
@@ -83,16 +78,20 @@ const TaskDetails = ({
   };
 
   const getMaterialCost = () => {
-    return selectedMaterials?.reduce(
-      (total, material) => total + (material?.quantity || 0) * (material?.price || 0),
-      0
-    ) || 0;
+    return (
+      selectedMaterials?.reduce(
+        (total, material) =>
+          total + (material?.quantity || 0) * (material?.price || 0),
+        0
+      ) || 0
+    );
   };
 
   const getTotalMaterialCost = () => {
     return (
       task.laborMaterials?.reduce(
-        (total, material) => total + (material?.quantity || 0) * (material?.price || 0),
+        (total, material) =>
+          total + (material?.quantity || 0) * (material?.price || 0),
         0
       ) || 0
     );
@@ -129,6 +128,10 @@ const TaskDetails = ({
   const materialCost = getMaterialCost();
   const totalMaterialCost = getTotalMaterialCost();
   const laborCost = currentHours * task.rate;
+
+  if (!task) {
+    return null;
+  }
 
   return (
     <Box sx={{ mt: 2, pl: 6 }}>
@@ -236,7 +239,7 @@ const TaskDetails = ({
             <List dense sx={{ bgcolor: "grey.50", borderRadius: 1, p: 1 }}>
               {task.laborMaterials?.map((material, index) => {
                 if (!material) return null;
-                
+
                 const isSelected = selectedMaterials.some(
                   (selected) => selected?.name === material.name
                 );
