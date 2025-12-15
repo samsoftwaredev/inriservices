@@ -40,6 +40,11 @@ const TaskDetails = ({
     []
   );
 
+  // Early return if task is undefined
+  if (!task) {
+    return null;
+  }
+
   // Initialize selected materials when component mounts or task changes
   useEffect(() => {
     if (task.laborMaterials) {
@@ -78,27 +83,30 @@ const TaskDetails = ({
   };
 
   const getMaterialCost = () => {
-    return selectedMaterials.reduce(
-      (total, material) => total + material.quantity * material.price,
+    return selectedMaterials?.reduce(
+      (total, material) => total + (material?.quantity || 0) * (material?.price || 0),
       0
-    );
+    ) || 0;
   };
 
   const getTotalMaterialCost = () => {
     return (
       task.laborMaterials?.reduce(
-        (total, material) => total + material.quantity * material.price,
+        (total, material) => total + (material?.quantity || 0) * (material?.price || 0),
         0
       ) || 0
     );
   };
 
   const isAllMaterialsSelected = () => {
-    return task.laborMaterials?.length === selectedMaterials.length;
+    const materialsLength = task.laborMaterials?.length || 0;
+    const selectedLength = selectedMaterials?.length || 0;
+    return materialsLength > 0 && materialsLength === selectedLength;
   };
 
   const isSomeMaterialsSelected = () => {
-    return selectedMaterials.length > 0 && !isAllMaterialsSelected();
+    const selectedLength = selectedMaterials?.length || 0;
+    return selectedLength > 0 && !isAllMaterialsSelected();
   };
 
   const handleSelectAllMaterials = () => {
@@ -195,8 +203,8 @@ const TaskDetails = ({
                 }
                 label={
                   <Typography variant="caption">
-                    Select All ({selectedMaterials.length}/
-                    {task.laborMaterials.length})
+                    Select All ({selectedMaterials?.length || 0}/
+                    {task.laborMaterials?.length || 0})
                   </Typography>
                 }
               />
@@ -226,9 +234,11 @@ const TaskDetails = ({
             </Box>
 
             <List dense sx={{ bgcolor: "grey.50", borderRadius: 1, p: 1 }}>
-              {task.laborMaterials.map((material, index) => {
+              {task.laborMaterials?.map((material, index) => {
+                if (!material) return null;
+                
                 const isSelected = selectedMaterials.some(
-                  (selected) => selected.name === material.name
+                  (selected) => selected?.name === material.name
                 );
                 const itemCost = material.quantity * material.price;
 

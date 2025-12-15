@@ -37,22 +37,20 @@ const AddFeatureForm = ({
   roomData,
   setRoomData,
 }: Props) => {
-  const [newFeature, setNewFeature] = useState({
-    type: "windows" as FeatureType,
-    name: "",
-    description: "",
-    dimensions: "",
-  });
+  const [featureType, setFeatureType] = useState<FeatureType>("windows");
+  const [featureName, setFeatureName] = useState("");
+  const [featureDescription, setFeatureDescription] = useState("");
+  const [featureDimensions, setFeatureDimensions] = useState("");
 
   const addFeature = () => {
-    if (!newFeature.name.trim()) return;
+    if (!featureName.trim()) return;
 
     const feature: RoomFeature = {
       id: `${roomId}-${uuidv4()}`,
-      type: newFeature.type,
-      name: newFeature.name,
-      description: newFeature.description,
-      dimensions: newFeature.dimensions,
+      type: featureType,
+      name: featureName,
+      description: featureDescription,
+      dimensions: featureDimensions,
       image: "",
       picture: null,
       workLabor: [],
@@ -62,17 +60,27 @@ const AddFeatureForm = ({
       ...roomData,
       features: {
         ...roomData.features,
-        [newFeature.type]: [...roomData.features[newFeature.type], feature],
+        [featureType]: [...roomData.features[featureType], feature],
       },
     });
 
     // Reset form
-    setNewFeature({
-      type: "windows",
-      name: "",
-      description: "",
-      dimensions: "",
-    });
+    setFeatureType("windows");
+    setFeatureName("");
+    setFeatureDescription("");
+    setFeatureDimensions("");
+  };
+
+  const onChangeFeatureType = (e: SelectChangeEvent) => {
+    setFeatureType(e.target.value as FeatureType);
+  };
+
+  const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFeatureName(e.target.value);
+  };
+
+  const onChangeDimensions = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFeatureDimensions(e.target.value);
   };
 
   return (
@@ -86,16 +94,14 @@ const AddFeatureForm = ({
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, sm: 3 }}>
           <FormControl fullWidth size="small">
-            <InputLabel>Feature Type</InputLabel>
+            <InputLabel htmlFor="featureTypeList">Feature Type</InputLabel>
             <Select
-              value={newFeature.type}
+              labelId="featureTypeList-label"
+              id="featureTypeList"
+              name="featureTypeList"
+              value={featureType}
               label="Feature Type"
-              onChange={(e: SelectChangeEvent<FeatureType>) =>
-                setNewFeature({
-                  ...newFeature,
-                  type: e.target.value as FeatureType,
-                })
-              }
+              onChange={onChangeFeatureType}
             >
               {featureTypes.map((type) => (
                 <MenuItem key={type.value} value={type.value}>
@@ -107,28 +113,23 @@ const AddFeatureForm = ({
         </Grid>
         <Grid size={{ xs: 12, sm: 3 }}>
           <TextField
+            name="title"
             fullWidth
             size="small"
             label="Title"
-            value={newFeature.name}
-            onChange={(e) =>
-              setNewFeature({ ...newFeature, name: e.target.value })
-            }
+            value={featureName}
+            onChange={onChangeTitle}
             placeholder="e.g., Large Window"
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 3 }}>
           <TextField
             fullWidth
+            name="dimensions"
             size="small"
             label={`Dimensions (${measurementUnit})`}
-            value={newFeature.dimensions}
-            onChange={(e) =>
-              setNewFeature({
-                ...newFeature,
-                dimensions: e.target.value,
-              })
-            }
+            value={featureDimensions}
+            onChange={onChangeDimensions}
             placeholder="e.g., 3x4"
           />
         </Grid>
@@ -138,7 +139,7 @@ const AddFeatureForm = ({
             variant="contained"
             startIcon={<AddIcon />}
             onClick={addFeature}
-            disabled={!newFeature.name.trim()}
+            disabled={!featureName.trim()}
           >
             Add
           </Button>
@@ -150,10 +151,8 @@ const AddFeatureForm = ({
         minRows={2}
         size="small"
         label="Description (Optional)"
-        value={newFeature.description}
-        onChange={(e) =>
-          setNewFeature({ ...newFeature, description: e.target.value })
-        }
+        value={featureDescription}
+        onChange={(e) => setFeatureDescription(e.target.value)}
         sx={{ mt: 2 }}
         placeholder="Additional details (e.g., Type of window, material, scratched, broken, etc.)"
       />
