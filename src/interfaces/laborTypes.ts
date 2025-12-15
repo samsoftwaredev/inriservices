@@ -161,12 +161,7 @@ export interface Section {
   floorNumber: number;
 }
 
-export interface Customer {
-  id: string;
-  name: string;
-  contact: string;
-  phone: string;
-  email: string;
+export interface CustomerAddress {
   address: string;
   city: string;
   state: string;
@@ -182,6 +177,15 @@ export interface LocationData {
   floorPlan: number;
   sections: Section[];
 }
+
+export type Customer = {
+  id: string;
+  name: string;
+  contact: string;
+  phone: string;
+  email: string;
+  buildings: LocationData[];
+};
 
 export type FeatureDetails = {
   coats: number | null;

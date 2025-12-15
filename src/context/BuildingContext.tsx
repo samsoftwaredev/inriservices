@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { LocationData, Section } from "@/interfaces/laborTypes";
+import { useCustomer } from "./CustomerContext";
 
 interface DeleteConfirmationState {
   open: boolean;
@@ -41,28 +42,32 @@ interface BuildingProviderProps {
 }
 
 export const BuildingProvider = ({ children }: BuildingProviderProps) => {
-  const [buildingData, setBuildingData] = useState<LocationData>({
-    address: "123 Main St",
-    city: "Garland",
-    state: "TX",
-    zipCode: "75040",
-    measurementUnit: "ft",
-    floorPlan: 1,
-    sections: [
-      {
-        id: "1",
-        name: "Living Room",
-        description: "Spacious living area",
-        floorNumber: 1,
-      },
-      {
-        id: "2",
-        name: "Kitchen",
-        description: "Modern kitchen area",
-        floorNumber: 1,
-      },
-    ],
-  });
+  const { currentCustomer } = useCustomer();
+  const [currentBuildingIndex, setCurrentBuildingIndex] = useState(0);
+  const [buildingData, setBuildingData] = useState<LocationData>(
+    currentCustomer.buildings[currentBuildingIndex]
+    // { address: "123 Main St",
+    // city: "Garland",
+    // state: "TX",
+    // zipCode: "75040",
+    // measurementUnit: "ft",
+    // floorPlan: 1,
+    // sections: [
+    //   {
+    //     id: "1",
+    //     name: "Living Room",
+    //     description: "Spacious living area",
+    //     floorNumber: 1,
+    //   },
+    //   {
+    //     id: "2",
+    //     name: "Kitchen",
+    //     description: "Modern kitchen area",
+    //     floorNumber: 1,
+    //   },
+    // ]
+    // },
+  );
 
   // Menu and dialog states
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

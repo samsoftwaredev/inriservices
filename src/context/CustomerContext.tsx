@@ -3,10 +3,6 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Customer } from "@/interfaces/laborTypes";
 
-// ============================================================================
-// TYPES & INTERFACES
-// ============================================================================
-
 interface CustomerContextType {
   // State
   previousCustomers: Customer[];
@@ -29,17 +25,9 @@ interface CustomerProviderProps {
   children: ReactNode;
 }
 
-// ============================================================================
-// CONTEXT CREATION
-// ============================================================================
-
 const CustomerContext = createContext<CustomerContextType | undefined>(
   undefined
 );
-
-// ============================================================================
-// SAMPLE DATA
-// ============================================================================
 
 const INITIAL_CUSTOMERS: Customer[] = [
   {
@@ -48,10 +36,30 @@ const INITIAL_CUSTOMERS: Customer[] = [
     contact: "Jane Smith",
     phone: "(123) 456-7890",
     email: "jane.smith@example.com",
-    address: "123 Main St",
-    city: "Anytown",
-    state: "CA",
-    zipCode: "12345",
+    buildings: [
+      {
+        address: "456 Oak St",
+        city: "Springfield",
+        state: "IL",
+        zipCode: "62704",
+        measurementUnit: "ft",
+        floorPlan: 2,
+        sections: [
+          {
+            id: "1",
+            name: "Living Room",
+            description: "Spacious living area",
+            floorNumber: 1,
+          },
+          {
+            id: "2",
+            name: "Kitchen",
+            description: "Modern kitchen space",
+            floorNumber: 1,
+          },
+        ],
+      },
+    ],
   },
   {
     id: "2",
@@ -59,10 +67,17 @@ const INITIAL_CUSTOMERS: Customer[] = [
     contact: "Bob Wilson",
     phone: "(555) 123-4567",
     email: "bob.wilson@email.com",
-    address: "456 Oak Avenue",
-    city: "Springfield",
-    state: "TX",
-    zipCode: "67890",
+    buildings: [
+      {
+        address: "789 Pine St",
+        city: "Metropolis",
+        state: "NY",
+        zipCode: "10001",
+        measurementUnit: "ft",
+        floorPlan: 3,
+        sections: [],
+      },
+    ],
   },
   {
     id: "3",
@@ -70,10 +85,17 @@ const INITIAL_CUSTOMERS: Customer[] = [
     contact: "Sarah Brown",
     phone: "(333) 555-7777",
     email: "sarah.brown@gmail.com",
-    address: "789 Pine Street",
-    city: "Riverside",
-    state: "FL",
-    zipCode: "54321",
+    buildings: [
+      {
+        address: "321 Cedar St",
+        city: "Gotham",
+        state: "NJ",
+        zipCode: "07097",
+        measurementUnit: "ft",
+        floorPlan: 1,
+        sections: [],
+      },
+    ],
   },
 ];
 
@@ -83,15 +105,18 @@ const DEFAULT_CUSTOMER: Customer = {
   contact: "Jane Smith",
   phone: "(123) 456-7890",
   email: "jane.smith@example.com",
-  address: "123 Main St",
-  city: "Anytown",
-  state: "CA",
-  zipCode: "12345",
+  buildings: [
+    {
+      address: "456 Oak St",
+      city: "Springfield",
+      state: "IL",
+      zipCode: "62704",
+      measurementUnit: "ft",
+      floorPlan: 2,
+      sections: [],
+    },
+  ],
 };
-
-// ============================================================================
-// PROVIDER COMPONENT
-// ============================================================================
 
 export const CustomerProvider = ({ children }: CustomerProviderProps) => {
   // State
@@ -101,10 +126,6 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
     useState<Customer>(DEFAULT_CUSTOMER);
   const [newCustomerDialogOpen, setNewCustomerDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  // ============================================================================
-  // EVENT HANDLERS
-  // ============================================================================
 
   const handleSelectPreviousCustomer = (customer: Customer) => {
     setCurrentCustomer(customer);
@@ -144,10 +165,6 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
     setAnchorEl(null);
   };
 
-  // ============================================================================
-  // CONTEXT VALUE
-  // ============================================================================
-
   const value: CustomerContextType = {
     // State
     previousCustomers,
@@ -169,10 +186,6 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
   return React.createElement(CustomerContext.Provider, { value }, children);
 };
 
-// ============================================================================
-// CUSTOM HOOK
-// ============================================================================
-
 export const useCustomer = (): CustomerContextType => {
   const context = useContext(CustomerContext);
   if (context === undefined) {
@@ -180,10 +193,6 @@ export const useCustomer = (): CustomerContextType => {
   }
   return context;
 };
-
-// ============================================================================
-// UTILITY FUNCTIONS (OPTIONAL)
-// ============================================================================
 
 /**
  * Get customer by ID

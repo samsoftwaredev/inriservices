@@ -11,12 +11,15 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  MenuItem,
 } from "@mui/material";
 import {
   Dashboard as DashboardIcon,
   People as PeopleIcon,
   Assessment as AssessmentIcon,
 } from "@mui/icons-material";
+import { Person as PersonIcon } from "@mui/icons-material";
+
 import { Customer } from "@/interfaces/laborTypes";
 
 interface Props {
@@ -26,15 +29,19 @@ interface Props {
   onNavigation: (path: string) => void;
   onLogoClick: () => void;
   currentCustomer: Customer;
+  previousCustomers: Customer[];
+  onSelectPreviousCustomer: (customer: Customer) => void;
 }
 
-const NavigationDrawer = ({
+const SideNav = ({
   drawerWidth,
   mobileOpen,
   onDrawerToggle,
   onNavigation,
   onLogoClick,
   currentCustomer,
+  previousCustomers,
+  onSelectPreviousCustomer,
 }: Props) => {
   const navigationItems = [
     {
@@ -139,6 +146,21 @@ const NavigationDrawer = ({
           {currentCustomer.name}
         </Typography>
       </Box>
+      {previousCustomers.map((customer) => (
+        <MenuItem
+          key={customer.id}
+          onClick={() => onSelectPreviousCustomer(customer)}
+          sx={{ minWidth: 250 }}
+        >
+          <ListItemIcon>
+            <PersonIcon />
+          </ListItemIcon>
+          <ListItemText
+            primary={customer.name}
+            secondary={`${customer.contact} • ${customer.phone}`}
+          />
+        </MenuItem>
+      ))}
     </Box>
   );
 
@@ -186,4 +208,4 @@ const NavigationDrawer = ({
   );
 };
 
-export default NavigationDrawer;
+export default SideNav;

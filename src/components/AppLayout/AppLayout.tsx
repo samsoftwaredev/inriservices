@@ -3,7 +3,7 @@
 import React from "react";
 import { Box, Container, CssBaseline } from "@mui/material";
 
-import TopAppBar from "@/components/TopAppBar";
+import SideNav from "@/components/SideNav";
 import { ThemeRegistry } from "@/app/ThemeRegistry";
 import { useAppNavigation } from "@/hooks";
 import { useCustomer } from "@/context/CustomerContext";
@@ -13,7 +13,11 @@ const drawerWidth = 280;
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const { mobileOpen, handleDrawerToggle, handleNavigation, handleLogoClick } =
     useAppNavigation();
-  const { currentCustomer } = useCustomer();
+  const {
+    currentCustomer,
+    previousCustomers,
+    handleSelectPreviousCustomer: onSelectPreviousCustomer,
+  } = useCustomer();
 
   return (
     <ThemeRegistry>
@@ -24,13 +28,15 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
           backgroundColor: "#eaf3f6",
         }}
       >
-        <TopAppBar
+        <SideNav
           drawerWidth={drawerWidth}
           mobileOpen={mobileOpen}
           onDrawerToggle={handleDrawerToggle}
           onNavigation={handleNavigation}
           onLogoClick={handleLogoClick}
           currentCustomer={currentCustomer}
+          previousCustomers={previousCustomers}
+          onSelectPreviousCustomer={onSelectPreviousCustomer}
         />
 
         <Container maxWidth="md">{children}</Container>

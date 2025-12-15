@@ -98,13 +98,13 @@ export default function RootLayout({
         `}
       </Script>
       <body>
-        <BuildingProvider>
-          <GallonsProvider>
-            <CustomerProvider>
+        <GallonsProvider>
+          <CustomerProvider>
+            <BuildingProvider>
               <ProjectCostProvider>{children}</ProjectCostProvider>
-            </CustomerProvider>
-          </GallonsProvider>
-        </BuildingProvider>
+            </BuildingProvider>
+          </CustomerProvider>
+        </GallonsProvider>
       </body>
     </html>
   );

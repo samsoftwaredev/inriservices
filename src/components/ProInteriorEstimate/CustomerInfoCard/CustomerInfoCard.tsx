@@ -170,9 +170,11 @@ const CustomerInfoCard = ({ currentCustomer, onCustomerUpdate }: Props) => {
               </Grid>
               <Grid size={{ xs: 12 }}>
                 <Typography variant="body1">
-                  <strong>Address:</strong> {currentCustomer.address},{" "}
-                  {currentCustomer.city}, {currentCustomer.state}{" "}
-                  {currentCustomer.zipCode}
+                  <strong>Address:</strong>{" "}
+                  {currentCustomer.buildings?.[0].address},{" "}
+                  {currentCustomer.buildings?.[0].city},{" "}
+                  {currentCustomer.buildings?.[0].state}{" "}
+                  {currentCustomer.buildings?.[0].zipCode}
                 </Typography>
               </Grid>
             </Grid>

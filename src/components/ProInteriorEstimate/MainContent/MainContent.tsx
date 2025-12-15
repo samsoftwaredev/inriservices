@@ -47,9 +47,7 @@ const MainContent = ({
   const { updateProjectCost } = useProjectCost();
   const {
     previousCustomers,
-    setPreviousCustomers,
     currentCustomer,
-    setCurrentCustomer,
     newCustomerDialogOpen,
     setNewCustomerDialogOpen,
     handleSelectPreviousCustomer: onSelectPreviousCustomer,
@@ -92,6 +90,7 @@ const MainContent = ({
         previousCustomers={previousCustomers}
         onSelectCustomer={onSelectPreviousCustomer}
         onCreateNewCustomer={() => setNewCustomerDialogOpen(true)}
+        onCreateNewLocation={() => {}}
       />
 
       <NewCustomerDialog
