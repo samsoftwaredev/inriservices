@@ -5,6 +5,7 @@ import React, {
   useContext,
   useState,
   ReactNode,
+  use,
   useEffect,
 } from "react";
 import { LocationData, Section } from "@/interfaces/laborTypes";
@@ -53,28 +54,11 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   const [currentBuildingIndex, setCurrentBuildingIndex] = useState(0);
   const [buildingData, setBuildingData] = useState<LocationData>(
     currentCustomer.buildings[currentBuildingIndex]
-    // { address: "123 Main St",
-    // city: "Garland",
-    // state: "TX",
-    // zipCode: "75040",
-    // measurementUnit: "ft",
-    // floorPlan: 1,
-    // sections: [
-    //   {
-    //     id: "1",
-    //     name: "Living Room",
-    //     description: "Spacious living area",
-    //     floorNumber: 1,
-    //   },
-    //   {
-    //     id: "2",
-    //     name: "Kitchen",
-    //     description: "Modern kitchen area",
-    //     floorNumber: 1,
-    //   },
-    // ]
-    // },
   );
+
+  useEffect(() => {
+    setBuildingData(currentCustomer.buildings[currentBuildingIndex]);
+  }, [currentCustomer]);
 
   // Menu and dialog states
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
