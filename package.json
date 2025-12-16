@@ -22,6 +22,7 @@
     "next-sitemap": "^4.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-hook-form": "^7.68.0",
     "react-intersection-observer": "^9.16.0",
     "react-markdown": "^10.1.0",
     "react-slick": "^0.30.3"

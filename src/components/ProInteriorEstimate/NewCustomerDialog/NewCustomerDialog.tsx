@@ -31,6 +31,11 @@ const NewCustomerDialog = ({ open, onClose, onSaveCustomer }: Props) => {
     contact: "",
     phone: "",
     email: "",
+    buildings: [],
+  });
+
+  // Separate state for location data
+  const [locationData, setLocationData] = useState({
     address: "",
     city: "",
     state: "",
@@ -46,15 +51,36 @@ const NewCustomerDialog = ({ open, onClose, onSaveCustomer }: Props) => {
       });
     };
 
+  const handleLocationChange =
+    (field: keyof typeof locationData) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setLocationData({
+        ...locationData,
+        [field]: event.target.value,
+      });
+    };
+
   const handleStateChange = (event: SelectChangeEvent<string>) => {
-    setCustomerData({
-      ...customerData,
+    setLocationData({
+      ...locationData,
       state: event.target.value,
     });
   };
 
   const handleSave = () => {
-    onSaveCustomer(customerData);
+    // Create customer with building data
+    const newCustomer = {
+      ...customerData,
+      buildings: [
+        {
+          ...locationData,
+          measurementUnit: "ft" as const, // Default value
+          floorPlan: 1, // Default value
+          sections: [], // Default empty sections
+        },
+      ],
+    };
+    onSaveCustomer(newCustomer);
     handleClose();
   };
 
@@ -64,6 +90,9 @@ const NewCustomerDialog = ({ open, onClose, onSaveCustomer }: Props) => {
       contact: "",
       phone: "",
       email: "",
+      buildings: [],
+    });
+    setLocationData({
       address: "",
       city: "",
       state: "",
@@ -121,8 +150,8 @@ const NewCustomerDialog = ({ open, onClose, onSaveCustomer }: Props) => {
             <TextField
               fullWidth
               label="Physical Address"
-              value={customerData.address}
-              onChange={handleInputChange("address")}
+              value={locationData.address}
+              onChange={handleLocationChange("address")}
               required
             />
           </Grid>
@@ -130,8 +159,8 @@ const NewCustomerDialog = ({ open, onClose, onSaveCustomer }: Props) => {
             <TextField
               fullWidth
               label="City"
-              value={customerData.city}
-              onChange={handleInputChange("city")}
+              value={locationData.city}
+              onChange={handleLocationChange("city")}
               required
             />
           </Grid>
@@ -141,7 +170,7 @@ const NewCustomerDialog = ({ open, onClose, onSaveCustomer }: Props) => {
               <Select
                 labelId="current-customer-label"
                 id="current-customer"
-                value={customerData.state}
+                value={locationData.state}
                 onChange={handleStateChange}
               >
                 {usa_states.map((state) => (
@@ -156,8 +185,8 @@ const NewCustomerDialog = ({ open, onClose, onSaveCustomer }: Props) => {
             <TextField
               fullWidth
               label="ZIP Code"
-              value={customerData.zipCode}
-              onChange={handleInputChange("zipCode")}
+              value={locationData.zipCode}
+              onChange={handleLocationChange("zipCode")}
               required
             />
           </Grid>

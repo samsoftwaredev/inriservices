@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import { LocationData, Section } from "@/interfaces/laborTypes";
 import { useCustomer } from "./CustomerContext";
 
@@ -20,6 +26,7 @@ interface BuildingContextType {
   setDeleteConfirmation: React.Dispatch<
     React.SetStateAction<DeleteConfirmationState>
   >;
+  currentBuildingIndex: number;
   // Handlers
   addNewSection: () => void;
   handleDeleteSectionClick: (sectionId: string, sectionName: string) => void;
@@ -68,6 +75,10 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
     // ]
     // },
   );
+
+  useEffect(() => {
+    setBuildingData(currentCustomer.buildings[currentBuildingIndex]);
+  }, [currentCustomer]);
 
   // Menu and dialog states
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -152,6 +163,7 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
     setAnchorEl,
     deleteConfirmation,
     setDeleteConfirmation,
+    currentBuildingIndex,
     // Handlers
     addNewSection,
     handleDeleteSectionClick,

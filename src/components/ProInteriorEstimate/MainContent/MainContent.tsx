@@ -102,7 +102,6 @@ const MainContent = ({
       <ProjectSettings
         currentCustomer={currentCustomer}
         onCustomerUpdate={onCustomerUpdate}
-        buildingData={buildingData}
         setBuildingData={setBuildingData}
       />
 

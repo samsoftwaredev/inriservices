@@ -168,15 +168,11 @@ export interface CustomerAddress {
   zipCode: string;
 }
 
-export interface LocationData {
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
+export type LocationData = {
   measurementUnit: MeasurementUnit;
   floorPlan: number;
   sections: Section[];
-}
+} & CustomerAddress;
 
 export type Customer = {
   id: string;
