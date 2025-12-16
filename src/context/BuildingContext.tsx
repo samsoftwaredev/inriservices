@@ -76,10 +76,6 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
     // },
   );
 
-  useEffect(() => {
-    setBuildingData(currentCustomer.buildings[currentBuildingIndex]);
-  }, [currentCustomer]);
-
   // Menu and dialog states
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteConfirmation, setDeleteConfirmation] =

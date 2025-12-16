@@ -120,7 +120,7 @@ const ProjectSettings = ({
   currentCustomer,
   onCustomerUpdate,
 }: Props) => {
-  const { buildingData } = useBuilding();
+  const { currentBuildingIndex } = useBuilding();
 
   // Initialize react-hook-form with default values
   const {
@@ -136,52 +136,15 @@ const ProjectSettings = ({
       customerEmail: currentCustomer.email || "",
       customerPhone: currentCustomer.phone || "",
       customerContact: currentCustomer.contact || "",
-      address: buildingData.address || "",
-      city: buildingData.city || "",
-      state: buildingData.state || "",
-      zipCode: buildingData.zipCode || "",
-      measurementUnit: buildingData.measurementUnit || "ft",
-      floorPlan: buildingData.floorPlan || 1,
+      address: currentCustomer.buildings[currentBuildingIndex].address || "",
+      city: currentCustomer.buildings[currentBuildingIndex].city || "",
+      state: currentCustomer.buildings[currentBuildingIndex].state || "",
+      zipCode: currentCustomer.buildings[currentBuildingIndex].zipCode || "",
+      measurementUnit:
+        currentCustomer.buildings[currentBuildingIndex].measurementUnit || "ft",
+      floorPlan: currentCustomer.buildings[currentBuildingIndex].floorPlan || 1,
     },
   });
-
-  // Watch all form values to trigger updates
-  const watchedValues = watch();
-
-  // Update parent components when form values change
-  useEffect(() => {
-    if (isDirty && isValid) {
-      // Update customer data
-      const updatedCustomer: Customer = {
-        ...currentCustomer, // Preserve existing id and buildings
-        name: watchedValues.customerName,
-        email: watchedValues.customerEmail,
-        phone: watchedValues.customerPhone,
-        contact: watchedValues.customerContact,
-      };
-      onCustomerUpdate(updatedCustomer);
-
-      // Update building data
-      const updatedBuildingData: LocationData = {
-        ...buildingData,
-        address: watchedValues.address,
-        city: watchedValues.city,
-        state: watchedValues.state,
-        zipCode: watchedValues.zipCode,
-        measurementUnit: watchedValues.measurementUnit,
-        floorPlan: watchedValues.floorPlan,
-      };
-      setBuildingData(updatedBuildingData);
-    }
-  }, [
-    watchedValues,
-    isDirty,
-    isValid,
-    onCustomerUpdate,
-    setBuildingData,
-    buildingData,
-    currentCustomer,
-  ]);
 
   // Update form when external props change
   useEffect(() => {
@@ -190,14 +153,15 @@ const ProjectSettings = ({
       customerEmail: currentCustomer.email || "",
       customerPhone: currentCustomer.phone || "",
       customerContact: currentCustomer.contact || "",
-      address: buildingData.address || "",
-      city: buildingData.city || "",
-      state: buildingData.state || "",
-      zipCode: buildingData.zipCode || "",
-      measurementUnit: buildingData.measurementUnit || "ft",
-      floorPlan: buildingData.floorPlan || 1,
+      address: currentCustomer.buildings[currentBuildingIndex].address || "",
+      city: currentCustomer.buildings[currentBuildingIndex].city || "",
+      state: currentCustomer.buildings[currentBuildingIndex].state || "",
+      zipCode: currentCustomer.buildings[currentBuildingIndex].zipCode || "",
+      measurementUnit:
+        currentCustomer.buildings[currentBuildingIndex].measurementUnit || "ft",
+      floorPlan: currentCustomer.buildings[currentBuildingIndex].floorPlan || 1,
     });
-  }, [currentCustomer, buildingData, reset]);
+  }, [currentCustomer, reset]);
 
   // Helper function to get measurement unit label
   const getMeasurementUnitLabel = (unit: MeasurementUnit): string => {

@@ -17,10 +17,13 @@ import {
   Dashboard as DashboardIcon,
   People as PeopleIcon,
   Assessment as AssessmentIcon,
+  PunchClock,
+  DocumentScannerOutlined,
 } from "@mui/icons-material";
 import { Person as PersonIcon } from "@mui/icons-material";
 
 import { Customer } from "@/interfaces/laborTypes";
+import Link from "next/link";
 
 interface Props {
   drawerWidth: number;
@@ -58,6 +61,16 @@ const SideNav = ({
       text: "New Estimate",
       icon: <AssessmentIcon />,
       path: "/estimates",
+    },
+    {
+      text: "Time Logs",
+      icon: <PunchClock />,
+      path: "/timelogs",
+    },
+    {
+      text: "Contracts",
+      icon: <DocumentScannerOutlined />,
+      path: "/contracts",
     },
   ];
 
@@ -155,10 +168,15 @@ const SideNav = ({
           <ListItemIcon>
             <PersonIcon />
           </ListItemIcon>
-          <ListItemText
-            primary={customer.name}
-            secondary={`${customer.contact} • ${customer.phone}`}
-          />
+          <Link
+            href={`/interior-estimate/${customer.id}`}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <ListItemText
+              primary={customer.name}
+              secondary={`${customer.contact} • ${customer.phone}`}
+            />
+          </Link>
         </MenuItem>
       ))}
     </Box>
