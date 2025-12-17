@@ -207,7 +207,7 @@ export interface CostCalculation {
   totalWithProfit: number;
   taxesToPay: number;
   paymentSystemFee: number;
-  companyFeesTotal: number;
+  managementFeeTotal: number;
   totalWithTaxes: number;
 }
 

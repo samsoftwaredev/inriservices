@@ -32,7 +32,7 @@ export const calculateCosts = (
   const subtotal = estimateItems.reduce((acc, item) => acc + item.cost, 0);
   const discountAmount = calculateDiscount(subtotal, discount);
   const totalAfterDiscount = Math.max(0, subtotal - discountAmount);
-  const companyFeesTotal = calculateTotalCompanyFees();
+  const managementFeeTotal = calculateTotalCompanyFees();
   const profitAmount = totalAfterDiscount * PRICING_CONFIG.profitMargin;
   const totalWithProfit = totalAfterDiscount + profitAmount;
   const taxesToPay = totalWithProfit * PRICING_CONFIG.taxAmount;
@@ -40,7 +40,7 @@ export const calculateCosts = (
     totalWithProfit * PRICING_CONFIG.paymentFeeRate +
     PRICING_CONFIG.paymentFeeFixed;
   const totalWithTaxes =
-    companyFeesTotal + paymentSystemFee + totalWithProfit + taxesToPay;
+    managementFeeTotal + paymentSystemFee + totalWithProfit + taxesToPay;
 
   return {
     subtotal,
@@ -50,7 +50,7 @@ export const calculateCosts = (
     totalWithProfit,
     taxesToPay,
     paymentSystemFee,
-    companyFeesTotal,
+    managementFeeTotal,
     totalWithTaxes,
   };
 };

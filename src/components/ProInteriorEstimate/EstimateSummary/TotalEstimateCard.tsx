@@ -12,7 +12,7 @@ interface CostCalculation {
   totalWithProfit: number;
   taxesToPay: number;
   paymentSystemFee: number;
-  companyFeesTotal: number;
+  managementFeeTotal: number;
   totalWithTaxes: number;
 }
 
@@ -69,7 +69,7 @@ export const TotalEstimateCard = ({
         Payment system fee ${formatCurrency(costs.paymentSystemFee)}
       </Typography>
       <Typography variant={isMobile ? "caption" : "body2"}>
-        Company fees ${formatCurrency(costs.companyFeesTotal)}
+        Management fee ${formatCurrency(costs.managementFeeTotal)}
       </Typography>
     </Stack>
   </Grid>

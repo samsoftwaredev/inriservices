@@ -13,7 +13,7 @@ import {
 import { AddBox, Calculate, FormatPaint, Work } from "@mui/icons-material";
 import { theme } from "@/app/theme";
 import { useGallons } from "@/context/GallonsContext";
-import { useBuilding } from "@/context";
+import { useBuilding, useProjectCost } from "@/context";
 import { PRICING_CONFIG } from "@/constants";
 import { CostItem } from "./CostItem";
 import { SubtotalRow } from "./SubtotalRow";
@@ -23,7 +23,6 @@ import { TotalEstimateCard } from "./TotalEstimateCard";
 import DiscountSection from "./DiscountSectiont";
 import { DiscountConfig } from "@/interfaces/laborTypes";
 import { calculateCosts } from "@/tools/costTools";
-import ProjectCostSummary from "@/components/ProjectCostSummary";
 
 const DEFAULT_DISCOUNT: DiscountConfig = {
   type: "percentage",
@@ -35,7 +34,12 @@ const EstimateSummary = () => {
   const muiTheme = useTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("sm"));
   const [discount, setDiscount] = useState<DiscountConfig>(DEFAULT_DISCOUNT);
-
+  const {
+    totalProjectCost,
+    totalProjectLaborCost,
+    totalProjectMaterialCost,
+    projectTaskBreakdown,
+  } = useProjectCost();
   const {
     totalGallonsBySection,
     totalGallons,
@@ -55,12 +59,12 @@ const EstimateSummary = () => {
     },
     {
       label: "Labor Cost",
-      cost: totalHours * PRICING_CONFIG.hoursRate,
+      cost: totalHours * PRICING_CONFIG.hoursRate + totalProjectLaborCost,
       icon: <Work />,
     },
     {
       label: "Materials",
-      cost: 0,
+      cost: totalProjectMaterialCost,
       icon: <AddBox />,
     },
   ];
@@ -134,8 +138,6 @@ const EstimateSummary = () => {
           mappingNames={mappingNames}
           isMobile={isMobile}
         />
-
-        <ProjectCostSummary />
       </Grid>
     </Paper>
   );
