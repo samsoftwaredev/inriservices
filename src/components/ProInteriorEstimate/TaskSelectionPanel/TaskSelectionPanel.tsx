@@ -14,7 +14,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import TaskItem from "../TaskItem";
 import { LaborMaterial, LaborTask, TaskHours } from "@/interfaces/laborTypes";
-import { availableLaborTasks } from "../../../constants/laborData";
+import { availableLaborTasks } from "@/constants/laborData";
 
 interface Props {
   searchTerm: string;

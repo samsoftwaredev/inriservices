@@ -51,7 +51,6 @@ interface EditableFeature {
   image: string;
   name?: string;
   description?: string;
-  picture: string | null;
 }
 
 // ============================================================================
@@ -98,7 +97,6 @@ const EditFeatureDialog = ({
     image: "",
     name: "",
     description: "",
-    picture: null,
   });
 
   const [selectedFeatureType, setSelectedFeatureType] =
@@ -122,7 +120,6 @@ const EditFeatureDialog = ({
         image: feature.image,
         name: feature.name || "",
         description: feature.description || "",
-        picture: feature.picture,
       });
       setSelectedFeatureType(featureType);
       setErrors([]);

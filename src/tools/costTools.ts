@@ -1,5 +1,9 @@
 import { BUSINESS_OPERATION_FEES, PRICING_CONFIG } from "@/constants";
-import { CostCalculation, DiscountConfig } from "@/interfaces/laborTypes";
+import {
+  CostCalculation,
+  DiscountConfig,
+  RoomFeature,
+} from "@/interfaces/laborTypes";
 
 export const formatCurrency = (amount: number): string => {
   return amount.toLocaleString(undefined, {
@@ -62,4 +66,18 @@ export const validateDiscountValue = (
 ): number => {
   const maxValue = type === "percentage" ? 100 : maxAmount;
   return Math.max(0, Math.min(value, maxValue));
+};
+
+export const calculateFeatureCost = (feature: RoomFeature): number => {
+  if (!feature.workLabor) return 0;
+  return feature.workLabor.reduce((total, task) => {
+    const laborCost = task.hours * task.rate;
+    const materialCost =
+      (feature.includeMaterialCosts === true &&
+        task.laborMaterials?.reduce((matTotal, material) => {
+          return matTotal + material.quantity * material.price;
+        }, 0)) ||
+      0;
+    return total + laborCost + materialCost;
+  }, 0);
 };

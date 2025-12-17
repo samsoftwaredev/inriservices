@@ -23,12 +23,9 @@ import {
   Category as CategoryIcon,
 } from "@mui/icons-material";
 import { RoomData, FeatureType, RoomFeature } from "@/interfaces/laborTypes";
-import { featureTypes } from "../../../constants/laborData";
+import { featureTypes } from "@/constants/laborData";
 import FeatureCard from "./FeatureCard";
-
-// ============================================================================
-// TYPES & INTERFACES
-// ============================================================================
+import { calculateFeatureCost } from "@/tools";
 
 interface Props {
   roomData: RoomData;
@@ -42,10 +39,6 @@ interface DeleteConfirmationState {
   featureId: string | null;
   featureName: string | null;
 }
-
-// ============================================================================
-// UTILITY FUNCTIONS
-// ============================================================================
 
 const getFeatureTypeLabel = (featureType: FeatureType): string => {
   const type = featureTypes.find((ft) => ft.value === featureType);
@@ -78,23 +71,9 @@ const getFeatureTypeIcon = (featureType: FeatureType): React.ReactNode => {
 const calculateTotalCostForType = (features: RoomFeature[]): number => {
   return features.reduce((total, feature) => {
     if (!feature.workLabor) return total;
-    return (
-      total +
-      feature.workLabor.reduce((featureTotal, task) => {
-        const laborCost = task.hours * task.rate;
-        const materialCost =
-          task.laborMaterials?.reduce((matTotal, material) => {
-            return matTotal + material.quantity * material.price;
-          }, 0) || 0;
-        return featureTotal + laborCost + materialCost;
-      }, 0)
-    );
+    return total + calculateFeatureCost(feature);
   }, 0);
 };
-
-// ============================================================================
-// MAIN COMPONENT
-// ============================================================================
 
 const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
   const [deleteConfirmation, setDeleteConfirmation] =
@@ -168,10 +147,6 @@ const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
     const features = roomData.features[featureType.value];
     return features && features.length > 0;
   });
-
-  // ============================================================================
-  // RENDER
-  // ============================================================================
 
   return (
     <Box sx={{ width: "100%" }}>

@@ -99,7 +99,6 @@ export type RoomFeature = {
   image: string;
   name?: string;
   description?: string;
-  picture: string | null;
   includeMaterialCosts?: boolean;
   workLabor?: LaborTask[];
 };

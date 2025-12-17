@@ -29,7 +29,7 @@ export const ProjectCostProvider: React.FC<ProjectCostProviderProps> = ({
     //   totalLaborCost: 0,
     //   totalMaterialCost: 0,
     //   taskBreakdown: [],
-    //
+    // },
   });
 
   const updateProjectCost = (roomId: string, roomData: RoomData) => {
@@ -44,13 +44,14 @@ export const ProjectCostProvider: React.FC<ProjectCostProviderProps> = ({
         featureArray.forEach((feature) => {
           feature.workLabor?.forEach((task) => {
             totalLaborCost += task.hours * task.rate;
-            totalMaterialCost += task.laborMaterials
-              ? task.laborMaterials.reduce(
-                  (matTotal, material) =>
-                    matTotal + material.quantity * material.price,
-                  0
-                )
-              : 0;
+            totalMaterialCost +=
+              feature.includeMaterialCosts === true && task.laborMaterials
+                ? task.laborMaterials.reduce(
+                    (matTotal, material) =>
+                      matTotal + material.quantity * material.price,
+                    0
+                  )
+                : 0;
           });
         });
       });

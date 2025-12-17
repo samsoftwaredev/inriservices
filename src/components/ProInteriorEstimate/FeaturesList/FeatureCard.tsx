@@ -19,6 +19,7 @@ import {
 } from "@mui/icons-material";
 import { RoomFeature, FeatureType } from "@/interfaces/laborTypes";
 import { getDefaultFeatureImage } from "@/tools/featureTool";
+import { calculateFeatureCost } from "@/tools";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -34,26 +35,6 @@ interface Props {
     featureName: string
   ) => void;
 }
-
-// ============================================================================
-// UTILITY FUNCTIONS
-// ============================================================================
-
-const calculateFeatureCost = (feature: RoomFeature): number => {
-  if (!feature.workLabor) return 0;
-  return feature.workLabor.reduce((total, task) => {
-    const laborCost = task.hours * task.rate;
-    const materialCost =
-      task.laborMaterials?.reduce((matTotal, material) => {
-        return matTotal + material.quantity * material.price;
-      }, 0) || 0;
-    return total + laborCost + materialCost;
-  }, 0);
-};
-
-// ============================================================================
-// MAIN COMPONENT
-// ============================================================================
 
 const FeatureCard = ({
   feature,

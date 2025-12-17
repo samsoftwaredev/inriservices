@@ -52,7 +52,6 @@ const AddFeatureForm = ({
       description: featureDescription,
       dimensions: featureDimensions,
       image: "",
-      picture: null,
       workLabor: [],
     };
 
