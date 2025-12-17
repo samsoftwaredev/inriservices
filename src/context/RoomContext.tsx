@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import {
   MeasurementUnit,
   PaintBaseType,
@@ -14,7 +14,7 @@ interface RoomContextType {
   measurementUnit: MeasurementUnit;
   floorNumber: number;
   roomData: RoomData;
-  setRoomData: React.Dispatch<React.SetStateAction<RoomData>>;
+  updateRoom: (newRoomData: Partial<RoomData>) => void;
 }
 
 interface RoomProviderProps {
@@ -38,7 +38,7 @@ export const RoomProvider = ({
   floorNumber,
   updateProjectCost,
 }: RoomProviderProps) => {
-  const [roomData, setRoomData] = useState<RoomData>({
+  const defaultRoomData: RoomData = {
     // WallDimensions
     wallPaintCoats: 1,
     wallPerimeter: "",
@@ -96,11 +96,21 @@ export const RoomProvider = ({
       wainscoting: [],
       other: [],
     },
+  };
+
+  const localStoredRoomData = localStorage.getItem(`roomData-${roomId}`);
+  const [roomData, setRoomData] = useState<RoomData>({
+    ...JSON.parse(localStoredRoomData || JSON.stringify(defaultRoomData)),
   });
 
-  useEffect(() => {
-    updateProjectCost(roomId, roomData);
-  }, [roomData]);
+  const updateRoom = (newRoomData: Partial<RoomData>) => {
+    setRoomData((prevData) => {
+      const updatedData = { ...prevData, ...newRoomData };
+      updateProjectCost(roomId, roomData);
+      localStorage.setItem(`roomData-${roomId}`, JSON.stringify(updatedData));
+      return updatedData;
+    });
+  };
 
   const value: RoomContextType = {
     roomId,
@@ -109,7 +119,7 @@ export const RoomProvider = ({
     measurementUnit,
     floorNumber,
     roomData,
-    setRoomData,
+    updateRoom,
   };
 
   return <RoomContext.Provider value={value}>{children}</RoomContext.Provider>;

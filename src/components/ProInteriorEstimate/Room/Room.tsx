@@ -24,13 +24,8 @@ import CancelIcon from "@mui/icons-material/Cancel";
 
 import RoomDimensions from "../RoomDimensions";
 import RoomFeatures from "../RoomFeatures";
-import {
-  RoomData,
-  Props,
-  RoomDimensionsOverview,
-  PaintBaseType,
-} from "@/interfaces/laborTypes";
-import { floorOptions } from "../../../constants/laborData";
+import { Props, RoomDimensionsOverview } from "@/interfaces/laborTypes";
+import { floorOptions } from "@/constants/laborData";
 import { calculateArea, calculatePerimeter } from "../laborCalc";
 import { convertToFeet } from "@/tools/convertMeasurement";
 import { useRoom } from "@/context/RoomContext";
@@ -42,7 +37,7 @@ const Room = ({ onRoomUpdate }: Props) => {
     roomDescription,
     floorNumber,
     roomData,
-    setRoomData,
+    updateRoom,
     measurementUnit,
   } = useRoom();
   const [isEditMode, setIsEditMode] = useState(true);
@@ -95,7 +90,7 @@ const Room = ({ onRoomUpdate }: Props) => {
   };
 
   const handleSave = () => {
-    setRoomData({
+    updateRoom({
       ...roomData,
       area: editData.area,
       wallPerimeter: editData.wallPerimeter,
@@ -277,20 +272,13 @@ const Room = ({ onRoomUpdate }: Props) => {
           roomId={roomId}
           measurementUnit={measurementUnit}
           isEditMode={isEditMode}
-          roomData={roomData}
           editData={editData}
           setEditData={setEditData}
-          setRoomData={setRoomData}
         />
 
         <Divider sx={{ my: 2 }} />
 
-        <RoomFeatures
-          roomId={roomId}
-          measurementUnit={measurementUnit}
-          roomData={roomData}
-          setRoomData={setRoomData}
-        />
+        <RoomFeatures roomId={roomId} measurementUnit={measurementUnit} />
       </CardContent>
 
       {isEditMode && (

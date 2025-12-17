@@ -18,6 +18,7 @@ import DialogFooter from "../DialogFooter";
 import { RoomLaborCostProvider } from "@/context/RoomLaborCostContext";
 import { useLaborTaskDialog } from "@/hooks/useLaborTaskDialog";
 import { RoomData, FeatureType } from "@/interfaces/laborTypes";
+import { useRoom } from "@/context/RoomContext";
 
 interface Props {
   open: boolean;
@@ -25,8 +26,6 @@ interface Props {
   selectedFeature: { type: FeatureType; id: string } | null;
   selectedLaborTasks: string[];
   setSelectedLaborTasks: React.Dispatch<React.SetStateAction<string[]>>;
-  roomData: RoomData;
-  setRoomData: React.Dispatch<React.SetStateAction<RoomData>>;
   setSelectedFeature: React.Dispatch<
     React.SetStateAction<{ type: FeatureType; id: string } | null>
   >;
@@ -38,10 +37,9 @@ const LaborTaskDialog = ({
   selectedFeature,
   selectedLaborTasks,
   setSelectedLaborTasks,
-  roomData,
-  setRoomData,
   setSelectedFeature,
 }: Props) => {
+  const { roomData, updateRoom } = useRoom();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.down("md"));
@@ -75,7 +73,7 @@ const LaborTaskDialog = ({
     selectedLaborTasks,
     setSelectedLaborTasks,
     roomData,
-    setRoomData,
+    updateRoom,
     setSelectedFeature,
   });
 

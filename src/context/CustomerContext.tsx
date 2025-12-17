@@ -129,6 +129,7 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
 
   const handleSelectPreviousCustomer = (customer: Customer) => {
     setCurrentCustomer(customer);
+    localStorage.setItem("currentCustomerId", customer.id);
     closeCustomerMenu();
   };
 
@@ -139,6 +140,7 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
     };
 
     setCurrentCustomer(newCustomer);
+    localStorage.setItem("currentCustomerId", newCustomer.id);
     setPreviousCustomers((prev) => [...prev, newCustomer]);
     closeNewCustomerDialog();
   };

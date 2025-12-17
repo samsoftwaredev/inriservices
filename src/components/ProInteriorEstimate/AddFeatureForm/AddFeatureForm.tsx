@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import {
-  RoomData,
   FeatureType,
   RoomFeature,
   MeasurementUnit,
@@ -23,20 +22,15 @@ import {
 import { featureTypes } from "@/constants/laborData";
 import ImageUpload from "@/components/ImageUpload";
 import { uuidv4 } from "@/tools/general";
+import { useRoom } from "@/context/RoomContext";
 
 interface Props {
   roomId: string;
   measurementUnit: MeasurementUnit;
-  roomData: RoomData;
-  setRoomData: React.Dispatch<React.SetStateAction<RoomData>>;
 }
 
-const AddFeatureForm = ({
-  roomId,
-  measurementUnit,
-  roomData,
-  setRoomData,
-}: Props) => {
+const AddFeatureForm = ({ roomId, measurementUnit }: Props) => {
+  const { roomData, updateRoom } = useRoom();
   const [featureType, setFeatureType] = useState<FeatureType>("windows");
   const [featureName, setFeatureName] = useState("");
   const [featureDescription, setFeatureDescription] = useState("");
@@ -55,7 +49,7 @@ const AddFeatureForm = ({
       workLabor: [],
     };
 
-    setRoomData({
+    updateRoom({
       ...roomData,
       features: {
         ...roomData.features,

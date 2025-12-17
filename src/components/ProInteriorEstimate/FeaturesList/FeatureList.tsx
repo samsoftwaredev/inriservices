@@ -26,10 +26,9 @@ import { RoomData, FeatureType, RoomFeature } from "@/interfaces/laborTypes";
 import { featureTypes } from "@/constants/laborData";
 import FeatureCard from "./FeatureCard";
 import { calculateFeatureCost } from "@/tools";
+import { useRoom } from "@/context/RoomContext";
 
 interface Props {
-  roomData: RoomData;
-  setRoomData: React.Dispatch<React.SetStateAction<RoomData>>;
   onOpenLaborDialog: (featureType: FeatureType, featureId: string) => void;
 }
 
@@ -75,7 +74,8 @@ const calculateTotalCostForType = (features: RoomFeature[]): number => {
   }, 0);
 };
 
-const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
+const FeaturesList = ({ onOpenLaborDialog }: Props) => {
+  const { roomData, updateRoom } = useRoom();
   const [deleteConfirmation, setDeleteConfirmation] =
     useState<DeleteConfirmationState>({
       open: false,
@@ -121,7 +121,7 @@ const FeaturesList = ({ roomData, setRoomData, onOpenLaborDialog }: Props) => {
   };
 
   const removeFeature = (featureType: FeatureType, featureId: string) => {
-    setRoomData({
+    updateRoom({
       ...roomData,
       features: {
         ...roomData.features,

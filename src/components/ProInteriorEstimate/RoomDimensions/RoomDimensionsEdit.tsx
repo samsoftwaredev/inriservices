@@ -51,18 +51,13 @@ import {
 } from "@/interfaces/laborTypes";
 import { calculateArea, calculatePerimeter } from "../laborCalc";
 import GallonsCalc from "./GallonsCalc";
-import { convertMeasurement, convertToFeet } from "@/tools/convertMeasurement";
-
-// ============================================================================
-// TYPES & INTERFACES
-// ============================================================================
+import { convertToFeet } from "@/tools/convertMeasurement";
+import { useRoom } from "@/context/RoomContext";
 
 interface Props {
   measurementUnit: MeasurementUnit;
-  roomData: RoomData;
   editData: RoomDimensionsOverview;
   setEditData: React.Dispatch<React.SetStateAction<RoomDimensionsOverview>>;
-  setRoomData: React.Dispatch<React.SetStateAction<RoomData>>;
   roomId: string;
 }
 
@@ -569,12 +564,11 @@ const renderAreaField = (
 
 const RoomDimensionsEdit = ({
   measurementUnit,
-  roomData,
   editData,
   setEditData,
-  setRoomData,
   roomId,
 }: Props) => {
+  const { roomData, updateRoom } = useRoom();
   const [expandedSections, setExpandedSections] = useState<
     Record<string, boolean>
   >(DEFAULT_SECTION_STATE);
@@ -599,7 +593,7 @@ const RoomDimensionsEdit = ({
 
   const handlePresetApply = (preset: PresetConfig) => {
     setEditData((prev) => ({ ...prev, ...preset.values }));
-    setRoomData((prev) => ({ ...prev, ...preset.values }));
+    updateRoom(preset.values);
 
     // Auto-expand relevant sections
     setExpandedSections((prev) => ({
@@ -647,15 +641,14 @@ const RoomDimensionsEdit = ({
       ),
     };
 
-    setRoomData((prev) => ({
-      ...prev,
+    updateRoom({
       areaCalculated: calculations.area,
       wallPerimeterCalculated: calculations.wallPerimeter,
       baseboardPerimeterCalculated: calculations.baseboardPerimeter,
       crownMoldingPerimeterCalculated: calculations.crownMoldingPerimeter,
       chairRailPerimeterCalculated: calculations.chairRailPerimeter,
       wainscotingPerimeterCalculated: calculations.wainscotingPerimeter,
-    }));
+    });
   };
 
   const handleInputChange =
@@ -675,11 +668,10 @@ const RoomDimensionsEdit = ({
             value,
             convertToFeet(editData.roomHeight, measurementUnit)
           );
-          setRoomData((prev) => ({
-            ...prev,
+          updateRoom({
             wallPerimeterCalculated: wallPerimeter,
             areaCalculated: area,
-          }));
+          });
           break;
 
         case "roomHeight":
@@ -687,11 +679,10 @@ const RoomDimensionsEdit = ({
             editData.wallPerimeter,
             convertToFeet(numValue, measurementUnit)
           );
-          setRoomData((prev) => ({
-            ...prev,
+          updateRoom({
             wallPerimeterCalculated: wallPerim,
             roomHeight: numValue,
-          }));
+          });
           break;
 
         case "baseboardHeight":
@@ -699,10 +690,9 @@ const RoomDimensionsEdit = ({
             editData.baseboardPerimeter,
             convertToFeet(numValue, measurementUnit)
           );
-          setRoomData((prev) => ({
-            ...prev,
+          updateRoom({
             baseboardPerimeterCalculated: baseboardPerim,
-          }));
+          });
           break;
 
         case "crownMoldingHeight":
@@ -710,10 +700,9 @@ const RoomDimensionsEdit = ({
             editData.crownMoldingPerimeter,
             convertToFeet(numValue, measurementUnit)
           );
-          setRoomData((prev) => ({
-            ...prev,
+          updateRoom({
             crownMoldingPerimeterCalculated: crownMoldingPerim,
-          }));
+          });
           break;
 
         case "chairRailHeight":
@@ -721,10 +710,9 @@ const RoomDimensionsEdit = ({
             editData.chairRailPerimeter,
             convertToFeet(numValue, measurementUnit)
           );
-          setRoomData((prev) => ({
-            ...prev,
+          updateRoom({
             chairRailPerimeterCalculated: chairRailPerim,
-          }));
+          });
           break;
 
         case "wainscotingHeight":
@@ -732,14 +720,13 @@ const RoomDimensionsEdit = ({
             editData.wainscotingPerimeter,
             convertToFeet(numValue, measurementUnit)
           );
-          setRoomData((prev) => ({
-            ...prev,
+          updateRoom({
             wainscotingPerimeterCalculated: wainscotingPerim,
-          }));
+          });
           break;
 
         default:
-          setRoomData((prev) => ({ ...prev, [fieldKey]: numValue }));
+          updateRoom({ [fieldKey]: numValue });
       }
     };
 

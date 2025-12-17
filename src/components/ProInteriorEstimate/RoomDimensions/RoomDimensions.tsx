@@ -15,20 +15,16 @@ interface Props {
   roomId: string;
   measurementUnit: MeasurementUnit;
   isEditMode: boolean;
-  roomData: RoomData;
   editData: RoomDimensionsOverview;
   setEditData: React.Dispatch<React.SetStateAction<RoomDimensionsOverview>>;
-  setRoomData: React.Dispatch<React.SetStateAction<RoomData>>;
 }
 
 const RoomDimensions = ({
   roomId,
   measurementUnit,
   isEditMode,
-  roomData,
   editData,
   setEditData,
-  setRoomData,
 }: Props) => {
   if (isEditMode) {
     return (
@@ -40,10 +36,8 @@ const RoomDimensions = ({
         <RoomDimensionsEdit
           roomId={roomId}
           measurementUnit={measurementUnit}
-          roomData={roomData}
           editData={editData}
           setEditData={setEditData}
-          setRoomData={setRoomData}
         />
       </>
     );
@@ -55,10 +49,7 @@ const RoomDimensions = ({
         Room Dimensions
         <InfoTooltip message="You record a measurement of '3x5' by stating the units and dimensions, most commonly as '3 by 5'. This means the item is 3 units wide by 5 units long." />
       </Typography>
-      <RoomDimensionsDisplay
-        measurementUnit={measurementUnit}
-        roomData={roomData}
-      />
+      <RoomDimensionsDisplay measurementUnit={measurementUnit} />
     </>
   );
 };

@@ -12,25 +12,16 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddFeatureForm from "../AddFeatureForm";
 import FeaturesList from "../FeaturesList";
 import LaborTaskDialog from "../LaborTaskDialog";
-import {
-  RoomData,
-  FeatureType,
-  MeasurementUnit,
-} from "@/interfaces/laborTypes";
+import { FeatureType, MeasurementUnit } from "@/interfaces/laborTypes";
+import { useRoom } from "@/context/RoomContext";
 
 interface Props {
   roomId: string;
   measurementUnit: MeasurementUnit;
-  roomData: RoomData;
-  setRoomData: React.Dispatch<React.SetStateAction<RoomData>>;
 }
 
-const RoomFeatures = ({
-  roomId,
-  measurementUnit,
-  roomData,
-  setRoomData,
-}: Props) => {
+const RoomFeatures = ({ roomId, measurementUnit }: Props) => {
+  const { roomData, updateRoom } = useRoom();
   const [laborDialogOpen, setLaborDialogOpen] = useState(false);
   const [selectedFeature, setSelectedFeature] = useState<{
     type: FeatureType;
@@ -67,18 +58,9 @@ const RoomFeatures = ({
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <AddFeatureForm
-            roomId={roomId}
-            measurementUnit={measurementUnit}
-            roomData={roomData}
-            setRoomData={setRoomData}
-          />
+          <AddFeatureForm roomId={roomId} measurementUnit={measurementUnit} />
 
-          <FeaturesList
-            roomData={roomData}
-            setRoomData={setRoomData}
-            onOpenLaborDialog={openLaborDialog}
-          />
+          <FeaturesList onOpenLaborDialog={openLaborDialog} />
         </AccordionDetails>
       </Accordion>
 
@@ -88,8 +70,6 @@ const RoomFeatures = ({
         selectedFeature={selectedFeature}
         selectedLaborTasks={selectedLaborTasks}
         setSelectedLaborTasks={setSelectedLaborTasks}
-        roomData={roomData}
-        setRoomData={setRoomData}
         setSelectedFeature={setSelectedFeature}
       />
     </>

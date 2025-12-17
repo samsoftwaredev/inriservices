@@ -2,16 +2,17 @@
 
 import React from "react";
 import { Typography, Grid, Chip } from "@mui/material";
-import { MeasurementUnit, RoomData } from "@/interfaces/laborTypes";
+import { MeasurementUnit } from "@/interfaces/laborTypes";
 import InfoTooltip from "../InfoTooltip";
 import { numberOfPaintGallons } from "../laborCalc";
+import { useRoom } from "@/context/RoomContext";
 
 interface Props {
   measurementUnit: MeasurementUnit;
-  roomData: RoomData;
 }
 
-const RoomWallDimensionsDisplay = ({ measurementUnit, roomData }: Props) => {
+const RoomWallDimensionsDisplay = ({ measurementUnit }: Props) => {
+  const { roomData } = useRoom();
   const paintCoatOptions = [
     { value: 1, label: "1 Coat" },
     { value: 2, label: "2 Coats (Standard)" },

@@ -15,7 +15,7 @@ interface UseLaborTaskDialogProps {
   selectedLaborTasks: string[];
   setSelectedLaborTasks: React.Dispatch<React.SetStateAction<string[]>>;
   roomData: RoomData;
-  setRoomData: React.Dispatch<React.SetStateAction<RoomData>>;
+  updateRoom: (newRoomData: RoomData) => void;
   setSelectedFeature: React.Dispatch<
     React.SetStateAction<{ type: FeatureType; id: string } | null>
   >;
@@ -28,7 +28,7 @@ export const useLaborTaskDialog = ({
   selectedLaborTasks,
   setSelectedLaborTasks,
   roomData,
-  setRoomData,
+  updateRoom,
   setSelectedFeature,
 }: UseLaborTaskDialogProps) => {
   const [taskHours, setTaskHours] = useState<TaskHours>({});
@@ -162,7 +162,7 @@ export const useLaborTaskDialog = ({
           updatedFeatureToMove,
         ];
 
-        setRoomData({
+        updateRoom({
           ...roomData,
           features: {
             ...roomData.features,
@@ -177,7 +177,7 @@ export const useLaborTaskDialog = ({
         });
       }
     } else {
-      setRoomData({
+      updateRoom({
         ...roomData,
         features: {
           ...roomData.features,
@@ -232,7 +232,7 @@ export const useLaborTaskDialog = ({
       }
     );
 
-    setRoomData({
+    updateRoom({
       ...roomData,
       features: {
         ...roomData.features,
