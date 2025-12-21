@@ -24,9 +24,9 @@ import { Person as PersonIcon } from "@mui/icons-material";
 
 import { Customer } from "@/interfaces/laborTypes";
 import Link from "next/link";
+import { drawerWidth } from "@/constants";
 
 interface Props {
-  drawerWidth: number;
   mobileOpen: boolean;
   onDrawerToggle: () => void;
   onNavigation: (path: string) => void;
@@ -37,7 +37,6 @@ interface Props {
 }
 
 const SideNav = ({
-  drawerWidth,
   mobileOpen,
   onDrawerToggle,
   onNavigation,

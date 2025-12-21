@@ -7,8 +7,7 @@ import SideNav from "@/components/SideNav";
 import { ThemeRegistry } from "@/app/ThemeRegistry";
 import { useAppNavigation } from "@/hooks";
 import { useCustomer } from "@/context/CustomerContext";
-
-const drawerWidth = 280;
+import AppTopNav from "../AppTopNav";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const { mobileOpen, handleDrawerToggle, handleNavigation, handleLogoClick } =
@@ -28,8 +27,8 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
           backgroundColor: "#eaf3f6",
         }}
       >
+        <AppTopNav open={mobileOpen} handleDrawerOpen={handleDrawerToggle} />
         <SideNav
-          drawerWidth={drawerWidth}
           mobileOpen={mobileOpen}
           onDrawerToggle={handleDrawerToggle}
           onNavigation={handleNavigation}
@@ -38,8 +37,9 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
           previousCustomers={previousCustomers}
           onSelectPreviousCustomer={onSelectPreviousCustomer}
         />
-
-        <Container maxWidth="md">{children}</Container>
+        <Container maxWidth="md" sx={{ mt: 8, mb: 4 }}>
+          {children}
+        </Container>
       </Box>
     </ThemeRegistry>
   );
