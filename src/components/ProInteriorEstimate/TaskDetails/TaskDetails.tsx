@@ -36,6 +36,7 @@ const TaskDetails = ({
   includeMaterialCosts = true,
   onMaterialSelectionChange,
 }: Props) => {
+  const [hours, setHours] = useState<string>(currentHours.toString());
   const [selectedMaterials, setSelectedMaterials] = useState<LaborMaterial[]>(
     []
   );
@@ -48,8 +49,8 @@ const TaskDetails = ({
   }, [task.laborMaterials]);
 
   const handleHoursChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const hours = parseFloat(event.target.value) || 0;
-    onHoursChange(task.name, hours);
+    onHoursChange(task.name, parseFloat(event.target.value) || 0);
+    setHours(event.target.value);
   };
 
   const handleMaterialToggle = (material: LaborMaterial) => {
@@ -140,8 +141,8 @@ const TaskDetails = ({
         <Grid size={{ xs: 12, sm: 3 }}>
           <TextField
             label="Hours"
-            type="number"
-            value={currentHours}
+            type="text"
+            value={hours}
             onChange={handleHoursChange}
             inputProps={{
               min: 0,
