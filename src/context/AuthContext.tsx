@@ -1,0 +1,180 @@
+"use client";
+
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import {
+  User,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  sendPasswordResetEmail,
+  confirmPasswordReset,
+  onAuthStateChanged,
+  updateProfile,
+  sendEmailVerification,
+} from "firebase/auth";
+import { auth } from "@/app/firebaseConfig";
+
+// Types
+interface AuthContextType {
+  currentUser: User | null;
+  loading: boolean;
+  // Auth methods
+  signup: (
+    email: string,
+    password: string,
+    displayName?: string
+  ) => Promise<User>;
+  login: (email: string, password: string) => Promise<User>;
+  logout: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+  confirmPasswordReset: (oobCode: string, newPassword: string) => Promise<void>;
+  updateUserProfile: (displayName: string) => Promise<void>;
+  sendVerificationEmail: () => Promise<void>;
+}
+
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+// Create context
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Custom hook to use auth context
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
+
+// Auth Provider component
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Sign up function
+  const signup = async (
+    email: string,
+    password: string,
+    displayName?: string
+  ): Promise<User> => {
+    try {
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // Update profile with display name if provided
+      if (displayName && result.user) {
+        await updateProfile(result.user, {
+          displayName: displayName,
+        });
+      }
+
+      // Send email verification
+      if (result.user) {
+        await sendEmailVerification(result.user);
+      }
+
+      return result.user;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  // Login function
+  const login = async (email: string, password: string): Promise<User> => {
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      return result.user;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  // Logout function
+  const logout = async (): Promise<void> => {
+    try {
+      await signOut(auth);
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  // Reset password function
+  const resetPassword = async (email: string): Promise<void> => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  // Confirm password reset function
+  const confirmPasswordResetFunction = async (
+    oobCode: string,
+    newPassword: string
+  ): Promise<void> => {
+    try {
+      await confirmPasswordReset(auth, oobCode, newPassword);
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  // Update user profile function
+  const updateUserProfile = async (displayName: string): Promise<void> => {
+    try {
+      if (currentUser) {
+        await updateProfile(currentUser, { displayName });
+        // Force refresh the current user state
+        setCurrentUser({ ...currentUser, displayName });
+      }
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  // Send verification email function
+  const sendVerificationEmail = async (): Promise<void> => {
+    try {
+      if (currentUser) {
+        await sendEmailVerification(currentUser);
+      }
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  // Set up auth state observer
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const value: AuthContextType = {
+    currentUser,
+    loading,
+    signup,
+    login,
+    logout,
+    resetPassword,
+    confirmPasswordReset: confirmPasswordResetFunction,
+    updateUserProfile,
+    sendVerificationEmail,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};

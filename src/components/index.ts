@@ -8,6 +8,7 @@ export { default as ObjectionsBusters } from "./ObjectionBusters";
 export { default as TopNavbar } from "./TopNavbar";
 export { default as Footer } from "./Footer";
 export { default as MapServices } from "./MapServices";
+export { ProtectedRoute } from "./ProtectedRoute";
 export { default as HoursOperation } from "./HoursOperation";
 export { default as SampleWork } from "./SampleWork";
 export { default as ContactForm } from "./ContactForm";

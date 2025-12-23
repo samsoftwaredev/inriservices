@@ -4,12 +4,15 @@ import React from "react";
 
 import DashboardPage from "@/components/DashboardPage";
 import AppLayout from "@/components/AppLayout";
+import { ProtectedRoute } from "@/components";
 
 const Dashboard = () => {
   return (
-    <AppLayout>
-      <DashboardPage />
-    </AppLayout>
+    <ProtectedRoute>
+      <AppLayout>
+        <DashboardPage />
+      </AppLayout>
+    </ProtectedRoute>
   );
 };
 

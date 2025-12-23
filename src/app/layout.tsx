@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { companyName, companyWebsiteURL } from "@/constants";
 import Script from "next/script";
-import { BuildingProvider, ProjectCostProvider } from "@/context";
+import { BuildingProvider, ProjectCostProvider, AuthProvider } from "@/context";
 import { GallonsProvider } from "@/context/GallonsContext";
 import { CustomerProvider } from "@/context/CustomerContext";
 
@@ -98,13 +98,15 @@ export default function RootLayout({
         `}
       </Script>
       <body>
-        <GallonsProvider>
-          <CustomerProvider>
-            <BuildingProvider>
-              <ProjectCostProvider>{children}</ProjectCostProvider>
-            </BuildingProvider>
-          </CustomerProvider>
-        </GallonsProvider>
+        <AuthProvider>
+          <GallonsProvider>
+            <CustomerProvider>
+              <BuildingProvider>
+                <ProjectCostProvider>{children}</ProjectCostProvider>
+              </BuildingProvider>
+            </CustomerProvider>
+          </GallonsProvider>
+        </AuthProvider>
       </body>
     </html>
   );

@@ -67,7 +67,7 @@ const SideNav = ({
       path: "/timelogs",
     },
     {
-      text: "Contracts",
+      text: "Generate Contracts",
       icon: <DocumentScannerOutlined />,
       path: "/contracts",
     },

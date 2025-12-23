@@ -5,3 +5,4 @@ export {
   useRoomLaborCost,
 } from "./RoomLaborCostContext";
 export { ProjectCostProvider, useProjectCost } from "./ProjectCostContext";
+export { AuthProvider, useAuth } from "./AuthContext";
