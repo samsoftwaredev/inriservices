@@ -17,7 +17,7 @@ import CostSummaryPanel from "../CostSummaryPanel";
 import DialogFooter from "../DialogFooter";
 import { RoomLaborCostProvider } from "@/context/RoomLaborCostContext";
 import { useLaborTaskDialog } from "@/hooks/useLaborTaskDialog";
-import { RoomData, FeatureType } from "@/interfaces/laborTypes";
+import { FeatureType } from "@/interfaces/laborTypes";
 import { useRoom } from "@/context/RoomContext";
 
 interface Props {

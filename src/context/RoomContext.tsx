@@ -78,6 +78,7 @@ export const RoomProvider = ({
     floorPaintBase: PaintBaseType.Latex,
     floorNumber: floorNumber,
     totalCost: 0,
+    includeMaterialCosts: true,
     features: {
       outlets: [],
       switches: [],

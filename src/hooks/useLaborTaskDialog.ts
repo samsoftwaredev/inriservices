@@ -112,6 +112,10 @@ export const useLaborTaskDialog = ({
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setIncludeMaterialCosts(event.target.checked);
+    updateRoom({
+      ...roomData,
+      includeMaterialCosts: event.target.checked,
+    });
   };
 
   // Return empty cost data - these values are now handled by the context

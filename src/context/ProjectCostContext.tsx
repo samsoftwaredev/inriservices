@@ -45,7 +45,9 @@ export const ProjectCostProvider: React.FC<ProjectCostProviderProps> = ({
           feature.workLabor?.forEach((task) => {
             totalLaborCost += task.hours * task.rate;
             totalMaterialCost +=
-              feature.includeMaterialCosts === true && task.laborMaterials
+              roomData.includeMaterialCosts === true &&
+              feature.includeMaterialCosts === true &&
+              task.laborMaterials
                 ? task.laborMaterials.reduce(
                     (matTotal, material) =>
                       matTotal + material.quantity * material.price,

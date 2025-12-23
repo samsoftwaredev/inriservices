@@ -114,6 +114,7 @@ export type RoomData = {
   wainscotingPerimeterCalculated: number;
   floorNumber?: number;
   roomHeight: number;
+  includeMaterialCosts?: boolean;
   features: {
     ceilings: RoomFeature[];
     flooring: RoomFeature[];

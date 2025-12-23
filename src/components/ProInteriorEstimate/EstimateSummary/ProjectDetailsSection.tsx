@@ -19,7 +19,7 @@ export const ProjectDetailsSection = ({
   <>
     <Grid size={12} display="flex" justifyContent="space-between">
       <Typography variant={isMobile ? "subtitle1" : "h6"}>
-        Approximately Total
+        Approximate Time
       </Typography>
       <Typography variant={isMobile ? "subtitle1" : "h6"}>
         {totalHours} hrs | {totalDays} day{totalDays !== 1 ? "s" : ""}
