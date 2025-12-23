@@ -7,6 +7,7 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { drawerWidth } from "@/constants";
 import { Box } from "@mui/material";
+import { useScreenSize } from "@/hooks";
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -42,8 +43,13 @@ export default function AppTopNav({
   open: boolean;
   handleDrawerOpen: () => void;
 }) {
+  const isMobile = useScreenSize().isXs;
   return (
-    <AppBar position="fixed" open={open}>
+    <AppBar
+      position="fixed"
+      open={open}
+      sx={{ display: isMobile ? "block" : "none" }}
+    >
       <Toolbar>
         <IconButton
           color="inherit"
@@ -68,7 +74,6 @@ export default function AppTopNav({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            mr: 2,
           }}
         >
           <Typography variant="h6" color="white" fontWeight="bold">
