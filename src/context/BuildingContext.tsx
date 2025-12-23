@@ -71,7 +71,7 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
       current.delete("buildingId");
     }
     // controlled navigation
-    router.push(`${pathname}?${current.toString()}`);
+    window.history.replaceState({}, "", current.toString());
   };
 
   const updateLocalStorage = (buildingId?: string) => {
@@ -98,8 +98,6 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   useEffect(() => {
     const building = getBuilding();
     setBuildingData(building);
-    updateQuery(building?.id);
-    updateLocalStorage(building?.id);
   }, [searchParams, currentCustomer, currentBuildingId]);
 
   // Menu and dialog states

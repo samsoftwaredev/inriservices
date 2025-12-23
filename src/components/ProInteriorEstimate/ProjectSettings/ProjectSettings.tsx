@@ -201,7 +201,6 @@ const ProjectSettings = ({ currentCustomer }: Props) => {
                   fullWidth
                   label="Customer Name"
                   size="small"
-                  placeholder="Enter customer name"
                   error={!!errors.customerName}
                   helperText={errors.customerName?.message}
                 />
@@ -221,7 +220,6 @@ const ProjectSettings = ({ currentCustomer }: Props) => {
                   fullWidth
                   label="Email Address"
                   size="small"
-                  placeholder="customer@example.com"
                   type="email"
                   error={!!errors.customerEmail}
                   helperText={errors.customerEmail?.message}
@@ -242,7 +240,6 @@ const ProjectSettings = ({ currentCustomer }: Props) => {
                   fullWidth
                   label="Phone Number"
                   size="small"
-                  placeholder="(555) 123-4567"
                   type="tel"
                   error={!!errors.customerPhone}
                   helperText={errors.customerPhone?.message}
@@ -263,7 +260,6 @@ const ProjectSettings = ({ currentCustomer }: Props) => {
                   fullWidth
                   label="Contact Method"
                   size="small"
-                  placeholder="Preferred contact method"
                   error={!!errors.customerContact}
                   helperText={errors.customerContact?.message}
                 />
@@ -296,7 +292,6 @@ const ProjectSettings = ({ currentCustomer }: Props) => {
                   fullWidth
                   label="Project Address"
                   size="small"
-                  placeholder="Enter the project street address"
                   error={!!errors.address}
                   helperText={errors.address?.message}
                 />
@@ -316,7 +311,6 @@ const ProjectSettings = ({ currentCustomer }: Props) => {
                   fullWidth
                   label="City"
                   size="small"
-                  placeholder="Enter city"
                   error={!!errors.city}
                   helperText={errors.city?.message}
                 />
@@ -363,7 +357,6 @@ const ProjectSettings = ({ currentCustomer }: Props) => {
                   fullWidth
                   label="ZIP Code"
                   size="small"
-                  placeholder="12345"
                   inputProps={{ maxLength: 10 }}
                   error={!!errors.zipCode}
                   helperText={errors.zipCode?.message}

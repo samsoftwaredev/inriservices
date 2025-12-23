@@ -36,6 +36,34 @@ interface Props {
   onSelectPreviousCustomer: (customer: Customer) => void;
 }
 
+const navigationItems = [
+  {
+    text: "Dashboard",
+    icon: <DashboardIcon />,
+    path: "/dashboard",
+  },
+  {
+    text: "Clients",
+    icon: <PeopleIcon />,
+    path: "/clients",
+  },
+  {
+    text: "New Estimate",
+    icon: <AssessmentIcon />,
+    path: "/estimates",
+  },
+  {
+    text: "Time Logs",
+    icon: <PunchClock />,
+    path: "/timelogs",
+  },
+  {
+    text: "Generate Contracts",
+    icon: <DocumentScannerOutlined />,
+    path: "/contracts",
+  },
+];
+
 const SideNav = ({
   mobileOpen,
   onDrawerToggle,
@@ -45,34 +73,6 @@ const SideNav = ({
   previousCustomers,
   onSelectPreviousCustomer,
 }: Props) => {
-  const navigationItems = [
-    {
-      text: "Dashboard",
-      icon: <DashboardIcon />,
-      path: "/dashboard",
-    },
-    {
-      text: "Clients",
-      icon: <PeopleIcon />,
-      path: "/clients",
-    },
-    {
-      text: "New Estimate",
-      icon: <AssessmentIcon />,
-      path: "/estimates",
-    },
-    {
-      text: "Time Logs",
-      icon: <PunchClock />,
-      path: "/timelogs",
-    },
-    {
-      text: "Generate Contracts",
-      icon: <DocumentScannerOutlined />,
-      path: "/contracts",
-    },
-  ];
-
   const drawerContent = (
     <Box>
       {/* Company Logo */}
@@ -102,7 +102,12 @@ const SideNav = ({
             mr: 2,
           }}
         >
-          <Typography variant="h6" color="white" fontWeight="bold">
+          <Typography
+            variant="h6"
+            fontSize={15}
+            color="white"
+            fontWeight="bold"
+          >
             INRI
           </Typography>
         </Box>

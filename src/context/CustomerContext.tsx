@@ -119,7 +119,7 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
       current.delete("customerId");
     }
     // controlled navigation
-    router.push(`${pathname}?${current.toString()}`);
+    router.push(`interior-estimate?${current.toString()}`);
   };
 
   const updateLocalStorage = (customerId?: string) => {

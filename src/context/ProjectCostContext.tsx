@@ -19,8 +19,10 @@ const ProjectCostContext = createContext<ProjectCostContextType | undefined>(
   undefined
 );
 
-export const ProjectCostProvider: React.FC<ProjectCostProviderProps> = ({
+export const ProjectCostProvider = ({
   children,
+}: {
+  children: React.ReactNode;
 }) => {
   const [laborCosts, setLaborCosts] = useState<Record<string, LaborCostData>>({
     // Example structure; actual data will be populated via updateProjectCost
