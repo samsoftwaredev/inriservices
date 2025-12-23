@@ -5,11 +5,12 @@ import React, {
   useContext,
   useState,
   ReactNode,
-  use,
   useEffect,
+  useCallback,
 } from "react";
 import { LocationData, Section } from "@/interfaces/laborTypes";
 import { useCustomer } from "./CustomerContext";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface DeleteConfirmationState {
   open: boolean;
@@ -29,7 +30,7 @@ interface BuildingContextType {
   setDeleteConfirmation: React.Dispatch<
     React.SetStateAction<DeleteConfirmationState>
   >;
-  currentBuildingIndex: number;
+  currentBuildingId?: string;
   // Handlers
   addNewSection: () => void;
   handleDeleteSectionClick: (sectionId: string, sectionName: string) => void;
@@ -41,6 +42,7 @@ interface BuildingContextType {
     roomDescription: string;
     floorNumber: number;
   }) => void;
+  getAddresses: () => { id: string; address: string }[];
 }
 
 const BuildingContext = createContext<BuildingContextType | undefined>(
@@ -52,15 +54,53 @@ interface BuildingProviderProps {
 }
 
 export const BuildingProvider = ({ children }: BuildingProviderProps) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { currentCustomer } = useCustomer();
-  const [currentBuildingIndex, setCurrentBuildingIndex] = useState(0);
-  const [buildingData, setBuildingData] = useState<LocationData | undefined>(
-    currentCustomer?.buildings[currentBuildingIndex]
-  );
+  const [currentBuildingId, setCurrentBuildingId] = useState<
+    string | undefined
+  >();
+  const [buildingData, setBuildingData] = useState<LocationData | undefined>();
+
+  const updateQuery = (buildingId?: string) => {
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    if (buildingId) {
+      current.set("buildingId", buildingId);
+    } else {
+      current.delete("buildingId");
+    }
+    // controlled navigation
+    router.push(`${pathname}?${current.toString()}`);
+  };
+
+  const updateLocalStorage = (buildingId?: string) => {
+    if (buildingId) {
+      localStorage.setItem("currentBuildingId", buildingId);
+    } else {
+      localStorage.removeItem("currentBuildingId");
+    }
+  };
+
+  const getBuilding = () => {
+    return currentCustomer?.buildings[0];
+  };
+
+  const getBuildingById = (id: string) => {
+    const buildingIndex = currentCustomer?.buildings.findIndex(
+      (building) => building.id === id
+    );
+    return buildingIndex !== undefined && buildingIndex >= 0
+      ? buildingIndex
+      : undefined;
+  };
 
   useEffect(() => {
-    setBuildingData(currentCustomer?.buildings[currentBuildingIndex]);
-  }, [currentCustomer]);
+    const building = getBuilding();
+    setBuildingData(building);
+    updateQuery(building?.id);
+    updateLocalStorage(building?.id);
+  }, [searchParams, currentCustomer, currentBuildingId]);
 
   // Menu and dialog states
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -144,6 +184,15 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
     });
   };
 
+  const getAddresses = useCallback((): { id: string; address: string }[] => {
+    return (
+      currentCustomer?.buildings.map((building) => ({
+        id: building.id,
+        address: building.address,
+      })) || []
+    );
+  }, [currentCustomer]);
+
   const value: BuildingContextType = {
     // State
     buildingData,
@@ -152,13 +201,14 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
     setAnchorEl,
     deleteConfirmation,
     setDeleteConfirmation,
-    currentBuildingIndex,
+    currentBuildingId,
     // Handlers
     addNewSection,
     handleDeleteSectionClick,
     handleDeleteCancel,
     handleDeleteConfirm,
     onRoomUpdate,
+    getAddresses,
   };
 
   return React.createElement(BuildingContext.Provider, { value }, children);

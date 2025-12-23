@@ -114,7 +114,7 @@ const validationRules = {
 };
 
 const ProjectSettings = ({ currentCustomer }: Props) => {
-  const { currentBuildingIndex } = useBuilding();
+  const { buildingData } = useBuilding();
 
   // Initialize react-hook-form with default values
   const {
@@ -130,15 +130,12 @@ const ProjectSettings = ({ currentCustomer }: Props) => {
       customerEmail: currentCustomer?.email || "",
       customerPhone: currentCustomer?.phone || "",
       customerContact: currentCustomer?.contact || "",
-      address: currentCustomer?.buildings[currentBuildingIndex].address || "",
-      city: currentCustomer?.buildings[currentBuildingIndex].city || "",
-      state: currentCustomer?.buildings[currentBuildingIndex].state || "",
-      zipCode: currentCustomer?.buildings[currentBuildingIndex].zipCode || "",
-      measurementUnit:
-        currentCustomer?.buildings[currentBuildingIndex].measurementUnit ||
-        "ft",
-      floorPlan:
-        currentCustomer?.buildings[currentBuildingIndex].floorPlan || 1,
+      address: buildingData?.address || "",
+      city: buildingData?.city || "",
+      state: buildingData?.state || "",
+      zipCode: buildingData?.zipCode || "",
+      measurementUnit: buildingData?.measurementUnit || "ft",
+      floorPlan: buildingData?.floorPlan || 1,
     },
   });
 
@@ -149,17 +146,14 @@ const ProjectSettings = ({ currentCustomer }: Props) => {
       customerEmail: currentCustomer?.email || "",
       customerPhone: currentCustomer?.phone || "",
       customerContact: currentCustomer?.contact || "",
-      address: currentCustomer?.buildings[currentBuildingIndex].address || "",
-      city: currentCustomer?.buildings[currentBuildingIndex].city || "",
-      state: currentCustomer?.buildings[currentBuildingIndex].state || "",
-      zipCode: currentCustomer?.buildings[currentBuildingIndex].zipCode || "",
-      measurementUnit:
-        currentCustomer?.buildings[currentBuildingIndex].measurementUnit ||
-        "ft",
-      floorPlan:
-        currentCustomer?.buildings[currentBuildingIndex].floorPlan || 1,
+      address: buildingData?.address || "",
+      city: buildingData?.city || "",
+      state: buildingData?.state || "",
+      zipCode: buildingData?.zipCode || "",
+      measurementUnit: buildingData?.measurementUnit || "ft",
+      floorPlan: buildingData?.floorPlan || 1,
     });
-  }, [currentCustomer, reset]);
+  }, [currentCustomer, buildingData, reset]);
 
   // Helper function to get measurement unit label
   const getMeasurementUnitLabel = (unit: MeasurementUnit): string => {

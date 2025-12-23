@@ -10,11 +10,9 @@ import EstimateSummary from "./EstimateSummary";
 const Building = () => {
   const {
     buildingData,
-    setBuildingData,
     anchorEl,
     setAnchorEl,
     deleteConfirmation,
-    setDeleteConfirmation,
     addNewSection,
     handleDeleteSectionClick,
     handleDeleteCancel,
@@ -26,7 +24,6 @@ const Building = () => {
     <>
       <MainContent
         buildingData={buildingData}
-        setBuildingData={setBuildingData}
         anchorEl={anchorEl}
         setAnchorEl={setAnchorEl}
         onAddNewSection={addNewSection}

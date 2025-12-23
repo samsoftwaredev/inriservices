@@ -34,7 +34,7 @@ const validationRules = {
   },
 };
 
-const ForgotPasswordPage: React.FC = () => {
+const ForgotPasswordPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");

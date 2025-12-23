@@ -10,7 +10,6 @@ interface Props {
   anchorEl: HTMLElement | null;
   onClose: () => void;
   previousCustomers: Customer[];
-  onSelectCustomer: (customer: Customer) => void;
   onCreateNewCustomer: () => void;
   onCreateNewLocation: () => void;
 }
@@ -18,7 +17,6 @@ interface Props {
 const CustomerSelectionMenu = ({
   anchorEl,
   onClose,
-  onSelectCustomer,
   onCreateNewCustomer,
   onCreateNewLocation,
 }: Props) => {

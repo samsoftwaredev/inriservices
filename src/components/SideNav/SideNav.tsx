@@ -31,7 +31,7 @@ interface Props {
   onDrawerToggle: () => void;
   onNavigation: (path: string) => void;
   onLogoClick: () => void;
-  currentCustomer: Customer;
+  currentCustomer?: Customer;
   previousCustomers: Customer[];
   onSelectPreviousCustomer: (customer: Customer) => void;
 }
@@ -160,6 +160,13 @@ const SideNav = ({
           </Typography>
         </Box>
       )}
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        sx={{ px: 2, mt: 2, display: "block" }}
+      >
+        Previous Customers
+      </Typography>
       {previousCustomers.map((customer) => (
         <MenuItem
           key={customer.id}

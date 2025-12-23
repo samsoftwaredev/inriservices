@@ -12,11 +12,8 @@ import AppTopNav from "../AppTopNav";
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const { mobileOpen, handleDrawerToggle, handleNavigation, handleLogoClick } =
     useAppNavigation();
-  const {
-    currentCustomer,
-    previousCustomers,
-    handleSelectPreviousCustomer: onSelectPreviousCustomer,
-  } = useCustomer();
+  const { currentCustomer, previousCustomers, handleSelectPreviousCustomer } =
+    useCustomer();
 
   return (
     <ThemeRegistry>
@@ -35,7 +32,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
           onLogoClick={handleLogoClick}
           currentCustomer={currentCustomer}
           previousCustomers={previousCustomers}
-          onSelectPreviousCustomer={onSelectPreviousCustomer}
+          onSelectPreviousCustomer={handleSelectPreviousCustomer}
         />
         <Container maxWidth="md" sx={{ mt: 8, mb: 4 }}>
           {children}

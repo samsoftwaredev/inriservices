@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   Box,
@@ -50,7 +50,7 @@ const validationRules = {
   },
 };
 
-const ResetPasswordPage: React.FC = () => {
+const ResetPasswordPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -59,7 +59,6 @@ const ResetPasswordPage: React.FC = () => {
   const [oobCode, setOobCode] = useState<string | null>(null);
   const { confirmPasswordReset } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const {
     control,
@@ -75,18 +74,6 @@ const ResetPasswordPage: React.FC = () => {
   });
 
   const password = watch("password");
-
-  useEffect(() => {
-    // Get the oobCode from URL parameters
-    const code = searchParams.get("oobCode");
-    if (code) {
-      setOobCode(code);
-    } else {
-      setError(
-        "Invalid or missing reset code. Please request a new password reset."
-      );
-    }
-  }, [searchParams]);
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     if (!oobCode) {

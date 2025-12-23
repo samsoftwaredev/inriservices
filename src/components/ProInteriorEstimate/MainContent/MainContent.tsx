@@ -19,8 +19,7 @@ import { RoomProvider } from "@/context/RoomContext";
 import { useProjectCost } from "@/context";
 
 interface Props {
-  buildingData: LocationData;
-  setBuildingData: React.Dispatch<React.SetStateAction<LocationData>>;
+  buildingData?: LocationData;
   anchorEl: HTMLElement | null;
   setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
   onAddNewSection: () => void;
@@ -35,7 +34,6 @@ interface Props {
 
 const MainContent = ({
   buildingData,
-  setBuildingData,
   anchorEl,
   setAnchorEl,
   onAddNewSection,
@@ -43,14 +41,8 @@ const MainContent = ({
   onRoomUpdate,
 }: Props) => {
   const { updateProjectCost } = useProjectCost();
-  const {
-    previousCustomers,
-    currentCustomer,
-    handleSelectPreviousCustomer: onSelectPreviousCustomer,
-    handleSaveNewCustomer: onSaveNewCustomer,
-    handleCustomerUpdate: onCustomerUpdate,
-    setCurrentCustomer,
-  } = useCustomer();
+  const { previousCustomers, currentCustomer, setCurrentCustomer } =
+    useCustomer();
 
   const newCustomer = () => {
     setCurrentCustomer(undefined);
@@ -84,7 +76,6 @@ const MainContent = ({
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
         previousCustomers={previousCustomers}
-        onSelectCustomer={onSelectPreviousCustomer}
         onCreateNewCustomer={newCustomer}
         onCreateNewLocation={() => {}}
       />

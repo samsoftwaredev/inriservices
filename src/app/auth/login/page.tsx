@@ -51,7 +51,7 @@ const validationRules = {
   },
 };
 
-const LoginPage: React.FC = () => {
+const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");

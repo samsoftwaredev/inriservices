@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Customer } from "@/interfaces/laborTypes";
+import { uuidv4 } from "@/tools";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface CustomerContextType {
   // State
@@ -35,6 +37,7 @@ const INITIAL_CUSTOMERS: Customer[] = [
     email: "jane.smith@example.com",
     buildings: [
       {
+        id: "1",
         address: "456 Oak St",
         city: "Springfield",
         state: "IL",
@@ -66,6 +69,7 @@ const INITIAL_CUSTOMERS: Customer[] = [
     email: "bob.wilson@email.com",
     buildings: [
       {
+        id: "2",
         address: "789 Pine St",
         city: "Metropolis",
         state: "NY",
@@ -84,6 +88,7 @@ const INITIAL_CUSTOMERS: Customer[] = [
     email: "sarah.brown@gmail.com",
     buildings: [
       {
+        id: "3",
         address: "321 Cedar St",
         city: "Gotham",
         state: "NJ",
@@ -96,46 +101,50 @@ const INITIAL_CUSTOMERS: Customer[] = [
   },
 ];
 
-const DEFAULT_CUSTOMER: Customer = {
-  id: "1",
-  name: "John Doe",
-  contact: "Jane Smith",
-  phone: "(123) 456-7890",
-  email: "jane.smith@example.com",
-  buildings: [
-    {
-      address: "456 Oak St",
-      city: "Springfield",
-      state: "IL",
-      zipCode: "62704",
-      measurementUnit: "ft",
-      floorPlan: 2,
-      sections: [],
-    },
-  ],
-};
-
 export const CustomerProvider = ({ children }: CustomerProviderProps) => {
-  // State
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [previousCustomers, setPreviousCustomers] =
     useState<Customer[]>(INITIAL_CUSTOMERS);
   const [currentCustomer, setCurrentCustomer] = useState<
     Customer | undefined
   >();
 
+  const updateQuery = (customerId?: string) => {
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    if (customerId) {
+      current.set("customerId", customerId);
+    } else {
+      current.delete("customerId");
+    }
+    // controlled navigation
+    router.push(`${pathname}?${current.toString()}`);
+  };
+
+  const updateLocalStorage = (customerId?: string) => {
+    if (customerId) {
+      localStorage.setItem("currentCustomerId", customerId);
+    } else {
+      localStorage.removeItem("currentCustomerId");
+    }
+  };
+
   const handleSelectPreviousCustomer = (customer: Customer) => {
     setCurrentCustomer(customer);
-    localStorage.setItem("currentCustomerId", customer.id);
+    updateQuery(customer.id);
+    updateLocalStorage(customer.id);
   };
 
   const handleSaveNewCustomer = (newCustomerData: Omit<Customer, "id">) => {
     const newCustomer: Customer = {
       ...newCustomerData,
-      id: Date.now().toString(),
+      id: uuidv4(),
     };
 
     setCurrentCustomer(newCustomer);
-    localStorage.setItem("currentCustomerId", newCustomer.id);
+    updateQuery(newCustomer.id);
+    updateLocalStorage(newCustomer.id);
     setPreviousCustomers((prev) => [...prev, newCustomer]);
   };
 

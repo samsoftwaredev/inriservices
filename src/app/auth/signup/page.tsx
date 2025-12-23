@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -80,7 +80,7 @@ const validationRules = {
   },
 };
 
-const SignupPage: React.FC = () => {
+const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);

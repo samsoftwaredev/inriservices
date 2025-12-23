@@ -169,6 +169,7 @@ export interface CustomerAddress {
 }
 
 export type LocationData = {
+  id: string;
   measurementUnit: MeasurementUnit;
   floorPlan: number;
   sections: Section[];
