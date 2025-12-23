@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import { LocationData, Section } from "@/interfaces/laborTypes";
 import { useCustomer } from "./CustomerContext";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface DeleteConfirmationState {
   open: boolean;
@@ -56,7 +56,6 @@ interface BuildingProviderProps {
 export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const { currentCustomer } = useCustomer();
   const [currentBuildingId, setCurrentBuildingId] = useState<
     string | undefined
@@ -64,14 +63,14 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   const [buildingData, setBuildingData] = useState<LocationData | undefined>();
 
   const updateQuery = (buildingId?: string) => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
+    const current = new URLSearchParams(window.location.search);
     if (buildingId) {
       current.set("buildingId", buildingId);
     } else {
       current.delete("buildingId");
     }
     // controlled navigation
-    window.history.replaceState({}, "", current.toString());
+    router.replace(`${pathname}?${current.toString()}`);
   };
 
   const updateLocalStorage = (buildingId?: string) => {
@@ -98,7 +97,7 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   useEffect(() => {
     const building = getBuilding();
     setBuildingData(building);
-  }, [searchParams, currentCustomer, currentBuildingId]);
+  }, [currentCustomer, currentBuildingId]);
 
   // Menu and dialog states
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

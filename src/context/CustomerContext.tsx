@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Customer } from "@/interfaces/laborTypes";
 import { uuidv4 } from "@/tools";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface CustomerContextType {
   // State
@@ -104,23 +104,11 @@ const INITIAL_CUSTOMERS: Customer[] = [
 export const CustomerProvider = ({ children }: CustomerProviderProps) => {
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [previousCustomers, setPreviousCustomers] =
     useState<Customer[]>(INITIAL_CUSTOMERS);
   const [currentCustomer, setCurrentCustomer] = useState<
     Customer | undefined
   >();
-
-  const updateQuery = (customerId?: string) => {
-    const current = new URLSearchParams(Array.from(searchParams.entries()));
-    if (customerId) {
-      current.set("customerId", customerId);
-    } else {
-      current.delete("customerId");
-    }
-    // controlled navigation
-    router.push(`interior-estimate?${current.toString()}`);
-  };
 
   const updateLocalStorage = (customerId?: string) => {
     if (customerId) {
@@ -132,8 +120,18 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
 
   const handleSelectPreviousCustomer = (customer: Customer) => {
     setCurrentCustomer(customer);
-    updateQuery(customer.id);
     updateLocalStorage(customer.id);
+  };
+
+  const updateQuery = (customerId?: string) => {
+    const current = new URLSearchParams(window.location.search);
+    if (customerId) {
+      current.set("customerId", customerId);
+    } else {
+      current.delete("customerId");
+    }
+    // controlled navigation
+    router.replace(`${pathname}?${current.toString()}`);
   };
 
   const handleSaveNewCustomer = (newCustomerData: Omit<Customer, "id">) => {
