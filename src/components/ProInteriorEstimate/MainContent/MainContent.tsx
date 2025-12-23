@@ -9,9 +9,7 @@ import {
 } from "@mui/icons-material";
 
 import CustomerHeader from "@/components/CustomerHeader";
-import CustomerInfoCard from "../CustomerInfoCard";
 import CustomerSelectionMenu from "../CustomerSelectionMenu";
-import NewCustomerDialog from "../NewCustomerDialog";
 import ProjectSettings from "../ProjectSettings";
 import Room from "../Room";
 import { LocationData } from "@/interfaces/laborTypes";
@@ -48,12 +46,15 @@ const MainContent = ({
   const {
     previousCustomers,
     currentCustomer,
-    newCustomerDialogOpen,
-    setNewCustomerDialogOpen,
     handleSelectPreviousCustomer: onSelectPreviousCustomer,
     handleSaveNewCustomer: onSaveNewCustomer,
     handleCustomerUpdate: onCustomerUpdate,
+    setCurrentCustomer,
   } = useCustomer();
+
+  const newCustomer = () => {
+    setCurrentCustomer(undefined);
+  };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -79,31 +80,16 @@ const MainContent = ({
         </IconButton>
       </CustomerHeader>
 
-      <CustomerInfoCard
-        currentCustomer={currentCustomer}
-        onCustomerUpdate={onCustomerUpdate}
-      />
-
       <CustomerSelectionMenu
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
         previousCustomers={previousCustomers}
         onSelectCustomer={onSelectPreviousCustomer}
-        onCreateNewCustomer={() => setNewCustomerDialogOpen(true)}
+        onCreateNewCustomer={newCustomer}
         onCreateNewLocation={() => {}}
       />
 
-      <NewCustomerDialog
-        open={newCustomerDialogOpen}
-        onClose={() => setNewCustomerDialogOpen(false)}
-        onSaveCustomer={onSaveNewCustomer}
-      />
-
-      <ProjectSettings
-        currentCustomer={currentCustomer}
-        onCustomerUpdate={onCustomerUpdate}
-        setBuildingData={setBuildingData}
-      />
+      <ProjectSettings currentCustomer={currentCustomer} />
 
       <Box
         sx={{
@@ -118,13 +104,13 @@ const MainContent = ({
 
       <Divider sx={{ mb: 2 }} />
 
-      {buildingData.sections.length === 0 && (
+      {buildingData === undefined || buildingData.sections.length === 0 ? (
         <Typography variant="body2" color="text.secondary">
           No sections added yet.
         </Typography>
-      )}
+      ) : null}
 
-      {buildingData.sections.map((section) => (
+      {buildingData?.sections.map((section) => (
         <Box key={section.id} sx={{ mb: 2, position: "relative" }}>
           <Box
             sx={{

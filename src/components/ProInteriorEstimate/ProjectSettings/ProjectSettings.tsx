@@ -24,9 +24,7 @@ import { usa_states } from "@/constants";
 import { useBuilding } from "@/context";
 
 interface Props {
-  currentCustomer: Customer;
-  onCustomerUpdate: (customer: Customer) => void;
-  setBuildingData: React.Dispatch<React.SetStateAction<LocationData>>;
+  currentCustomer?: Customer;
 }
 
 // Form data interface for react-hook-form
@@ -115,11 +113,7 @@ const validationRules = {
   },
 };
 
-const ProjectSettings = ({
-  setBuildingData,
-  currentCustomer,
-  onCustomerUpdate,
-}: Props) => {
+const ProjectSettings = ({ currentCustomer }: Props) => {
   const { currentBuildingIndex } = useBuilding();
 
   // Initialize react-hook-form with default values
@@ -132,34 +126,38 @@ const ProjectSettings = ({
   } = useForm<ProjectFormData>({
     mode: "onChange", // Validate on every change
     defaultValues: {
-      customerName: currentCustomer.name || "",
-      customerEmail: currentCustomer.email || "",
-      customerPhone: currentCustomer.phone || "",
-      customerContact: currentCustomer.contact || "",
-      address: currentCustomer.buildings[currentBuildingIndex].address || "",
-      city: currentCustomer.buildings[currentBuildingIndex].city || "",
-      state: currentCustomer.buildings[currentBuildingIndex].state || "",
-      zipCode: currentCustomer.buildings[currentBuildingIndex].zipCode || "",
+      customerName: currentCustomer?.name || "",
+      customerEmail: currentCustomer?.email || "",
+      customerPhone: currentCustomer?.phone || "",
+      customerContact: currentCustomer?.contact || "",
+      address: currentCustomer?.buildings[currentBuildingIndex].address || "",
+      city: currentCustomer?.buildings[currentBuildingIndex].city || "",
+      state: currentCustomer?.buildings[currentBuildingIndex].state || "",
+      zipCode: currentCustomer?.buildings[currentBuildingIndex].zipCode || "",
       measurementUnit:
-        currentCustomer.buildings[currentBuildingIndex].measurementUnit || "ft",
-      floorPlan: currentCustomer.buildings[currentBuildingIndex].floorPlan || 1,
+        currentCustomer?.buildings[currentBuildingIndex].measurementUnit ||
+        "ft",
+      floorPlan:
+        currentCustomer?.buildings[currentBuildingIndex].floorPlan || 1,
     },
   });
 
   // Update form when external props change
   useEffect(() => {
     reset({
-      customerName: currentCustomer.name || "",
-      customerEmail: currentCustomer.email || "",
-      customerPhone: currentCustomer.phone || "",
-      customerContact: currentCustomer.contact || "",
-      address: currentCustomer.buildings[currentBuildingIndex].address || "",
-      city: currentCustomer.buildings[currentBuildingIndex].city || "",
-      state: currentCustomer.buildings[currentBuildingIndex].state || "",
-      zipCode: currentCustomer.buildings[currentBuildingIndex].zipCode || "",
+      customerName: currentCustomer?.name || "",
+      customerEmail: currentCustomer?.email || "",
+      customerPhone: currentCustomer?.phone || "",
+      customerContact: currentCustomer?.contact || "",
+      address: currentCustomer?.buildings[currentBuildingIndex].address || "",
+      city: currentCustomer?.buildings[currentBuildingIndex].city || "",
+      state: currentCustomer?.buildings[currentBuildingIndex].state || "",
+      zipCode: currentCustomer?.buildings[currentBuildingIndex].zipCode || "",
       measurementUnit:
-        currentCustomer.buildings[currentBuildingIndex].measurementUnit || "ft",
-      floorPlan: currentCustomer.buildings[currentBuildingIndex].floorPlan || 1,
+        currentCustomer?.buildings[currentBuildingIndex].measurementUnit ||
+        "ft",
+      floorPlan:
+        currentCustomer?.buildings[currentBuildingIndex].floorPlan || 1,
     });
   }, [currentCustomer, reset]);
 

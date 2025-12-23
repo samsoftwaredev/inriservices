@@ -19,8 +19,10 @@ interface DeleteConfirmationState {
 
 interface BuildingContextType {
   // State
-  buildingData: LocationData;
-  setBuildingData: React.Dispatch<React.SetStateAction<LocationData>>;
+  buildingData?: LocationData;
+  setBuildingData: React.Dispatch<
+    React.SetStateAction<LocationData | undefined>
+  >;
   anchorEl: null | HTMLElement;
   setAnchorEl: React.Dispatch<React.SetStateAction<null | HTMLElement>>;
   deleteConfirmation: DeleteConfirmationState;
@@ -52,12 +54,12 @@ interface BuildingProviderProps {
 export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   const { currentCustomer } = useCustomer();
   const [currentBuildingIndex, setCurrentBuildingIndex] = useState(0);
-  const [buildingData, setBuildingData] = useState<LocationData>(
-    currentCustomer.buildings[currentBuildingIndex]
+  const [buildingData, setBuildingData] = useState<LocationData | undefined>(
+    currentCustomer?.buildings[currentBuildingIndex]
   );
 
   useEffect(() => {
-    setBuildingData(currentCustomer.buildings[currentBuildingIndex]);
+    setBuildingData(currentCustomer?.buildings[currentBuildingIndex]);
   }, [currentCustomer]);
 
   // Menu and dialog states
@@ -72,15 +74,18 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   const addNewSection = () => {
     const newSection: Section = {
       id: Date.now().toString(),
-      name: `Room ${buildingData.sections.length + 1}`,
+      name: `Room ${buildingData?.sections.length! + 1}`,
       description: "New room section",
       floorNumber: 1,
     };
 
-    setBuildingData((prev) => ({
-      ...prev,
-      sections: [...prev.sections, newSection],
-    }));
+    setBuildingData((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        sections: [...prev.sections, newSection],
+      };
+    });
   };
 
   const handleDeleteSectionClick = (sectionId: string, sectionName: string) => {
@@ -101,12 +106,15 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
 
   const handleDeleteConfirm = () => {
     if (deleteConfirmation.sectionId) {
-      setBuildingData((prev) => ({
-        ...prev,
-        sections: prev.sections.filter(
-          (section) => section.id !== deleteConfirmation.sectionId
-        ),
-      }));
+      setBuildingData((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          sections: prev.sections.filter(
+            (section) => section.id !== deleteConfirmation.sectionId
+          ),
+        };
+      });
     }
     handleDeleteCancel();
   };
@@ -118,6 +126,7 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
     floorNumber: number;
   }) => {
     setBuildingData((prevData) => {
+      if (!prevData) return prevData;
       const updatedSections = prevData.sections.map((section) =>
         section.id === updates.roomId
           ? {

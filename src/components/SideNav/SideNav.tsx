@@ -147,17 +147,19 @@ const SideNav = ({
       <Divider sx={{ my: 2, mx: 2 }} />
 
       {/* Additional Info Section */}
-      <Box sx={{ p: 2 }}>
-        <Typography variant="caption" color="text.secondary" gutterBottom>
-          Current Project
-        </Typography>
-        <Typography variant="body2" fontWeight="medium">
-          Interior Estimate
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {currentCustomer.name}
-        </Typography>
-      </Box>
+      {currentCustomer && (
+        <Box sx={{ p: 2 }}>
+          <Typography variant="caption" color="text.secondary" gutterBottom>
+            Current Project
+          </Typography>
+          <Typography variant="body2" fontWeight="medium">
+            Interior Estimate
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {currentCustomer.name}
+          </Typography>
+        </Box>
+      )}
       {previousCustomers.map((customer) => (
         <MenuItem
           key={customer.id}

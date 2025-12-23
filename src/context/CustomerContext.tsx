@@ -7,18 +7,15 @@ interface CustomerContextType {
   // State
   previousCustomers: Customer[];
   setPreviousCustomers: React.Dispatch<React.SetStateAction<Customer[]>>;
-  currentCustomer: Customer;
-  setCurrentCustomer: React.Dispatch<React.SetStateAction<Customer>>;
-  newCustomerDialogOpen: boolean;
-  setNewCustomerDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  currentCustomer?: Customer;
+  setCurrentCustomer: React.Dispatch<
+    React.SetStateAction<Customer | undefined>
+  >;
 
   // Handlers
   handleSelectPreviousCustomer: (customer: Customer) => void;
   handleSaveNewCustomer: (newCustomerData: Omit<Customer, "id">) => void;
   handleCustomerUpdate: (updatedCustomer: Customer) => void;
-  closeNewCustomerDialog: () => void;
-  openNewCustomerDialog: () => void;
-  closeCustomerMenu: () => void;
 }
 
 interface CustomerProviderProps {
@@ -122,15 +119,13 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
   // State
   const [previousCustomers, setPreviousCustomers] =
     useState<Customer[]>(INITIAL_CUSTOMERS);
-  const [currentCustomer, setCurrentCustomer] =
-    useState<Customer>(DEFAULT_CUSTOMER);
-  const [newCustomerDialogOpen, setNewCustomerDialogOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [currentCustomer, setCurrentCustomer] = useState<
+    Customer | undefined
+  >();
 
   const handleSelectPreviousCustomer = (customer: Customer) => {
     setCurrentCustomer(customer);
     localStorage.setItem("currentCustomerId", customer.id);
-    closeCustomerMenu();
   };
 
   const handleSaveNewCustomer = (newCustomerData: Omit<Customer, "id">) => {
@@ -142,7 +137,6 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
     setCurrentCustomer(newCustomer);
     localStorage.setItem("currentCustomerId", newCustomer.id);
     setPreviousCustomers((prev) => [...prev, newCustomer]);
-    closeNewCustomerDialog();
   };
 
   const handleCustomerUpdate = (updatedCustomer: Customer) => {
@@ -154,35 +148,17 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
     );
   };
 
-  const closeNewCustomerDialog = () => {
-    setNewCustomerDialogOpen(false);
-  };
-
-  const openNewCustomerDialog = () => {
-    setNewCustomerDialogOpen(true);
-    setAnchorEl(null);
-  };
-
-  const closeCustomerMenu = () => {
-    setAnchorEl(null);
-  };
-
   const value: CustomerContextType = {
     // State
     previousCustomers,
     setPreviousCustomers,
     currentCustomer,
     setCurrentCustomer,
-    newCustomerDialogOpen,
-    setNewCustomerDialogOpen,
 
     // Handlers
     handleSelectPreviousCustomer,
     handleSaveNewCustomer,
     handleCustomerUpdate,
-    closeNewCustomerDialog,
-    openNewCustomerDialog,
-    closeCustomerMenu,
   };
 
   return React.createElement(CustomerContext.Provider, { value }, children);
@@ -202,7 +178,7 @@ export const useCustomer = (): CustomerContextType => {
 export const useCustomerById = (customerId: string) => {
   const { previousCustomers, currentCustomer } = useCustomer();
 
-  if (currentCustomer.id === customerId) {
+  if (currentCustomer?.id === customerId) {
     return currentCustomer;
   }
 
