@@ -1,9 +1,15 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import { Customer } from "@/interfaces/laborTypes";
 import { uuidv4 } from "@/tools";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 interface CustomerContextType {
   // State
@@ -102,7 +108,6 @@ const INITIAL_CUSTOMERS: Customer[] = [
 ];
 
 export const CustomerProvider = ({ children }: CustomerProviderProps) => {
-  const router = useRouter();
   const pathname = usePathname();
   const [previousCustomers, setPreviousCustomers] =
     useState<Customer[]>(INITIAL_CUSTOMERS);
@@ -119,19 +124,7 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
   };
 
   const handleSelectPreviousCustomer = (customer: Customer) => {
-    setCurrentCustomer(customer);
     updateLocalStorage(customer.id);
-  };
-
-  const updateQuery = (customerId?: string) => {
-    const current = new URLSearchParams(window.location.search);
-    if (customerId) {
-      current.set("customerId", customerId);
-    } else {
-      current.delete("customerId");
-    }
-    // controlled navigation
-    router.replace(`${pathname}?${current.toString()}`);
   };
 
   const handleSaveNewCustomer = (newCustomerData: Omit<Customer, "id">) => {
@@ -141,7 +134,6 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
     };
 
     setCurrentCustomer(newCustomer);
-    updateQuery(newCustomer.id);
     updateLocalStorage(newCustomer.id);
     setPreviousCustomers((prev) => [...prev, newCustomer]);
   };
@@ -154,6 +146,30 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
       )
     );
   };
+
+  function getCustomerIdURL(url: string): number | undefined {
+    const id = new URL(url).pathname.split("/").pop();
+    if (!id) return undefined;
+    return Number.isInteger(+id) ? Number(id) : undefined;
+  }
+
+  const getCustomerById = (customerId?: number) => {
+    const customer = previousCustomers.find(
+      (cust) => Number(cust.id) === customerId
+    );
+    if (customer) {
+      setCurrentCustomer(customer);
+      updateLocalStorage(customer.id);
+    } else {
+      setCurrentCustomer(undefined);
+      updateLocalStorage();
+    }
+  };
+
+  useEffect(() => {
+    const customerId = getCustomerIdURL(window.location.href);
+    getCustomerById(customerId);
+  }, [pathname]);
 
   const value: CustomerContextType = {
     // State
