@@ -12,34 +12,24 @@ import CustomerHeader from "@/components/CustomerHeader";
 import CustomerSelectionMenu from "../CustomerSelectionMenu";
 import ProjectSettings from "../ProjectSettings";
 import Room from "../Room";
-import { LocationData } from "@/interfaces/laborTypes";
 import { theme } from "@/app/theme";
 import { useCustomer } from "@/context/CustomerContext";
 import { RoomProvider } from "@/context/RoomContext";
-import { useProjectCost } from "@/context";
+import { useBuilding } from "@/context";
+import DeleteSectionDialog from "../DeleteSectionDialog";
 
-interface Props {
-  buildingData?: LocationData;
-  anchorEl: HTMLElement | null;
-  setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
-  onAddNewSection: () => void;
-  onDeleteSectionClick: (roomId: string, sectionName: string) => void;
-  onRoomUpdate: (updates: {
-    roomId: string;
-    roomName: string;
-    roomDescription: string;
-    floorNumber: number;
-  }) => void;
-}
-
-const MainContent = ({
-  buildingData,
-  anchorEl,
-  setAnchorEl,
-  onAddNewSection,
-  onDeleteSectionClick,
-  onRoomUpdate,
-}: Props) => {
+const MainContent = () => {
+  const {
+    buildingData,
+    anchorEl,
+    setAnchorEl,
+    deleteConfirmation,
+    addNewSection,
+    handleDeleteSectionClick,
+    handleDeleteCancel,
+    handleDeleteConfirm,
+    onRoomUpdate,
+  } = useBuilding();
   const { previousCustomers, currentCustomer, setCurrentCustomer } =
     useCustomer();
 
@@ -113,7 +103,7 @@ const MainContent = ({
             <IconButton
               size="small"
               color="error"
-              onClick={() => onDeleteSectionClick(room.id, room.name)}
+              onClick={() => handleDeleteSectionClick(room.id, room.name)}
               sx={{
                 bgcolor: "background.paper",
                 boxShadow: 1,
@@ -143,7 +133,7 @@ const MainContent = ({
       <Button
         variant="contained"
         startIcon={<AddIcon />}
-        onClick={onAddNewSection}
+        onClick={addNewSection}
         fullWidth
         sx={{
           background: theme.palette.gradient.subtle,
@@ -153,6 +143,11 @@ const MainContent = ({
       </Button>
 
       {/* <CustomerExpectations baseCost={baseCost} onCostChange={onCostChange} /> */}
+      <DeleteSectionDialog
+        deleteConfirmation={deleteConfirmation}
+        onCancel={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+      />
     </Box>
   );
 };

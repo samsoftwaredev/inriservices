@@ -3,41 +3,25 @@
 import React from "react";
 
 import MainContent from "./MainContent";
-import DeleteSectionDialog from "./DeleteSectionDialog";
-import { useBuilding } from "@/context/BuildingContext";
 import EstimateSummary from "./EstimateSummary";
+import {
+  BuildingProvider,
+  GallonsProvider,
+  ProjectCostProvider,
+} from "@/context";
+import { useCustomer } from "@/context/CustomerContext";
 
 const Building = () => {
-  const {
-    buildingData,
-    anchorEl,
-    setAnchorEl,
-    deleteConfirmation,
-    addNewSection,
-    handleDeleteSectionClick,
-    handleDeleteCancel,
-    handleDeleteConfirm,
-    onRoomUpdate,
-  } = useBuilding();
-
+  const { currentCustomer } = useCustomer();
   return (
-    <>
-      <MainContent
-        buildingData={buildingData}
-        anchorEl={anchorEl}
-        setAnchorEl={setAnchorEl}
-        onAddNewSection={addNewSection}
-        onDeleteSectionClick={handleDeleteSectionClick}
-        onRoomUpdate={onRoomUpdate}
-      />
-      <EstimateSummary />
-
-      <DeleteSectionDialog
-        deleteConfirmation={deleteConfirmation}
-        onCancel={handleDeleteCancel}
-        onConfirm={handleDeleteConfirm}
-      />
-    </>
+    <BuildingProvider customer={currentCustomer}>
+      <ProjectCostProvider>
+        <GallonsProvider>
+          <MainContent />
+          <EstimateSummary />
+        </GallonsProvider>
+      </ProjectCostProvider>
+    </BuildingProvider>
   );
 };
 

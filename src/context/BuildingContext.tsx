@@ -8,7 +8,12 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { LocationData, RoomData, Section } from "@/interfaces/laborTypes";
+import {
+  Customer,
+  LocationData,
+  RoomData,
+  Section,
+} from "@/interfaces/laborTypes";
 import { useCustomer } from "./CustomerContext";
 import { usePathname, useRouter } from "next/navigation";
 import { useProjectCost } from "./ProjectCostContext";
@@ -52,17 +57,21 @@ const BuildingContext = createContext<BuildingContextType | undefined>(
 
 interface BuildingProviderProps {
   children: ReactNode;
+  customer?: Customer;
 }
 
-export const BuildingProvider = ({ children }: BuildingProviderProps) => {
+export const BuildingProvider = ({
+  children,
+  customer,
+}: BuildingProviderProps) => {
   const router = useRouter();
   const pathname = usePathname();
-  const { updateProjectCost } = useProjectCost();
-  const { currentCustomer } = useCustomer();
   const [currentBuildingId, setCurrentBuildingId] = useState<
     string | undefined
   >();
-  const [buildingData, setBuildingData] = useState<LocationData | undefined>();
+  const [buildingData, setBuildingData] = useState<LocationData | undefined>(
+    customer?.buildings[0]
+  );
 
   const updateQuery = (buildingId?: string) => {
     const current = new URLSearchParams(window.location.search);
@@ -84,11 +93,11 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   };
 
   const getBuilding = () => {
-    return currentCustomer?.buildings[0];
+    return customer?.buildings[0];
   };
 
   const getBuildingById = (id: string) => {
-    const buildingIndex = currentCustomer?.buildings.findIndex(
+    const buildingIndex = customer?.buildings.findIndex(
       (building) => building.id === id
     );
     return buildingIndex !== undefined && buildingIndex >= 0
@@ -96,13 +105,13 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
       : undefined;
   };
 
-  useEffect(() => {
-    const building = getBuilding();
-    setBuildingData(building);
-    updateQuery(building?.id);
-    updateLocalStorage(building?.id);
-    setCurrentBuildingId(building?.id);
-  }, [currentCustomer, buildingData?.rooms.length]);
+  // useEffect(() => {
+  //   const building = getBuilding();
+  //   setBuildingData(building);
+  //   updateQuery(building?.id);
+  //   updateLocalStorage(building?.id);
+  //   setCurrentBuildingId(building?.id);
+  // }, [currentCustomer, buildingData?.rooms.length]);
 
   // Menu and dialog states
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -148,16 +157,15 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
 
   const handleDeleteConfirm = () => {
     if (deleteConfirmation.roomId) {
-      setBuildingData((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          rooms: prev.rooms.filter(
-            (room) => room.id !== deleteConfirmation.roomId
-          ),
-        };
-      });
-      updateProjectCost(deleteConfirmation.roomId, {} as RoomData);
+      const copyBuildingData = { ...buildingData! };
+      copyBuildingData.rooms = copyBuildingData.rooms.filter(
+        (room) => room.id !== deleteConfirmation.roomId
+      );
+      setBuildingData(copyBuildingData);
+      // If no rooms left, reset building data
+      if (copyBuildingData.rooms.length === 0) {
+        setBuildingData(undefined);
+      }
     }
     handleDeleteCancel();
   };
@@ -189,12 +197,12 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
 
   const getAddresses = useCallback((): { id: string; address: string }[] => {
     return (
-      currentCustomer?.buildings.map((building) => ({
+      customer?.buildings.map((building) => ({
         id: building.id,
         address: building.address,
       })) || []
     );
-  }, [currentCustomer]);
+  }, [customer]);
 
   const value: BuildingContextType = {
     // State

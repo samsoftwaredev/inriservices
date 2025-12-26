@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { companyName, companyWebsiteURL } from "@/constants";
 import Script from "next/script";
-import { BuildingProvider, ProjectCostProvider, AuthProvider } from "@/context";
-import { GallonsProvider } from "@/context/GallonsContext";
+import { AuthProvider } from "@/context";
 import { CustomerProvider } from "@/context/CustomerContext";
 
 export const metadata: Metadata = {
@@ -99,13 +98,7 @@ export default function RootLayout({
       </Script>
       <body>
         <AuthProvider>
-          <ProjectCostProvider>
-            <GallonsProvider>
-              <CustomerProvider>
-                <BuildingProvider>{children}</BuildingProvider>
-              </CustomerProvider>
-            </GallonsProvider>
-          </ProjectCostProvider>
+          <CustomerProvider>{children}</CustomerProvider>
         </AuthProvider>
       </body>
     </html>
