@@ -7,7 +7,7 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { Customer } from "@/interfaces/laborTypes";
+import { Customer, LocationData } from "@/interfaces/laborTypes";
 import { uuidv4 } from "@/tools";
 import { usePathname } from "next/navigation";
 
@@ -24,6 +24,11 @@ interface CustomerContextType {
   handleSelectPreviousCustomer: (customer: Customer) => void;
   handleSaveNewCustomer: (newCustomerData: Omit<Customer, "id">) => void;
   handleCustomerUpdate: (updatedCustomer: Customer) => void;
+
+  buildingData?: LocationData;
+  setBuildingData: React.Dispatch<
+    React.SetStateAction<LocationData | undefined>
+  >;
 }
 
 interface CustomerProviderProps {
@@ -114,6 +119,7 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
   const [currentCustomer, setCurrentCustomer] = useState<
     Customer | undefined
   >();
+  const [buildingData, setBuildingData] = useState<LocationData | undefined>();
 
   const updateLocalStorage = (customerId?: string) => {
     if (customerId) {
@@ -147,22 +153,22 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
     );
   };
 
-  function getCustomerIdURL(url: string): number | undefined {
+  function getCustomerIdURL(url: string): string | undefined {
     const id = new URL(url).pathname.split("/").pop();
     if (!id) return undefined;
-    return Number.isInteger(+id) ? Number(id) : undefined;
+    return id;
   }
 
-  const getCustomerById = (customerId?: number) => {
-    const customer = previousCustomers.find(
-      (cust) => Number(cust.id) === customerId
-    );
+  const getCustomerById = (customerId?: string) => {
+    const customer = previousCustomers.find((cust) => cust.id === customerId);
     if (customer) {
       setCurrentCustomer(customer);
       updateLocalStorage(customer.id);
+      setBuildingData(customer.buildings[0]);
     } else {
       setCurrentCustomer(undefined);
       updateLocalStorage();
+      setBuildingData(undefined);
     }
   };
 
@@ -182,6 +188,9 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
     handleSelectPreviousCustomer,
     handleSaveNewCustomer,
     handleCustomerUpdate,
+
+    buildingData,
+    setBuildingData,
   };
 
   return React.createElement(CustomerContext.Provider, { value }, children);

@@ -5,18 +5,11 @@ import React, {
   useContext,
   useState,
   ReactNode,
-  useEffect,
   useCallback,
 } from "react";
-import {
-  Customer,
-  LocationData,
-  RoomData,
-  Section,
-} from "@/interfaces/laborTypes";
-import { useCustomer } from "./CustomerContext";
+import { LocationData, Section } from "@/interfaces/laborTypes";
 import { usePathname, useRouter } from "next/navigation";
-import { useProjectCost } from "./ProjectCostContext";
+import { useCustomer } from "./CustomerContext";
 
 interface DeleteConfirmationState {
   open: boolean;
@@ -57,21 +50,16 @@ const BuildingContext = createContext<BuildingContextType | undefined>(
 
 interface BuildingProviderProps {
   children: ReactNode;
-  customer?: Customer;
 }
 
-export const BuildingProvider = ({
-  children,
-  customer,
-}: BuildingProviderProps) => {
+export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   const router = useRouter();
   const pathname = usePathname();
+  const { buildingData, setBuildingData } = useCustomer();
+
   const [currentBuildingId, setCurrentBuildingId] = useState<
     string | undefined
   >();
-  const [buildingData, setBuildingData] = useState<LocationData | undefined>(
-    customer?.buildings[0]
-  );
 
   const updateQuery = (buildingId?: string) => {
     const current = new URLSearchParams(window.location.search);
@@ -91,27 +79,6 @@ export const BuildingProvider = ({
       localStorage.removeItem("currentBuildingId");
     }
   };
-
-  const getBuilding = () => {
-    return customer?.buildings[0];
-  };
-
-  const getBuildingById = (id: string) => {
-    const buildingIndex = customer?.buildings.findIndex(
-      (building) => building.id === id
-    );
-    return buildingIndex !== undefined && buildingIndex >= 0
-      ? buildingIndex
-      : undefined;
-  };
-
-  // useEffect(() => {
-  //   const building = getBuilding();
-  //   setBuildingData(building);
-  //   updateQuery(building?.id);
-  //   updateLocalStorage(building?.id);
-  //   setCurrentBuildingId(building?.id);
-  // }, [currentCustomer, buildingData?.rooms.length]);
 
   // Menu and dialog states
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -197,12 +164,12 @@ export const BuildingProvider = ({
 
   const getAddresses = useCallback((): { id: string; address: string }[] => {
     return (
-      customer?.buildings.map((building) => ({
-        id: building.id,
-        address: building.address,
+      buildingData?.rooms.map((room) => ({
+        id: room.id,
+        address: room.name,
       })) || []
     );
-  }, [customer]);
+  }, [buildingData]);
 
   const value: BuildingContextType = {
     // State

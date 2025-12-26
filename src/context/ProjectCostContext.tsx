@@ -4,11 +4,10 @@ import { LaborCostData, RoomData } from "@/interfaces/laborTypes";
 import React, { createContext, useContext, useState } from "react";
 
 interface ProjectCostContextType {
-  updateProjectCost: (roomId: string, roomData: RoomData) => void;
-  totalProjectCost: number;
+  updateProjectCost: (roomId: string, roomData?: RoomData) => void;
+  removeRoomCostData: (roomId: string) => void;
   totalProjectLaborCost: number;
   totalProjectMaterialCost: number;
-  projectTaskBreakdown: any[];
 }
 
 interface ProjectCostProviderProps {
@@ -30,12 +29,28 @@ export const ProjectCostProvider = ({ children }: ProjectCostProviderProps) => {
     // },
   });
 
-  const updateProjectCost = (roomId: string, roomData: RoomData) => {
+  const updateProjectCost = (
+    roomId: string,
+    roomData: RoomData | undefined
+  ) => {
     // Logic to update laborCosts based on roomId and roomData
     // This is a placeholder implementation; actual logic will depend on requirements
     let totalLaborCost = 0;
     let totalMaterialCost = 0;
     let totalCost = 0;
+
+    if (!roomData) {
+      // If roomData is undefined, remove the cost data for this room
+      setLaborCosts((prevCosts) => {
+        if (prevCosts[roomId]) {
+          const updatedCosts = { ...prevCosts };
+          delete updatedCosts[roomId];
+          return updatedCosts;
+        }
+        return prevCosts;
+      });
+      return;
+    }
 
     roomData.features &&
       Object.values(roomData.features).forEach((featureArray) => {
@@ -73,11 +88,6 @@ export const ProjectCostProvider = ({ children }: ProjectCostProviderProps) => {
     });
   };
 
-  const totalProjectCost = Object.values(laborCosts).reduce(
-    (sum, costData) => sum + costData.totalCost,
-    0
-  );
-
   const totalProjectLaborCost = Object.values(laborCosts).reduce(
     (sum, costData) => sum + costData.totalLaborCost,
     0
@@ -88,16 +98,22 @@ export const ProjectCostProvider = ({ children }: ProjectCostProviderProps) => {
     0
   );
 
-  const projectTaskBreakdown = Object.values(laborCosts).flatMap(
-    (costData) => costData.taskBreakdown
-  );
+  const removeRoomCostData = (roomId: string) => {
+    setLaborCosts((prevCosts) => {
+      if (prevCosts[roomId]) {
+        const updatedCosts = { ...prevCosts };
+        delete updatedCosts[roomId];
+        return updatedCosts;
+      }
+      return prevCosts;
+    });
+  };
 
   const value: ProjectCostContextType = {
     updateProjectCost,
-    totalProjectCost,
+    removeRoomCostData,
     totalProjectLaborCost,
     totalProjectMaterialCost,
-    projectTaskBreakdown,
   };
 
   return (

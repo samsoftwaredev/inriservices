@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -29,6 +29,7 @@ import { floorOptions } from "@/constants/laborData";
 import { calculateArea, calculatePerimeter } from "../laborCalc";
 import { convertToFeet } from "@/tools/convertMeasurement";
 import { useRoom } from "@/context/RoomContext";
+import { useGallons, useProjectCost } from "@/context";
 
 const Room = ({ onRoomUpdate }: Props) => {
   const {
@@ -40,6 +41,8 @@ const Room = ({ onRoomUpdate }: Props) => {
     updateRoom,
     measurementUnit,
   } = useRoom();
+  const { onRemoveRoom } = useGallons();
+  const { removeRoomCostData } = useProjectCost();
   const [isEditMode, setIsEditMode] = useState(true);
 
   const [editData, setEditData] = useState<RoomDimensionsOverview>({
@@ -186,6 +189,13 @@ const Room = ({ onRoomUpdate }: Props) => {
     ? editData.roomDescription
     : roomDescription;
   const displayFloorNumber = isEditMode ? editData.floorNumber : floorNumber;
+
+  useEffect(() => {
+    return () => {
+      removeRoomCostData(roomId);
+      onRemoveRoom(roomId);
+    };
+  }, []);
 
   return (
     <Card elevation={2} sx={{ mb: 2 }}>

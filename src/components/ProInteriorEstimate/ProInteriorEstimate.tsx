@@ -9,12 +9,10 @@ import {
   GallonsProvider,
   ProjectCostProvider,
 } from "@/context";
-import { useCustomer } from "@/context/CustomerContext";
 
 const Building = () => {
-  const { currentCustomer } = useCustomer();
   return (
-    <BuildingProvider customer={currentCustomer}>
+    <BuildingProvider>
       <ProjectCostProvider>
         <GallonsProvider>
           <MainContent />

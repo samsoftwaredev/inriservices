@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Box,
   Divider,
@@ -34,12 +34,7 @@ const EstimateSummary = () => {
   const muiTheme = useTheme();
   const isMobile = useMediaQuery(muiTheme.breakpoints.down("sm"));
   const [discount, setDiscount] = useState<DiscountConfig>(DEFAULT_DISCOUNT);
-  const {
-    totalProjectCost,
-    totalProjectLaborCost,
-    totalProjectMaterialCost,
-    projectTaskBreakdown,
-  } = useProjectCost();
+  const { totalProjectLaborCost, totalProjectMaterialCost } = useProjectCost();
   const {
     totalGallonsBySection,
     totalGallons,
@@ -51,23 +46,26 @@ const EstimateSummary = () => {
 
   const totalRooms = buildingData?.rooms.length || 0;
 
-  const estimateWorkItems = [
-    {
-      label: "Paint Cost",
-      cost: totalGallons * PRICING_CONFIG.costGallons,
-      icon: <FormatPaint />,
-    },
-    {
-      label: "Labor Cost",
-      cost: totalHours * PRICING_CONFIG.hoursRate + totalProjectLaborCost,
-      icon: <Work />,
-    },
-    {
-      label: "Materials",
-      cost: totalProjectMaterialCost,
-      icon: <AddBox />,
-    },
-  ];
+  const estimateWorkItems = useMemo(
+    () => [
+      {
+        label: "Paint Cost",
+        cost: totalGallons * PRICING_CONFIG.costGallons,
+        icon: <FormatPaint />,
+      },
+      {
+        label: "Labor Cost",
+        cost: totalHours * PRICING_CONFIG.hoursRate + totalProjectLaborCost,
+        icon: <Work />,
+      },
+      {
+        label: "Materials",
+        cost: totalProjectMaterialCost,
+        icon: <AddBox />,
+      },
+    ],
+    [totalGallons, totalHours, totalProjectLaborCost, totalProjectMaterialCost]
+  );
 
   const totalGallonsBySectionEntries = Object.entries(
     totalGallonsBySection

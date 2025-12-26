@@ -57,6 +57,7 @@ type GallonsContextType = {
     ceiling: { paintBase: string | null; totalPerimeter: number }[];
     floor: { paintBase: string | null; totalPerimeter: number }[];
   };
+  onRemoveRoom: (roomId: string) => void;
 };
 
 const GallonsContext = createContext<GallonsContextType | undefined>(undefined);
@@ -210,6 +211,44 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     floor: aggregatePerimeterByPaintBase(Object.values(floor)),
   };
 
+  const onRemoveRoom = (roomId: string) => {
+    setWalls((prev) => {
+      const updated = { ...prev };
+      delete updated[roomId];
+      return updated;
+    });
+    setCrownMolding((prev) => {
+      const updated = { ...prev };
+      delete updated[roomId];
+      return updated;
+    });
+    setChairRail((prev) => {
+      const updated = { ...prev };
+      delete updated[roomId];
+      return updated;
+    });
+    setBaseboard((prev) => {
+      const updated = { ...prev };
+      delete updated[roomId];
+      return updated;
+    });
+    setWainscoting((prev) => {
+      const updated = { ...prev };
+      delete updated[roomId];
+      return updated;
+    });
+    setCeiling((prev) => {
+      const updated = { ...prev };
+      delete updated[roomId];
+      return updated;
+    });
+    setFloor((prev) => {
+      const updated = { ...prev };
+      delete updated[roomId];
+      return updated;
+    });
+  };
+
   const value: GallonsContextType = {
     walls,
     setWalls,
@@ -233,6 +272,7 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     totalDays: convertHoursToDays(totalHours),
     measurementUnit,
     setMeasurementUnit,
+    onRemoveRoom,
   };
 
   return React.createElement(GallonsContext.Provider, { value }, children);
