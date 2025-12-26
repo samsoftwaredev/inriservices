@@ -49,7 +49,7 @@ const EstimateSummary = () => {
   } = useGallons();
   const { buildingData } = useBuilding();
 
-  const totalRooms = buildingData?.sections.length || 0;
+  const totalRooms = buildingData?.rooms.length || 0;
 
   const estimateWorkItems = [
     {

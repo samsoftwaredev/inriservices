@@ -172,7 +172,7 @@ export type LocationData = {
   id: string;
   measurementUnit: MeasurementUnit;
   floorPlan: number;
-  sections: Section[];
+  rooms: Section[];
 } & CustomerAddress;
 
 export type Customer = {

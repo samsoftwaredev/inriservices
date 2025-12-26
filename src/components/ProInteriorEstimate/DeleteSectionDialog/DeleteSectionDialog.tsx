@@ -17,7 +17,7 @@ import {
 
 interface DeleteConfirmationState {
   open: boolean;
-  sectionId: string | null;
+  roomId: string | null;
   sectionName: string | null;
 }
 

@@ -1,11 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   MeasurementUnit,
   PaintBaseType,
   RoomData,
 } from "@/interfaces/laborTypes";
+import { useProjectCost } from "./ProjectCostContext";
 
 interface RoomContextType {
   roomId: string;
@@ -24,7 +25,6 @@ interface RoomProviderProps {
   roomDescription: string;
   measurementUnit: MeasurementUnit;
   floorNumber: number;
-  updateProjectCost: (roomId: string, roomData: RoomData) => void;
 }
 
 const RoomContext = createContext<RoomContextType | undefined>(undefined);
@@ -36,8 +36,8 @@ export const RoomProvider = ({
   roomDescription,
   measurementUnit,
   floorNumber,
-  updateProjectCost,
 }: RoomProviderProps) => {
+  const { updateProjectCost } = useProjectCost();
   const defaultRoomData: RoomData = {
     // WallDimensions
     wallPaintCoats: 1,
@@ -107,7 +107,7 @@ export const RoomProvider = ({
   const updateRoom = (newRoomData: Partial<RoomData>) => {
     setRoomData((prevData) => {
       const updatedData = { ...prevData, ...newRoomData };
-      updateProjectCost(roomId, roomData);
+      updateProjectCost(roomId, updatedData);
       localStorage.setItem(`roomData-${roomId}`, JSON.stringify(updatedData));
       return updatedData;
     });

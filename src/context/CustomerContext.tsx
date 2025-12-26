@@ -50,7 +50,7 @@ const INITIAL_CUSTOMERS: Customer[] = [
         zipCode: "62704",
         measurementUnit: "ft",
         floorPlan: 2,
-        sections: [
+        rooms: [
           {
             id: "1",
             name: "Living Room",
@@ -82,7 +82,7 @@ const INITIAL_CUSTOMERS: Customer[] = [
         zipCode: "10001",
         measurementUnit: "ft",
         floorPlan: 3,
-        sections: [],
+        rooms: [],
       },
     ],
   },
@@ -101,7 +101,7 @@ const INITIAL_CUSTOMERS: Customer[] = [
         zipCode: "07097",
         measurementUnit: "ft",
         floorPlan: 1,
-        sections: [],
+        rooms: [],
       },
     ],
   },

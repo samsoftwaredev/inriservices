@@ -584,10 +584,10 @@ const RoomDimensionsEdit = ({
   // EVENT HANDLERS
   // ============================================================================
 
-  const handleSectionToggle = (sectionId: string) => {
+  const handleSectionToggle = (roomId: string) => {
     setExpandedSections((prev) => ({
       ...prev,
-      [sectionId]: !prev[sectionId],
+      [roomId]: !prev[roomId],
     }));
   };
 

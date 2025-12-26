@@ -8,13 +8,14 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { LocationData, Section } from "@/interfaces/laborTypes";
+import { LocationData, RoomData, Section } from "@/interfaces/laborTypes";
 import { useCustomer } from "./CustomerContext";
 import { usePathname, useRouter } from "next/navigation";
+import { useProjectCost } from "./ProjectCostContext";
 
 interface DeleteConfirmationState {
   open: boolean;
-  sectionId: string | null;
+  roomId: string | null;
   sectionName: string | null;
 }
 
@@ -33,7 +34,7 @@ interface BuildingContextType {
   currentBuildingId?: string;
   // Handlers
   addNewSection: () => void;
-  handleDeleteSectionClick: (sectionId: string, sectionName: string) => void;
+  handleDeleteSectionClick: (roomId: string, sectionName: string) => void;
   handleDeleteCancel: () => void;
   handleDeleteConfirm: () => void;
   onRoomUpdate: (updates: {
@@ -56,6 +57,7 @@ interface BuildingProviderProps {
 export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   const router = useRouter();
   const pathname = usePathname();
+  const { updateProjectCost } = useProjectCost();
   const { currentCustomer } = useCustomer();
   const [currentBuildingId, setCurrentBuildingId] = useState<
     string | undefined
@@ -97,21 +99,24 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   useEffect(() => {
     const building = getBuilding();
     setBuildingData(building);
-  }, [currentCustomer, currentBuildingId]);
+    updateQuery(building?.id);
+    updateLocalStorage(building?.id);
+    setCurrentBuildingId(building?.id);
+  }, [currentCustomer, buildingData?.rooms.length]);
 
   // Menu and dialog states
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteConfirmation, setDeleteConfirmation] =
     useState<DeleteConfirmationState>({
       open: false,
-      sectionId: null,
+      roomId: null,
       sectionName: null,
     });
 
   const addNewSection = () => {
     const newSection: Section = {
       id: Date.now().toString(),
-      name: `Room ${buildingData?.sections.length! + 1}`,
+      name: `Room ${buildingData?.rooms.length! + 1}`,
       description: "New room section",
       floorNumber: 1,
     };
@@ -120,15 +125,15 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
       if (!prev) return prev;
       return {
         ...prev,
-        sections: [...prev.sections, newSection],
+        rooms: [...prev.rooms, newSection],
       };
     });
   };
 
-  const handleDeleteSectionClick = (sectionId: string, sectionName: string) => {
+  const handleDeleteSectionClick = (roomId: string, sectionName: string) => {
     setDeleteConfirmation({
       open: true,
-      sectionId,
+      roomId,
       sectionName,
     });
   };
@@ -136,22 +141,23 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   const handleDeleteCancel = () => {
     setDeleteConfirmation({
       open: false,
-      sectionId: null,
+      roomId: null,
       sectionName: null,
     });
   };
 
   const handleDeleteConfirm = () => {
-    if (deleteConfirmation.sectionId) {
+    if (deleteConfirmation.roomId) {
       setBuildingData((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
-          sections: prev.sections.filter(
-            (section) => section.id !== deleteConfirmation.sectionId
+          rooms: prev.rooms.filter(
+            (room) => room.id !== deleteConfirmation.roomId
           ),
         };
       });
+      updateProjectCost(deleteConfirmation.roomId, {} as RoomData);
     }
     handleDeleteCancel();
   };
@@ -164,19 +170,19 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   }) => {
     setBuildingData((prevData) => {
       if (!prevData) return prevData;
-      const updatedSections = prevData.sections.map((section) =>
-        section.id === updates.roomId
+      const updatedRooms = prevData.rooms.map((room) =>
+        room.id === updates.roomId
           ? {
-              ...section,
+              ...room,
               name: updates.roomName,
               description: updates.roomDescription,
               floorNumber: updates.floorNumber,
             }
-          : section
+          : room
       );
       return {
         ...prevData,
-        sections: updatedSections,
+        rooms: updatedRooms,
       };
     });
   };

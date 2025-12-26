@@ -23,7 +23,7 @@ interface Props {
   anchorEl: HTMLElement | null;
   setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
   onAddNewSection: () => void;
-  onDeleteSectionClick: (sectionId: string, sectionName: string) => void;
+  onDeleteSectionClick: (roomId: string, sectionName: string) => void;
   onRoomUpdate: (updates: {
     roomId: string;
     roomName: string;
@@ -40,7 +40,6 @@ const MainContent = ({
   onDeleteSectionClick,
   onRoomUpdate,
 }: Props) => {
-  const { updateProjectCost } = useProjectCost();
   const { previousCustomers, currentCustomer, setCurrentCustomer } =
     useCustomer();
 
@@ -95,14 +94,14 @@ const MainContent = ({
 
       <Divider sx={{ mb: 2 }} />
 
-      {buildingData === undefined || buildingData.sections.length === 0 ? (
+      {buildingData === undefined || buildingData.rooms.length === 0 ? (
         <Typography variant="body2" color="text.secondary">
-          No sections added yet.
+          No rooms added yet.
         </Typography>
       ) : null}
 
-      {buildingData?.sections.map((section) => (
-        <Box key={section.id} sx={{ mb: 2, position: "relative" }}>
+      {buildingData?.rooms.map((room) => (
+        <Box key={room.id} sx={{ mb: 2, position: "relative" }}>
           <Box
             sx={{
               position: "absolute",
@@ -114,7 +113,7 @@ const MainContent = ({
             <IconButton
               size="small"
               color="error"
-              onClick={() => onDeleteSectionClick(section.id, section.name)}
+              onClick={() => onDeleteSectionClick(room.id, room.name)}
               sx={{
                 bgcolor: "background.paper",
                 boxShadow: 1,
@@ -130,12 +129,11 @@ const MainContent = ({
           </Box>
 
           <RoomProvider
-            roomId={section.id}
-            roomName={section.name}
-            roomDescription={section.description}
+            roomId={room.id}
+            roomName={room.name}
+            roomDescription={room.description}
             measurementUnit={buildingData.measurementUnit}
-            floorNumber={section.floorNumber}
-            updateProjectCost={updateProjectCost}
+            floorNumber={room.floorNumber}
           >
             <Room onRoomUpdate={onRoomUpdate} />
           </RoomProvider>
