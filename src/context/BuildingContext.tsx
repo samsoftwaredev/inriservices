@@ -54,7 +54,6 @@ interface BuildingProviderProps {
 
 export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   const { buildingData, setBuildingData } = useCustomer();
-
   const [currentBuildingId, setCurrentBuildingId] = useState<
     string | undefined
   >();

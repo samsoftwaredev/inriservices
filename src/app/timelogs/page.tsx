@@ -1,12 +1,13 @@
 import AppLayout from "@/components/AppLayout/AppLayout";
+import { TimeTracker } from "@/components/TimeTracker";
 import React from "react";
 
-const TimeLogs = () => {
+const TimeLogsPage = () => {
   return (
     <AppLayout>
-      <p>Time Logs</p>
+      <TimeTracker />
     </AppLayout>
   );
 };
 
-export default TimeLogs;
+export default TimeLogsPage;
