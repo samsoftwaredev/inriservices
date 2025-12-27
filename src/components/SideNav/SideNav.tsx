@@ -21,7 +21,7 @@ import {
   DocumentScannerOutlined,
 } from "@mui/icons-material";
 import { Person as PersonIcon } from "@mui/icons-material";
-
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { Customer } from "@/interfaces/laborTypes";
 import Link from "next/link";
 import { drawerWidth } from "@/constants";
@@ -61,6 +61,11 @@ const navigationItems = [
     text: "Generate Contracts",
     icon: <DocumentScannerOutlined />,
     path: "/contracts",
+  },
+  {
+    text: "Money Tracker",
+    icon: <AttachMoneyIcon />,
+    path: "/money-tracker",
   },
 ];
 
