@@ -7,9 +7,9 @@ import React, {
   ReactNode,
   useCallback,
 } from "react";
-import { LocationData, Section } from "@/interfaces/laborTypes";
-import { usePathname, useRouter } from "next/navigation";
+import { LocationData, RoomOverview } from "@/interfaces/laborTypes";
 import { useCustomer } from "./CustomerContext";
+import { uuidv4 } from "@/tools";
 
 interface DeleteConfirmationState {
   open: boolean;
@@ -31,7 +31,7 @@ interface BuildingContextType {
   >;
   currentBuildingId?: string;
   // Handlers
-  addNewSection: () => void;
+  addNewRoom: () => void;
   handleDeleteSectionClick: (roomId: string, sectionName: string) => void;
   handleDeleteCancel: () => void;
   handleDeleteConfirm: () => void;
@@ -53,32 +53,11 @@ interface BuildingProviderProps {
 }
 
 export const BuildingProvider = ({ children }: BuildingProviderProps) => {
-  const router = useRouter();
-  const pathname = usePathname();
   const { buildingData, setBuildingData } = useCustomer();
 
   const [currentBuildingId, setCurrentBuildingId] = useState<
     string | undefined
   >();
-
-  const updateQuery = (buildingId?: string) => {
-    const current = new URLSearchParams(window.location.search);
-    if (buildingId) {
-      current.set("buildingId", buildingId);
-    } else {
-      current.delete("buildingId");
-    }
-    // controlled navigation
-    router.replace(`${pathname}?${current.toString()}`);
-  };
-
-  const updateLocalStorage = (buildingId?: string) => {
-    if (buildingId) {
-      localStorage.setItem("currentBuildingId", buildingId);
-    } else {
-      localStorage.removeItem("currentBuildingId");
-    }
-  };
 
   // Menu and dialog states
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -89,21 +68,21 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
       sectionName: null,
     });
 
-  const addNewSection = () => {
-    const newSection: Section = {
-      id: Date.now().toString(),
-      name: `Room ${buildingData?.rooms.length! + 1}`,
+  const addNewRoom = () => {
+    const id = uuidv4();
+    const newRoom: RoomOverview = {
+      id,
+      name: `Room ${id.slice(0, 8)}`,
       description: "New room section",
       floorNumber: 1,
     };
 
-    setBuildingData((prev) => {
-      if (!prev) return prev;
-      return {
-        ...prev,
-        rooms: [...prev.rooms, newSection],
-      };
-    });
+    setBuildingData((previousBuildingData) => ({
+      ...previousBuildingData!,
+      rooms: previousBuildingData?.rooms
+        ? [...previousBuildingData.rooms, newRoom]
+        : [newRoom],
+    }));
   };
 
   const handleDeleteSectionClick = (roomId: string, sectionName: string) => {
@@ -181,7 +160,7 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
     setDeleteConfirmation,
     currentBuildingId,
     // Handlers
-    addNewSection,
+    addNewRoom,
     handleDeleteSectionClick,
     handleDeleteCancel,
     handleDeleteConfirm,

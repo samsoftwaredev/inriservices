@@ -24,7 +24,7 @@ const MainContent = () => {
     anchorEl,
     setAnchorEl,
     deleteConfirmation,
-    addNewSection,
+    addNewRoom,
     handleDeleteSectionClick,
     handleDeleteCancel,
     handleDeleteConfirm,
@@ -133,7 +133,7 @@ const MainContent = () => {
       <Button
         variant="contained"
         startIcon={<AddIcon />}
-        onClick={addNewSection}
+        onClick={addNewRoom}
         fullWidth
         sx={{
           background: theme.palette.gradient.subtle,

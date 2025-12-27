@@ -154,7 +154,7 @@ export type FeatureType = keyof RoomData["features"];
 
 export type MeasurementUnit = "ft" | "m" | "in";
 
-export interface Section {
+export interface RoomOverview {
   id: string;
   name: string;
   description: string;
@@ -172,7 +172,7 @@ export type LocationData = {
   id: string;
   measurementUnit: MeasurementUnit;
   floorPlan: number;
-  rooms: Section[];
+  rooms: RoomOverview[];
 } & CustomerAddress;
 
 export type Customer = {
