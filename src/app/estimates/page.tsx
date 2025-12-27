@@ -4,12 +4,15 @@ import React from "react";
 
 import EstimatesPage from "@/components/EstimatesPage/EstimatesPage";
 import AppLayout from "@/components/AppLayout";
+import { ProtectedRoute } from "@/components";
 
 const Estimates = () => {
   return (
-    <AppLayout>
-      <EstimatesPage />
-    </AppLayout>
+    <ProtectedRoute>
+      <AppLayout>
+        <EstimatesPage />
+      </AppLayout>
+    </ProtectedRoute>
   );
 };
 

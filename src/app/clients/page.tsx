@@ -4,12 +4,15 @@ import React from "react";
 
 import ClientsPage from "@/components/ClientsPage";
 import AppLayout from "@/components/AppLayout/AppLayout";
+import { ProtectedRoute } from "@/components";
 
 const Clients = () => {
   return (
-    <AppLayout>
-      <ClientsPage />
-    </AppLayout>
+    <ProtectedRoute>
+      <AppLayout>
+        <ClientsPage />
+      </AppLayout>
+    </ProtectedRoute>
   );
 };
 

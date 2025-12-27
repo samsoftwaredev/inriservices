@@ -2,14 +2,16 @@
 
 import React from "react";
 
-import { ProInteriorEstimate } from "@/components";
+import { ProInteriorEstimate, ProtectedRoute } from "@/components";
 import AppLayout from "@/components/AppLayout";
 
 const InteriorEstimate = () => {
   return (
-    <AppLayout>
-      <ProInteriorEstimate />
-    </AppLayout>
+    <ProtectedRoute>
+      <AppLayout>
+        <ProInteriorEstimate />
+      </AppLayout>
+    </ProtectedRoute>
   );
 };
 

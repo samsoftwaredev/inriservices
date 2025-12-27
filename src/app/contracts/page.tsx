@@ -1,12 +1,15 @@
+import { ProtectedRoute } from "@/components";
 import AppLayout from "@/components/AppLayout";
 import { DocumentSigningDashboard } from "@/components/DocuSign";
 import React from "react";
 
 const Contracts = () => {
   return (
-    <AppLayout>
-      <DocumentSigningDashboard />
-    </AppLayout>
+    <ProtectedRoute>
+      <AppLayout>
+        <DocumentSigningDashboard />
+      </AppLayout>
+    </ProtectedRoute>
   );
 };
 
