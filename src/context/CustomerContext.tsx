@@ -55,7 +55,20 @@ const INITIAL_CUSTOMERS: Customer[] = [
         zipCode: "62704",
         measurementUnit: "ft",
         floorPlan: 2,
-        rooms: [],
+        rooms: [
+          {
+            id: "1",
+            name: "Living Room",
+            description: "Spacious living area",
+            floorNumber: 1,
+          },
+          {
+            id: "2",
+            name: "Kitchen",
+            description: "Modern kitchen space",
+            floorNumber: 1,
+          },
+        ],
       },
     ],
   },

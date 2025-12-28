@@ -18,7 +18,7 @@ import { RoomProvider } from "@/context/RoomContext";
 import { useBuilding } from "@/context";
 import DeleteSectionDialog from "../DeleteSectionDialog";
 
-const MainContent = () => {
+const MainContent = ({ isNewClient }: { isNewClient?: boolean }) => {
   const {
     buildingData,
     anchorEl,
@@ -44,7 +44,7 @@ const MainContent = () => {
   return (
     <Box component="main" my={2}>
       <CustomerHeader
-        headerName="Edit Estimate"
+        headerName={isNewClient ? "New Estimate" : "Edit Estimate"}
         headerDescription="Fill in the details to generate a professional quote"
       >
         <IconButton

@@ -95,7 +95,7 @@ export type RoomDimensionsOverview = {
 export type RoomFeature = {
   id: string;
   type: string;
-  dimensions: string;
+  dimensions?: string;
   image: string;
   name?: string;
   description?: string;

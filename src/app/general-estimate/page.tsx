@@ -2,17 +2,17 @@
 
 import React from "react";
 
-import { ProInteriorEstimate, ProtectedRoute } from "@/components";
+import { GeneralEstimate, ProtectedRoute } from "@/components";
 import AppLayout from "@/components/AppLayout";
 
-const InteriorEstimate = () => {
+const GeneralEstimatePage = () => {
   return (
     <ProtectedRoute>
       <AppLayout>
-        <ProInteriorEstimate isNewClient />
+        <GeneralEstimate />
       </AppLayout>
     </ProtectedRoute>
   );
 };
 
-export default InteriorEstimate;
+export default GeneralEstimatePage;

@@ -1,15 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Card,
   CardContent,
   Typography,
-  Button,
   Grid,
-  Paper,
-  Chip,
   List,
   ListItem,
   ListItemIcon,
@@ -20,12 +17,11 @@ import {
   Deck as DeckIcon,
   Brush as BrushIcon,
   Check as CheckIcon,
-  ArrowForward as ArrowForwardIcon,
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import CustomerHeader from "../CustomerHeader";
 
-type EstimationType = "interior" | "exterior" | null;
+type EstimationType = "interior" | "exterior" | "general" | null;
 
 const EstimatesPage = () => {
   const router = useRouter();
@@ -35,10 +31,29 @@ const EstimatesPage = () => {
       router.push("/interior-estimate");
     } else if (id === "exterior") {
       router.push("/exterior-estimate");
+    } else if (id === "general") {
+      router.push("/general-estimate");
     }
   };
 
   const estimationTypes = [
+    {
+      id: "general" as const,
+      title: "General Estimate",
+      description:
+        "General paint estimation for indoor/outdoor space. Best for smaller projects",
+      icon: <BrushIcon sx={{ fontSize: 48, color: "warning.main" }} />,
+      features: [
+        "Picture-based area selection",
+        "Minimal input required",
+        "Quick estimates",
+        "Basic material breakdown",
+        "Minimum labor cost overview",
+        "Ideal for small projects",
+      ],
+      color: "warning.main",
+      bgColor: "warning.50",
+    },
     {
       id: "interior" as const,
       title: "Interior Estimate",

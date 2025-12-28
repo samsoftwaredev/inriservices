@@ -10,12 +10,12 @@ import {
   ProjectCostProvider,
 } from "@/context";
 
-const Building = () => {
+const Building = ({ isNewClient }: { isNewClient?: boolean }) => {
   return (
     <BuildingProvider>
       <ProjectCostProvider>
         <GallonsProvider>
-          <MainContent />
+          <MainContent isNewClient={isNewClient} />
           <EstimateSummary />
         </GallonsProvider>
       </ProjectCostProvider>

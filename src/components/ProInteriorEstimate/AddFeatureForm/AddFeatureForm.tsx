@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import {
   Box,
-  Typography,
   TextField,
   Button,
   Grid,
@@ -14,11 +13,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import {
-  FeatureType,
-  RoomFeature,
-  MeasurementUnit,
-} from "@/interfaces/laborTypes";
+import { FeatureType, RoomFeature } from "@/interfaces/laborTypes";
 import { featureTypes } from "@/constants/laborData";
 import ImageUpload from "@/components/ImageUpload";
 import { uuidv4 } from "@/tools/general";
@@ -26,10 +21,9 @@ import { useRoom } from "@/context/RoomContext";
 
 interface Props {
   roomId: string;
-  measurementUnit: MeasurementUnit;
 }
 
-const AddFeatureForm = ({ roomId, measurementUnit }: Props) => {
+const AddFeatureForm = ({ roomId }: Props) => {
   const { roomData, updateRoom } = useRoom();
   const [featureType, setFeatureType] = useState<FeatureType>("windows");
   const [featureName, setFeatureName] = useState("");
@@ -78,14 +72,11 @@ const AddFeatureForm = ({ roomId, measurementUnit }: Props) => {
 
   return (
     <Box sx={{ mb: 3, bgcolor: "grey.50", borderRadius: 1 }}>
-      <Typography variant="subtitle1" gutterBottom>
-        Add New Feature
-      </Typography>
       <Box sx={{ mb: 2 }}>
         <ImageUpload />
       </Box>
       <Grid container spacing={2}>
-        <Grid size={{ xs: 12, sm: 3 }}>
+        <Grid size={{ xs: 12, sm: 5 }}>
           <FormControl fullWidth size="small">
             <InputLabel htmlFor="featureTypeList">Feature Type</InputLabel>
             <Select
@@ -104,29 +95,18 @@ const AddFeatureForm = ({ roomId, measurementUnit }: Props) => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid size={{ xs: 12, sm: 3 }}>
+        <Grid size={{ xs: 12, sm: 5 }}>
           <TextField
             name="title"
             fullWidth
             size="small"
-            label="Title"
+            label="Summary Title"
             value={featureName}
             onChange={onChangeTitle}
             placeholder="e.g., Large Window"
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 3 }}>
-          <TextField
-            fullWidth
-            name="dimensions"
-            size="small"
-            label={`Dimensions (${measurementUnit})`}
-            value={featureDimensions}
-            onChange={onChangeDimensions}
-            placeholder="e.g., 3x4"
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 3 }}>
+        <Grid size={{ xs: 12, sm: 2 }}>
           <Button
             fullWidth
             variant="contained"
@@ -140,10 +120,19 @@ const AddFeatureForm = ({ roomId, measurementUnit }: Props) => {
       </Grid>
       <TextField
         fullWidth
+        size="small"
+        label="Dimensions (Optional)"
+        value={featureDimensions}
+        onChange={onChangeDimensions}
+        sx={{ mt: 2 }}
+        placeholder="e.g., 3ft x 7ft, 24in x 36in"
+      />
+      <TextField
+        fullWidth
         multiline
         minRows={2}
         size="small"
-        label="Description (Optional)"
+        label="Additional Details / Client Notes (Optional)"
         value={featureDescription}
         onChange={(e) => setFeatureDescription(e.target.value)}
         sx={{ mt: 2 }}

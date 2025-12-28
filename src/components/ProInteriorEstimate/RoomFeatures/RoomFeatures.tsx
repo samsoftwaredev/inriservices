@@ -58,7 +58,7 @@ const RoomFeatures = ({ roomId, measurementUnit }: Props) => {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <AddFeatureForm roomId={roomId} measurementUnit={measurementUnit} />
+          <AddFeatureForm roomId={roomId} />
 
           <FeaturesList onOpenLaborDialog={openLaborDialog} />
         </AccordionDetails>

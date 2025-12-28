@@ -47,7 +47,6 @@ interface Props {
 interface EditableFeature {
   id: string;
   type: string;
-  dimensions: string;
   image: string;
   name?: string;
   description?: string;
@@ -66,10 +65,6 @@ const validateFeatureData = (feature: EditableFeature): string[] => {
 
   if (!feature.type?.trim()) {
     errors.push("Feature type is required");
-  }
-
-  if (!feature.dimensions?.trim()) {
-    errors.push("Dimensions are required");
   }
 
   return errors;
@@ -93,7 +88,6 @@ const EditFeatureDialog = ({
   const [editableFeature, setEditableFeature] = useState<EditableFeature>({
     id: "",
     type: "",
-    dimensions: "",
     image: "",
     name: "",
     description: "",
@@ -116,7 +110,6 @@ const EditFeatureDialog = ({
       setEditableFeature({
         id: feature.id,
         type: feature.type,
-        dimensions: feature.dimensions,
         image: feature.image,
         name: feature.name || "",
         description: feature.description || "",
@@ -399,18 +392,6 @@ const EditFeatureDialog = ({
                     ))}
                   </Select>
                 </FormControl>
-              </Grid>
-
-              {/* Dimensions */}
-              <Grid size={{ xs: 12, sm: 6 }}>
-                <TextField
-                  fullWidth
-                  label="Dimensions"
-                  value={editableFeature.dimensions}
-                  onChange={handleInputChange("dimensions")}
-                  placeholder="e.g., 3ft x 7ft, 24in x 36in"
-                  error={errors.some((error) => error.includes("Dimensions"))}
-                />
               </Grid>
 
               {/* Type (Internal) */}
