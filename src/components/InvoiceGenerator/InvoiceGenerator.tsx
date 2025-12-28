@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 import {
   Document,
   Page,
@@ -9,9 +9,9 @@ import {
   StyleSheet,
   PDFDownloadLink,
   Font,
-} from '@react-pdf/renderer';
-import { Button } from '@mui/material';
-import { Download, Receipt } from '@mui/icons-material';
+} from "@react-pdf/renderer";
+import { Button } from "@mui/material";
+import { Download, Receipt } from "@mui/icons-material";
 
 // Define types for invoice data
 interface InvoiceItem {
@@ -47,44 +47,44 @@ interface InvoiceData {
 // PDF Styles
 const styles = StyleSheet.create({
   page: {
-    flexDirection: 'column',
-    backgroundColor: '#ffffff',
+    flexDirection: "column",
+    backgroundColor: "#ffffff",
     padding: 30,
-    fontFamily: 'Helvetica',
+    fontFamily: "Helvetica",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 30,
     paddingBottom: 20,
-    borderBottom: '2 solid #333333',
+    borderBottom: "2 solid #333333",
   },
   companyInfo: {
     flex: 1,
   },
   companyName: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333333',
+    fontWeight: "bold",
+    color: "#333333",
     marginBottom: 5,
   },
   companyDetails: {
     fontSize: 10,
-    color: '#666666',
+    color: "#666666",
     lineHeight: 1.4,
   },
   invoiceInfo: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
   invoiceTitle: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#2196F3',
+    fontWeight: "bold",
+    color: "#2196F3",
     marginBottom: 10,
   },
   invoiceNumber: {
     fontSize: 12,
-    color: '#333333',
+    color: "#333333",
     marginBottom: 5,
   },
   customerSection: {
@@ -92,34 +92,34 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333333',
+    fontWeight: "bold",
+    color: "#333333",
     marginBottom: 10,
     paddingBottom: 5,
-    borderBottom: '1 solid #cccccc',
+    borderBottom: "1 solid #cccccc",
   },
   customerInfo: {
     fontSize: 11,
-    color: '#333333',
+    color: "#333333",
     lineHeight: 1.4,
   },
   table: {
     marginBottom: 30,
   },
   tableHeader: {
-    flexDirection: 'row',
-    backgroundColor: '#f5f5f5',
+    flexDirection: "row",
+    backgroundColor: "#f5f5f5",
     padding: 8,
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#333333',
-    borderBottom: '1 solid #cccccc',
+    fontWeight: "bold",
+    color: "#333333",
+    borderBottom: "1 solid #cccccc",
   },
   tableRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 8,
     fontSize: 11,
-    borderBottom: '1 solid #eeeeee',
+    borderBottom: "1 solid #eeeeee",
     minHeight: 30,
   },
   tableCell: {
@@ -131,66 +131,66 @@ const styles = StyleSheet.create({
   },
   quantity: {
     flex: 1,
-    textAlign: 'center',
+    textAlign: "center",
   },
   rate: {
     flex: 1.5,
-    textAlign: 'right',
+    textAlign: "right",
   },
   amount: {
     flex: 1.5,
-    textAlign: 'right',
+    textAlign: "right",
   },
   totalsSection: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     marginTop: 20,
   },
   totalRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     width: 200,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     padding: 5,
     fontSize: 11,
   },
   totalLabel: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   grandTotal: {
-    flexDirection: 'row',
+    flexDirection: "row",
     width: 200,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     padding: 8,
     fontSize: 14,
-    fontWeight: 'bold',
-    backgroundColor: '#f5f5f5',
+    fontWeight: "bold",
+    backgroundColor: "#f5f5f5",
     marginTop: 5,
   },
   notes: {
     marginTop: 30,
     padding: 15,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: "#f9f9f9",
     borderRadius: 5,
   },
   notesTitle: {
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
-    color: '#333333',
+    color: "#333333",
   },
   notesText: {
     fontSize: 10,
-    color: '#666666',
+    color: "#666666",
     lineHeight: 1.4,
   },
   footer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 30,
     left: 30,
     right: 30,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 10,
-    color: '#666666',
-    borderTop: '1 solid #cccccc',
+    color: "#666666",
+    borderTop: "1 solid #cccccc",
     paddingTop: 10,
   },
 });
@@ -204,9 +204,9 @@ const InvoicePDF: React.FC<{ data: InvoiceData }> = ({ data }) => (
         <View style={styles.companyInfo}>
           <Text style={styles.companyName}>InriPaintWall</Text>
           <Text style={styles.companyDetails}>
-            Expert Painting & Drywall Services{'\n'}
-            Garland, Texas{'\n'}
-            Phone: (469) 123-4567{'\n'}
+            Expert Painting & Drywall Services{"\n"}
+            Garland, Texas{"\n"}
+            Phone: (469) 123-4567{"\n"}
             Email: contact@inripaintwall.com
           </Text>
         </View>
@@ -222,9 +222,12 @@ const InvoicePDF: React.FC<{ data: InvoiceData }> = ({ data }) => (
       <View style={styles.customerSection}>
         <Text style={styles.sectionTitle}>Bill To:</Text>
         <Text style={styles.customerInfo}>
-          {data.customer.name}{'\n'}
-          {data.customer.address}{'\n'}
-          {data.customer.city}, {data.customer.state} {data.customer.zipCode}{'\n'}
+          {data.customer.name}
+          {"\n"}
+          {data.customer.address}
+          {"\n"}
+          {data.customer.city}, {data.customer.state} {data.customer.zipCode}
+          {"\n"}
           {data.customer.email}
         </Text>
       </View>
@@ -233,7 +236,9 @@ const InvoicePDF: React.FC<{ data: InvoiceData }> = ({ data }) => (
       <View style={styles.table}>
         {/* Table Header */}
         <View style={styles.tableHeader}>
-          <Text style={[styles.tableCell, styles.description]}>Description</Text>
+          <Text style={[styles.tableCell, styles.description]}>
+            Description
+          </Text>
           <Text style={[styles.tableCell, styles.quantity]}>Qty</Text>
           <Text style={[styles.tableCell, styles.rate]}>Rate</Text>
           <Text style={[styles.tableCell, styles.amount]}>Amount</Text>
@@ -285,7 +290,8 @@ const InvoicePDF: React.FC<{ data: InvoiceData }> = ({ data }) => (
       {/* Footer */}
       <View style={styles.footer}>
         <Text>
-          Thank you for your business! Payment is due within 30 days of invoice date.
+          Thank you for your business! Payment is due within 30 days of invoice
+          date.
         </Text>
       </View>
     </Page>
@@ -297,27 +303,29 @@ interface InvoiceGeneratorProps {
   invoiceData: InvoiceData;
   buttonText?: string;
   fileName?: string;
-  variant?: 'contained' | 'outlined' | 'text';
-  size?: 'small' | 'medium' | 'large';
+  variant?: "contained" | "outlined" | "text";
+  size?: "small" | "medium" | "large";
   fullWidth?: boolean;
 }
 
 const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
   invoiceData,
-  buttonText = 'Download Invoice',
+  buttonText = "Download Invoice",
   fileName,
-  variant = 'contained',
-  size = 'medium',
+  variant = "contained",
+  size = "medium",
   fullWidth = false,
 }) => {
-  const defaultFileName = `invoice-${invoiceData.invoiceNumber}-${invoiceData.date.replace(/\//g, '-')}.pdf`;
+  const defaultFileName = `invoice-${
+    invoiceData.invoiceNumber
+  }-${invoiceData.date.replace(/\//g, "-")}.pdf`;
   const pdfFileName = fileName || defaultFileName;
 
   return (
     <PDFDownloadLink
       document={<InvoicePDF data={invoiceData} />}
       fileName={pdfFileName}
-      style={{ textDecoration: 'none' }}
+      style={{ textDecoration: "none" }}
     >
       {({ blob, url, loading, error }) => (
         <Button
@@ -328,13 +336,13 @@ const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
           disabled={loading}
           sx={{
             minWidth: 150,
-            '&:hover': {
-              transform: 'translateY(-1px)',
+            "&:hover": {
+              transform: "translateY(-1px)",
             },
-            transition: 'transform 0.2s ease-in-out',
+            transition: "transform 0.2s ease-in-out",
           }}
         >
-          {loading ? 'Generating PDF...' : buttonText}
+          {loading ? "Generating PDF..." : buttonText}
         </Button>
       )}
     </PDFDownloadLink>

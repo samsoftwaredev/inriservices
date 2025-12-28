@@ -27,41 +27,41 @@ npm install --save-dev @types/react-pdf
 The main component that provides a download button for PDF generation.
 
 ```tsx
-import { InvoiceGenerator, InvoiceData } from '@/components';
+import { InvoiceGenerator, InvoiceData } from "@/components";
 
 const invoiceData: InvoiceData = {
-  invoiceNumber: 'INV-001',
-  date: '12/28/2025',
-  dueDate: '01/27/2026',
+  invoiceNumber: "INV-001",
+  date: "12/28/2025",
+  dueDate: "01/27/2026",
   customer: {
-    name: 'John Smith',
-    email: 'john@example.com',
-    address: '123 Main St',
-    city: 'Garland',
-    state: 'TX',
-    zipCode: '75040'
+    name: "John Smith",
+    email: "john@example.com",
+    address: "123 Main St",
+    city: "Garland",
+    state: "TX",
+    zipCode: "75040",
   },
   items: [
     {
-      id: '1',
-      description: 'Living Room - Interior Painting',
+      id: "1",
+      description: "Living Room - Interior Painting",
       quantity: 1,
       rate: 650,
-      amount: 650
-    }
+      amount: 650,
+    },
   ],
   subtotal: 650,
   tax: 53.63,
   taxRate: 0.0825,
   total: 703.63,
-  notes: 'Thank you for your business!'
+  notes: "Thank you for your business!",
 };
 
 <InvoiceGenerator
   invoiceData={invoiceData}
   buttonText="Download Invoice"
   variant="contained"
-/>
+/>;
 ```
 
 ### InvoiceDemo
@@ -69,24 +69,24 @@ const invoiceData: InvoiceData = {
 An interactive demo component that allows users to create and customize invoices.
 
 ```tsx
-import { InvoiceDemo } from '@/components';
+import { InvoiceDemo } from "@/components";
 
 // Use as a standalone page or component
-<InvoiceDemo />
+<InvoiceDemo />;
 ```
 
 ## Props
 
 ### InvoiceGenerator Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `invoiceData` | `InvoiceData` | Required | Complete invoice data object |
-| `buttonText` | `string` | 'Download Invoice' | Text displayed on the button |
-| `fileName` | `string` | Auto-generated | Custom filename for the PDF |
-| `variant` | `'contained' | 'outlined' | 'text'` | 'contained' | Material-UI button variant |
-| `size` | `'small' | 'medium' | 'large'` | 'medium' | Button size |
-| `fullWidth` | `boolean` | false | Whether button takes full width |
+| Prop          | Type          | Default            | Description                     |
+| ------------- | ------------- | ------------------ | ------------------------------- | ----------- | -------------------------- |
+| `invoiceData` | `InvoiceData` | Required           | Complete invoice data object    |
+| `buttonText`  | `string`      | 'Download Invoice' | Text displayed on the button    |
+| `fileName`    | `string`      | Auto-generated     | Custom filename for the PDF     |
+| `variant`     | `'contained'  | 'outlined'         | 'text'`                         | 'contained' | Material-UI button variant |
+| `size`        | `'small'      | 'medium'           | 'large'`                        | 'medium'    | Button size                |
+| `fullWidth`   | `boolean`     | false              | Whether button takes full width |
 
 ## Types
 
@@ -139,21 +139,21 @@ interface Customer {
 Converts estimate data into invoice format:
 
 ```typescript
-import { generateInvoiceFromEstimate } from '@/tools/invoiceUtils';
+import { generateInvoiceFromEstimate } from "@/tools/invoiceUtils";
 
 const estimateData = {
   rooms: [
     {
-      id: '1',
-      name: 'Living Room',
-      description: 'Interior painting',
-      cost: 650
-    }
+      id: "1",
+      name: "Living Room",
+      description: "Interior painting",
+      cost: 650,
+    },
   ],
   customer: {
-    name: 'John Smith',
-    email: 'john@example.com'
-  }
+    name: "John Smith",
+    email: "john@example.com",
+  },
 };
 
 const invoiceData = generateInvoiceFromEstimate(estimateData);
@@ -164,7 +164,7 @@ const invoiceData = generateInvoiceFromEstimate(estimateData);
 Creates a sample invoice for demo purposes:
 
 ```typescript
-import { generateSampleInvoice } from '@/tools/invoiceUtils';
+import { generateSampleInvoice } from "@/tools/invoiceUtils";
 
 const sampleInvoice = generateSampleInvoice();
 ```
@@ -174,7 +174,7 @@ const sampleInvoice = generateSampleInvoice();
 Formats numbers as currency:
 
 ```typescript
-import { formatInvoiceCurrency } from '@/tools/invoiceUtils';
+import { formatInvoiceCurrency } from "@/tools/invoiceUtils";
 
 const formatted = formatInvoiceCurrency(650); // "$650.00"
 ```
@@ -184,16 +184,16 @@ const formatted = formatInvoiceCurrency(650); // "$650.00"
 ### Basic Usage
 
 ```tsx
-import { InvoiceGenerator } from '@/components';
+import { InvoiceGenerator } from "@/components";
 
 function MyComponent() {
   const handleDownload = () => {
     const invoiceData = {
       // ... invoice data
     };
-    
+
     return (
-      <InvoiceGenerator 
+      <InvoiceGenerator
         invoiceData={invoiceData}
         buttonText="Download PDF"
         variant="outlined"
@@ -214,11 +214,11 @@ function EstimatePage() {
     rooms: [...], // Room data
     customer: {...}, // Customer info
   };
-  
+
   const invoiceData = generateInvoiceFromEstimate(estimateData);
-  
+
   return (
-    <InvoiceGenerator 
+    <InvoiceGenerator
       invoiceData={invoiceData}
       buttonText="Generate Invoice PDF"
     />
@@ -267,7 +267,10 @@ Tax calculations use Texas sales tax (8.25%). To modify:
 
 ```typescript
 // In invoiceUtils.ts
-export const calculateTax = (subtotal: number, taxRate: number = 0.0875): number => {
+export const calculateTax = (
+  subtotal: number,
+  taxRate: number = 0.0875
+): number => {
   return subtotal * taxRate;
 };
 ```
@@ -275,12 +278,14 @@ export const calculateTax = (subtotal: number, taxRate: number = 0.0875): number
 ## Testing
 
 The invoice functionality can be tested at:
+
 - `/invoice-demo` - Interactive demo page
 - `/general-estimate` - Integrated with estimate functionality
 
 ## Browser Compatibility
 
 The PDF generation works in all modern browsers that support:
+
 - File download APIs
 - Canvas/SVG rendering
 - Modern JavaScript features

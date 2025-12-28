@@ -44,48 +44,47 @@ const GeneralEstimate = () => {
   // generate PDF estimate report
   return (
     <ProtectedRoute>
-      <AppLayout>
-        <Typography variant="h4" gutterBottom>
-          General Estimate
+      <Typography variant="h4" gutterBottom>
+        General Estimate
+      </Typography>
+
+      <Box sx={{ mb: 3 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={addNewRoom}
+          sx={{ mr: 2 }}
+        >
+          Add Room
+        </Button>
+
+        {/* Invoice Generator Demo */}
+        <InvoiceGenerator
+          invoiceData={generateSampleInvoice()}
+          buttonText="Download Invoice PDF"
+          variant="outlined"
+        />
+      </Box>
+
+      {/* Estimate Summary */}
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Estimate Summary
         </Typography>
-        
-        <Box sx={{ mb: 3 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={addNewRoom}
-            sx={{ mr: 2 }}
-          >
-            Add Room
-          </Button>
-          
-          {/* Invoice Generator Demo */}
-          <InvoiceGenerator
-            invoiceData={generateSampleInvoice()}
-            buttonText="Download Invoice PDF"
-            variant="outlined"
-          />
-        </Box>
+        <Typography variant="body2" color="text.secondary" gutterBottom>
+          Total Rooms: {rooms.length}
+        </Typography>
+        <Typography variant="h6" color="primary">
+          Estimated Total: ${rooms.length * 450 + (rooms.length - 1) * 50}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          *Tax not included. Final pricing may vary based on specific
+          requirements.
+        </Typography>
+      </Paper>
 
-        {/* Estimate Summary */}
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Estimate Summary
-          </Typography>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
-            Total Rooms: {rooms.length}
-          </Typography>
-          <Typography variant="h6" color="primary">
-            Estimated Total: ${rooms.length * 450 + (rooms.length - 1) * 50}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            *Tax not included. Final pricing may vary based on specific requirements.
-          </Typography>
-        </Paper>
+      <Divider sx={{ mb: 3 }} />
 
-        <Divider sx={{ mb: 3 }} />
-      </AppLayout>
-      
       <ProjectCostProvider>
         {rooms.map((room, index) => (
           <RoomProvider

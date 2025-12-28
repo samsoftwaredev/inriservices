@@ -28,7 +28,6 @@ const AddFeatureForm = ({ roomId }: Props) => {
   const [featureType, setFeatureType] = useState<FeatureType>("windows");
   const [featureName, setFeatureName] = useState("");
   const [featureDescription, setFeatureDescription] = useState("");
-  const [featureDimensions, setFeatureDimensions] = useState("");
 
   const addFeature = () => {
     if (!featureName.trim()) return;
@@ -38,7 +37,6 @@ const AddFeatureForm = ({ roomId }: Props) => {
       type: featureType,
       name: featureName,
       description: featureDescription,
-      dimensions: featureDimensions,
       image: "",
       workLabor: [],
     };
@@ -55,7 +53,6 @@ const AddFeatureForm = ({ roomId }: Props) => {
     setFeatureType("windows");
     setFeatureName("");
     setFeatureDescription("");
-    setFeatureDimensions("");
   };
 
   const onChangeFeatureType = (e: SelectChangeEvent) => {
@@ -64,10 +61,6 @@ const AddFeatureForm = ({ roomId }: Props) => {
 
   const onChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFeatureName(e.target.value);
-  };
-
-  const onChangeDimensions = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFeatureDimensions(e.target.value);
   };
 
   return (
@@ -118,15 +111,6 @@ const AddFeatureForm = ({ roomId }: Props) => {
           </Button>
         </Grid>
       </Grid>
-      <TextField
-        fullWidth
-        size="small"
-        label="Dimensions (Optional)"
-        value={featureDimensions}
-        onChange={onChangeDimensions}
-        sx={{ mt: 2 }}
-        placeholder="e.g., 3ft x 7ft, 24in x 36in"
-      />
       <TextField
         fullWidth
         multiline
