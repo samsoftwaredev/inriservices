@@ -10,7 +10,7 @@ import {
 
 import CustomerHeader from "@/components/CustomerHeader";
 import CustomerSelectionMenu from "../CustomerSelectionMenu";
-import ProjectSettings from "../ProjectSettings";
+import ClientForm from "../ClientForm";
 import Room from "../Room";
 import { theme } from "@/app/theme";
 import { useCustomer } from "@/context/CustomerContext";
@@ -69,7 +69,12 @@ const MainContent = ({ isNewClient }: { isNewClient?: boolean }) => {
         onCreateNewLocation={() => {}}
       />
 
-      <ProjectSettings currentCustomer={currentCustomer} />
+      <ClientForm
+        onError={() => {}}
+        onSubmit={() => {}}
+        currentCustomer={currentCustomer}
+        buildingData={buildingData}
+      />
 
       <Box
         sx={{

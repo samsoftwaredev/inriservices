@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { uuidv4, generateSampleInvoice } from "@/tools";
-import AppLayout from "../AppLayout";
 import AddFeatureForm from "../ProInteriorEstimate/AddFeatureForm";
 import { ProtectedRoute } from "../ProtectedRoute";
 import { RoomProvider } from "@/context/RoomContext";

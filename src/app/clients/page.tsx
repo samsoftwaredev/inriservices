@@ -2,18 +2,18 @@
 
 import React from "react";
 
-import ClientsPage from "@/components/ClientsPage";
+import Clients from "@/components/Clients";
 import AppLayout from "@/components/AppLayout/AppLayout";
 import { ProtectedRoute } from "@/components";
 
-const Clients = () => {
+const ClientsPage = () => {
   return (
     <ProtectedRoute>
       <AppLayout>
-        <ClientsPage />
+        <Clients />
       </AppLayout>
     </ProtectedRoute>
   );
 };
 
-export default Clients;
+export default ClientsPage;

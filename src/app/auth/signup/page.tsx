@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -26,6 +26,7 @@ import {
   Lock,
   Person,
   PersonAdd,
+  Business,
 } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
 import { useAuth } from "@/context";
@@ -37,6 +38,7 @@ interface SignupFormData {
   password: string;
   confirmPassword: string;
   acceptTerms: boolean;
+  companyId: string;
 }
 
 // Validation rules
@@ -48,9 +50,19 @@ const validationRules = {
       message: "Name must be at least 2 characters",
     },
     pattern: {
-      value: /^[a-zA-Z\s'-]+$/,
-      message:
-        "Name can only contain letters, spaces, hyphens, and apostrophes",
+      value: /^[a-zA-Z'-]+\s+[a-zA-Z\s'-]+$/,
+      message: "Please enter both first and last name separated by a space",
+    },
+  },
+  companyId: {
+    required: "Company ID is required",
+    minLength: {
+      value: 2,
+      message: "Company ID must be at least 2 characters",
+    },
+    pattern: {
+      value: /^[a-zA-Z0-9-]+$/,
+      message: "Please enter a valid company ID",
     },
   },
   email: {
@@ -98,6 +110,7 @@ const SignupPage = () => {
     mode: "onChange",
     defaultValues: {
       displayName: "",
+      companyId: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -119,7 +132,7 @@ const SignupPage = () => {
         return;
       }
 
-      await signup(data.email, data.password, data.displayName);
+      await signup(data.email, data.password, data.displayName, data.companyId);
 
       setSuccess(
         "Account created successfully! Please check your email to verify your account."
@@ -222,6 +235,30 @@ const SignupPage = () => {
                       startAdornment: (
                         <InputAdornment position="start">
                           <Person color="action" />
+                        </InputAdornment>
+                      ),
+                    }}
+                    disabled={loading}
+                  />
+                )}
+              />
+
+              <Controller
+                name="companyId"
+                control={control}
+                rules={validationRules.companyId}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Company ID"
+                    margin="normal"
+                    error={!!errors.companyId}
+                    helperText={errors.companyId?.message}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Business color="action" />
                         </InputAdornment>
                       ),
                     }}

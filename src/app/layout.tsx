@@ -4,7 +4,7 @@ import { companyName, companyWebsiteURL } from "@/constants";
 import Script from "next/script";
 import { AuthProvider } from "@/context";
 import { CustomerProvider } from "@/context/CustomerContext";
-
+import { ToastContainer } from "react-toastify";
 export const metadata: Metadata = {
   title: companyName,
   description:
@@ -99,6 +99,7 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <CustomerProvider>{children}</CustomerProvider>
+          <ToastContainer />
         </AuthProvider>
       </body>
     </html>

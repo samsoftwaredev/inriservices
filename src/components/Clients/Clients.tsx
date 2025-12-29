@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import {
   Box,
   Button,
@@ -28,7 +29,6 @@ import {
   Phone as PhoneIcon,
   Email as EmailIcon,
   Work as WorkIcon,
-  AttachMoney as MoneyIcon,
   MoreVert as MoreVertIcon,
   Visibility as VisibilityIcon,
   Edit as EditIcon,
@@ -36,6 +36,10 @@ import {
   Person as PersonIcon,
 } from "@mui/icons-material";
 import CustomerHeader from "../CustomerHeader";
+import ClientForm from "../ProInteriorEstimate/ClientForm";
+import { clientApi } from "@/services";
+import { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
+import { ClientFormData } from "../ProInteriorEstimate/ClientForm/ClientForm.model";
 
 interface Client {
   id: string;
@@ -58,8 +62,8 @@ const ClientsPage = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
+  const [createNewClient, setCreateNewClient] = useState(false);
   const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-
   // Sample clients data
   const clients: Client[] = [
     {
@@ -139,8 +143,12 @@ const ClientsPage = () => {
     },
   ];
 
-  const handleAddClient = () => {
-    console.log("Add Client button clicked");
+  const handleOpenClientForm = () => {
+    setCreateNewClient(true);
+  };
+
+  const handleCloseClientForm = () => {
+    setCreateNewClient(false);
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,6 +186,22 @@ const ClientsPage = () => {
     setSelectedClient(null);
   };
 
+  const getClients = () => {
+    clientApi
+      .listClients("company123")
+      .then((response) => {
+        console.log(response);
+        // Handle response to set clients state
+      })
+      .catch(() => {
+        toast.error("Failed to fetch clients");
+      });
+  };
+
+  useEffect(() => {
+    getClients();
+  }, []);
+
   // Filter clients based on search term
   const filteredClients = clients.filter(
     (client) =>
@@ -210,6 +234,26 @@ const ClientsPage = () => {
       .slice(0, 2);
   };
 
+  const onSubmit: SubmitHandler<ClientFormData> = (data) => {
+    console.log(data);
+    handleCloseClientForm();
+    clientApi
+      .createClient("company123", {
+        name: data.customerName,
+        contact: data.customerContact,
+        phone: data.customerPhone,
+        email: data.customerEmail,
+      })
+      .then(() => {
+        // Refresh clients list or show success message
+      })
+      .catch(() => {
+        toast.error("Failed to create client");
+      });
+  };
+  const onError: SubmitErrorHandler<ClientFormData> = (errors) =>
+    console.log(errors);
+
   return (
     <Box sx={{ py: 3 }}>
       <CustomerHeader
@@ -220,11 +264,21 @@ const ClientsPage = () => {
           variant="contained"
           color="primary"
           startIcon={<AddCircleOutline />}
-          onClick={handleAddClient}
+          onClick={handleOpenClientForm}
         >
           Add Client
         </Button>
       </CustomerHeader>
+
+      {createNewClient && (
+        <Box sx={{ mb: 4 }}>
+          <ClientForm onSubmit={onSubmit} onError={onError} />
+          <Button onClick={handleCloseClientForm}>Close</Button>
+          <Button type="submit" form="client-form" variant="contained">
+            Create New Client
+          </Button>
+        </Box>
+      )}
 
       {/* Search Bar */}
       <Box sx={{ mb: 4 }}>
@@ -303,7 +357,7 @@ const ClientsPage = () => {
                 <Button
                   variant="contained"
                   startIcon={<AddCircleOutline />}
-                  onClick={handleAddClient}
+                  onClick={handleOpenClientForm}
                 >
                   Add Your First Client
                 </Button>

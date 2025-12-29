@@ -19,6 +19,7 @@ import {
   sendEmailVerification,
 } from "firebase/auth";
 import { auth } from "@/app/firebaseConfig";
+import { AppUser, userApi } from "@/services";
 
 // Types
 interface AuthContextType {
@@ -28,7 +29,8 @@ interface AuthContextType {
   signup: (
     email: string,
     password: string,
-    displayName?: string
+    displayName: string,
+    companyId: string
   ) => Promise<User>;
   login: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
@@ -57,13 +59,15 @@ export const useAuth = (): AuthContextType => {
 // Auth Provider component
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Sign up function
   const signup = async (
     email: string,
     password: string,
-    displayName?: string
+    displayName: string,
+    companyId: string
   ): Promise<User> => {
     try {
       const result = await createUserWithEmailAndPassword(
@@ -73,11 +77,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       );
 
       // Update profile with display name if provided
-      if (displayName && result.user) {
-        await updateProfile(result.user, {
-          displayName: displayName,
-        });
-      }
+      await updateProfile(result.user, {
+        displayName: displayName,
+      });
+
+      const [firstName, ...lastName] = displayName.split(" ");
+
+      await userApi.createUser(result.user.uid, {
+        email: result.user.email || "",
+        companyId: companyId,
+        role: "company_user",
+        firstName: firstName,
+        lastName: lastName.join(" "),
+        phone: "",
+        status: "active",
+      });
 
       // Send email verification
       if (result.user) {
@@ -154,10 +168,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const fetchUserData = async (uid: string) => {
+    try {
+      const userData = await userApi.getUser(uid);
+      setUser(userData);
+    } catch (error) {
+      console.error("Failed to fetch user data:", error);
+    }
+  };
+
   // Set up auth state observer
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
+      console.log("Auth state changed. Current user:", user);
+      if (user) {
+        fetchUserData(user.uid);
+      }
       setLoading(false);
     });
 
