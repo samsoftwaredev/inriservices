@@ -55,7 +55,7 @@ export type UserStatus = "active" | "invited" | "disabled";
 
 export type StubStatus = "invited" | "claimed" | "revoked";
 
-export type MeasurementUnit = "ft" | "m";
+export type MeasurementUnit = "ft" | "m" | "in";
 
 export interface AuditFields {
   createdAt: Timestamp | null;

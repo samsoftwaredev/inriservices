@@ -37,11 +37,13 @@ import {
 } from "@mui/icons-material";
 import CustomerHeader from "../CustomerHeader";
 import ClientForm from "../ProInteriorEstimate/ClientForm";
-import { clientApi } from "@/services";
+import { buildingApi, Client, clientApi, db, StubStatus } from "@/services";
 import { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { ClientFormData } from "../ProInteriorEstimate/ClientForm/ClientForm.model";
+import { useAuth } from "@/context";
+import { collectionGroup, getDocs, query, where } from "firebase/firestore";
 
-interface Client {
+interface ClientInfo {
   id: string;
   fullName: string;
   email: string;
@@ -53,95 +55,35 @@ interface Client {
   numberOfProjects: number;
   totalRevenue: number;
   lastProjectDate: string;
-  status: "active" | "inactive" | "potential";
+  status: StubStatus;
   notes?: string;
 }
 
+const defaultClient: ClientInfo = {
+  id: "1",
+  fullName: "John Doe",
+  email: "john.doe@email.com",
+  phone: "(123) 456-7890",
+  address: "123 Main St",
+  city: "Garland",
+  state: "TX",
+  zipCode: "75040",
+  numberOfProjects: 3,
+  totalRevenue: 8500,
+  lastProjectDate: "2024-10-01",
+  status: "claimed",
+  notes: "Prefers eco-friendly paint options",
+};
+
 const ClientsPage = () => {
+  const { userData } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
   const [createNewClient, setCreateNewClient] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-  // Sample clients data
-  const clients: Client[] = [
-    {
-      id: "1",
-      fullName: "John Doe",
-      email: "john.doe@email.com",
-      phone: "(123) 456-7890",
-      address: "123 Main St",
-      city: "Garland",
-      state: "TX",
-      zipCode: "75040",
-      numberOfProjects: 3,
-      totalRevenue: 8500,
-      lastProjectDate: "2024-10-01",
-      status: "active",
-      notes: "Prefers eco-friendly paint options",
-    },
-    {
-      id: "2",
-      fullName: "Alice Johnson",
-      email: "alice.johnson@email.com",
-      phone: "(555) 123-4567",
-      address: "456 Oak Avenue",
-      city: "Springfield",
-      state: "TX",
-      zipCode: "67890",
-      numberOfProjects: 2,
-      totalRevenue: 5800,
-      lastProjectDate: "2024-09-15",
-      status: "active",
-      notes: "Interested in premium finishes",
-    },
-    {
-      id: "3",
-      fullName: "Michael Brown",
-      email: "michael.brown@email.com",
-      phone: "(333) 555-7777",
-      address: "789 Pine Street",
-      city: "Riverside",
-      state: "FL",
-      zipCode: "54321",
-      numberOfProjects: 1,
-      totalRevenue: 2900,
-      lastProjectDate: "2024-08-20",
-      status: "inactive",
-      notes: "Last project: exterior painting",
-    },
-    {
-      id: "4",
-      fullName: "Sarah Wilson",
-      email: "sarah.wilson@email.com",
-      phone: "(444) 888-9999",
-      address: "321 Elm Drive",
-      city: "Austin",
-      state: "TX",
-      zipCode: "78701",
-      numberOfProjects: 4,
-      totalRevenue: 12300,
-      lastProjectDate: "2024-10-10",
-      status: "active",
-      notes: "VIP client - interior specialist",
-    },
-    {
-      id: "5",
-      fullName: "David Martinez",
-      email: "david.martinez@email.com",
-      phone: "(666) 777-8888",
-      address: "654 Cedar Lane",
-      city: "Houston",
-      state: "TX",
-      zipCode: "77001",
-      numberOfProjects: 0,
-      totalRevenue: 0,
-      lastProjectDate: "",
-      status: "potential",
-      notes: "Potential client - follow up needed",
-    },
-  ];
+  const [selectedClient, setSelectedClient] = useState<ClientInfo | null>(null);
+  const [clients, setClients] = useState<ClientInfo[]>([]);
 
   const handleOpenClientForm = () => {
     setCreateNewClient(true);
@@ -186,14 +128,62 @@ const ClientsPage = () => {
     setSelectedClient(null);
   };
 
+  const getAllClientAddresses = async (companyId: string) => {
+    const q = query(
+      collectionGroup(db, "buildings"),
+      where("companyId", "==", companyId),
+      where("isDeleted", "==", false)
+    );
+
+    const snap = await getDocs(q);
+
+    return snap.docs.map((doc) => {
+      const b = doc.data();
+      return {
+        clientId: b.clientId,
+        address: b.address,
+        city: b.city,
+        state: b.state,
+        zipCode: b.zipCode,
+      };
+    });
+  };
+
   const getClients = () => {
+    console.log("Fetching clients for company:", userData);
+    if (userData?.companyId == null) return;
+
     clientApi
-      .listClients("company123")
-      .then((response) => {
+      .listClients(userData.companyId)
+      .then(async (response) => {
+        //  const addresses = await getAllClientAddresses(userData.companyId);
+        const address = {
+          address: "",
+          city: "",
+          state: "",
+          zipCode: "",
+        };
+        const transformedClients = response.items.map((client: Client) => ({
+          id: client.id,
+          fullName: client.name,
+          email: client.email,
+          phone: client.phone,
+          address: address?.address || "",
+          city: address?.city || "",
+          state: address?.state || "",
+          zipCode: address?.zipCode || "",
+          numberOfProjects: 0,
+          totalRevenue: 0,
+          lastProjectDate: "",
+          status: "claimed" as StubStatus,
+          notes: "",
+        }));
+        setClients(transformedClients);
         console.log(response);
         // Handle response to set clients state
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error(err);
         toast.error("Failed to fetch clients");
       });
   };
@@ -212,13 +202,13 @@ const ClientsPage = () => {
       client.state.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: StubStatus) => {
     switch (status) {
-      case "active":
+      case "claimed":
         return "success";
-      case "inactive":
+      case "revoked":
         return "default";
-      case "potential":
+      case "invited":
         return "warning";
       default:
         return "default";
@@ -235,17 +225,29 @@ const ClientsPage = () => {
   };
 
   const onSubmit: SubmitHandler<ClientFormData> = (data) => {
-    console.log(data);
-    handleCloseClientForm();
+    if (userData?.companyId == null) return;
+
     clientApi
-      .createClient("company123", {
+      .createClient(userData.companyId, {
         name: data.customerName,
         contact: data.customerContact,
         phone: data.customerPhone,
         email: data.customerEmail,
       })
+      .then((clientId) => {
+        return buildingApi.createBuilding(userData.companyId, clientId, {
+          address: data.address,
+          city: data.city,
+          state: data.state,
+          zipCode: data.zipCode,
+          measurementUnit: data.measurementUnit,
+          floorPlan: data.floorPlan,
+        });
+      })
       .then(() => {
-        // Refresh clients list or show success message
+        toast.success("Client created successfully");
+        handleCloseClientForm();
+        getClients();
       })
       .catch(() => {
         toast.error("Failed to create client");
@@ -566,7 +568,9 @@ const ClientsPage = () => {
             <Chip
               label={selectedClient?.status}
               size="small"
-              color={getStatusColor(selectedClient?.status || "") as any}
+              color={
+                getStatusColor(selectedClient?.status as StubStatus) as any
+              }
               variant="filled"
             />
           </Box>

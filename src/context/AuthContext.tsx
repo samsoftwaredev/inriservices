@@ -23,7 +23,8 @@ import { AppUser, userApi } from "@/services";
 
 // Types
 interface AuthContextType {
-  currentUser: User | null;
+  firebaseUser: User | null;
+  userData?: AppUser | null;
   loading: boolean;
   // Auth methods
   signup: (
@@ -58,8 +59,8 @@ export const useAuth = (): AuthContextType => {
 
 // Auth Provider component
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [user, setUser] = useState<AppUser | null>(null);
+  const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
+  const [userData, setUserData] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Sign up function
@@ -147,10 +148,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Update user profile function
   const updateUserProfile = async (displayName: string): Promise<void> => {
     try {
-      if (currentUser) {
-        await updateProfile(currentUser, { displayName });
+      if (firebaseUser) {
+        await updateProfile(firebaseUser, { displayName });
         // Force refresh the current user state
-        setCurrentUser({ ...currentUser, displayName });
+        setFirebaseUser({ ...firebaseUser, displayName });
       }
     } catch (error: any) {
       throw new Error(error.message);
@@ -160,8 +161,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Send verification email function
   const sendVerificationEmail = async (): Promise<void> => {
     try {
-      if (currentUser) {
-        await sendEmailVerification(currentUser);
+      if (firebaseUser) {
+        await sendEmailVerification(firebaseUser);
       }
     } catch (error: any) {
       throw new Error(error.message);
@@ -171,7 +172,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const fetchUserData = async (uid: string) => {
     try {
       const userData = await userApi.getUser(uid);
-      setUser(userData);
+      setUserData(userData);
+      console.log("Auth state changed. Current user:", userData);
     } catch (error) {
       console.error("Failed to fetch user data:", error);
     }
@@ -179,11 +181,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Set up auth state observer
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      console.log("Auth state changed. Current user:", user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setFirebaseUser(user);
       if (user) {
-        fetchUserData(user.uid);
+        await fetchUserData(user.uid);
       }
       setLoading(false);
     });
@@ -192,7 +193,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const value: AuthContextType = {
-    currentUser,
+    firebaseUser,
+    userData,
     loading,
     signup,
     login,
