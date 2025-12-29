@@ -19,12 +19,14 @@ import {
   Assessment as AssessmentIcon,
   PunchClock,
   DocumentScannerOutlined,
+  Logout as LogoutIcon,
 } from "@mui/icons-material";
 import { Person as PersonIcon } from "@mui/icons-material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { Customer } from "@/interfaces/laborTypes";
 import Link from "next/link";
 import { drawerWidth } from "@/constants";
+import { useAuth } from "@/context";
 
 interface Props {
   mobileOpen: boolean;
@@ -78,6 +80,7 @@ const SideNav = ({
   previousCustomers,
   onSelectPreviousCustomer,
 }: Props) => {
+  const { logout } = useAuth();
   const drawerContent = (
     <Box>
       {/* Company Logo */}
@@ -197,6 +200,21 @@ const SideNav = ({
           </Link>
         </MenuItem>
       ))}
+      <Box sx={{ position: "absolute", bottom: 16, width: "100%" }}>
+        <MenuItem onClick={logout} sx={{ minWidth: 250 }}>
+          <ListItemIcon>
+            <LogoutIcon />
+          </ListItemIcon>
+          <ListItemText>Logout</ListItemText>
+        </MenuItem>
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ px: 2, mt: 2, display: "block" }}
+        >
+          © {new Date().getFullYear()} INRI Estimator
+        </Typography>
+      </Box>
     </Box>
   );
 
