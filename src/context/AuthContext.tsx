@@ -7,24 +7,11 @@ import React, {
   useState,
   ReactNode,
 } from "react";
-import {
-  User,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  sendPasswordResetEmail,
-  confirmPasswordReset,
-  onAuthStateChanged,
-  updateProfile,
-  sendEmailVerification,
-} from "firebase/auth";
-import { auth } from "@/app/firebaseConfig";
-import { AppUser, userApi } from "@/services";
-
+import { createClient } from "@/app/supabaseConfig";
+import { AuthResponse, User } from "@supabase/supabase-js";
 // Types
 interface AuthContextType {
-  firebaseUser: User | null;
-  userData?: AppUser | null;
+  userData?: User | null;
   loading: boolean;
   // Auth methods
   signup: (
@@ -32,8 +19,8 @@ interface AuthContextType {
     password: string,
     displayName: string,
     companyId: string
-  ) => Promise<User>;
-  login: (email: string, password: string) => Promise<User>;
+  ) => Promise<AuthResponse>;
+  login: (email: string, password: string) => Promise<AuthResponse>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   confirmPasswordReset: (oobCode: string, newPassword: string) => Promise<void>;
@@ -58,9 +45,9 @@ export const useAuth = (): AuthContextType => {
 };
 
 // Auth Provider component
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
-  const [userData, setUserData] = useState<AppUser | null>(null);
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const supabase = createClient();
+  const [userData, setUserData] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Sign up function
@@ -69,47 +56,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     password: string,
     displayName: string,
     companyId: string
-  ): Promise<User> => {
+  ): Promise<AuthResponse> => {
     try {
-      const result = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const data = {
+        email: email,
+        password: password,
+      };
 
-      // Update profile with display name if provided
-      await updateProfile(result.user, {
-        displayName: displayName,
-      });
+      const result = await supabase.auth.signUp(data);
+
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
 
       const [firstName, ...lastName] = displayName.split(" ");
 
-      await userApi.createUser(result.user.uid, {
-        email: result.user.email || "",
-        companyId: companyId,
-        role: "company_user",
-        firstName: firstName,
-        lastName: lastName.join(" "),
-        phone: "",
-        status: "active",
-      });
-
-      // Send email verification
-      if (result.user) {
-        await sendEmailVerification(result.user);
-      }
-
-      return result.user;
+      return result;
     } catch (error: any) {
       throw new Error(error.message);
     }
   };
 
   // Login function
-  const login = async (email: string, password: string): Promise<User> => {
+  const login = async (
+    email: string,
+    password: string
+  ): Promise<AuthResponse> => {
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      return result.user;
+      const result = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+      if (result.error) {
+        throw new Error(result.error.message);
+      }
+      return result;
     } catch (error: any) {
       throw new Error(error.message);
     }
@@ -118,82 +99,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Logout function
   const logout = async (): Promise<void> => {
     try {
-      await signOut(auth);
+      await supabase.auth.signOut();
     } catch (error: any) {
       throw new Error(error.message);
     }
   };
 
   // Reset password function
-  const resetPassword = async (email: string): Promise<void> => {
-    try {
-      await sendPasswordResetEmail(auth, email);
-    } catch (error: any) {
-      throw new Error(error.message);
-    }
-  };
+  const resetPassword = async (email: string): Promise<void> => {};
 
   // Confirm password reset function
   const confirmPasswordResetFunction = async (
     oobCode: string,
     newPassword: string
-  ): Promise<void> => {
-    try {
-      await confirmPasswordReset(auth, oobCode, newPassword);
-    } catch (error: any) {
-      throw new Error(error.message);
-    }
-  };
+  ): Promise<void> => {};
 
   // Update user profile function
-  const updateUserProfile = async (displayName: string): Promise<void> => {
-    try {
-      if (firebaseUser) {
-        await updateProfile(firebaseUser, { displayName });
-        // Force refresh the current user state
-        setFirebaseUser({ ...firebaseUser, displayName });
-      }
-    } catch (error: any) {
-      throw new Error(error.message);
-    }
-  };
+  const updateUserProfile = async (displayName: string): Promise<void> => {};
 
   // Send verification email function
-  const sendVerificationEmail = async (): Promise<void> => {
-    try {
-      if (firebaseUser) {
-        await sendEmailVerification(firebaseUser);
-      }
-    } catch (error: any) {
-      throw new Error(error.message);
-    }
-  };
+  const sendVerificationEmail = async (): Promise<void> => {};
 
-  const fetchUserData = async (uid: string) => {
-    try {
-      const userData = await userApi.getUser(uid);
-      setUserData(userData);
-      console.log("Auth state changed. Current user:", userData);
-    } catch (error) {
-      console.error("Failed to fetch user data:", error);
-    }
-  };
+  const fetchUserData = async (uid: string) => {};
 
   // Set up auth state observer
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setFirebaseUser(user);
-      if (user) {
-        await fetchUserData(user.uid);
-      }
-      setLoading(false);
-    });
-
-    return unsubscribe;
+    fetchUserData("123");
   }, []);
 
   const value: AuthContextType = {
-    firebaseUser,
     userData,
     loading,
     signup,

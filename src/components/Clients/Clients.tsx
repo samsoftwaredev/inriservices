@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import {
   Box,
   Button,
@@ -37,11 +36,9 @@ import {
 } from "@mui/icons-material";
 import CustomerHeader from "../CustomerHeader";
 import ClientForm from "../ProInteriorEstimate/ClientForm";
-import { buildingApi, Client, clientApi, db, StubStatus } from "@/services";
 import { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { ClientFormData } from "../ProInteriorEstimate/ClientForm/ClientForm.model";
 import { useAuth } from "@/context";
-import { collectionGroup, getDocs, query, where } from "firebase/firestore";
 
 interface ClientInfo {
   id: string;
@@ -55,7 +52,7 @@ interface ClientInfo {
   numberOfProjects: number;
   totalRevenue: number;
   lastProjectDate: string;
-  status: StubStatus;
+  status: "claimed" | "revoked" | "invited";
   notes?: string;
 }
 
@@ -128,65 +125,7 @@ const ClientsPage = () => {
     setSelectedClient(null);
   };
 
-  const getAllClientAddresses = async (companyId: string) => {
-    const q = query(
-      collectionGroup(db, "buildings"),
-      where("companyId", "==", companyId),
-      where("isDeleted", "==", false)
-    );
-
-    const snap = await getDocs(q);
-
-    return snap.docs.map((doc) => {
-      const b = doc.data();
-      return {
-        clientId: b.clientId,
-        address: b.address,
-        city: b.city,
-        state: b.state,
-        zipCode: b.zipCode,
-      };
-    });
-  };
-
-  const getClients = () => {
-    console.log("Fetching clients for company:", userData);
-    if (userData?.companyId == null) return;
-
-    clientApi
-      .listClients(userData.companyId)
-      .then(async (response) => {
-        //  const addresses = await getAllClientAddresses(userData.companyId);
-        const address = {
-          address: "",
-          city: "",
-          state: "",
-          zipCode: "",
-        };
-        const transformedClients = response.items.map((client: Client) => ({
-          id: client.id,
-          fullName: client.name,
-          email: client.email,
-          phone: client.phone,
-          address: address?.address || "",
-          city: address?.city || "",
-          state: address?.state || "",
-          zipCode: address?.zipCode || "",
-          numberOfProjects: 0,
-          totalRevenue: 0,
-          lastProjectDate: "",
-          status: "claimed" as StubStatus,
-          notes: "",
-        }));
-        setClients(transformedClients);
-        console.log(response);
-        // Handle response to set clients state
-      })
-      .catch((err) => {
-        console.error(err);
-        toast.error("Failed to fetch clients");
-      });
-  };
+  const getClients = () => {};
 
   useEffect(() => {
     getClients();
@@ -202,7 +141,7 @@ const ClientsPage = () => {
       client.state.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getStatusColor = (status: StubStatus) => {
+  const getStatusColor = (status: "claimed" | "revoked" | "invited") => {
     switch (status) {
       case "claimed":
         return "success";
@@ -225,36 +164,12 @@ const ClientsPage = () => {
   };
 
   const onSubmit: SubmitHandler<ClientFormData> = (data) => {
-    if (userData?.companyId == null) return;
-
-    clientApi
-      .createClient(userData.companyId, {
-        name: data.customerName,
-        contact: data.customerContact,
-        phone: data.customerPhone,
-        email: data.customerEmail,
-      })
-      .then((clientId) => {
-        return buildingApi.createBuilding(userData.companyId, clientId, {
-          address: data.address,
-          city: data.city,
-          state: data.state,
-          zipCode: data.zipCode,
-          measurementUnit: data.measurementUnit,
-          floorPlan: data.floorPlan,
-        });
-      })
-      .then(() => {
-        toast.success("Client created successfully");
-        handleCloseClientForm();
-        getClients();
-      })
-      .catch(() => {
-        toast.error("Failed to create client");
-      });
+    console.log("New Client Data:", data);
   };
-  const onError: SubmitErrorHandler<ClientFormData> = (errors) =>
+
+  const onError: SubmitErrorHandler<ClientFormData> = (errors) => {
     console.log(errors);
+  };
 
   return (
     <Box sx={{ py: 3 }}>
@@ -568,9 +483,9 @@ const ClientsPage = () => {
             <Chip
               label={selectedClient?.status}
               size="small"
-              color={
-                getStatusColor(selectedClient?.status as StubStatus) as any
-              }
+              color={getStatusColor(
+                selectedClient?.status as "claimed" | "revoked" | "invited"
+              )}
               variant="filled"
             />
           </Box>

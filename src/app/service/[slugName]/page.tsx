@@ -1,33 +1,53 @@
 import { Box, Container, Typography, Stack, Avatar, Chip } from "@mui/material";
 import { ErrorPage, Footer, Meta, TopNavbar } from "@/components";
 import { MetaProps } from "@/interfaces";
-import { ref, child, get, getDatabase } from "firebase/database";
-import { app } from "@/app/firebaseConfig";
 import ReactMarkdown from "react-markdown";
-
-async function fetchMyDataOnce(path: string) {
-  try {
-    const database = getDatabase(app);
-    const dbRef = ref(database);
-    const dataPath = `/service/${path}`;
-    const snapshot = await get(child(dbRef, dataPath));
-    if (snapshot.exists()) {
-      return snapshot.val();
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-}
 interface Props {
   params: Promise<{ slugName: string }>;
 }
 // eslint-disable-next-line
 export default async function Service({ params }: Props) {
-  const { slugName } = await params;
-  const data = await fetchMyDataOnce(slugName);
+  const data = {
+    id: "1",
+    slug: "residential-painting",
+    title: "Residential Painting",
+    excerpt:
+      "Transform your home with our expert residential painting services.",
+    cover_image_url:
+      "https://example.com/images/residential-painting-cover.jpg",
+    seo: {
+      title: "Residential Painting - Our Services",
+      metaTags: [],
+      linkTags: [],
+    },
+    author: {
+      name: "Jane Doe",
+      role: "Lead Painter",
+      avatar_url: "https://example.com/avatars/jane-doe.jpg",
+    },
+    created_at: "2023-10-01T12:00:00Z",
+    tags: ["interior", "exterior", "eco-friendly"],
+    reading_time_minutes: 5,
+    content: `# Welcome to Our Residential Painting Service
 
+At **INRI Paint & Wall LLC**, we specialize in transforming homes with our top-notch residential painting services. Whether you're looking to refresh a single room or give your entire house a makeover, our team of experienced painters is here to help.
+
+## Our Services
+
+- Interior Painting
+- Exterior Painting
+- Eco-Friendly Paint Options
+- Custom Color Consultation
+
+> "A fresh coat of paint can completely change the look and feel of your home." - INRI Paint & Wall LLC
+
+We use only high-quality paints and materials to ensure a long-lasting finish that you'll love.
+
+### Contact Us
+
+Ready to give your home a new look? Contact us today for a free consultation and estimate!
+ `,
+  };
   if (!data) {
     return (
       <>

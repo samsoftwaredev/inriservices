@@ -16,21 +16,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   redirectTo = "/auth/login",
   requireEmailVerification = false,
 }) => {
-  const { firebaseUser, loading } = useAuth();
+  const { loading, userData } = useAuth();
   const router = useRouter();
   const [isChecking, setIsChecking] = useState(true);
-
-  useEffect(() => {
-    if (!loading) {
-      if (!firebaseUser) {
-        router.push(redirectTo);
-      } else if (requireEmailVerification && !firebaseUser.emailVerified) {
-        router.push("/auth/verify-email");
-      } else {
-        setIsChecking(false);
-      }
-    }
-  }, [firebaseUser, loading, router, redirectTo, requireEmailVerification]);
 
   // Show loading spinner while checking authentication
   if (loading || isChecking) {
@@ -54,12 +42,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   // Show nothing if not authenticated (user will be redirected)
-  if (!firebaseUser) {
+  if (!userData) {
     return null;
   }
 
   // Show nothing if email verification is required but not completed
-  if (requireEmailVerification && !firebaseUser.emailVerified) {
+  if (requireEmailVerification) {
     return null;
   }
 

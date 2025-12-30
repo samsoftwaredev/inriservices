@@ -9,42 +9,26 @@ import {
   Box,
 } from "@mui/material";
 import { ErrorPage, Footer, Meta, TopNavbar } from "@/components";
-import { ref, child, get, getDatabase } from "firebase/database";
-import { app } from "@/app/firebaseConfig";
-
-async function fetchMyDataOnce() {
-  try {
-    const database = getDatabase(app);
-    const dbRef = ref(database);
-    const dataPath = `/service`;
-    const snapshot = await get(child(dbRef, dataPath));
-    if (snapshot.exists()) {
-      return snapshot.val();
-    } else {
-      return null;
-    }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-}
 
 export default async function Service() {
-  const data = await fetchMyDataOnce();
-
-  if (!data) {
-    return (
-      <>
-        <Meta />
-        <TopNavbar />
-        <ErrorPage />
-        <Footer />
-      </>
-    );
-  }
-
-  // data is an object of objects: { [slug]: serviceObj }
-  const serviceList = Object.values(data);
-
+  const serviceList = [
+    {
+      id: "1",
+      slug: "residential-painting",
+      title: "Residential Painting",
+      excerpt:
+        "Transform your home with our expert residential painting services.",
+      cover_image_url:
+        "https://example.com/images/residential-painting-cover.jpg",
+      author: {
+        name: "Jane Doe",
+        avatar_url: "https://example.com/avatars/jane-doe.jpg",
+      },
+      category: "Home Services",
+      tags: ["interior", "exterior", "eco-friendly"],
+      reading_time_minutes: 5,
+    },
+  ];
   return (
     <>
       <Meta />
@@ -65,7 +49,7 @@ export default async function Service() {
         </Typography>
 
         <Grid container spacing={3}>
-          {serviceList.map((service: any) => (
+          {serviceList.map((service) => (
             <Grid
               component={"a"}
               href={`/service/${service.slug}`}
