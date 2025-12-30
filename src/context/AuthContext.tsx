@@ -8,10 +8,12 @@ import React, {
   ReactNode,
 } from "react";
 import { createClient } from "@/app/supabaseConfig";
-import { AuthResponse, User } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
+import { Profile, profileApi } from "@/services";
 // Types
 interface AuthContextType {
-  userData?: User | null;
+  user: User | null;
+  userData?: Profile | null;
   loading: boolean;
   // Auth methods
   signup: (
@@ -19,11 +21,10 @@ interface AuthContextType {
     password: string,
     displayName: string,
     companyId: string
-  ) => Promise<AuthResponse>;
-  login: (email: string, password: string) => Promise<AuthResponse>;
+  ) => Promise<User>;
+  login: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
-  confirmPasswordReset: (oobCode: string, newPassword: string) => Promise<void>;
   updateUserProfile: (displayName: string) => Promise<void>;
   sendVerificationEmail: () => Promise<void>;
 }
@@ -47,7 +48,8 @@ export const useAuth = (): AuthContextType => {
 // Auth Provider component
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const supabase = createClient();
-  const [userData, setUserData] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [userData, setUserData] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Sign up function
@@ -56,85 +58,113 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     password: string,
     displayName: string,
     companyId: string
-  ): Promise<AuthResponse> => {
-    try {
-      const data = {
-        email: email,
-        password: password,
-      };
+  ): Promise<User> => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: displayName,
+          company_id: companyId,
+        },
+      },
+    });
 
-      const result = await supabase.auth.signUp(data);
+    if (error) throw error;
+    if (!data.user) throw new Error("No user returned from signup");
 
-      if (result.error) {
-        throw new Error(result.error.message);
-      }
-
-      const [firstName, ...lastName] = displayName.split(" ");
-
-      return result;
-    } catch (error: any) {
-      throw new Error(error.message);
-    }
+    return data.user;
   };
 
   // Login function
-  const login = async (
-    email: string,
-    password: string
-  ): Promise<AuthResponse> => {
-    try {
-      const result = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-      });
-      if (result.error) {
-        throw new Error(result.error.message);
-      }
-      return result;
-    } catch (error: any) {
-      throw new Error(error.message);
-    }
+  const login = async (email: string, password: string): Promise<User> => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) throw error;
+    if (!data.user) throw new Error("No user returned from login");
+
+    return data.user;
   };
 
   // Logout function
   const logout = async (): Promise<void> => {
-    try {
-      await supabase.auth.signOut();
-    } catch (error: any) {
-      throw new Error(error.message);
-    }
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
   };
 
   // Reset password function
-  const resetPassword = async (email: string): Promise<void> => {};
-
-  // Confirm password reset function
-  const confirmPasswordResetFunction = async (
-    oobCode: string,
-    newPassword: string
-  ): Promise<void> => {};
+  const resetPassword = async (email: string): Promise<void> => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    if (error) throw error;
+  };
 
   // Update user profile function
-  const updateUserProfile = async (displayName: string): Promise<void> => {};
+  const updateUserProfile = async (displayName: string): Promise<void> => {
+    const { error } = await supabase.auth.updateUser({
+      data: { display_name: displayName },
+    });
+    if (error) throw error;
+
+    // Force refresh the current user state
+    if (user) {
+      setUser({
+        ...user,
+        user_metadata: { ...user.user_metadata, display_name: displayName },
+      });
+    }
+  };
 
   // Send verification email function
-  const sendVerificationEmail = async (): Promise<void> => {};
+  const sendVerificationEmail = async (): Promise<void> => {
+    if (user?.email) {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: user.email,
+      });
+      if (error) throw error;
+    }
+  };
 
-  const fetchUserData = async (uid: string) => {};
+  const fetchUserData = async (): Promise<void> => {
+    try {
+      const userData = await profileApi.getMe();
+      setUserData(userData);
+      console.log("Auth state changed. Current user:", userData);
+    } catch (error) {
+      console.error("Failed to fetch user data:", error);
+    }
+  };
 
   // Set up auth state observer
   useEffect(() => {
-    fetchUserData("123");
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          await fetchUserData();
+        } else {
+          setUserData(null);
+        }
+        setLoading(false);
+      }
+    );
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, []);
 
   const value: AuthContextType = {
+    user,
     userData,
     loading,
     signup,
     login,
     logout,
     resetPassword,
-    confirmPasswordReset: confirmPasswordResetFunction,
     updateUserProfile,
     sendVerificationEmail,
   };

@@ -139,19 +139,9 @@ const SignupPage = () => {
       );
 
       // Redirect to login after a short delay
-      setTimeout(() => {
-        router.push("/auth/login");
-      }, 2000);
-    } catch (error: any) {
+      router.push("/dashboard");
+    } catch (error: unknown) {
       let errorMessage = "Failed to create account";
-
-      if (error.message.includes("email-already-in-use")) {
-        errorMessage = "An account with this email already exists";
-      } else if (error.message.includes("weak-password")) {
-        errorMessage = "Password is too weak";
-      } else if (error.message.includes("invalid-email")) {
-        errorMessage = "Invalid email address";
-      }
 
       setError(errorMessage);
     } finally {
