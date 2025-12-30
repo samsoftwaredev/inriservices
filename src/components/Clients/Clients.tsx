@@ -39,6 +39,7 @@ import ClientForm from "../ProInteriorEstimate/ClientForm";
 import { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { ClientFormData } from "../ProInteriorEstimate/ClientForm/ClientForm.model";
 import { useAuth } from "@/context";
+import { clientApi, ClientStatus } from "@/services";
 
 interface ClientInfo {
   id: string;
@@ -52,25 +53,9 @@ interface ClientInfo {
   numberOfProjects: number;
   totalRevenue: number;
   lastProjectDate: string;
-  status: "claimed" | "revoked" | "invited";
+  status: ClientStatus;
   notes?: string;
 }
-
-const defaultClient: ClientInfo = {
-  id: "1",
-  fullName: "John Doe",
-  email: "john.doe@email.com",
-  phone: "(123) 456-7890",
-  address: "123 Main St",
-  city: "Garland",
-  state: "TX",
-  zipCode: "75040",
-  numberOfProjects: 3,
-  totalRevenue: 8500,
-  lastProjectDate: "2024-10-01",
-  status: "claimed",
-  notes: "Prefers eco-friendly paint options",
-};
 
 const ClientsPage = () => {
   const { userData } = useAuth();
@@ -125,7 +110,29 @@ const ClientsPage = () => {
     setSelectedClient(null);
   };
 
-  const getClients = () => {};
+  const getClients = async () => {
+    const clientRes = await clientApi.listClientsWithAddresses();
+    const clientList: ClientInfo[] = clientRes.items.map((client) => {
+      const property =
+        client.properties.length > 0 ? client.properties[0] : null;
+      return {
+        id: client.id,
+        fullName: client.display_name,
+        email: client.primary_email || "",
+        phone: client.primary_phone || "",
+        address: property ? property.address_line1 : "",
+        city: property ? property.city : "",
+        state: property ? property.state : "",
+        zipCode: property ? property.zip : "",
+        numberOfProjects: 0,
+        totalRevenue: 0,
+        lastProjectDate: "",
+        status: client.status,
+        notes: client.notes || "",
+      };
+    });
+    setClients(clientList);
+  };
 
   useEffect(() => {
     getClients();
@@ -141,13 +148,13 @@ const ClientsPage = () => {
       client.state.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getStatusColor = (status: "claimed" | "revoked" | "invited") => {
+  const getStatusColor = (status?: ClientStatus) => {
     switch (status) {
-      case "claimed":
+      case "lead":
         return "success";
-      case "revoked":
+      case "active":
         return "default";
-      case "invited":
+      case "inactive":
         return "warning";
       default:
         return "default";
@@ -483,9 +490,7 @@ const ClientsPage = () => {
             <Chip
               label={selectedClient?.status}
               size="small"
-              color={getStatusColor(
-                selectedClient?.status as "claimed" | "revoked" | "invited"
-              )}
+              color={getStatusColor(selectedClient?.status)}
               variant="filled"
             />
           </Box>

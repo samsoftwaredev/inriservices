@@ -21,15 +21,20 @@ export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Client = Database["public"]["Tables"]["clients"]["Row"];
 export type Property = Database["public"]["Tables"]["properties"]["Row"];
 
+export type ClientWithProperties = Client & {
+  properties: Property[];
+};
+
+export type MemberRole = Database["public"]["Enums"]["member_role"];
+export type ClientType = Database["public"]["Enums"]["client_type"];
+export type ClientStatus = Database["public"]["Enums"]["client_status"];
+
 const supabase = createClient();
 
 /** -------------------------------------------------------
  * Types (match DB)
  * ------------------------------------------------------ */
 
-export type MemberRole = "owner" | "admin" | "staff" | "viewer";
-export type ClientType = "person" | "business";
-export type ClientStatus = "lead" | "active" | "inactive";
 export type PropertyType = "residential" | "commercial";
 
 export type WithMeta<T> = T & { id: string };
@@ -239,6 +244,78 @@ export const clientApi = {
     const { data, error } = await query.limit(10);
     if (error) throw error;
     return (data ?? []) as Client[];
+  },
+
+  async listClientsWithAddresses(params?: {
+    q?: string; // searches client display_name/email/phone + property address fields
+    status?: ClientStatus;
+    limit?: number;
+    offset?: number;
+  }): Promise<ListResult<ClientWithProperties>> {
+    const limit = params?.limit ?? 50;
+    const offset = params?.offset ?? 0;
+
+    // Join properties as nested array: properties(*)
+    let query = supabase
+      .from("clients")
+      .select(
+        `
+        *,
+        properties:properties(*)
+      `,
+        { count: "exact" }
+      );
+
+    if (params?.status) query = query.eq("status", params.status);
+
+    // Search across clients + properties
+    if (params?.q && params.q.trim()) {
+      const q = params.q.trim();
+
+      // NOTE: PostgREST "or" does not reliably span nested relations in all cases.
+      // This works for many setups, but if it doesn't in your project,
+      // use the RPC approach (below).
+      query = query.or(
+        [
+          `display_name.ilike.%${q}%`,
+          `primary_email.ilike.%${q}%`,
+          `primary_phone.ilike.%${q}%`,
+          // property fields (may or may not work depending on PostgREST config)
+          `properties.name.ilike.%${q}%`,
+          `properties.address_line1.ilike.%${q}%`,
+          `properties.address_line2.ilike.%${q}%`,
+          `properties.city.ilike.%${q}%`,
+          `properties.state.ilike.%${q}%`,
+          `properties.zip.ilike.%${q}%`,
+        ].join(",")
+      );
+    }
+
+    const { data, error, count } = await query
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      items: ((data ?? []) as unknown) as ClientWithProperties[],
+      total: count ?? undefined,
+    };
+  },
+
+  async getClientWithAddresses(clientId: string): Promise<ClientWithProperties> {
+    const res = await supabase
+      .from("clients")
+      .select(
+        `
+        *,
+        properties:properties(*)
+      `
+      )
+      .eq("id", clientId)
+      .single();
+
+    return assertOk(res, `Client not found: ${clientId}`) as unknown as ClientWithProperties;
   },
 };
 
