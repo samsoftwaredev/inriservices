@@ -20,6 +20,9 @@ export type Company = Database["public"]["Tables"]["companies"]["Row"];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Client = Database["public"]["Tables"]["clients"]["Row"];
 export type Property = Database["public"]["Tables"]["properties"]["Row"];
+export type Project = Database["public"]["Tables"]["projects"]["Row"]; 
+export type PropertyRoom = Database["public"]["Tables"]["property_rooms"]["Row"];
+
 
 export type ClientWithProperties = Client & {
   properties: Property[];
@@ -28,6 +31,14 @@ export type ClientWithProperties = Client & {
 export type MemberRole = Database["public"]["Enums"]["member_role"];
 export type ClientType = Database["public"]["Enums"]["client_type"];
 export type ClientStatus = Database["public"]["Enums"]["client_status"];
+export type ProjectStatus = Database["public"]["Enums"]["project_status"];
+export type ProjectType = Database["public"]["Enums"]["project_type"];
+
+export type ProjectWithRelationsAndRooms = Project & {
+  client: Client;
+  property: Property & { rooms: PropertyRoom[] };
+};
+
 
 const supabase = createClient();
 
@@ -385,5 +396,71 @@ export const propertyApi = {
   async deleteProperty(id: string): Promise<void> {
     const { error } = await supabase.from("properties").delete().eq("id", id);
     if (error) throw error;
+  },
+};
+
+export const projectApi = {
+  async listProjectsWithClientPropertyAndRooms(params?: {
+    status?: ProjectStatus;
+    project_type?: ProjectType;
+    q?: string; // reliable search is project.name; cross-table search => use RPC
+    limit?: number;
+    offset?: number;
+  }): Promise<ListResult<ProjectWithRelationsAndRooms>> {
+    const limit = params?.limit ?? 50;
+    const offset = params?.offset ?? 0;
+
+    let query = supabase
+      .from("projects")
+      .select(
+        `
+        *,
+        client:clients(*),
+        property:properties(
+          *,
+          rooms:property_rooms(*)
+        )
+        `,
+        { count: "exact" }
+      );
+
+    if (params?.status) query = query.eq("status", params.status);
+    if (params?.project_type) query = query.eq("project_type", params.project_type);
+
+    if (params?.q && params.q.trim()) {
+      const q = params.q.trim();
+      // Keep this reliable. Cross-table searching embedded relations is often inconsistent.
+      query = query.ilike("name", `%${q}%`);
+    }
+
+    const { data, error, count } = await query
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) throw error;
+
+    return {
+      items: (data ?? []) as unknown as ProjectWithRelationsAndRooms[],
+      total: count ?? undefined,
+    };
+  },
+
+  async getProjectWithClientPropertyAndRooms(projectId: string): Promise<ProjectWithRelationsAndRooms> {
+    const res = await supabase
+      .from("projects")
+      .select(
+        `
+        *,
+        client:clients(*),
+        property:properties(
+          *,
+          rooms:property_rooms(*)
+        )
+        `
+      )
+      .eq("id", projectId)
+      .single();
+
+    return assertOk(res, `Project not found: ${projectId}`) as unknown as ProjectWithRelationsAndRooms;
   },
 };

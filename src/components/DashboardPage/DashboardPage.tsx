@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Card,
@@ -37,6 +37,8 @@ import {
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import CustomerHeader from "../CustomerHeader";
+import { projectApi, ProjectStatus, ProjectType } from "@/services";
+import { toast } from "react-toastify";
 
 interface WorkHistoryItem {
   id: string;
@@ -47,8 +49,8 @@ interface WorkHistoryItem {
   totalCost: number;
   numberOfRooms: number;
   date: string;
-  status: "document_sent" | "in_progress" | "pending_signature" | "completed";
-  projectType: "interior" | "exterior";
+  status: ProjectStatus;
+  projectType: ProjectType;
 }
 
 interface DashboardStats {
@@ -62,6 +64,7 @@ const DashboardPage = () => {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedWorkId, setSelectedWorkId] = useState<string | null>(null);
+  const [workHistory, setWorkHistory] = useState<WorkHistoryItem[]>([]);
 
   // Sample dashboard statistics
   const stats: DashboardStats = {
@@ -70,70 +73,6 @@ const DashboardPage = () => {
     numberOfCustomers: 18,
     pendingWork: 6,
   };
-
-  // Sample work history data
-  const workHistory: WorkHistoryItem[] = [
-    {
-      id: "1",
-      customerName: "John Doe",
-      address: "123 Main St",
-      city: "Garland",
-      state: "TX",
-      totalCost: 3200,
-      numberOfRooms: 4,
-      date: "2024-10-01",
-      status: "completed",
-      projectType: "interior",
-    },
-    {
-      id: "2",
-      customerName: "Alice Johnson",
-      address: "456 Oak Avenue",
-      city: "Springfield",
-      state: "TX",
-      totalCost: 5800,
-      numberOfRooms: 6,
-      date: "2024-10-05",
-      status: "pending_signature",
-      projectType: "interior",
-    },
-    {
-      id: "3",
-      customerName: "Michael Brown",
-      address: "789 Pine Street",
-      city: "Riverside",
-      state: "FL",
-      totalCost: 2900,
-      numberOfRooms: 3,
-      date: "2024-10-08",
-      status: "in_progress",
-      projectType: "exterior",
-    },
-    {
-      id: "4",
-      customerName: "Sarah Wilson",
-      address: "321 Elm Drive",
-      city: "Austin",
-      state: "TX",
-      totalCost: 4500,
-      numberOfRooms: 5,
-      date: "2024-10-10",
-      status: "document_sent",
-      projectType: "interior",
-    },
-    {
-      id: "5",
-      customerName: "David Martinez",
-      address: "654 Cedar Lane",
-      city: "Houston",
-      state: "TX",
-      totalCost: 6200,
-      numberOfRooms: 7,
-      date: "2024-10-12",
-      status: "in_progress",
-      projectType: "interior",
-    },
-  ];
 
   const handleMenuClick = (
     event: React.MouseEvent<HTMLElement>,
@@ -216,6 +155,37 @@ const DashboardPage = () => {
       format: (value: number) => value.toString(),
     },
   ];
+
+  const getProjects = async () => {
+    try {
+      const projectRes =
+        await projectApi.listProjectsWithClientPropertyAndRooms();
+      const projects = projectRes.items.map((project) => ({
+        id: project.id,
+        customerName: project.client.display_name,
+        address: project.property.address_line1,
+        city: project.property.city,
+        state: project.property.state,
+        totalCost:
+          project.labor_cost_cents +
+          project.material_cost_cents +
+          project.tax_amount_cents,
+        numberOfRooms: project.property.rooms.length,
+        date: project.created_at,
+        status: project.status,
+        projectType: project.project_type,
+      }));
+      setWorkHistory(projects);
+      console.log("Fetched projects:", projectRes);
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+      toast.error("Failed to load projects.");
+    }
+  };
+
+  useEffect(() => {
+    getProjects();
+  }, []);
 
   return (
     <Box sx={{ py: 3 }}>
@@ -368,7 +338,7 @@ const DashboardPage = () => {
                         label={work.projectType}
                         size="small"
                         color={
-                          work.projectType === "interior"
+                          work.projectType === "interior_paint"
                             ? "primary"
                             : "success"
                         }

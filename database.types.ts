@@ -123,6 +123,91 @@ export type Database = {
           },
         ]
       }
+      projects: {
+        Row: {
+          client_id: string
+          company_id: string
+          created_at: string
+          end_date: string | null
+          id: string
+          labor_cost_cents: number
+          labor_hours_estimated: number | null
+          markup_bps: number
+          material_cost_cents: number
+          name: string
+          project_type: Database["public"]["Enums"]["project_type"]
+          property_id: string
+          scope_notes: string | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["project_status"]
+          tax_amount_cents: number
+          tax_rate_bps: number
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          company_id: string
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          labor_cost_cents?: number
+          labor_hours_estimated?: number | null
+          markup_bps?: number
+          material_cost_cents?: number
+          name: string
+          project_type?: Database["public"]["Enums"]["project_type"]
+          property_id: string
+          scope_notes?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["project_status"]
+          tax_amount_cents?: number
+          tax_rate_bps?: number
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          company_id?: string
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          labor_cost_cents?: number
+          labor_hours_estimated?: number | null
+          markup_bps?: number
+          material_cost_cents?: number
+          name?: string
+          project_type?: Database["public"]["Enums"]["project_type"]
+          property_id?: string
+          scope_notes?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["project_status"]
+          tax_amount_cents?: number
+          tax_rate_bps?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       properties: {
         Row: {
           address_line1: string
@@ -183,6 +268,96 @@ export type Database = {
           },
         ]
       }
+      property_rooms: {
+        Row: {
+          ceiling_area_sqft: number | null
+          ceiling_height_ft: number | null
+          company_id: string
+          created_at: string
+          description: string | null
+          floor_area_sqft: number | null
+          id: string
+          level: number
+          name: string
+          notes_customer: string | null
+          notes_internal: string | null
+          openings_area_sqft: number | null
+          paint_ceiling: boolean
+          paint_doors: boolean
+          paint_trim: boolean
+          paint_walls: boolean
+          property_id: string
+          room_height_ft: number | null
+          sort_order: number
+          updated_at: string
+          wall_area_sqft: number | null
+          wall_perimeter_ft: number | null
+        }
+        Insert: {
+          ceiling_area_sqft?: number | null
+          ceiling_height_ft?: number | null
+          company_id: string
+          created_at?: string
+          description?: string | null
+          floor_area_sqft?: number | null
+          id?: string
+          level?: number
+          name: string
+          notes_customer?: string | null
+          notes_internal?: string | null
+          openings_area_sqft?: number | null
+          paint_ceiling?: boolean
+          paint_doors?: boolean
+          paint_trim?: boolean
+          paint_walls?: boolean
+          property_id: string
+          room_height_ft?: number | null
+          sort_order?: number
+          updated_at?: string
+          wall_area_sqft?: number | null
+          wall_perimeter_ft?: number | null
+        }
+        Update: {
+          ceiling_area_sqft?: number | null
+          ceiling_height_ft?: number | null
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          floor_area_sqft?: number | null
+          id?: string
+          level?: number
+          name?: string
+          notes_customer?: string | null
+          notes_internal?: string | null
+          openings_area_sqft?: number | null
+          paint_ceiling?: boolean
+          paint_doors?: boolean
+          paint_trim?: boolean
+          paint_walls?: boolean
+          property_id?: string
+          room_height_ft?: number | null
+          sort_order?: number
+          updated_at?: string
+          wall_area_sqft?: number | null
+          wall_perimeter_ft?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_rooms_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "property_rooms_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       my_profile: {
@@ -228,6 +403,21 @@ export type Database = {
       client_status: "lead" | "active" | "inactive"
       client_type: "person" | "business"
       member_role: "owner" | "admin" | "staff" | "viewer"
+      project_status:
+        | "draft"
+        | "scheduled"
+        | "in_progress"
+        | "on_hold"
+        | "completed"
+        | "canceled"
+      project_type:
+        | "interior_paint"
+        | "exterior_paint"
+        | "drywall_repair"
+        | "trim_paint"
+        | "cabinet_paint"
+        | "wallpaper"
+        | "other"
       property_type: "residential" | "commercial"
     }
     CompositeTypes: {
@@ -359,6 +549,23 @@ export const Constants = {
       client_status: ["lead", "active", "inactive"],
       client_type: ["person", "business"],
       member_role: ["owner", "admin", "staff", "viewer"],
+      project_status: [
+        "draft",
+        "scheduled",
+        "in_progress",
+        "on_hold",
+        "completed",
+        "canceled",
+      ],
+      project_type: [
+        "interior_paint",
+        "exterior_paint",
+        "drywall_repair",
+        "trim_paint",
+        "cabinet_paint",
+        "wallpaper",
+        "other",
+      ],
       property_type: ["residential", "commercial"],
     },
   },
