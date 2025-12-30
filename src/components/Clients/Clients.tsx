@@ -20,6 +20,7 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Paper,
 } from "@mui/material";
 import {
   AddCircleOutline,
@@ -39,7 +40,8 @@ import ClientForm from "../ProInteriorEstimate/ClientForm";
 import { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { ClientFormData } from "../ProInteriorEstimate/ClientForm/ClientForm.model";
 import { useAuth } from "@/context";
-import { clientApi, ClientStatus } from "@/services";
+import { clientApi, ClientStatus, propertyApi } from "@/services";
+import { toast } from "react-toastify";
 
 interface ClientInfo {
   id: string;
@@ -47,6 +49,7 @@ interface ClientInfo {
   email: string;
   phone: string;
   address: string;
+  address2?: string;
   city: string;
   state: string;
   zipCode: string;
@@ -60,6 +63,8 @@ interface ClientInfo {
 const ClientsPage = () => {
   const { userData } = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
+  const [isCreatingNewClient, setIsCreatingNewClient] = useState(false);
+  const [isEditingClient, setIsEditingClient] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
@@ -93,21 +98,40 @@ const ClientsPage = () => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-    setSelectedClientId(null);
   };
 
   const handleViewDetails = () => {
     const client = clients.find((c) => c.id === selectedClientId);
     if (client) {
-      setSelectedClient(client);
-      setViewDetailsOpen(true);
+      setViewDetailsOpen(() => {
+        setSelectedClient(client);
+        return true;
+      });
     }
     handleMenuClose();
   };
 
   const handleCloseDetails = () => {
     setViewDetailsOpen(false);
+    handleMenuClose();
+    handleCloseEditForm();
     setSelectedClient(null);
+  };
+
+  const handleOpenEditForm = () => {
+    const client = clients.find((c) => c.id === selectedClientId);
+    if (client) {
+      setSelectedClient(() => {
+        handleMenuClose();
+        setIsEditingClient(true);
+        return client;
+      });
+    }
+  };
+
+  const handleCloseEditForm = () => {
+    handleMenuClose();
+    setIsEditingClient(false);
   };
 
   const getClients = async () => {
@@ -120,10 +144,11 @@ const ClientsPage = () => {
         fullName: client.display_name,
         email: client.primary_email || "",
         phone: client.primary_phone || "",
-        address: property ? property.address_line1 : "",
-        city: property ? property.city : "",
-        state: property ? property.state : "",
-        zipCode: property ? property.zip : "",
+        address: property?.address_line1 || "",
+        address2: property?.address_line2 || "",
+        city: property?.city || "",
+        state: property?.state || "",
+        zipCode: property?.zip || "",
         numberOfProjects: 0,
         totalRevenue: 0,
         lastProjectDate: "",
@@ -170,11 +195,74 @@ const ClientsPage = () => {
       .slice(0, 2);
   };
 
-  const onSubmit: SubmitHandler<ClientFormData> = (data) => {
-    console.log("New Client Data:", data);
+  const onCreateNewClient: SubmitHandler<ClientFormData> = async (data) => {
+    try {
+      setIsCreatingNewClient(true);
+      const newClient = await clientApi.createClient({
+        display_name: data.customerName,
+        primary_email: data.customerEmail,
+        primary_phone: data.customerPhone,
+        status: "lead",
+        notes: "",
+        client_type: "person",
+        company_id: userData?.company_id || "",
+      });
+      debugger;
+      await propertyApi.createProperty({
+        client_id: newClient.id, // Associate with the created client if needed
+        address_line1: data.address,
+        address_line2: data.address2 || "",
+        name: `${data.customerName}'s Property`,
+        property_type: "residential",
+        city: data.city,
+        state: data.state,
+        zip: data.zipCode,
+        country: "USA",
+        company_id: userData?.company_id || "",
+      });
+      getClients();
+      handleCloseClientForm();
+      toast.success("Client created successfully");
+    } catch (error) {
+      console.error("Error creating client:", error);
+      toast.error("Failed to create client");
+    } finally {
+      setIsCreatingNewClient(false);
+    }
   };
 
   const onError: SubmitErrorHandler<ClientFormData> = (errors) => {
+    console.log(errors);
+  };
+
+  const onSaveEdits: SubmitHandler<ClientFormData> = async (data) => {
+    try {
+      if (!selectedClient) return;
+      // Update client info
+      await clientApi.updateClient(selectedClient.id, {
+        display_name: data.customerName,
+        primary_email: data.customerEmail,
+        primary_phone: data.customerPhone,
+      });
+      // Update property info - assuming one property per client for simplicity
+      const property = await propertyApi.getProperty(selectedClient.id);
+      await propertyApi.updateProperty(property.id, {
+        address_line1: data.address,
+        address_line2: data.address2 || "",
+        city: data.city,
+        state: data.state,
+        zip: data.zipCode,
+      });
+      getClients();
+      setIsEditingClient(false);
+      toast.success("Client updated successfully");
+    } catch (error) {
+      console.error("Error updating client:", error);
+      toast.error("Failed to update client");
+    }
+  };
+
+  const onErrorEditing: SubmitErrorHandler<ClientFormData> = (errors) => {
     console.log(errors);
   };
 
@@ -196,11 +284,30 @@ const ClientsPage = () => {
 
       {createNewClient && (
         <Box sx={{ mb: 4 }}>
-          <ClientForm onSubmit={onSubmit} onError={onError} />
-          <Button onClick={handleCloseClientForm}>Close</Button>
-          <Button type="submit" form="client-form" variant="contained">
-            Create New Client
-          </Button>
+          <Paper elevation={2} sx={{ p: { xs: 2, sm: 3 }, mb: 2 }}>
+            <ClientForm
+              isLoading={isCreatingNewClient}
+              onSubmit={onCreateNewClient}
+              onError={onError}
+            />
+            <Box
+              sx={{ mt: 4 }}
+              display="flex"
+              justifyContent="flex-end"
+              gap={2}
+            >
+              <Button onClick={handleCloseClientForm}>Close</Button>
+              <Button
+                disabled={isCreatingNewClient}
+                type="submit"
+                form="client-form"
+                variant="contained"
+                loading={isCreatingNewClient}
+              >
+                Create New Client
+              </Button>
+            </Box>
+          </Paper>
         </Box>
       )}
 
@@ -455,7 +562,7 @@ const ClientsPage = () => {
           <VisibilityIcon sx={{ mr: 1, fontSize: 18 }} />
           View Details
         </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
+        <MenuItem onClick={handleOpenEditForm}>
           <EditIcon sx={{ mr: 1, fontSize: 18 }} />
           Edit Client
         </MenuItem>
@@ -464,6 +571,50 @@ const ClientsPage = () => {
           Project History
         </MenuItem>
       </Menu>
+
+      {/* Edit Client Dialog */}
+      {selectedClient && (
+        <Dialog
+          open={isEditingClient}
+          onClose={handleCloseEditForm}
+          maxWidth="md"
+          fullWidth
+        >
+          <DialogTitle>Edit Client</DialogTitle>
+          <DialogContent>
+            <ClientForm
+              isLoading={false}
+              onSubmit={onSaveEdits}
+              onError={onErrorEditing}
+              defaultValues={{
+                id: selectedClient.id,
+                name: selectedClient.fullName,
+                email: selectedClient.email,
+                phone: selectedClient.phone,
+                contact: "",
+                address: selectedClient.address,
+                address2: selectedClient.address2,
+                city: selectedClient.city,
+                state: selectedClient.state,
+                zipCode: selectedClient.zipCode,
+                measurementUnit: "ft",
+                floorPlan: 1,
+              }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setIsEditingClient(false)}>Cancel</Button>
+            <Button
+              type="submit"
+              form="client-form"
+              variant="contained"
+              color="primary"
+            >
+              Save Changes
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
 
       {/* Client Details Dialog */}
       <Dialog
@@ -582,7 +733,11 @@ const ClientsPage = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDetails}>Close</Button>
-          <Button variant="contained" color="primary">
+          <Button
+            onClick={handleOpenEditForm}
+            variant="contained"
+            color="primary"
+          >
             Edit Client
           </Button>
         </DialogActions>

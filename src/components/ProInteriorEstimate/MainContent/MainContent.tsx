@@ -1,7 +1,14 @@
 "use client";
 
 import React from "react";
-import { Box, Typography, Divider, Button, IconButton } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Divider,
+  Button,
+  IconButton,
+  Paper,
+} from "@mui/material";
 import {
   Add as AddIcon,
   Delete as DeleteIcon,
@@ -17,6 +24,7 @@ import { useCustomer } from "@/context/CustomerContext";
 import { RoomProvider } from "@/context/RoomContext";
 import { useBuilding } from "@/context";
 import DeleteSectionDialog from "../DeleteSectionDialog";
+import { MeasurementUnit } from "@/interfaces/laborTypes";
 
 const MainContent = ({ isNewClient }: { isNewClient?: boolean }) => {
   const {
@@ -40,6 +48,40 @@ const MainContent = ({ isNewClient }: { isNewClient?: boolean }) => {
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
+  const defaultValues =
+    currentCustomer && buildingData
+      ? {
+          id: currentCustomer?.id,
+          name: currentCustomer?.name,
+          email: currentCustomer?.email,
+          phone: currentCustomer?.phone,
+          contact: currentCustomer?.contact,
+          address: buildingData?.address,
+          address2: buildingData?.address2,
+          city: buildingData?.city,
+          state: buildingData?.state,
+          zipCode: buildingData?.zipCode,
+          measurementUnit:
+            buildingData?.measurementUnit || ("ft" as MeasurementUnit),
+          floorPlan: buildingData?.floorPlan || 0,
+        }
+      : currentCustomer
+      ? {
+          id: currentCustomer?.id,
+          name: currentCustomer?.name,
+          email: currentCustomer?.email,
+          phone: currentCustomer?.phone,
+          contact: currentCustomer?.contact,
+          address: "",
+          address2: "",
+          city: "",
+          state: "",
+          zipCode: "",
+          measurementUnit: "ft" as MeasurementUnit,
+          floorPlan: 0,
+        }
+      : undefined;
 
   return (
     <Box component="main" my={2}>
@@ -69,12 +111,13 @@ const MainContent = ({ isNewClient }: { isNewClient?: boolean }) => {
         onCreateNewLocation={() => {}}
       />
 
-      <ClientForm
-        onError={() => {}}
-        onSubmit={() => {}}
-        currentCustomer={currentCustomer}
-        buildingData={buildingData}
-      />
+      <Paper elevation={2} sx={{ p: { xs: 2, sm: 3 }, mb: 2 }}>
+        <ClientForm
+          onError={() => {}}
+          onSubmit={() => {}}
+          defaultValues={defaultValues}
+        />
+      </Paper>
 
       <Box
         sx={{

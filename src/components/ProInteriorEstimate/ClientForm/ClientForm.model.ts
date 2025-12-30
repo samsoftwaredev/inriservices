@@ -6,6 +6,7 @@ export interface ClientFormData {
   customerPhone: string;
   customerContact: string;
   address: string;
+  address2?: string;
   city: string;
   state: string;
   zipCode: string;

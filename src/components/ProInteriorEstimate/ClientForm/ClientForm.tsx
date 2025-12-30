@@ -7,7 +7,6 @@ import {
   Select,
   MenuItem,
   Grid,
-  Paper,
   TextField,
   Box,
   Typography,
@@ -16,24 +15,32 @@ import {
 import {
   useForm,
   Controller,
-  Form,
   SubmitHandler,
   SubmitErrorHandler,
 } from "react-hook-form";
-import {
-  Customer,
-  LocationData,
-  MeasurementUnit,
-} from "@/interfaces/laborTypes";
+import { MeasurementUnit } from "@/interfaces/laborTypes";
 import { floorOptions } from "@/constants/laborData";
 import { usa_states } from "@/constants";
 import { ClientFormData } from "./ClientForm.model";
 
 interface Props {
-  currentCustomer?: Customer;
-  buildingData?: LocationData;
+  defaultValues?: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    contact: string;
+    address: string;
+    address2?: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    measurementUnit: MeasurementUnit;
+    floorPlan: number;
+  };
   onSubmit: SubmitHandler<ClientFormData>;
   onError: SubmitErrorHandler<ClientFormData>;
+  isLoading?: boolean;
 }
 
 // Validation rules
@@ -78,6 +85,9 @@ const validationRules = {
       message: "Address must be at least 5 characters",
     },
   },
+  address2: {
+    required: false,
+  },
   city: {
     required: "City is required",
     minLength: {
@@ -108,12 +118,7 @@ const validationRules = {
   },
 };
 
-const ClientForm = ({
-  currentCustomer,
-  buildingData,
-  onSubmit,
-  onError,
-}: Props) => {
+const ClientForm = ({ defaultValues, onSubmit, onError, isLoading }: Props) => {
   // Initialize react-hook-form with default values
   const {
     control,
@@ -124,34 +129,36 @@ const ClientForm = ({
   } = useForm<ClientFormData>({
     mode: "onChange", // Validate on every change
     defaultValues: {
-      customerName: currentCustomer?.name || "",
-      customerEmail: currentCustomer?.email || "",
-      customerPhone: currentCustomer?.phone || "",
-      customerContact: currentCustomer?.contact || "",
-      address: buildingData?.address || "",
-      city: buildingData?.city || "",
-      state: buildingData?.state || "",
-      zipCode: buildingData?.zipCode || "",
-      measurementUnit: buildingData?.measurementUnit || "ft",
-      floorPlan: buildingData?.floorPlan || 1,
+      customerName: defaultValues?.name || "",
+      customerEmail: defaultValues?.email || "",
+      customerPhone: defaultValues?.phone || "",
+      customerContact: defaultValues?.contact || "",
+      address: defaultValues?.address || "",
+      address2: defaultValues?.address2 || "",
+      city: defaultValues?.city || "",
+      state: defaultValues?.state || "",
+      zipCode: defaultValues?.zipCode || "",
+      measurementUnit: defaultValues?.measurementUnit || "ft",
+      floorPlan: defaultValues?.floorPlan || 1,
     },
   });
 
   // Update form when external props change
   useEffect(() => {
     reset({
-      customerName: currentCustomer?.name || "",
-      customerEmail: currentCustomer?.email || "",
-      customerPhone: currentCustomer?.phone || "",
-      customerContact: currentCustomer?.contact || "",
-      address: buildingData?.address || "",
-      city: buildingData?.city || "",
-      state: buildingData?.state || "",
-      zipCode: buildingData?.zipCode || "",
-      measurementUnit: buildingData?.measurementUnit || "ft",
-      floorPlan: buildingData?.floorPlan || 1,
+      customerName: defaultValues?.name || "",
+      customerEmail: defaultValues?.email || "",
+      customerPhone: defaultValues?.phone || "",
+      customerContact: defaultValues?.contact || "",
+      address: defaultValues?.address || "",
+      address2: defaultValues?.address2 || "",
+      city: defaultValues?.city || "",
+      state: defaultValues?.state || "",
+      zipCode: defaultValues?.zipCode || "",
+      measurementUnit: defaultValues?.measurementUnit || "ft",
+      floorPlan: defaultValues?.floorPlan || 1,
     });
-  }, [currentCustomer, buildingData, reset]);
+  }, [defaultValues, defaultValues, reset]);
 
   // Helper function to get measurement unit label
   const getMeasurementUnitLabel = (unit: MeasurementUnit): string => {
@@ -176,281 +183,297 @@ const ClientForm = ({
 
   return (
     <form id="client-form" onSubmit={handleSubmit(onSubmit, onError)}>
-      <Paper elevation={2} sx={{ p: { xs: 2, sm: 3 }, mb: 2 }}>
-        {/* Customer Information Section */}
-        <Box sx={{ mb: 3 }}>
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{ color: "primary.main", fontWeight: 600 }}
-          >
-            Customer Information
-          </Typography>
+      {/* Customer Information Section */}
+      <Box sx={{ mb: 3 }}>
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{ color: "primary.main", fontWeight: 600 }}
+        >
+          Customer Information
+        </Typography>
 
-          <Grid container spacing={2}>
-            {/* Customer Name */}
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Controller
-                name="customerName"
-                control={control}
-                rules={validationRules.customerName}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Customer Name"
-                    size="small"
-                    error={!!errors.customerName}
-                    helperText={errors.customerName?.message}
-                  />
-                )}
-              />
-            </Grid>
-
-            {/* Customer Email */}
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Controller
-                name="customerEmail"
-                control={control}
-                rules={validationRules.customerEmail}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Email Address"
-                    size="small"
-                    type="email"
-                    error={!!errors.customerEmail}
-                    helperText={errors.customerEmail?.message}
-                  />
-                )}
-              />
-            </Grid>
-
-            {/* Customer Phone */}
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Controller
-                name="customerPhone"
-                control={control}
-                rules={validationRules.customerPhone}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Phone Number"
-                    size="small"
-                    type="tel"
-                    error={!!errors.customerPhone}
-                    helperText={errors.customerPhone?.message}
-                  />
-                )}
-              />
-            </Grid>
-
-            {/* Customer Contact */}
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Controller
-                name="customerContact"
-                control={control}
-                rules={validationRules.customerContact}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Contact Method"
-                    size="small"
-                    error={!!errors.customerContact}
-                    helperText={errors.customerContact?.message}
-                  />
-                )}
-              />
-            </Grid>
+        <Grid container spacing={2}>
+          {/* Customer Name */}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Controller
+              name="customerName"
+              control={control}
+              rules={validationRules.customerName}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  label="Customer Name"
+                  size="small"
+                  error={!!errors.customerName}
+                  helperText={errors.customerName?.message}
+                  disabled={isLoading}
+                />
+              )}
+            />
           </Grid>
-        </Box>
 
-        {/* Project Location Section */}
-        <Box sx={{ mb: 3 }}>
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{ color: "primary.main", fontWeight: 600 }}
-          >
-            Project Location
-          </Typography>
-
-          <Grid container spacing={2}>
-            {/* Address - Full width */}
-            <Grid size={{ xs: 12 }}>
-              <Controller
-                name="address"
-                control={control}
-                rules={validationRules.address}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Project Address"
-                    size="small"
-                    error={!!errors.address}
-                    helperText={errors.address?.message}
-                  />
-                )}
-              />
-            </Grid>
-
-            {/* City, State, ZIP Row */}
-            <Grid size={{ xs: 12, sm: 5 }}>
-              <Controller
-                name="city"
-                control={control}
-                rules={validationRules.city}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="City"
-                    size="small"
-                    error={!!errors.city}
-                    helperText={errors.city?.message}
-                  />
-                )}
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 4 }}>
-              <Controller
-                name="state"
-                control={control}
-                rules={validationRules.state}
-                render={({ field }) => (
-                  <FormControl fullWidth size="small" error={!!errors.state}>
-                    <InputLabel id="state-select-label">State</InputLabel>
-                    <Select
-                      {...field}
-                      labelId="state-select-label"
-                      id="state-select"
-                      label="State"
-                    >
-                      {usa_states.map((state) => (
-                        <MenuItem key={state.value} value={state.value}>
-                          {state.value} - {state.label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {errors.state && (
-                      <FormHelperText>{errors.state.message}</FormHelperText>
-                    )}
-                  </FormControl>
-                )}
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 3 }}>
-              <Controller
-                name="zipCode"
-                control={control}
-                rules={validationRules.zipCode}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="ZIP Code"
-                    size="small"
-                    inputProps={{ maxLength: 10 }}
-                    error={!!errors.zipCode}
-                    helperText={errors.zipCode?.message}
-                  />
-                )}
-              />
-            </Grid>
+          {/* Customer Email */}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Controller
+              name="customerEmail"
+              control={control}
+              rules={validationRules.customerEmail}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  label="Email Address"
+                  size="small"
+                  type="email"
+                  error={!!errors.customerEmail}
+                  helperText={errors.customerEmail?.message}
+                />
+              )}
+            />
           </Grid>
-        </Box>
 
-        {/* Project Settings Section */}
-        <Box>
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{ color: "primary.main", fontWeight: 600 }}
-          >
-            Project Settings
-          </Typography>
+          {/* Customer Phone */}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Controller
+              name="customerPhone"
+              control={control}
+              rules={validationRules.customerPhone}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  label="Phone Number"
+                  size="small"
+                  type="tel"
+                  error={!!errors.customerPhone}
+                  helperText={errors.customerPhone?.message}
+                />
+              )}
+            />
+          </Grid>
 
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Controller
-                name="measurementUnit"
-                control={control}
-                rules={validationRules.measurementUnit}
-                render={({ field }) => (
-                  <FormControl
-                    fullWidth
-                    size="small"
-                    error={!!errors.measurementUnit}
+          {/* Customer Contact */}
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Controller
+              name="customerContact"
+              control={control}
+              rules={validationRules.customerContact}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  label="Contact Method"
+                  size="small"
+                  error={!!errors.customerContact}
+                  helperText={errors.customerContact?.message}
+                  disabled={isLoading}
+                />
+              )}
+            />
+          </Grid>
+        </Grid>
+      </Box>
+
+      {/* Project Location Section */}
+      <Box sx={{ mb: 3 }}>
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{ color: "primary.main", fontWeight: 600 }}
+        >
+          Project Location
+        </Typography>
+
+        <Grid container spacing={2}>
+          {/* Address - Full width */}
+          <Grid size={{ xs: 12 }}>
+            <Controller
+              name="address"
+              control={control}
+              rules={validationRules.address}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  label="Project Address"
+                  size="small"
+                  error={!!errors.address}
+                  helperText={errors.address?.message}
+                  disabled={isLoading}
+                />
+              )}
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12 }}>
+            {/* Address2 - Full width */}
+            <Controller
+              name="address2"
+              control={control}
+              rules={validationRules.address2}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  label="Project Address 2 (Optional)"
+                  size="small"
+                  error={!!errors.address2}
+                  helperText={errors.address2?.message}
+                  disabled={isLoading}
+                />
+              )}
+            />
+          </Grid>
+
+          {/* City, State, ZIP Row */}
+          <Grid size={{ xs: 12, sm: 5 }}>
+            <Controller
+              name="city"
+              control={control}
+              rules={validationRules.city}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  label="City"
+                  size="small"
+                  error={!!errors.city}
+                  helperText={errors.city?.message}
+                  disabled={isLoading}
+                />
+              )}
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 4 }}>
+            <Controller
+              name="state"
+              control={control}
+              rules={validationRules.state}
+              render={({ field }) => (
+                <FormControl fullWidth size="small" error={!!errors.state}>
+                  <InputLabel id="state-select-label">State</InputLabel>
+                  <Select
+                    {...field}
+                    labelId="state-select-label"
+                    id="state-select"
+                    label="State"
                   >
-                    <InputLabel id="measurement-unit-label">
-                      Measurement Unit
-                    </InputLabel>
-                    <Select
-                      {...field}
-                      labelId="measurement-unit-label"
-                      id="measurement-unit-select"
-                      label="Measurement Unit"
-                    >
-                      {measurementUnitList.map((unit) => (
-                        <MenuItem key={unit} value={unit}>
-                          {getMeasurementUnitLabel(unit)}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {errors.measurementUnit && (
-                      <FormHelperText>
-                        {errors.measurementUnit.message}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
-                )}
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <Controller
-                name="floorPlan"
-                control={control}
-                rules={validationRules.floorPlan}
-                render={({ field }) => (
-                  <FormControl
-                    fullWidth
-                    size="small"
-                    error={!!errors.floorPlan}
-                  >
-                    <InputLabel id="floor-plan-label">
-                      Number of Floors
-                    </InputLabel>
-                    <Select
-                      {...field}
-                      labelId="floor-plan-label"
-                      id="floor-plan-select"
-                      label="Number of Floors"
-                    >
-                      {floorOptions.map((floorCount) => (
-                        <MenuItem key={floorCount} value={floorCount}>
-                          {getFloorLabel(floorCount)}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                    {errors.floorPlan && (
-                      <FormHelperText>
-                        {errors.floorPlan.message}
-                      </FormHelperText>
-                    )}
-                  </FormControl>
-                )}
-              />
-            </Grid>
+                    {usa_states.map((state) => (
+                      <MenuItem key={state.value} value={state.value}>
+                        {state.value} - {state.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {errors.state && (
+                    <FormHelperText>{errors.state.message}</FormHelperText>
+                  )}
+                </FormControl>
+              )}
+            />
           </Grid>
-        </Box>
-      </Paper>
+
+          <Grid size={{ xs: 12, sm: 3 }}>
+            <Controller
+              name="zipCode"
+              control={control}
+              rules={validationRules.zipCode}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  label="ZIP Code"
+                  size="small"
+                  inputProps={{ maxLength: 10 }}
+                  error={!!errors.zipCode}
+                  helperText={errors.zipCode?.message}
+                />
+              )}
+            />
+          </Grid>
+        </Grid>
+      </Box>
+
+      {/* Project Settings Section */}
+      <Box>
+        <Typography
+          variant="h6"
+          gutterBottom
+          sx={{ color: "primary.main", fontWeight: 600 }}
+        >
+          Project Settings
+        </Typography>
+
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Controller
+              name="measurementUnit"
+              control={control}
+              rules={validationRules.measurementUnit}
+              render={({ field }) => (
+                <FormControl
+                  fullWidth
+                  size="small"
+                  error={!!errors.measurementUnit}
+                >
+                  <InputLabel id="measurement-unit-label">
+                    Measurement Unit
+                  </InputLabel>
+                  <Select
+                    {...field}
+                    labelId="measurement-unit-label"
+                    id="measurement-unit-select"
+                    label="Measurement Unit"
+                  >
+                    {measurementUnitList.map((unit) => (
+                      <MenuItem key={unit} value={unit}>
+                        {getMeasurementUnitLabel(unit)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {errors.measurementUnit && (
+                    <FormHelperText>
+                      {errors.measurementUnit.message}
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              )}
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Controller
+              name="floorPlan"
+              control={control}
+              rules={validationRules.floorPlan}
+              render={({ field }) => (
+                <FormControl fullWidth size="small" error={!!errors.floorPlan}>
+                  <InputLabel id="floor-plan-label">
+                    Number of Floors
+                  </InputLabel>
+                  <Select
+                    {...field}
+                    labelId="floor-plan-label"
+                    id="floor-plan-select"
+                    label="Number of Floors"
+                  >
+                    {floorOptions.map((floorCount) => (
+                      <MenuItem key={floorCount} value={floorCount}>
+                        {getFloorLabel(floorCount)}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {errors.floorPlan && (
+                    <FormHelperText>{errors.floorPlan.message}</FormHelperText>
+                  )}
+                </FormControl>
+              )}
+            />
+          </Grid>
+        </Grid>
+      </Box>
     </form>
   );
 };

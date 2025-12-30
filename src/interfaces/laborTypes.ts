@@ -163,6 +163,7 @@ export interface RoomOverview {
 
 export interface CustomerAddress {
   address: string;
+  address2?: string;
   city: string;
   state: string;
   zipCode: string;
