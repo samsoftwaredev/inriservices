@@ -231,10 +231,6 @@ const ClientsPage = () => {
     }
   };
 
-  const onError: SubmitErrorHandler<ClientFormData> = (errors) => {
-    console.log(errors);
-  };
-
   const onSaveEdits: SubmitHandler<ClientFormData> = async (data) => {
     try {
       if (!selectedClient) return;
@@ -288,7 +284,6 @@ const ClientsPage = () => {
             <ClientForm
               isLoading={isCreatingNewClient}
               onSubmit={onCreateNewClient}
-              onError={onError}
             />
             <Box
               sx={{ mt: 4 }}
@@ -585,7 +580,6 @@ const ClientsPage = () => {
             <ClientForm
               isLoading={false}
               onSubmit={onSaveEdits}
-              onError={onErrorEditing}
               defaultValues={{
                 id: selectedClient.id,
                 name: selectedClient.fullName,

@@ -9,6 +9,7 @@ import { ProjectCostProvider } from "@/context";
 import { Button, Input, Box, Typography, Paper, Divider } from "@mui/material";
 import FeaturesList from "../ProInteriorEstimate/FeaturesList";
 import { InvoiceGenerator } from "../InvoiceGenerator";
+import CustomerSelectionMenu from "../ProInteriorEstimate/CustomerSelectionMenu";
 
 const GeneralEstimate = () => {
   const measurementUnit: "ft" | "m" = "ft";
@@ -37,15 +38,19 @@ const GeneralEstimate = () => {
   };
 
   // todo
+  // pick customer first
   // upload pictures of the property
   // describe the work needed
   // customer input details and notes
   // generate PDF estimate report
   return (
-    <ProtectedRoute>
-      <Typography variant="h4" gutterBottom>
-        General Estimate
-      </Typography>
+    <>
+      <CustomerSelectionMenu
+        title={"General Estimate"}
+        subtitle={"Select a customer for this estimate"}
+        onCreateNewCustomer={() => {}}
+        onCreateNewLocation={() => {}}
+      />
 
       <Box sx={{ mb: 3 }}>
         <Button
@@ -105,7 +110,7 @@ const GeneralEstimate = () => {
           </RoomProvider>
         ))}
       </ProjectCostProvider>
-    </ProtectedRoute>
+    </>
   );
 };
 

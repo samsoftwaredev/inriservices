@@ -26,11 +26,9 @@ import { useBuilding } from "@/context";
 import DeleteSectionDialog from "../DeleteSectionDialog";
 import { MeasurementUnit } from "@/interfaces/laborTypes";
 
-const MainContent = ({ isNewClient }: { isNewClient?: boolean }) => {
+const MainContent = () => {
   const {
     buildingData,
-    anchorEl,
-    setAnchorEl,
     deleteConfirmation,
     addNewRoom,
     handleDeleteSectionClick,
@@ -38,15 +36,10 @@ const MainContent = ({ isNewClient }: { isNewClient?: boolean }) => {
     handleDeleteConfirm,
     onRoomUpdate,
   } = useBuilding();
-  const { previousCustomers, currentCustomer, setCurrentCustomer } =
-    useCustomer();
+  const { currentCustomer, setCurrentCustomer } = useCustomer();
 
   const newCustomer = () => {
     setCurrentCustomer(undefined);
-  };
-
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
   };
 
   const defaultValues =
@@ -85,38 +78,13 @@ const MainContent = ({ isNewClient }: { isNewClient?: boolean }) => {
 
   return (
     <Box component="main" my={2}>
-      <CustomerHeader
-        headerName={isNewClient ? "New Estimate" : "Edit Estimate"}
-        headerDescription="Fill in the details to generate a professional quote"
-      >
-        <IconButton
-          color="primary"
-          onClick={handleClick}
-          sx={{
-            background: theme.palette.gradient.subtle,
-            bgcolor: "primary.main",
-            color: "white",
-            "&:hover": { bgcolor: "primary.dark" },
-          }}
-        >
-          <AddIcon />
-        </IconButton>
-      </CustomerHeader>
-
       <CustomerSelectionMenu
-        anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
-        previousCustomers={previousCustomers}
         onCreateNewCustomer={newCustomer}
         onCreateNewLocation={() => {}}
       />
 
       <Paper elevation={2} sx={{ p: { xs: 2, sm: 3 }, mb: 2 }}>
-        <ClientForm
-          onError={() => {}}
-          onSubmit={() => {}}
-          defaultValues={defaultValues}
-        />
+        <ClientForm onSubmit={() => {}} defaultValues={defaultValues} />
       </Paper>
 
       <Box

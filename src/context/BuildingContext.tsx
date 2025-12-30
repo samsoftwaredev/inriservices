@@ -23,8 +23,6 @@ interface BuildingContextType {
   setBuildingData: React.Dispatch<
     React.SetStateAction<LocationData | undefined>
   >;
-  anchorEl: null | HTMLElement;
-  setAnchorEl: React.Dispatch<React.SetStateAction<null | HTMLElement>>;
   deleteConfirmation: DeleteConfirmationState;
   setDeleteConfirmation: React.Dispatch<
     React.SetStateAction<DeleteConfirmationState>
@@ -59,7 +57,6 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
   >();
 
   // Menu and dialog states
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [deleteConfirmation, setDeleteConfirmation] =
     useState<DeleteConfirmationState>({
       open: false,
@@ -153,8 +150,6 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
     // State
     buildingData,
     setBuildingData,
-    anchorEl,
-    setAnchorEl,
     deleteConfirmation,
     setDeleteConfirmation,
     currentBuildingId,

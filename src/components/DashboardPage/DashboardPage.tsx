@@ -82,6 +82,7 @@ const initialStats: SummaryCard = {
 };
 
 const DashboardPage = () => {
+  const goalProjectCompleted = 30;
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedWorkId, setSelectedWorkId] = useState<string | null>(null);
@@ -146,14 +147,6 @@ const DashboardPage = () => {
       format: (value: number) => value.toString(),
     },
     {
-      title: "Amount Earned",
-      value: stats.amountEarnedCents / 100,
-      icon: <MoneyIcon sx={{ fontSize: 40, color: "primary.main" }} />,
-      color: "primary.main",
-      bgColor: "primary.50",
-      format: (value: number) => `$${value.toLocaleString()}`,
-    },
-    {
       title: "Number of Customers",
       value: stats.numberOfCustomers,
       icon: <PeopleIcon sx={{ fontSize: 40, color: "info.main" }} />,
@@ -168,6 +161,14 @@ const DashboardPage = () => {
       color: "warning.main",
       bgColor: "warning.50",
       format: (value: number) => value.toString(),
+    },
+    {
+      title: "Amount Earned",
+      value: stats.amountEarnedCents / 100,
+      icon: <MoneyIcon sx={{ fontSize: 40, color: "primary.main" }} />,
+      color: "primary.main",
+      bgColor: "primary.50",
+      format: (value: number) => `$${value.toLocaleString()}`,
     },
     {
       title: "Labor Cost",
@@ -223,7 +224,6 @@ const DashboardPage = () => {
         projectType: project.project_type,
       }));
       setWorkHistory(projects);
-      console.log("Fetched projects:", projectRes);
     } catch (error) {
       console.error("Error fetching projects:", error);
       toast.error("Failed to load projects.");
@@ -450,12 +450,12 @@ const DashboardPage = () => {
                 Monthly Progress
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {stats.jobsCompleted} / 30 jobs
+                {stats.jobsCompleted} / {goalProjectCompleted} jobs
               </Typography>
             </Box>
             <LinearProgress
               variant="determinate"
-              value={(stats.jobsCompleted / 30) * 100}
+              value={(stats.jobsCompleted / goalProjectCompleted) * 100}
               sx={{ height: 8, borderRadius: 4 }}
             />
           </Box>

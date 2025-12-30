@@ -21,25 +21,11 @@ import {
 import { MeasurementUnit } from "@/interfaces/laborTypes";
 import { floorOptions } from "@/constants/laborData";
 import { usa_states } from "@/constants";
-import { ClientFormData } from "./ClientForm.model";
+import { ClientFormData, ClientInitData } from "./ClientForm.model";
 
 interface Props {
-  defaultValues?: {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-    contact: string;
-    address: string;
-    address2?: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    measurementUnit: MeasurementUnit;
-    floorPlan: number;
-  };
+  defaultValues?: ClientInitData;
   onSubmit: SubmitHandler<ClientFormData>;
-  onError: SubmitErrorHandler<ClientFormData>;
   isLoading?: boolean;
 }
 
@@ -118,7 +104,7 @@ const validationRules = {
   },
 };
 
-const ClientForm = ({ defaultValues, onSubmit, onError, isLoading }: Props) => {
+const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
   // Initialize react-hook-form with default values
   const {
     control,
@@ -182,7 +168,7 @@ const ClientForm = ({ defaultValues, onSubmit, onError, isLoading }: Props) => {
   const measurementUnitList: MeasurementUnit[] = ["ft", "m", "in"];
 
   return (
-    <form id="client-form" onSubmit={handleSubmit(onSubmit, onError)}>
+    <form id="client-form" onSubmit={handleSubmit(onSubmit)}>
       {/* Customer Information Section */}
       <Box sx={{ mb: 3 }}>
         <Typography

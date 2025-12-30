@@ -9,7 +9,7 @@ const InteriorEstimate = () => {
   return (
     <ProtectedRoute>
       <AppLayout>
-        <ProInteriorEstimate isNewClient />
+        <ProInteriorEstimate />
       </AppLayout>
     </ProtectedRoute>
   );
