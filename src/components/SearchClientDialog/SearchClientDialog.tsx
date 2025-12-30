@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -18,18 +18,16 @@ interface Props {
   isOpen: boolean;
   client?: ClientInitData;
   isEditMode?: boolean;
-  onSubmit: (data: ClientFormData) => void;
+  onSubmit: (data: ClientFormData) => Promise<void>;
   onClose: () => void;
-  isLoading?: boolean;
 }
 
-const NewClientDialog = ({
+const SearchClientDialog = ({
   isOpen,
   client,
   onSubmit,
   onClose,
   isEditMode = false,
-  isLoading = false,
 }: Props) => {
   const defaultValues: ClientInitData = {
     id: client?.id || "",
@@ -50,7 +48,7 @@ const NewClientDialog = ({
       <DialogTitle>{isEditMode ? "Edit Client" : "New Client"}</DialogTitle>
       <DialogContent>
         <ClientForm
-          isLoading={isLoading}
+          isLoading={false}
           onSubmit={onSubmit}
           defaultValues={defaultValues}
         />
@@ -62,7 +60,6 @@ const NewClientDialog = ({
           form="client-form"
           variant="contained"
           color="primary"
-          disabled={isLoading}
         >
           {isEditMode ? "Save Changes" : "Create"}
         </Button>
@@ -71,4 +68,4 @@ const NewClientDialog = ({
   );
 };
 
-export default NewClientDialog;
+export default SearchClientDialog;

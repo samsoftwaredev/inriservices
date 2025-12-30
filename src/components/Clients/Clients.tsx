@@ -42,6 +42,7 @@ import { ClientFormData } from "../ProInteriorEstimate/ClientForm/ClientForm.mod
 import { useAuth } from "@/context";
 import { clientApi, ClientStatus, propertyApi } from "@/services";
 import { toast } from "react-toastify";
+import NewClientDialog from "../NewClientDialog";
 
 interface ClientInfo {
   id: string;
@@ -65,6 +66,7 @@ const ClientsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreatingNewClient, setIsCreatingNewClient] = useState(false);
   const [isEditingClient, setIsEditingClient] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
@@ -234,6 +236,7 @@ const ClientsPage = () => {
   const onSaveEdits: SubmitHandler<ClientFormData> = async (data) => {
     try {
       if (!selectedClient) return;
+      setIsUpdating(true);
       // Update client info
       await clientApi.updateClient(selectedClient.id, {
         display_name: data.customerName,
@@ -255,6 +258,8 @@ const ClientsPage = () => {
     } catch (error) {
       console.error("Error updating client:", error);
       toast.error("Failed to update client");
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -569,45 +574,27 @@ const ClientsPage = () => {
 
       {/* Edit Client Dialog */}
       {selectedClient && (
-        <Dialog
-          open={isEditingClient}
+        <NewClientDialog
+          isOpen={isEditingClient}
           onClose={handleCloseEditForm}
-          maxWidth="md"
-          fullWidth
-        >
-          <DialogTitle>Edit Client</DialogTitle>
-          <DialogContent>
-            <ClientForm
-              isLoading={false}
-              onSubmit={onSaveEdits}
-              defaultValues={{
-                id: selectedClient.id,
-                name: selectedClient.fullName,
-                email: selectedClient.email,
-                phone: selectedClient.phone,
-                contact: "",
-                address: selectedClient.address,
-                address2: selectedClient.address2,
-                city: selectedClient.city,
-                state: selectedClient.state,
-                zipCode: selectedClient.zipCode,
-                measurementUnit: "ft",
-                floorPlan: 1,
-              }}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setIsEditingClient(false)}>Cancel</Button>
-            <Button
-              type="submit"
-              form="client-form"
-              variant="contained"
-              color="primary"
-            >
-              Save Changes
-            </Button>
-          </DialogActions>
-        </Dialog>
+          isEditMode={true}
+          isLoading={isUpdating}
+          onSubmit={onSaveEdits}
+          client={{
+            id: selectedClient.id,
+            name: selectedClient.fullName,
+            email: selectedClient.email,
+            phone: selectedClient.phone,
+            contact: "",
+            address: selectedClient.address,
+            address2: selectedClient.address2,
+            city: selectedClient.city,
+            state: selectedClient.state,
+            zipCode: selectedClient.zipCode,
+            measurementUnit: "ft",
+            floorPlan: 1,
+          }}
+        />
       )}
 
       {/* Client Details Dialog */}
