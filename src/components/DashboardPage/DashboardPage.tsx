@@ -37,7 +37,13 @@ import {
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import CustomerHeader from "../CustomerHeader";
-import { projectApi, ProjectStatus, ProjectType } from "@/services";
+import {
+  DashboardMetricsJson,
+  getDashboardMetrics,
+  projectApi,
+  ProjectStatus,
+  ProjectType,
+} from "@/services";
 import { toast } from "react-toastify";
 
 interface WorkHistoryItem {
@@ -53,26 +59,35 @@ interface WorkHistoryItem {
   projectType: ProjectType;
 }
 
-interface DashboardStats {
+interface SummaryCard {
   jobsCompleted: number;
-  amountEarned: number;
+  amountEarnedCents: number;
   numberOfCustomers: number;
   pendingWork: number;
+  laborCostCents: number;
+  taxesCents: number;
+  averageAmountSpentByClientCents: number;
+  profitCents: number;
 }
+
+const initialStats: SummaryCard = {
+  jobsCompleted: 0,
+  amountEarnedCents: 0,
+  numberOfCustomers: 0,
+  pendingWork: 0,
+  laborCostCents: 0,
+  taxesCents: 0,
+  averageAmountSpentByClientCents: 0,
+  profitCents: 0,
+};
 
 const DashboardPage = () => {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedWorkId, setSelectedWorkId] = useState<string | null>(null);
   const [workHistory, setWorkHistory] = useState<WorkHistoryItem[]>([]);
-
-  // Sample dashboard statistics
-  const stats: DashboardStats = {
-    jobsCompleted: 24,
-    amountEarned: 87650,
-    numberOfCustomers: 18,
-    pendingWork: 6,
-  };
+  const [year, setYear] = useState<number>(new Date().getFullYear());
+  const [stats, setStats] = useState<SummaryCard>(initialStats);
 
   const handleMenuClick = (
     event: React.MouseEvent<HTMLElement>,
@@ -132,7 +147,7 @@ const DashboardPage = () => {
     },
     {
       title: "Amount Earned",
-      value: stats.amountEarned,
+      value: stats.amountEarnedCents / 100,
       icon: <MoneyIcon sx={{ fontSize: 40, color: "primary.main" }} />,
       color: "primary.main",
       bgColor: "primary.50",
@@ -153,6 +168,38 @@ const DashboardPage = () => {
       color: "warning.main",
       bgColor: "warning.50",
       format: (value: number) => value.toString(),
+    },
+    {
+      title: "Labor Cost",
+      value: stats.laborCostCents / 100,
+      icon: <MoneyIcon sx={{ fontSize: 40, color: "secondary.main" }} />,
+      color: "secondary.main",
+      bgColor: "secondary.50",
+      format: (value: number) => `$${value.toLocaleString()}`,
+    },
+    {
+      title: "Taxes Collected",
+      value: stats.taxesCents / 100,
+      icon: <MoneyIcon sx={{ fontSize: 40, color: "tertiary.main" }} />,
+      color: "tertiary.main",
+      bgColor: "tertiary.50",
+      format: (value: number) => `$${value.toLocaleString()}`,
+    },
+    {
+      title: "Avg. Spent by Client",
+      value: stats.averageAmountSpentByClientCents / 100,
+      icon: <MoneyIcon sx={{ fontSize: 40, color: "dark.main" }} />,
+      color: "dark.main",
+      bgColor: "dark.50",
+      format: (value: number) => `$${value.toLocaleString()}`,
+    },
+    {
+      title: "Profit",
+      value: stats.profitCents / 100,
+      icon: <TrendingUpIcon sx={{ fontSize: 40, color: "green" }} />,
+      color: "green",
+      bgColor: "green.50",
+      format: (value: number) => `$${value.toLocaleString()}`,
     },
   ];
 
@@ -183,9 +230,21 @@ const DashboardPage = () => {
     }
   };
 
+  const getStats = async () => {
+    const metricsRes = await getDashboardMetrics(year);
+    setStats({
+      ...metricsRes,
+      profitCents:
+        metricsRes.amountEarnedCents -
+        metricsRes.laborCostCents -
+        metricsRes.taxesCents,
+    });
+  };
+
   useEffect(() => {
     getProjects();
-  }, []);
+    getStats();
+  }, [year]);
 
   return (
     <Box sx={{ py: 3 }}>

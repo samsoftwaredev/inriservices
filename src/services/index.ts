@@ -40,6 +40,17 @@ export type ProjectWithRelationsAndRooms = Project & {
 };
 
 
+export type DashboardMetricsJson = {
+  year: number;
+  jobsCompleted: number;
+  amountEarnedCents: number;
+  numberOfCustomers: number;
+  pendingWork: number;
+  laborCostCents: number;
+  taxesCents: number;
+  averageAmountSpentByClientCents: number;
+};
+
 const supabase = createClient();
 
 /** -------------------------------------------------------
@@ -464,3 +475,12 @@ export const projectApi = {
     return assertOk(res, `Project not found: ${projectId}`) as unknown as ProjectWithRelationsAndRooms;
   },
 };
+
+
+export async function getDashboardMetrics(year: number): Promise<DashboardMetricsJson> {
+  const { data, error } = await supabase.rpc("get_project_metrics_by_year_json", {
+    p_year: year,
+  });
+  if (error) throw error;
+  return data as DashboardMetricsJson; // JSON comes back as an object
+}
