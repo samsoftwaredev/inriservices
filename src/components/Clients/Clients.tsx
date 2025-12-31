@@ -8,8 +8,6 @@ import {
   CardContent,
   Typography,
   Grid,
-  TextField,
-  InputAdornment,
   IconButton,
   Chip,
   Avatar,
@@ -24,8 +22,6 @@ import {
 } from "@mui/material";
 import {
   AddCircleOutline,
-  Search as SearchIcon,
-  Clear as ClearIcon,
   Phone as PhoneIcon,
   Email as EmailIcon,
   Work as WorkIcon,
@@ -43,6 +39,8 @@ import { useAuth } from "@/context";
 import { clientApi, ClientStatus, propertyApi } from "@/services";
 import { toast } from "react-toastify";
 import NewClientDialog from "../NewClientDialog";
+import SearchClient from "../SearchClient";
+import ClientCard from "../ClientCard";
 
 interface ClientInfo {
   id: string;
@@ -311,66 +309,11 @@ const ClientsPage = () => {
         </Box>
       )}
 
-      {/* Search Bar */}
-      <Box sx={{ mb: 4 }}>
-        <TextField
-          fullWidth
-          placeholder="Search clients by name, email, phone, or location..."
-          value={searchTerm}
-          onChange={handleSearchChange}
-          size="medium"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon color="action" />
-              </InputAdornment>
-            ),
-            endAdornment: searchTerm && (
-              <InputAdornment position="end">
-                <IconButton size="small" onClick={handleClearSearch} edge="end">
-                  <ClearIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              borderRadius: 2,
-            },
-          }}
-        />
-      </Box>
-
-      {/* Search Results Info */}
-      <Box
-        sx={{
-          mb: 3,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="body2" color="text.secondary">
-          {searchTerm ? (
-            <>
-              Found {filteredClients.length} client
-              {filteredClients.length !== 1 ? "s" : ""} matching "{searchTerm}"
-            </>
-          ) : (
-            <>Showing {clients.length} total clients</>
-          )}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          Total Revenue: $
-          {clients
-            .reduce((sum, client) => sum + client.totalRevenue, 0)
-            .toLocaleString()}
-        </Typography>
-      </Box>
+      <SearchClient />
 
       {/* Clients Grid */}
       <Grid container spacing={3}>
-        {filteredClients.length === 0 ? (
+        {filteredClients.length === 0 && (
           <Grid size={{ xs: 12 }}>
             <Box sx={{ textAlign: "center", py: 8 }}>
               <PersonIcon
@@ -395,158 +338,6 @@ const ClientsPage = () => {
               )}
             </Box>
           </Grid>
-        ) : (
-          filteredClients.map((client) => (
-            <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={client.id}>
-              <Card
-                sx={{
-                  height: "100%",
-                  position: "relative",
-                  "&:hover": {
-                    transform: "translateY(-2px)",
-                    boxShadow: 3,
-                    transition: "all 0.3s ease",
-                  },
-                }}
-              >
-                <CardContent sx={{ pb: 2 }}>
-                  {/* Header with Avatar and Menu */}
-                  <Box
-                    sx={{ display: "flex", alignItems: "flex-start", mb: 2 }}
-                  >
-                    <Avatar
-                      sx={{
-                        bgcolor: "primary.main",
-                        width: 48,
-                        height: 48,
-                        mr: 2,
-                        fontSize: 18,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {getInitials(client.fullName)}
-                    </Avatar>
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Typography variant="h6" fontWeight="bold" gutterBottom>
-                        {client.fullName}
-                      </Typography>
-                      <Chip
-                        label={client.status}
-                        size="small"
-                        color={getStatusColor(client.status) as any}
-                        variant="filled"
-                      />
-                    </Box>
-                    <IconButton
-                      size="small"
-                      onClick={(e) => handleMenuClick(e, client.id)}
-                    >
-                      <MoreVertIcon />
-                    </IconButton>
-                  </Box>
-
-                  {/* Contact Information */}
-                  <Box sx={{ mb: 2 }}>
-                    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                      <EmailIcon
-                        sx={{ fontSize: 16, color: "text.secondary", mr: 1 }}
-                      />
-                      <Typography variant="body2" color="text.secondary">
-                        {client.email}
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-                      <PhoneIcon
-                        sx={{ fontSize: 16, color: "text.secondary", mr: 1 }}
-                      />
-                      <Typography variant="body2" color="text.secondary">
-                        {client.phone}
-                      </Typography>
-                    </Box>
-                  </Box>
-
-                  {/* Address */}
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mb: 2 }}
-                  >
-                    {client.address}, {client.city}, {client.state}{" "}
-                    {client.zipCode}
-                  </Typography>
-
-                  <Divider sx={{ my: 2 }} />
-
-                  {/* Statistics */}
-                  <Grid container spacing={2}>
-                    <Grid size={{ xs: 6 }}>
-                      <Box sx={{ textAlign: "center" }}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            mb: 0.5,
-                          }}
-                        >
-                          <WorkIcon
-                            sx={{
-                              fontSize: 16,
-                              color: "primary.main",
-                              mr: 0.5,
-                            }}
-                          />
-                          <Typography
-                            variant="h6"
-                            color="primary.main"
-                            fontWeight="bold"
-                          >
-                            {client.numberOfProjects}
-                          </Typography>
-                        </Box>
-                        <Typography variant="caption" color="text.secondary">
-                          Projects
-                        </Typography>
-                      </Box>
-                    </Grid>
-                    <Grid size={{ xs: 6 }}>
-                      <Box sx={{ textAlign: "center" }}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            mb: 0.5,
-                          }}
-                        >
-                          <Typography
-                            variant="h6"
-                            color="success.main"
-                            fontWeight="bold"
-                          >
-                            ${client.totalRevenue.toLocaleString()}
-                          </Typography>
-                        </Box>
-                        <Typography variant="caption" color="text.secondary">
-                          Revenue
-                        </Typography>
-                      </Box>
-                    </Grid>
-                  </Grid>
-
-                  {/* Last Project Date */}
-                  {client.lastProjectDate && (
-                    <Box sx={{ mt: 2, textAlign: "center" }}>
-                      <Typography variant="caption" color="text.secondary">
-                        Last Project:{" "}
-                        {new Date(client.lastProjectDate).toLocaleDateString()}
-                      </Typography>
-                    </Box>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-          ))
         )}
       </Grid>
 

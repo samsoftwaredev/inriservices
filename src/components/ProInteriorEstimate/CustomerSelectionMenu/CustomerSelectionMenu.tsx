@@ -17,7 +17,7 @@ import NewClientDialog from "@/components/NewClientDialog/NewClientDialog";
 import { Add as AddIcon, Search as SearchIcon } from "@mui/icons-material";
 import CustomerHeader from "@/components/CustomerHeader";
 import { theme } from "@/app/theme";
-import { useCustomer } from "@/context/CustomerContext";
+import SearchClientDialog from "@/components/SearchClientDialog";
 
 interface Props {
   title?: string;
@@ -34,8 +34,9 @@ const CustomerSelectionMenu = ({
   subtitle,
   isNewClient = true,
 }: Props) => {
-  const { currentCustomer } = useCustomer();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isOpenSearchClientDialog, setIsOpenSearchClientDialog] =
+    React.useState(false);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -66,6 +67,15 @@ const CustomerSelectionMenu = ({
     onClose();
   };
 
+  const handleSearchClick = () => {
+    setIsOpenSearchClientDialog(true);
+    onClose();
+  };
+
+  const onCloseSearchClientDialog = () => {
+    setIsOpenSearchClientDialog(false);
+  };
+
   return (
     <>
       <CustomerHeader
@@ -89,7 +99,7 @@ const CustomerSelectionMenu = ({
         {/* client search */}
         <IconButton
           color="secondary"
-          onClick={handleClick}
+          onClick={handleSearchClick}
           sx={{
             mx: 0.5,
             bgcolor: "primary.main",
@@ -143,6 +153,10 @@ const CustomerSelectionMenu = ({
         onClose={onCloseNewClientDialog}
         isOpen={isOpenNewClientDialog}
         onSubmit={onSubmitNewClient}
+      />
+      <SearchClientDialog
+        isOpen={isOpenSearchClientDialog}
+        onClose={onCloseSearchClientDialog}
       />
     </>
   );

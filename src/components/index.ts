@@ -23,6 +23,11 @@ export { default as EditFeatureDialog } from "./EditFeatureDialog";
 export { default as EstimatesPage } from "./EstimatesPage";
 export { default as AppLayout } from "./AppLayout";
 export { default as GeneralEstimate } from "./GeneralEstimate";
+export { default as SearchClient } from "./SearchClient";
+export { default as SearchClientDialog } from "./SearchClientDialog";
+export { default as NewClientDialog } from "./NewClientDialog";
+export { default as CustomerSelectionMenu } from "./ProInteriorEstimate/CustomerSelectionMenu";
+
 export { InvoiceGenerator } from "./InvoiceGenerator";
 export type { InvoiceData, InvoiceItem, Customer } from "./InvoiceGenerator";
 export { InvoiceDemo } from "./InvoiceDemo";
