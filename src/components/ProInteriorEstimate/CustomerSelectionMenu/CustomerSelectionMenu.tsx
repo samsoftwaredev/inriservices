@@ -8,13 +8,14 @@ import {
   ListItemText,
   IconButton,
   Divider,
+  Button,
 } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import EditDocumentIcon from "@mui/icons-material/EditDocument";
 import MoneyIcon from "@mui/icons-material/Money";
 import NewClientDialog from "@/components/NewClientDialog/NewClientDialog";
-import { Add as AddIcon, Search as SearchIcon } from "@mui/icons-material";
+import { Add as AddIcon, Person as PersonIcon } from "@mui/icons-material";
 import CustomerHeader from "@/components/CustomerHeader";
 import { theme } from "@/app/theme";
 import SearchClientDialog from "@/components/SearchClientDialog";
@@ -97,7 +98,8 @@ const CustomerSelectionMenu = ({
           <AddIcon />
         </IconButton>
         {/* client search */}
-        <IconButton
+        <Button
+          startIcon={<PersonIcon />}
           color="secondary"
           onClick={handleSearchClick}
           sx={{
@@ -107,8 +109,8 @@ const CustomerSelectionMenu = ({
             "&:hover": { bgcolor: "primary.dark" },
           }}
         >
-          <SearchIcon />
-        </IconButton>
+          Select Client
+        </Button>
       </CustomerHeader>
       <Menu
         anchorEl={anchorEl}

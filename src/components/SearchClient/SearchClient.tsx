@@ -128,16 +128,10 @@ const ClientsPage = () => {
             )}
           </Typography>
         </Box>
-        <Typography variant="caption" color="text.secondary">
-          Total Revenue: $
-          {filteredClients
-            .reduce((sum, client) => sum + client.totalRevenue, 0)
-            .toLocaleString()}
-        </Typography>
       </Box>
       <Box sx={{ height: 1, bgcolor: "divider" }} />
 
-      <Grid container spacing={2} sx={{ py: 3 }}>
+      <Grid container spacing={2} sx={{ pb: 3 }}>
         {filteredClients.map((client) => (
           <ClientCard key={client.id} client={client} onClick={onClientClick} />
         ))}

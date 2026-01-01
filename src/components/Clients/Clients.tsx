@@ -207,7 +207,6 @@ const ClientsPage = () => {
         client_type: "person",
         company_id: userData?.company_id || "",
       });
-      debugger;
       await propertyApi.createProperty({
         client_id: newClient.id, // Associate with the created client if needed
         address_line1: data.address,
