@@ -10,7 +10,7 @@ import React, {
 import { createClient } from "@/app/supabaseConfig";
 import { User } from "@supabase/supabase-js";
 import { Profile, profileApi } from "@/services";
-// Types
+
 interface AuthContextType {
   user: User | null;
   userData?: Profile | null;
@@ -27,6 +27,7 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<void>;
   updateUserProfile: (displayName: string) => Promise<void>;
   sendVerificationEmail: () => Promise<void>;
+  confirmPasswordReset: (newPassword: string) => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -101,6 +102,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     if (error) throw error;
   };
 
+  const confirmPasswordReset = async (newPassword: string): Promise<void> => {
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword,
+    });
+    if (error) throw error;
+  };
+
   // Update user profile function
   const updateUserProfile = async (displayName: string): Promise<void> => {
     const { error } = await supabase.auth.updateUser({
@@ -167,6 +175,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     resetPassword,
     updateUserProfile,
     sendVerificationEmail,
+    confirmPasswordReset,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

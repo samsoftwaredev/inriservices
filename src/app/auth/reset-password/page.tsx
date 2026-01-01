@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -56,7 +56,6 @@ const ResetPasswordPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [oobCode, setOobCode] = useState<string | null>(null);
   const { confirmPasswordReset } = useAuth();
   const router = useRouter();
 
@@ -76,11 +75,6 @@ const ResetPasswordPage = () => {
   const password = watch("password");
 
   const onSubmit = async (data: ResetPasswordFormData) => {
-    if (!oobCode) {
-      setError("Invalid reset code");
-      return;
-    }
-
     try {
       setError("");
       setLoading(true);
@@ -91,7 +85,7 @@ const ResetPasswordPage = () => {
         return;
       }
 
-      await confirmPasswordReset(oobCode, data.password);
+      await confirmPasswordReset(data.password);
 
       setSuccess(true);
 
@@ -222,137 +216,131 @@ const ResetPasswordPage = () => {
               </Alert>
             )}
 
-            {oobCode && (
-              <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-                {/* Password Field */}
-                <Controller
-                  name="password"
-                  control={control}
-                  rules={validationRules.password}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="New Password"
-                      type={showPassword ? "text" : "password"}
-                      margin="normal"
-                      error={!!errors.password}
-                      helperText={errors.password?.message}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Lock color="action" />
-                          </InputAdornment>
-                        ),
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={togglePasswordVisibility}
-                              edge="end"
-                              disabled={loading}
-                            >
-                              {showPassword ? (
-                                <VisibilityOff />
-                              ) : (
-                                <Visibility />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                      disabled={loading}
-                      autoFocus
-                    />
-                  )}
-                />
+            <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+              {/* Password Field */}
+              <Controller
+                name="password"
+                control={control}
+                rules={validationRules.password}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="New Password"
+                    type={showPassword ? "text" : "password"}
+                    margin="normal"
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Lock color="action" />
+                        </InputAdornment>
+                      ),
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={togglePasswordVisibility}
+                            edge="end"
+                            disabled={loading}
+                          >
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                    disabled={loading}
+                    autoFocus
+                  />
+                )}
+              />
 
-                {/* Confirm Password Field */}
-                <Controller
-                  name="confirmPassword"
-                  control={control}
-                  rules={{
-                    ...validationRules.confirmPassword,
-                    validate: (value) =>
-                      value === password || "Passwords do not match",
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="Confirm New Password"
-                      type={showConfirmPassword ? "text" : "password"}
-                      margin="normal"
-                      error={!!errors.confirmPassword}
-                      helperText={errors.confirmPassword?.message}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Lock color="action" />
-                          </InputAdornment>
-                        ),
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              onClick={toggleConfirmPasswordVisibility}
-                              edge="end"
-                              disabled={loading}
-                            >
-                              {showConfirmPassword ? (
-                                <VisibilityOff />
-                              ) : (
-                                <Visibility />
-                              )}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                      disabled={loading}
-                    />
-                  )}
-                />
+              {/* Confirm Password Field */}
+              <Controller
+                name="confirmPassword"
+                control={control}
+                rules={{
+                  ...validationRules.confirmPassword,
+                  validate: (value) =>
+                    value === password || "Passwords do not match",
+                }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Confirm New Password"
+                    type={showConfirmPassword ? "text" : "password"}
+                    margin="normal"
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword?.message}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Lock color="action" />
+                        </InputAdornment>
+                      ),
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={toggleConfirmPasswordVisibility}
+                            edge="end"
+                            disabled={loading}
+                          >
+                            {showConfirmPassword ? (
+                              <VisibilityOff />
+                            ) : (
+                              <Visibility />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                    disabled={loading}
+                  />
+                )}
+              />
 
-                {/* Password Requirements */}
-                <Box sx={{ mt: 2, p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ mb: 1 }}
-                  >
-                    <strong>Password Requirements:</strong>
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    component="ul"
-                    sx={{ pl: 2, mb: 0 }}
-                  >
-                    <li>At least 8 characters long</li>
-                    <li>Contains uppercase and lowercase letters</li>
-                    <li>Contains at least one number</li>
-                  </Typography>
-                </Box>
-
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  size="large"
-                  disabled={!isValid || loading || !oobCode}
-                  sx={{
-                    mt: 3,
-                    mb: 2,
-                    height: 48,
-                  }}
+              {/* Password Requirements */}
+              <Box sx={{ mt: 2, p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 1 }}
                 >
-                  {loading ? (
-                    <CircularProgress size={24} color="inherit" />
-                  ) : (
-                    "Reset Password"
-                  )}
-                </Button>
+                  <strong>Password Requirements:</strong>
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  component="ul"
+                  sx={{ pl: 2, mb: 0 }}
+                >
+                  <li>At least 8 characters long</li>
+                  <li>Contains uppercase and lowercase letters</li>
+                  <li>Contains at least one number</li>
+                </Typography>
               </Box>
-            )}
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                size="large"
+                disabled={!isValid || loading}
+                sx={{
+                  mt: 3,
+                  mb: 2,
+                  height: 48,
+                }}
+              >
+                {loading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  "Reset Password"
+                )}
+              </Button>
+            </Box>
 
             {/* Back to Login Link */}
             <Box sx={{ textAlign: "center", mt: 2 }}>
