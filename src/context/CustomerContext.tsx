@@ -39,78 +39,7 @@ const CustomerContext = createContext<CustomerContextType | undefined>(
   undefined
 );
 
-const INITIAL_CUSTOMERS: Customer[] = [
-  {
-    id: "1",
-    name: "John Doe",
-    contact: "Jane Smith",
-    phone: "(123) 456-7890",
-    email: "jane.smith@example.com",
-    buildings: [
-      {
-        id: "1",
-        address: "456 Oak St",
-        city: "Springfield",
-        state: "IL",
-        zipCode: "62704",
-        measurementUnit: "ft",
-        floorPlan: 2,
-        rooms: [
-          {
-            id: "1",
-            name: "Living Room",
-            description: "Spacious living area",
-            floorNumber: 1,
-          },
-          {
-            id: "2",
-            name: "Kitchen",
-            description: "Modern kitchen space",
-            floorNumber: 1,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "2",
-    name: "Alice Johnson",
-    contact: "Bob Wilson",
-    phone: "(555) 123-4567",
-    email: "bob.wilson@email.com",
-    buildings: [
-      {
-        id: "2",
-        address: "789 Pine St",
-        city: "Metropolis",
-        state: "NY",
-        zipCode: "10001",
-        measurementUnit: "ft",
-        floorPlan: 3,
-        rooms: [],
-      },
-    ],
-  },
-  {
-    id: "3",
-    name: "Michael Brown",
-    contact: "Sarah Brown",
-    phone: "(333) 555-7777",
-    email: "sarah.brown@gmail.com",
-    buildings: [
-      {
-        id: "3",
-        address: "321 Cedar St",
-        city: "Gotham",
-        state: "NJ",
-        zipCode: "07097",
-        measurementUnit: "ft",
-        floorPlan: 1,
-        rooms: [],
-      },
-    ],
-  },
-];
+const INITIAL_CUSTOMERS: Customer[] = [];
 
 export const CustomerProvider = ({ children }: CustomerProviderProps) => {
   const pathname = usePathname();

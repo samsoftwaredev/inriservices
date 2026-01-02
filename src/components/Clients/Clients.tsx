@@ -1,20 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Typography,
-  Grid,
-  Chip,
-  Avatar,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Paper,
-} from "@mui/material";
-import { AddCircleOutline, Person as PersonIcon } from "@mui/icons-material";
+import { Box, Button, Paper } from "@mui/material";
+import { AddCircleOutline } from "@mui/icons-material";
 import CustomerHeader from "../CustomerHeader";
 import ClientForm from "../ProInteriorEstimate/ClientForm";
 import { SubmitHandler } from "react-hook-form";
@@ -24,6 +12,8 @@ import { clientApi, ClientStatus, propertyApi } from "@/services";
 import { toast } from "react-toastify";
 import NewClientDialog from "../NewClientDialog";
 import SearchClient from "../SearchClient";
+import ClientDetailDialog from "../ClientDetailDialog";
+import { useCustomer } from "@/context/CustomerContext";
 
 interface ClientInfo {
   id: string;
@@ -44,16 +34,12 @@ interface ClientInfo {
 
 const ClientsPage = () => {
   const { userData } = useAuth();
-  const [searchTerm, setSearchTerm] = useState("");
+  const { currentCustomer, setCurrentCustomer } = useCustomer();
   const [isCreatingNewClient, setIsCreatingNewClient] = useState(false);
   const [isEditingClient, setIsEditingClient] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
   const [createNewClient, setCreateNewClient] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<ClientInfo | null>(null);
-  const [clients, setClients] = useState<ClientInfo[]>([]);
 
   const handleOpenClientForm = () => {
     setCreateNewClient(true);
@@ -63,41 +49,40 @@ const ClientsPage = () => {
     setCreateNewClient(false);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleViewDetails = () => {
-    const client = clients.find((c) => c.id === selectedClientId);
-    if (client) {
-      setViewDetailsOpen(() => {
-        setSelectedClient(client);
-        return true;
-      });
-    }
-    handleMenuClose();
-  };
-
   const handleCloseDetails = () => {
     setViewDetailsOpen(false);
-    handleMenuClose();
     handleCloseEditForm();
-    setSelectedClient(null);
+    setCurrentCustomer(undefined);
   };
 
   const handleOpenEditForm = () => {
-    const client = clients.find((c) => c.id === selectedClientId);
-    if (client) {
-      setSelectedClient(() => {
-        handleMenuClose();
-        setIsEditingClient(true);
-        return client;
-      });
-    }
+    setCurrentCustomer(() => {
+      setIsEditingClient(true);
+      return {
+        id: currentCustomer!.id,
+        name: currentCustomer!.name,
+        email: currentCustomer!.email,
+        phone: currentCustomer!.phone,
+        status: currentCustomer!.status,
+        contact: "",
+        buildings: [
+          {
+            id: "",
+            address: currentCustomer?.buildings![0].address || "",
+            address2: currentCustomer?.buildings![0].address2 || "",
+            city: currentCustomer?.buildings![0].city || "",
+            state: currentCustomer?.buildings![0].state || "",
+            zipCode: currentCustomer?.buildings![0].zipCode || "",
+            measurementUnit: "ft",
+            floorPlan: 0,
+            rooms: [],
+          },
+        ],
+      };
+    });
   };
 
   const handleCloseEditForm = () => {
-    handleMenuClose();
     setIsEditingClient(false);
   };
 
@@ -123,44 +108,11 @@ const ClientsPage = () => {
         notes: client.notes || "",
       };
     });
-    setClients(clientList);
   };
 
   useEffect(() => {
     getClients();
   }, []);
-
-  // Filter clients based on search term
-  const filteredClients = clients.filter(
-    (client) =>
-      client.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.phone.includes(searchTerm) ||
-      client.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.state.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const getStatusColor = (status?: ClientStatus) => {
-    switch (status) {
-      case "lead":
-        return "success";
-      case "active":
-        return "default";
-      case "inactive":
-        return "warning";
-      default:
-        return "default";
-    }
-  };
-
-  const getInitials = (fullName: string) => {
-    return fullName
-      .split(" ")
-      .map((name) => name.charAt(0))
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  };
 
   const onCreateNewClient: SubmitHandler<ClientFormData> = async (data) => {
     try {
@@ -199,16 +151,16 @@ const ClientsPage = () => {
 
   const onSaveEdits: SubmitHandler<ClientFormData> = async (data) => {
     try {
-      if (!selectedClient) return;
+      if (!currentCustomer) return;
       setIsUpdating(true);
       // Update client info
-      await clientApi.updateClient(selectedClient.id, {
+      await clientApi.updateClient(currentCustomer.id, {
         display_name: data.customerName,
         primary_email: data.customerEmail,
         primary_phone: data.customerPhone,
       });
       // Update property info - assuming one property per client for simplicity
-      const property = await propertyApi.getProperty(selectedClient.id);
+      const property = await propertyApi.getProperty(currentCustomer.id);
       await propertyApi.updateProperty(property.id, {
         address_line1: data.address,
         address_line2: data.address2 || "",
@@ -273,38 +225,8 @@ const ClientsPage = () => {
 
       <SearchClient />
 
-      {/* Clients Grid */}
-      <Grid container spacing={3}>
-        {filteredClients.length === 0 && (
-          <Grid size={{ xs: 12 }}>
-            <Box sx={{ textAlign: "center", py: 8 }}>
-              <PersonIcon
-                sx={{ fontSize: 64, color: "text.disabled", mb: 2 }}
-              />
-              <Typography variant="h6" color="text.secondary">
-                {searchTerm ? "No clients found" : "No clients yet"}
-              </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                {searchTerm
-                  ? "Try different keywords or clear the search to see all clients."
-                  : "Start by adding your first client to track projects and revenue."}
-              </Typography>
-              {!searchTerm && (
-                <Button
-                  variant="contained"
-                  startIcon={<AddCircleOutline />}
-                  onClick={handleOpenClientForm}
-                >
-                  Add Your First Client
-                </Button>
-              )}
-            </Box>
-          </Grid>
-        )}
-      </Grid>
-
       {/* Edit Client Dialog */}
-      {selectedClient && (
+      {currentCustomer && (
         <NewClientDialog
           isOpen={isEditingClient}
           onClose={handleCloseEditForm}
@@ -312,148 +234,46 @@ const ClientsPage = () => {
           isLoading={isUpdating}
           onSubmit={onSaveEdits}
           client={{
-            id: selectedClient.id,
-            name: selectedClient.fullName,
-            email: selectedClient.email,
-            phone: selectedClient.phone,
+            id: currentCustomer.id,
+            name: currentCustomer.name,
+            email: currentCustomer.email,
+            phone: currentCustomer.phone,
             contact: "",
-            address: selectedClient.address,
-            address2: selectedClient.address2,
-            city: selectedClient.city,
-            state: selectedClient.state,
-            zipCode: selectedClient.zipCode,
+            address: currentCustomer.buildings[0].address,
+            address2: currentCustomer.buildings[0].address2,
+            city: currentCustomer.buildings[0].city,
+            state: currentCustomer.buildings[0].state,
+            zipCode: currentCustomer.buildings[0].zipCode,
             measurementUnit: "ft",
             floorPlan: 1,
           }}
         />
       )}
 
-      {/* Client Details Dialog */}
-      <Dialog
-        open={viewDetailsOpen}
-        onClose={handleCloseDetails}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle sx={{ display: "flex", alignItems: "center" }}>
-          <Avatar
-            sx={{
-              bgcolor: "primary.main",
-              width: 40,
-              height: 40,
-              mr: 2,
-              fontSize: 16,
-              fontWeight: "bold",
-            }}
-          >
-            {selectedClient && getInitials(selectedClient.fullName)}
-          </Avatar>
-          <Box>
-            <Typography variant="h6">{selectedClient?.fullName}</Typography>
-            <Chip
-              label={selectedClient?.status}
-              size="small"
-              color={getStatusColor(selectedClient?.status)}
-              variant="filled"
-            />
-          </Box>
-        </DialogTitle>
-        <DialogContent>
-          {selectedClient && (
-            <Grid container spacing={3}>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Typography variant="subtitle1" gutterBottom fontWeight="bold">
-                  Contact Information
-                </Typography>
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Email
-                  </Typography>
-                  <Typography variant="body1">
-                    {selectedClient.email}
-                  </Typography>
-                </Box>
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Phone
-                  </Typography>
-                  <Typography variant="body1">
-                    {selectedClient.phone}
-                  </Typography>
-                </Box>
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Address
-                  </Typography>
-                  <Typography variant="body1">
-                    {selectedClient.address}
-                    <br />
-                    {selectedClient.city}, {selectedClient.state}{" "}
-                    {selectedClient.zipCode}
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Typography variant="subtitle1" gutterBottom fontWeight="bold">
-                  Project Statistics
-                </Typography>
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Number of Projects
-                  </Typography>
-                  <Typography variant="body1">
-                    {selectedClient.numberOfProjects}
-                  </Typography>
-                </Box>
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Total Revenue
-                  </Typography>
-                  <Typography variant="body1">
-                    ${selectedClient.totalRevenue.toLocaleString()}
-                  </Typography>
-                </Box>
-                {selectedClient.lastProjectDate && (
-                  <Box sx={{ mb: 2 }}>
-                    <Typography variant="body2" color="text.secondary">
-                      Last Project
-                    </Typography>
-                    <Typography variant="body1">
-                      {new Date(
-                        selectedClient.lastProjectDate
-                      ).toLocaleDateString()}
-                    </Typography>
-                  </Box>
-                )}
-              </Grid>
-              {selectedClient.notes && (
-                <Grid size={{ xs: 12 }}>
-                  <Typography
-                    variant="subtitle1"
-                    gutterBottom
-                    fontWeight="bold"
-                  >
-                    Notes
-                  </Typography>
-                  <Typography variant="body1">
-                    {selectedClient.notes}
-                  </Typography>
-                </Grid>
-              )}
-            </Grid>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDetails}>Close</Button>
-          <Button
-            onClick={handleOpenEditForm}
-            variant="contained"
-            color="primary"
-          >
-            Edit Client
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {/* View Client Data */}
+      {currentCustomer && (
+        <ClientDetailDialog
+          viewDetailsOpen={viewDetailsOpen}
+          handleCloseDetails={handleCloseDetails}
+          handleOpenEditForm={handleOpenEditForm}
+          client={{
+            id: currentCustomer.id,
+            fullName: currentCustomer.name,
+            email: currentCustomer.email,
+            phone: currentCustomer.phone,
+            address: currentCustomer.buildings[0].address,
+            address2: currentCustomer.buildings[0].address2,
+            city: currentCustomer.buildings[0].city,
+            state: currentCustomer.buildings[0].state,
+            zipCode: currentCustomer.buildings[0].zipCode,
+            numberOfProjects: 0,
+            totalRevenue: 0,
+            lastProjectDate: "",
+            status: currentCustomer.status,
+            notes: "",
+          }}
+        />
+      )}
     </Box>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Card,
@@ -21,10 +21,10 @@ import {
   MoreVert as MoreVertIcon,
   Visibility as VisibilityIcon,
   Edit as EditIcon,
-  History as HistoryIcon,
 } from "@mui/icons-material";
 import { ClientStatus } from "@/services";
 import { ClientInfo } from "../SearchClient/SearchClient.model";
+import { useCustomer } from "@/context/CustomerContext";
 
 interface Props {
   client: ClientInfo;
@@ -48,6 +48,9 @@ const ClientCard = ({
   handleOpenEditForm,
   handleMenuClick,
 }: Props) => {
+  const { currentCustomer } = useCustomer();
+  const isSelected = currentCustomer?.id === client.id;
+
   const getStatusColor = (status?: ClientStatus) => {
     switch (status) {
       case "lead":
@@ -73,10 +76,34 @@ const ClientCard = ({
   return (
     <>
       <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={client.id}>
+        {isSelected && (
+          <Box
+            sx={{
+              bgcolor: "primary.main",
+              color: "white",
+              px: 1,
+              py: 0.5,
+              fontSize: 12,
+              fontWeight: "bold",
+              borderTopLeftRadius: 3,
+              borderTopRightRadius: 3,
+            }}
+          >
+            Selected
+          </Box>
+        )}
         <Card
           sx={{
             height: "100%",
             position: "relative",
+            borderWidth: isSelected ? 2 : 1,
+            borderStyle: "solid",
+            borderColor: isSelected ? "primary.main" : "divider",
+            boxShadow: isSelected ? 4 : "0px 1px 3px rgba(0,0,0,0.2)",
+            transition: "0.3s",
+            cursor: "pointer",
+            borderTopLeftRadius: 0,
+            borderTopRightRadius: 0,
             "&:hover": {
               transform: "translateY(-2px)",
               boxShadow: 3,
@@ -85,7 +112,11 @@ const ClientCard = ({
           }}
           onClick={() => onClick && onClick(client)}
         >
-          <CardContent sx={{ pb: 2 }}>
+          <CardContent
+            sx={{
+              pb: 2,
+            }}
+          >
             {/* Header with Avatar and Menu */}
             <Box sx={{ display: "flex", alignItems: "flex-start", mb: 2 }}>
               <Avatar

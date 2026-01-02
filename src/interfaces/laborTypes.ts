@@ -1,3 +1,5 @@
+import { ClientStatus } from "@/services";
+
 export interface LaborMaterial {
   description?: string;
   name?: string;
@@ -182,6 +184,7 @@ export type Customer = {
   contact: string;
   phone: string;
   email: string;
+  status: ClientStatus;
   buildings: LocationData[];
 };
 
