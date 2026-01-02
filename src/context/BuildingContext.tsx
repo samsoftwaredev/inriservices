@@ -162,7 +162,11 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
     getAddresses,
   };
 
-  return React.createElement(BuildingContext.Provider, { value }, children);
+  return (
+    <BuildingContext.Provider value={value}>
+      {children}
+    </BuildingContext.Provider>
+  );
 };
 
 // Custom hook to use the context

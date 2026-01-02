@@ -275,7 +275,9 @@ export const GallonsProvider = ({ children }: GallonsProviderProps) => {
     onRemoveRoom,
   };
 
-  return React.createElement(GallonsContext.Provider, { value }, children);
+  return (
+    <GallonsContext.Provider value={value}>{children}</GallonsContext.Provider>
+  );
 };
 
 // Custom hook to use the context

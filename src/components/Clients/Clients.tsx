@@ -52,7 +52,6 @@ const ClientsPage = () => {
   const handleCloseDetails = () => {
     setViewDetailsOpen(false);
     handleCloseEditForm();
-    setCurrentCustomer(undefined);
   };
 
   const handleOpenEditForm = () => {

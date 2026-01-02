@@ -116,7 +116,6 @@ const SearchClient = () => {
   const handleCloseDetails = () => {
     setViewDetailsOpen(false);
     handleCloseEditForm();
-    setCurrentCustomer(undefined);
   };
 
   const handleCloseEditForm = () => {

@@ -11,14 +11,13 @@ interface ProtectedRouteProps {
   requireEmailVerification?: boolean;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+const ProtectedRoute = ({
   children,
   redirectTo = "/auth/login",
   requireEmailVerification = false,
-}) => {
+}: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
     if (!loading) {
@@ -26,14 +25,12 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         router.push(redirectTo);
       } else if (requireEmailVerification && !user.email_confirmed_at) {
         router.push("/auth/verify-email");
-      } else {
-        setIsChecking(false);
       }
     }
   }, [user, loading, router, redirectTo, requireEmailVerification]);
 
   // Show loading spinner while checking authentication
-  if (loading || isChecking) {
+  if (loading) {
     return (
       <Box
         sx={{

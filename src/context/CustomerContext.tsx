@@ -94,10 +94,6 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
       setCurrentCustomer(customer);
       updateLocalStorage(customer.id);
       setBuildingData(customer.buildings[0]);
-    } else {
-      setCurrentCustomer(undefined);
-      updateLocalStorage();
-      setBuildingData(undefined);
     }
   };
 
@@ -122,7 +118,11 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
     setBuildingData,
   };
 
-  return React.createElement(CustomerContext.Provider, { value }, children);
+  return (
+    <CustomerContext.Provider value={value}>
+      {children}
+    </CustomerContext.Provider>
+  );
 };
 
 export const useCustomer = (): CustomerContextType => {

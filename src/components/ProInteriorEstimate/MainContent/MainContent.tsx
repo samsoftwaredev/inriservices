@@ -36,11 +36,9 @@ const MainContent = () => {
     handleDeleteConfirm,
     onRoomUpdate,
   } = useBuilding();
-  const { currentCustomer, setCurrentCustomer } = useCustomer();
+  const { currentCustomer } = useCustomer();
 
-  const newCustomer = () => {
-    setCurrentCustomer(undefined);
-  };
+  const newCustomer = () => {};
 
   const defaultValues =
     currentCustomer && buildingData

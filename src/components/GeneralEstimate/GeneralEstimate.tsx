@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { uuidv4, generateSampleInvoice } from "@/tools";
 import AddFeatureForm from "../ProInteriorEstimate/AddFeatureForm";
-import { ProtectedRoute } from "../ProtectedRoute";
 import { RoomProvider } from "@/context/RoomContext";
 import { ProjectCostProvider } from "@/context";
 import { Button, Input, Box, Typography, Paper, Divider } from "@mui/material";
