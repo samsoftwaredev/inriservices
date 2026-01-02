@@ -13,10 +13,49 @@ import { Search as SearchIcon, Clear as ClearIcon } from "@mui/icons-material";
 import { clientApi } from "@/services";
 import { ClientInfo } from "./SearchClient.model";
 import ClientCard from "../ClientCard";
+import { useCustomer } from "@/context/CustomerContext";
 
 const ClientsPage = () => {
+  const { setCurrentCustomer } = useCustomer();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [clients, setClients] = useState<ClientInfo[]>([]);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleMenuClick = (
+    event: React.MouseEvent<HTMLElement>,
+    clientId: string
+  ) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedClientId(clientId);
+  };
+
+  const handleViewDetails = () => {
+    const client = clients.find((c) => c.id === selectedClientId);
+    if (client) {
+      setCurrentCustomer({
+        id: client.id,
+        name: client.fullName,
+        contact: "",
+        email: client.email,
+        phone: client.phone,
+        buildings: [
+          {
+            id: "",
+            address: client.address,
+            address2: client.address2,
+            city: client.city,
+            state: client.state,
+            zipCode: client.zipCode,
+            measurementUnit: "ft",
+            floorPlan: 0,
+            rooms: [],
+          },
+        ],
+      });
+    }
+    handleMenuClose();
+  };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -66,8 +105,33 @@ const ClientsPage = () => {
   );
 
   const onClientClick = (client: ClientInfo) => {
-    // Handle client click action
+    setCurrentCustomer({
+      id: client.id,
+      name: client.fullName,
+      contact: "",
+      email: client.email,
+      phone: client.phone,
+      buildings: [
+        {
+          id: "",
+          address: client.address,
+          address2: client.address2,
+          city: client.city,
+          state: client.state,
+          zipCode: client.zipCode,
+          measurementUnit: "ft",
+          floorPlan: 0,
+          rooms: [],
+        },
+      ],
+    });
   };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleOpenEditForm = () => {};
 
   return (
     <>
@@ -133,7 +197,16 @@ const ClientsPage = () => {
 
       <Grid container spacing={2} sx={{ pb: 3 }}>
         {filteredClients.map((client) => (
-          <ClientCard key={client.id} client={client} onClick={onClientClick} />
+          <ClientCard
+            key={client.id}
+            client={client}
+            anchorEl={anchorEl}
+            handleMenuClick={handleMenuClick}
+            onClick={onClientClick}
+            handleMenuClose={handleMenuClose}
+            handleViewDetails={handleViewDetails}
+            handleOpenEditForm={handleOpenEditForm}
+          />
         ))}
       </Grid>
     </>

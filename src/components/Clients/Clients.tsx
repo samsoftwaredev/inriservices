@@ -4,43 +4,26 @@ import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Typography,
   Grid,
-  IconButton,
   Chip,
   Avatar,
-  Menu,
-  MenuItem,
-  Divider,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Paper,
 } from "@mui/material";
-import {
-  AddCircleOutline,
-  Phone as PhoneIcon,
-  Email as EmailIcon,
-  Work as WorkIcon,
-  MoreVert as MoreVertIcon,
-  Visibility as VisibilityIcon,
-  Edit as EditIcon,
-  History as HistoryIcon,
-  Person as PersonIcon,
-} from "@mui/icons-material";
+import { AddCircleOutline, Person as PersonIcon } from "@mui/icons-material";
 import CustomerHeader from "../CustomerHeader";
 import ClientForm from "../ProInteriorEstimate/ClientForm";
-import { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
+import { SubmitHandler } from "react-hook-form";
 import { ClientFormData } from "../ProInteriorEstimate/ClientForm/ClientForm.model";
 import { useAuth } from "@/context";
 import { clientApi, ClientStatus, propertyApi } from "@/services";
 import { toast } from "react-toastify";
 import NewClientDialog from "../NewClientDialog";
 import SearchClient from "../SearchClient";
-import ClientCard from "../ClientCard";
 
 interface ClientInfo {
   id: string;
@@ -78,22 +61,6 @@ const ClientsPage = () => {
 
   const handleCloseClientForm = () => {
     setCreateNewClient(false);
-  };
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const handleClearSearch = () => {
-    setSearchTerm("");
-  };
-
-  const handleMenuClick = (
-    event: React.MouseEvent<HTMLElement>,
-    clientId: string
-  ) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedClientId(clientId);
   };
 
   const handleMenuClose = () => {
@@ -260,10 +227,6 @@ const ClientsPage = () => {
     }
   };
 
-  const onErrorEditing: SubmitErrorHandler<ClientFormData> = (errors) => {
-    console.log(errors);
-  };
-
   return (
     <Box sx={{ py: 3 }}>
       <CustomerHeader
@@ -339,28 +302,6 @@ const ClientsPage = () => {
           </Grid>
         )}
       </Grid>
-
-      {/* Action Menu */}
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-      >
-        <MenuItem onClick={handleViewDetails}>
-          <VisibilityIcon sx={{ mr: 1, fontSize: 18 }} />
-          View Details
-        </MenuItem>
-        <MenuItem onClick={handleOpenEditForm}>
-          <EditIcon sx={{ mr: 1, fontSize: 18 }} />
-          Edit Client
-        </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
-          <HistoryIcon sx={{ mr: 1, fontSize: 18 }} />
-          Project History
-        </MenuItem>
-      </Menu>
 
       {/* Edit Client Dialog */}
       {selectedClient && (
