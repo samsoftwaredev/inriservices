@@ -12,27 +12,22 @@ import {
   Typography,
   FormHelperText,
 } from "@mui/material";
-import {
-  useForm,
-  Controller,
-  SubmitHandler,
-  SubmitErrorHandler,
-} from "react-hook-form";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { MeasurementUnit } from "@/interfaces/laborTypes";
 import { floorOptions } from "@/constants/laborData";
 import { usa_states } from "@/constants";
-import { ClientFormData, ClientInitData } from "./ClientForm.model";
+import { ClientFormData } from "@/components/SearchClient/SearchClient.model";
 
 interface Props {
-  defaultValues?: ClientInitData;
+  defaultValues?: ClientFormData;
   onSubmit: SubmitHandler<ClientFormData>;
   isLoading?: boolean;
 }
 
 // Validation rules
 const validationRules = {
-  customerName: {
-    required: "Customer name is required",
+  fullName: {
+    required: "Client name is required",
     minLength: {
       value: 2,
       message: "Name must be at least 2 characters",
@@ -43,21 +38,21 @@ const validationRules = {
         "Name can only contain letters, spaces, hyphens, and apostrophes",
     },
   },
-  customerEmail: {
+  email: {
     required: "Email is required",
     pattern: {
       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
       message: "Please enter a valid email address",
     },
   },
-  customerPhone: {
+  phone: {
     required: "Phone number is required",
     pattern: {
       value: /^[\+]?[(]?[0-9\s\-\(\)]{10,}$/,
       message: "Please enter a valid phone number (at least 10 digits)",
     },
   },
-  customerContact: {
+  contact: {
     required: "Contact information is required",
     minLength: {
       value: 2,
@@ -115,10 +110,10 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
   } = useForm<ClientFormData>({
     mode: "onChange", // Validate on every change
     defaultValues: {
-      customerName: defaultValues?.name || "",
-      customerEmail: defaultValues?.email || "",
-      customerPhone: defaultValues?.phone || "",
-      customerContact: defaultValues?.contact || "",
+      fullName: defaultValues?.fullName || "",
+      email: defaultValues?.email || "",
+      phone: defaultValues?.phone || "",
+      contact: defaultValues?.contact || "",
       address: defaultValues?.address || "",
       address2: defaultValues?.address2 || "",
       city: defaultValues?.city || "",
@@ -132,10 +127,10 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
   // Update form when external props change
   useEffect(() => {
     reset({
-      customerName: defaultValues?.name || "",
-      customerEmail: defaultValues?.email || "",
-      customerPhone: defaultValues?.phone || "",
-      customerContact: defaultValues?.contact || "",
+      fullName: defaultValues?.fullName || "",
+      email: defaultValues?.email || "",
+      phone: defaultValues?.phone || "",
+      contact: defaultValues?.contact || "",
       address: defaultValues?.address || "",
       address2: defaultValues?.address2 || "",
       city: defaultValues?.city || "",
@@ -183,17 +178,17 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
           {/* Customer Name */}
           <Grid size={{ xs: 12, sm: 6 }}>
             <Controller
-              name="customerName"
+              name="fullName"
               control={control}
-              rules={validationRules.customerName}
+              rules={validationRules.fullName}
               render={({ field }) => (
                 <TextField
                   {...field}
                   fullWidth
-                  label="Customer Name"
+                  label="Client Name"
                   size="small"
-                  error={!!errors.customerName}
-                  helperText={errors.customerName?.message}
+                  error={!!errors.fullName}
+                  helperText={errors.fullName?.message}
                   disabled={isLoading}
                 />
               )}
@@ -203,9 +198,9 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
           {/* Customer Email */}
           <Grid size={{ xs: 12, sm: 6 }}>
             <Controller
-              name="customerEmail"
+              name="email"
               control={control}
-              rules={validationRules.customerEmail}
+              rules={validationRules.email}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -213,8 +208,8 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
                   label="Email Address"
                   size="small"
                   type="email"
-                  error={!!errors.customerEmail}
-                  helperText={errors.customerEmail?.message}
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
                 />
               )}
             />
@@ -223,9 +218,9 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
           {/* Customer Phone */}
           <Grid size={{ xs: 12, sm: 6 }}>
             <Controller
-              name="customerPhone"
+              name="phone"
               control={control}
-              rules={validationRules.customerPhone}
+              rules={validationRules.phone}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -233,8 +228,8 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
                   label="Phone Number"
                   size="small"
                   type="tel"
-                  error={!!errors.customerPhone}
-                  helperText={errors.customerPhone?.message}
+                  error={!!errors.phone}
+                  helperText={errors.phone?.message}
                 />
               )}
             />
@@ -243,17 +238,17 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
           {/* Customer Contact */}
           <Grid size={{ xs: 12, sm: 6 }}>
             <Controller
-              name="customerContact"
+              name="contact"
               control={control}
-              rules={validationRules.customerContact}
+              rules={validationRules.contact}
               render={({ field }) => (
                 <TextField
                   {...field}
                   fullWidth
                   label="Contact Method"
                   size="small"
-                  error={!!errors.customerContact}
-                  helperText={errors.customerContact?.message}
+                  error={!!errors.contact}
+                  helperText={errors.contact?.message}
                   disabled={isLoading}
                 />
               )}

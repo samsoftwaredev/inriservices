@@ -35,7 +35,7 @@ interface Props {
   onLogoClick: () => void;
   currentClient?: ClientData;
   previousClient: ClientData[];
-  onSelectPreviousCustomer: (customer: ClientData) => void;
+  onSelectPreviousCustomer: (client: ClientData) => void;
 }
 
 const navigationItems = [
@@ -169,7 +169,7 @@ const SideNav = ({
             Interior Estimate
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {currentClient.name}
+            {currentClient.fullName}
           </Typography>
         </Box>
       )}
@@ -180,22 +180,22 @@ const SideNav = ({
       >
         Previous Customers
       </Typography>
-      {previousClient.map((customer) => (
+      {previousClient.map((client) => (
         <MenuItem
-          key={customer.id}
-          onClick={() => onSelectPreviousCustomer(customer)}
+          key={client.id}
+          onClick={() => onSelectPreviousCustomer(client)}
           sx={{ minWidth: 250 }}
         >
           <ListItemIcon>
             <PersonIcon />
           </ListItemIcon>
           <Link
-            href={`/interior-estimate/${customer.id}`}
+            href={`/interior-estimate/${client.id}`}
             style={{ textDecoration: "none", color: "inherit" }}
           >
             <ListItemText
-              primary={customer.name}
-              secondary={`${customer.contact} • ${customer.phone}`}
+              primary={client.fullName}
+              secondary={`${client.contact} • ${client.phone}`}
             />
           </Link>
         </MenuItem>

@@ -71,10 +71,10 @@ const CustomerInfoCard = ({ currentClient, onCustomerUpdate }: Props) => {
       <CardContent>
         {editMode ? (
           <Box>
-            {/* Customer Information Form */}
+            {/* Client Information Form */}
             <Box sx={{ mb: 3 }}>
               <Typography variant="h6" gutterBottom>
-                Customer Information
+                Client Information
               </Typography>
 
               {/* Image Upload Section */}
@@ -93,9 +93,9 @@ const CustomerInfoCard = ({ currentClient, onCustomerUpdate }: Props) => {
                 <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField
                     fullWidth
-                    label="Customer Name"
-                    value={editData.name}
-                    onChange={handleInputChange("name")}
+                    label="Client Name"
+                    value={editData.fullName}
+                    onChange={handleInputChange("fullName")}
                     size="small"
                   />
                 </Grid>
@@ -155,7 +155,7 @@ const CustomerInfoCard = ({ currentClient, onCustomerUpdate }: Props) => {
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography variant="body1">
-                  <strong>Client:</strong> {currentClient.name}
+                  <strong>Client:</strong> {currentClient.fullName}
                 </Typography>
                 <Typography variant="body1">
                   <strong>Contact:</strong> {currentClient.contact}
@@ -242,7 +242,9 @@ const CustomerInfoCard = ({ currentClient, onCustomerUpdate }: Props) => {
             variant="contained"
             startIcon={<SaveIcon />}
             onClick={handleSave}
-            disabled={!editData.name || !editData.contact || !editData.phone}
+            disabled={
+              !editData.fullName || !editData.contact || !editData.phone
+            }
           >
             Save Changes
           </Button>

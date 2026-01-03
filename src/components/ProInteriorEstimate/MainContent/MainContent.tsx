@@ -15,7 +15,6 @@ import {
   HomeRepairServiceOutlined,
 } from "@mui/icons-material";
 
-import CustomerHeader from "@/components/CustomerHeader";
 import CustomerSelectionMenu from "../CustomerSelectionMenu";
 import ClientForm from "../ClientForm";
 import Room from "../Room";
@@ -25,6 +24,7 @@ import { RoomProvider } from "@/context/RoomContext";
 import { useBuilding } from "@/context";
 import DeleteSectionDialog from "../DeleteSectionDialog";
 import { MeasurementUnit } from "@/interfaces/laborTypes";
+import { ClientFormData } from "@/components/SearchClient/SearchClient.model";
 
 const MainContent = () => {
   const {
@@ -40,11 +40,11 @@ const MainContent = () => {
 
   const newCustomer = () => {};
 
-  const defaultValues =
+  const defaultValues: ClientFormData | undefined =
     currentClient && buildingData
       ? {
           id: currentClient?.id,
-          name: currentClient?.name,
+          fullName: currentClient?.fullName,
           email: currentClient?.email,
           phone: currentClient?.phone,
           contact: currentClient?.contact,
@@ -56,11 +56,15 @@ const MainContent = () => {
           measurementUnit:
             buildingData?.measurementUnit || ("ft" as MeasurementUnit),
           floorPlan: buildingData?.floorPlan || 0,
+          numberOfProjects: 0,
+          totalRevenue: 0,
+          lastProjectDate: "",
+          status: "active",
         }
       : currentClient
       ? {
           id: currentClient?.id,
-          name: currentClient?.name,
+          fullName: currentClient?.fullName,
           email: currentClient?.email,
           phone: currentClient?.phone,
           contact: currentClient?.contact,
@@ -71,6 +75,10 @@ const MainContent = () => {
           zipCode: "",
           measurementUnit: "ft" as MeasurementUnit,
           floorPlan: 0,
+          numberOfProjects: 0,
+          totalRevenue: 0,
+          lastProjectDate: "",
+          status: "active",
         }
       : undefined;
 

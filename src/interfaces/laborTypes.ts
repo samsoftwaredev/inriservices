@@ -180,7 +180,7 @@ export type LocationData = {
 
 export type ClientData = {
   id: string;
-  name: string;
+  fullName: string;
   contact: string;
   phone: string;
   email: string;

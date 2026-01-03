@@ -43,16 +43,16 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
   const [currentClient, setCurrentClient] = useState<ClientData | undefined>();
   const [buildingData, setBuildingData] = useState<LocationData | undefined>();
 
-  const updateLocalStorage = (customerId?: string) => {
-    if (customerId) {
-      localStorage.setItem("currentCustomerId", customerId);
+  const updateLocalStorage = (clientId?: string) => {
+    if (clientId) {
+      localStorage.setItem("currentClientId", clientId);
     } else {
-      localStorage.removeItem("currentCustomerId");
+      localStorage.removeItem("currentClientId");
     }
   };
 
-  const handleSelectPreviousClient = (customer: ClientData) => {
-    updateLocalStorage(customer.id);
+  const handleSelectPreviousClient = (client: ClientData) => {
+    updateLocalStorage(client.id);
   };
 
   const handleSaveNewClient = (newCustomerData: Omit<ClientData, "id">) => {
@@ -66,11 +66,11 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
     setPreviousClient((prev) => [...prev, newCustomer]);
   };
 
-  const handleClientUpdate = (updatedCustomer: ClientData) => {
-    setCurrentClient(updatedCustomer);
+  const handleClientUpdate = (updatedClient: ClientData) => {
+    setCurrentClient(updatedClient);
     setPreviousClient((prev) =>
-      prev.map((customer) =>
-        customer.id === updatedCustomer.id ? updatedCustomer : customer
+      prev.map((client) =>
+        client.id === updatedClient.id ? updatedClient : client
       )
     );
   };
@@ -81,18 +81,18 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
     return id;
   }
 
-  const getCustomerById = (customerId?: string) => {
-    const customer = previousClient.find((cust) => cust.id === customerId);
-    if (customer) {
-      setCurrentClient(customer);
-      updateLocalStorage(customer.id);
-      setBuildingData(customer.buildings[0]);
+  const getCustomerById = (clientId?: string) => {
+    const client = previousClient.find((client) => client.id === clientId);
+    if (client) {
+      setCurrentClient(client);
+      updateLocalStorage(client.id);
+      setBuildingData(client.buildings[0]);
     }
   };
 
   useEffect(() => {
-    const customerId = getCustomerIdURL(window.location.href);
-    getCustomerById(customerId);
+    const clientId = getCustomerIdURL(window.location.href);
+    getCustomerById(clientId);
   }, [pathname]);
 
   const value: ClientContextType = {

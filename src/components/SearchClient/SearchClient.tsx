@@ -94,7 +94,7 @@ const SearchClient = () => {
   const onClientClick = (client: ClientFormData) => {
     setCurrentClient({
       id: client.id,
-      name: client.fullName,
+      fullName: client.fullName,
       contact: "",
       email: client.email,
       phone: client.phone,
@@ -288,7 +288,7 @@ const SearchClient = () => {
           onSubmit={onSaveEdits}
           client={{
             id: currentClient.id,
-            fullName: currentClient.name,
+            fullName: currentClient.fullName,
             email: currentClient.email,
             phone: currentClient.phone,
             contact: "",
@@ -316,7 +316,7 @@ const SearchClient = () => {
           handleOpenEditForm={handleOpenEditForm}
           client={{
             id: currentClient.id,
-            fullName: currentClient.name,
+            fullName: currentClient.fullName,
             email: currentClient.email,
             phone: currentClient.phone,
             address: currentClient.buildings[0].address,

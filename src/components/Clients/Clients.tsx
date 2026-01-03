@@ -58,7 +58,7 @@ const ClientsPage = () => {
       setIsEditingClient(true);
       return {
         id: currentClient!.id,
-        name: currentClient!.name,
+        fullName: currentClient!.fullName,
         email: currentClient!.email,
         phone: currentClient!.phone,
         status: currentClient!.status,
@@ -233,7 +233,7 @@ const ClientsPage = () => {
           onSubmit={onSaveEdits}
           client={{
             id: currentClient.id,
-            fullName: currentClient.name,
+            fullName: currentClient.fullName,
             email: currentClient.email,
             phone: currentClient.phone,
             contact: "",
@@ -261,7 +261,7 @@ const ClientsPage = () => {
           handleOpenEditForm={handleOpenEditForm}
           client={{
             id: currentClient.id,
-            fullName: currentClient.name,
+            fullName: currentClient.fullName,
             email: currentClient.email,
             phone: currentClient.phone,
             address: currentClient.buildings[0].address,
