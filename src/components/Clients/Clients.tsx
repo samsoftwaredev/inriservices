@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import NewClientDialog from "../NewClientDialog";
 import SearchClient from "../SearchClient";
 import ClientDetailDialog from "../ClientDetailDialog";
-import { useCustomer } from "@/context/CustomerContext";
+import { useClient } from "@/context/CustomerContext";
 
 interface ClientInfo {
   id: string;
@@ -34,7 +34,7 @@ interface ClientInfo {
 
 const ClientsPage = () => {
   const { userData } = useAuth();
-  const { currentCustomer, setCurrentCustomer } = useCustomer();
+  const { currentCustomer, setCurrentCustomer } = useClient();
   const [isCreatingNewClient, setIsCreatingNewClient] = useState(false);
   const [isEditingClient, setIsEditingClient] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);

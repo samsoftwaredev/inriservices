@@ -24,7 +24,7 @@ import {
 } from "@mui/icons-material";
 import { ClientStatus } from "@/services";
 import { ClientInfo } from "../SearchClient/SearchClient.model";
-import { useCustomer } from "@/context/CustomerContext";
+import { useClient } from "@/context/CustomerContext";
 
 interface Props {
   client: ClientInfo;
@@ -48,7 +48,7 @@ const ClientCard = ({
   handleOpenEditForm,
   handleMenuClick,
 }: Props) => {
-  const { currentCustomer } = useCustomer();
+  const { currentCustomer } = useClient();
   const isSelected = currentCustomer?.id === client.id;
 
   const getStatusColor = (status?: ClientStatus) => {

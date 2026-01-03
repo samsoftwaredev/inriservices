@@ -17,7 +17,7 @@ import {
 import { clientApi, propertyApi } from "@/services";
 import { ClientInfo } from "./SearchClient.model";
 import ClientCard from "../ClientCard";
-import { useCustomer } from "@/context/CustomerContext";
+import { useClient } from "@/context/CustomerContext";
 import ClientDetailDialog from "../ClientDetailDialog";
 import NewClientDialog from "../NewClientDialog";
 import { toast } from "react-toastify";
@@ -25,7 +25,7 @@ import { ClientFormData } from "../ProInteriorEstimate/ClientForm/ClientForm.mod
 import { SubmitHandler } from "react-hook-form";
 
 const SearchClient = () => {
-  const { setCurrentCustomer, currentCustomer } = useCustomer();
+  const { setCurrentCustomer, currentCustomer } = useClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [clients, setClients] = useState<ClientInfo[]>([]);

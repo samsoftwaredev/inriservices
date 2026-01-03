@@ -11,7 +11,7 @@ import { Customer, LocationData } from "@/interfaces/laborTypes";
 import { uuidv4 } from "@/tools";
 import { usePathname } from "next/navigation";
 
-interface CustomerContextType {
+interface ClientContextType {
   // State
   previousCustomers: Customer[];
   setPreviousCustomers: React.Dispatch<React.SetStateAction<Customer[]>>;
@@ -31,20 +31,15 @@ interface CustomerContextType {
   >;
 }
 
-interface CustomerProviderProps {
+interface ClientProviderProps {
   children: ReactNode;
 }
 
-const CustomerContext = createContext<CustomerContextType | undefined>(
-  undefined
-);
+const ClientContext = createContext<ClientContextType | undefined>(undefined);
 
-const INITIAL_CUSTOMERS: Customer[] = [];
-
-export const CustomerProvider = ({ children }: CustomerProviderProps) => {
+export const ClientProvider = ({ children }: ClientProviderProps) => {
   const pathname = usePathname();
-  const [previousCustomers, setPreviousCustomers] =
-    useState<Customer[]>(INITIAL_CUSTOMERS);
+  const [previousCustomers, setPreviousCustomers] = useState<Customer[]>([]);
   const [currentCustomer, setCurrentCustomer] = useState<
     Customer | undefined
   >();
@@ -102,7 +97,7 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
     getCustomerById(customerId);
   }, [pathname]);
 
-  const value: CustomerContextType = {
+  const value: ClientContextType = {
     // State
     previousCustomers,
     setPreviousCustomers,
@@ -119,53 +114,14 @@ export const CustomerProvider = ({ children }: CustomerProviderProps) => {
   };
 
   return (
-    <CustomerContext.Provider value={value}>
-      {children}
-    </CustomerContext.Provider>
+    <ClientContext.Provider value={value}>{children}</ClientContext.Provider>
   );
 };
 
-export const useCustomer = (): CustomerContextType => {
-  const context = useContext(CustomerContext);
+export const useClient = (): ClientContextType => {
+  const context = useContext(ClientContext);
   if (context === undefined) {
-    throw new Error("useCustomer must be used within a CustomerProvider");
-  }
-  return context;
-};
-
-/**
- * Get customer by ID
- */
-export const useCustomerById = (customerId: string) => {
-  const { previousCustomers, currentCustomer } = useCustomer();
-
-  if (currentCustomer?.id === customerId) {
-    return currentCustomer;
-  }
-
-  return (
-    previousCustomers.find((customer) => customer.id === customerId) || null
-  );
-};
-
-/**
- * Check if customer exists
- */
-export const useCustomerExists = (customerEmail: string) => {
-  const { previousCustomers } = useCustomer();
-
-  return previousCustomers.some(
-    (customer) => customer.email.toLowerCase() === customerEmail.toLowerCase()
-  );
-};
-
-/**
- * Search customers by name or email
- */
-export const useCustomerSearch = () => {
-  const context = useContext(CustomerContext);
-  if (context === undefined) {
-    throw new Error("useCustomer must be used within a CustomerProvider");
+    throw new Error("useClient must be used within a ClientProvider");
   }
   return context;
 };

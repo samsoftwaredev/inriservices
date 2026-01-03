@@ -3,7 +3,7 @@ import "./globals.css";
 import { companyName, companyWebsiteURL } from "@/constants";
 import Script from "next/script";
 import { AuthProvider } from "@/context";
-import { CustomerProvider } from "@/context/CustomerContext";
+import { ClientProvider } from "@/context/CustomerContext";
 import { ToastContainer } from "react-toastify";
 export const metadata: Metadata = {
   title: companyName,
@@ -98,7 +98,7 @@ export default function RootLayout({
       </Script>
       <body>
         <AuthProvider>
-          <CustomerProvider>{children}</CustomerProvider>
+          <ClientProvider>{children}</ClientProvider>
           <ToastContainer />
         </AuthProvider>
       </body>

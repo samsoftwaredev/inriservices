@@ -8,7 +8,7 @@ import React, {
   useCallback,
 } from "react";
 import { LocationData, RoomOverview } from "@/interfaces/laborTypes";
-import { useCustomer } from "./CustomerContext";
+import { useClient } from "./CustomerContext";
 import { uuidv4 } from "@/tools";
 
 interface DeleteConfirmationState {
@@ -51,7 +51,7 @@ interface BuildingProviderProps {
 }
 
 export const BuildingProvider = ({ children }: BuildingProviderProps) => {
-  const { buildingData, setBuildingData } = useCustomer();
+  const { buildingData, setBuildingData } = useClient();
   const [currentBuildingId, setCurrentBuildingId] = useState<
     string | undefined
   >();

@@ -6,14 +6,14 @@ import { Box, Container, CssBaseline } from "@mui/material";
 import SideNav from "@/components/SideNav";
 import { ThemeRegistry } from "@/app/ThemeRegistry";
 import { useAppNavigation } from "@/hooks";
-import { useCustomer } from "@/context/CustomerContext";
+import { useClient } from "@/context/CustomerContext";
 import AppTopNav from "../AppTopNav";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const { mobileOpen, handleDrawerToggle, handleNavigation, handleLogoClick } =
     useAppNavigation();
   const { currentCustomer, previousCustomers, handleSelectPreviousCustomer } =
-    useCustomer();
+    useClient();
 
   return (
     <ThemeRegistry>

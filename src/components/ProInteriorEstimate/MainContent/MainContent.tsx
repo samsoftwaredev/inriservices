@@ -20,7 +20,7 @@ import CustomerSelectionMenu from "../CustomerSelectionMenu";
 import ClientForm from "../ClientForm";
 import Room from "../Room";
 import { theme } from "@/app/theme";
-import { useCustomer } from "@/context/CustomerContext";
+import { useClient } from "@/context/CustomerContext";
 import { RoomProvider } from "@/context/RoomContext";
 import { useBuilding } from "@/context";
 import DeleteSectionDialog from "../DeleteSectionDialog";
@@ -36,7 +36,7 @@ const MainContent = () => {
     handleDeleteConfirm,
     onRoomUpdate,
   } = useBuilding();
-  const { currentCustomer } = useCustomer();
+  const { currentCustomer } = useClient();
 
   const newCustomer = () => {};
 
