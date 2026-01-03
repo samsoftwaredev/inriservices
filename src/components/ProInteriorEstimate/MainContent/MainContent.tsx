@@ -20,7 +20,7 @@ import CustomerSelectionMenu from "../CustomerSelectionMenu";
 import ClientForm from "../ClientForm";
 import Room from "../Room";
 import { theme } from "@/app/theme";
-import { useClient } from "@/context/CustomerContext";
+import { useClient } from "@/context/ClientContext";
 import { RoomProvider } from "@/context/RoomContext";
 import { useBuilding } from "@/context";
 import DeleteSectionDialog from "../DeleteSectionDialog";
@@ -36,18 +36,18 @@ const MainContent = () => {
     handleDeleteConfirm,
     onRoomUpdate,
   } = useBuilding();
-  const { currentCustomer } = useClient();
+  const { currentClient } = useClient();
 
   const newCustomer = () => {};
 
   const defaultValues =
-    currentCustomer && buildingData
+    currentClient && buildingData
       ? {
-          id: currentCustomer?.id,
-          name: currentCustomer?.name,
-          email: currentCustomer?.email,
-          phone: currentCustomer?.phone,
-          contact: currentCustomer?.contact,
+          id: currentClient?.id,
+          name: currentClient?.name,
+          email: currentClient?.email,
+          phone: currentClient?.phone,
+          contact: currentClient?.contact,
           address: buildingData?.address,
           address2: buildingData?.address2,
           city: buildingData?.city,
@@ -57,13 +57,13 @@ const MainContent = () => {
             buildingData?.measurementUnit || ("ft" as MeasurementUnit),
           floorPlan: buildingData?.floorPlan || 0,
         }
-      : currentCustomer
+      : currentClient
       ? {
-          id: currentCustomer?.id,
-          name: currentCustomer?.name,
-          email: currentCustomer?.email,
-          phone: currentCustomer?.phone,
-          contact: currentCustomer?.contact,
+          id: currentClient?.id,
+          name: currentClient?.name,
+          email: currentClient?.email,
+          phone: currentClient?.phone,
+          contact: currentClient?.contact,
           address: "",
           address2: "",
           city: "",

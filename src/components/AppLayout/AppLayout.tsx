@@ -6,13 +6,13 @@ import { Box, Container, CssBaseline } from "@mui/material";
 import SideNav from "@/components/SideNav";
 import { ThemeRegistry } from "@/app/ThemeRegistry";
 import { useAppNavigation } from "@/hooks";
-import { useClient } from "@/context/CustomerContext";
+import { useClient } from "@/context/ClientContext";
 import AppTopNav from "../AppTopNav";
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const { mobileOpen, handleDrawerToggle, handleNavigation, handleLogoClick } =
     useAppNavigation();
-  const { currentCustomer, previousCustomers, handleSelectPreviousCustomer } =
+  const { currentClient, previousClient, handleSelectPreviousClient } =
     useClient();
 
   return (
@@ -30,9 +30,9 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
           onDrawerToggle={handleDrawerToggle}
           onNavigation={handleNavigation}
           onLogoClick={handleLogoClick}
-          currentCustomer={currentCustomer}
-          previousCustomers={previousCustomers}
-          onSelectPreviousCustomer={handleSelectPreviousCustomer}
+          currentClient={currentClient}
+          previousClient={previousClient}
+          onSelectPreviousCustomer={handleSelectPreviousClient}
         />
         <Container maxWidth="md" sx={{ mt: 8, mb: 4 }}>
           {children}

@@ -9,14 +9,11 @@ import {
   DialogActions,
 } from "@mui/material";
 import ClientForm from "../ProInteriorEstimate/ClientForm";
-import {
-  ClientFormData,
-  ClientInitData,
-} from "../ProInteriorEstimate/ClientForm/ClientForm.model";
+import { ClientFormData } from "../SearchClient/SearchClient.model";
 
 interface Props {
   isOpen: boolean;
-  client?: ClientInitData;
+  client?: ClientFormData;
   isEditMode?: boolean;
   onSubmit: (data: ClientFormData) => void;
   onClose: () => void;
@@ -31,9 +28,9 @@ const NewClientDialog = ({
   isEditMode = false,
   isLoading = false,
 }: Props) => {
-  const defaultValues: ClientInitData = {
+  const defaultValues: ClientFormData = {
     id: client?.id || "",
-    name: client?.name || "",
+    fullName: client?.fullName || "",
     email: client?.email || "",
     phone: client?.phone || "",
     contact: client?.contact || "",
@@ -44,7 +41,13 @@ const NewClientDialog = ({
     zipCode: client?.zipCode || "",
     measurementUnit: client?.measurementUnit || "ft",
     floorPlan: client?.floorPlan || 1,
+    numberOfProjects: client?.numberOfProjects || 0,
+    totalRevenue: client?.totalRevenue || 0,
+    lastProjectDate: client?.lastProjectDate || "",
+    status: client?.status || "active",
+    notes: client?.notes || "",
   };
+
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>{isEditMode ? "Edit Client" : "New Client"}</DialogTitle>

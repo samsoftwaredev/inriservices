@@ -15,20 +15,19 @@ import {
   Person as PersonIcon,
 } from "@mui/icons-material";
 import { clientApi, propertyApi } from "@/services";
-import { ClientInfo } from "./SearchClient.model";
 import ClientCard from "../ClientCard";
-import { useClient } from "@/context/CustomerContext";
+import { useClient } from "@/context/ClientContext";
 import ClientDetailDialog from "../ClientDetailDialog";
 import NewClientDialog from "../NewClientDialog";
 import { toast } from "react-toastify";
-import { ClientFormData } from "../ProInteriorEstimate/ClientForm/ClientForm.model";
 import { SubmitHandler } from "react-hook-form";
+import { ClientFormData } from "./SearchClient.model";
 
 const SearchClient = () => {
-  const { setCurrentCustomer, currentCustomer } = useClient();
+  const { setCurrentClient, currentClient } = useClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
-  const [clients, setClients] = useState<ClientInfo[]>([]);
+  const [clients, setClients] = useState<ClientFormData[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isEditingClient, setIsEditingClient] = useState(false);
   const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
@@ -52,7 +51,7 @@ const SearchClient = () => {
 
   const getClients = async () => {
     const clientRes = await clientApi.listClientsWithAddresses();
-    const clientList: ClientInfo[] = clientRes.items.map((client) => {
+    const clientList: ClientFormData[] = clientRes.items.map((client) => {
       const property =
         client.properties.length > 0 ? client.properties[0] : null;
       return {
@@ -70,6 +69,9 @@ const SearchClient = () => {
         lastProjectDate: "",
         status: client.status,
         notes: client.notes || "",
+        contact: "",
+        floorPlan: 0,
+        measurementUnit: "ft",
       };
     });
     setClients(clientList);
@@ -89,8 +91,8 @@ const SearchClient = () => {
       client.state.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const onClientClick = (client: ClientInfo) => {
-    setCurrentCustomer({
+  const onClientClick = (client: ClientFormData) => {
+    setCurrentClient({
       id: client.id,
       name: client.fullName,
       contact: "",
@@ -149,16 +151,16 @@ const SearchClient = () => {
 
   const onSaveEdits: SubmitHandler<ClientFormData> = async (data) => {
     try {
-      if (!currentCustomer) return;
+      if (!currentClient) return;
       setIsUpdating(true);
       // Update client info
-      await clientApi.updateClient(currentCustomer.id, {
-        display_name: data.customerName,
-        primary_email: data.customerEmail,
-        primary_phone: data.customerPhone,
+      await clientApi.updateClient(currentClient.id, {
+        display_name: data.fullName,
+        primary_email: data.email,
+        primary_phone: data.phone,
       });
       // Update property info - assuming one property per client for simplicity
-      const property = await propertyApi.getProperty(currentCustomer.id);
+      const property = await propertyApi.getProperty(currentClient.id);
       await propertyApi.updateProperty(property.id, {
         address_line1: data.address,
         address_line2: data.address2 || "",
@@ -277,7 +279,7 @@ const SearchClient = () => {
       </Grid>
 
       {/* Edit Client Dialog */}
-      {currentCustomer && (
+      {currentClient && (
         <NewClientDialog
           isOpen={isEditingClient}
           onClose={handleCloseEditForm}
@@ -285,42 +287,47 @@ const SearchClient = () => {
           isLoading={isUpdating}
           onSubmit={onSaveEdits}
           client={{
-            id: currentCustomer.id,
-            name: currentCustomer.name,
-            email: currentCustomer.email,
-            phone: currentCustomer.phone,
+            id: currentClient.id,
+            fullName: currentClient.name,
+            email: currentClient.email,
+            phone: currentClient.phone,
             contact: "",
-            address: currentCustomer.buildings[0].address,
-            address2: currentCustomer.buildings[0].address2,
-            city: currentCustomer.buildings[0].city,
-            state: currentCustomer.buildings[0].state,
-            zipCode: currentCustomer.buildings[0].zipCode,
+            address: currentClient.buildings[0].address,
+            address2: currentClient.buildings[0].address2,
+            city: currentClient.buildings[0].city,
+            state: currentClient.buildings[0].state,
+            zipCode: currentClient.buildings[0].zipCode,
             measurementUnit: "ft",
             floorPlan: 1,
+            numberOfProjects: 0,
+            totalRevenue: 0,
+            lastProjectDate: "",
+            status: currentClient.status,
+            notes: "",
           }}
         />
       )}
 
       {/* View Client Data */}
-      {currentCustomer && (
+      {currentClient && (
         <ClientDetailDialog
           viewDetailsOpen={viewDetailsOpen}
           handleCloseDetails={handleCloseDetails}
           handleOpenEditForm={handleOpenEditForm}
           client={{
-            id: currentCustomer.id,
-            fullName: currentCustomer.name,
-            email: currentCustomer.email,
-            phone: currentCustomer.phone,
-            address: currentCustomer.buildings[0].address,
-            address2: currentCustomer.buildings[0].address2,
-            city: currentCustomer.buildings[0].city,
-            state: currentCustomer.buildings[0].state,
-            zipCode: currentCustomer.buildings[0].zipCode,
+            id: currentClient.id,
+            fullName: currentClient.name,
+            email: currentClient.email,
+            phone: currentClient.phone,
+            address: currentClient.buildings[0].address,
+            address2: currentClient.buildings[0].address2,
+            city: currentClient.buildings[0].city,
+            state: currentClient.buildings[0].state,
+            zipCode: currentClient.buildings[0].zipCode,
             numberOfProjects: 0,
             totalRevenue: 0,
             lastProjectDate: "",
-            status: currentCustomer.status,
+            status: currentClient.status,
             notes: "",
           }}
         />

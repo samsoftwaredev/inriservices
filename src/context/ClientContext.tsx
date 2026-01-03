@@ -7,23 +7,23 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { Customer, LocationData } from "@/interfaces/laborTypes";
+import { ClientData, LocationData } from "@/interfaces/laborTypes";
 import { uuidv4 } from "@/tools";
 import { usePathname } from "next/navigation";
 
 interface ClientContextType {
   // State
-  previousCustomers: Customer[];
-  setPreviousCustomers: React.Dispatch<React.SetStateAction<Customer[]>>;
-  currentCustomer?: Customer;
-  setCurrentCustomer: React.Dispatch<
-    React.SetStateAction<Customer | undefined>
+  previousClient: ClientData[];
+  setPreviousClient: React.Dispatch<React.SetStateAction<ClientData[]>>;
+  currentClient?: ClientData;
+  setCurrentClient: React.Dispatch<
+    React.SetStateAction<ClientData | undefined>
   >;
 
   // Handlers
-  handleSelectPreviousCustomer: (customer: Customer) => void;
-  handleSaveNewCustomer: (newCustomerData: Omit<Customer, "id">) => void;
-  handleCustomerUpdate: (updatedCustomer: Customer) => void;
+  handleSelectPreviousClient: (customer: ClientData) => void;
+  handleSaveNewClient: (newCustomerData: Omit<ClientData, "id">) => void;
+  handleClientUpdate: (updatedCustomer: ClientData) => void;
 
   buildingData?: LocationData;
   setBuildingData: React.Dispatch<
@@ -39,10 +39,8 @@ const ClientContext = createContext<ClientContextType | undefined>(undefined);
 
 export const ClientProvider = ({ children }: ClientProviderProps) => {
   const pathname = usePathname();
-  const [previousCustomers, setPreviousCustomers] = useState<Customer[]>([]);
-  const [currentCustomer, setCurrentCustomer] = useState<
-    Customer | undefined
-  >();
+  const [previousClient, setPreviousClient] = useState<ClientData[]>([]);
+  const [currentClient, setCurrentClient] = useState<ClientData | undefined>();
   const [buildingData, setBuildingData] = useState<LocationData | undefined>();
 
   const updateLocalStorage = (customerId?: string) => {
@@ -53,24 +51,24 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
     }
   };
 
-  const handleSelectPreviousCustomer = (customer: Customer) => {
+  const handleSelectPreviousClient = (customer: ClientData) => {
     updateLocalStorage(customer.id);
   };
 
-  const handleSaveNewCustomer = (newCustomerData: Omit<Customer, "id">) => {
-    const newCustomer: Customer = {
+  const handleSaveNewClient = (newCustomerData: Omit<ClientData, "id">) => {
+    const newCustomer: ClientData = {
       ...newCustomerData,
       id: uuidv4(),
     };
 
-    setCurrentCustomer(newCustomer);
+    setCurrentClient(newCustomer);
     updateLocalStorage(newCustomer.id);
-    setPreviousCustomers((prev) => [...prev, newCustomer]);
+    setPreviousClient((prev) => [...prev, newCustomer]);
   };
 
-  const handleCustomerUpdate = (updatedCustomer: Customer) => {
-    setCurrentCustomer(updatedCustomer);
-    setPreviousCustomers((prev) =>
+  const handleClientUpdate = (updatedCustomer: ClientData) => {
+    setCurrentClient(updatedCustomer);
+    setPreviousClient((prev) =>
       prev.map((customer) =>
         customer.id === updatedCustomer.id ? updatedCustomer : customer
       )
@@ -84,9 +82,9 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
   }
 
   const getCustomerById = (customerId?: string) => {
-    const customer = previousCustomers.find((cust) => cust.id === customerId);
+    const customer = previousClient.find((cust) => cust.id === customerId);
     if (customer) {
-      setCurrentCustomer(customer);
+      setCurrentClient(customer);
       updateLocalStorage(customer.id);
       setBuildingData(customer.buildings[0]);
     }
@@ -99,15 +97,15 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
 
   const value: ClientContextType = {
     // State
-    previousCustomers,
-    setPreviousCustomers,
-    currentCustomer,
-    setCurrentCustomer,
+    previousClient,
+    setPreviousClient,
+    currentClient,
+    setCurrentClient,
 
     // Handlers
-    handleSelectPreviousCustomer,
-    handleSaveNewCustomer,
-    handleCustomerUpdate,
+    handleSelectPreviousClient,
+    handleSaveNewClient,
+    handleClientUpdate,
 
     buildingData,
     setBuildingData,

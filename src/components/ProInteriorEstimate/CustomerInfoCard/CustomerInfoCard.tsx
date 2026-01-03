@@ -20,26 +20,27 @@ import {
   Person2Outlined,
   PhotoLibrary as PhotoLibraryIcon,
 } from "@mui/icons-material";
-import { Customer } from "@/interfaces/laborTypes";
+import { ClientData } from "@/interfaces/laborTypes";
 import { ImageUpload } from "@/components";
 
 interface Props {
-  currentCustomer: Customer;
-  onCustomerUpdate: (customer: Customer) => void;
+  currentClient: ClientData;
+  onCustomerUpdate: (customer: ClientData) => void;
 }
 
-const CustomerInfoCard = ({ currentCustomer, onCustomerUpdate }: Props) => {
+const CustomerInfoCard = ({ currentClient, onCustomerUpdate }: Props) => {
   const [editMode, setEditMode] = useState(false);
-  const [editData, setEditData] = useState<Customer>({ ...currentCustomer });
+  const [editData, setEditData] = useState<ClientData>({ ...currentClient });
   const [customerImages, setCustomerImages] = useState<any[]>([]);
 
   const handleEditClick = () => {
-    setEditData({ ...currentCustomer });
+    setEditData({ ...currentClient });
     setEditMode(true);
   };
 
   const handleInputChange =
-    (field: keyof Customer) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    (field: keyof ClientData) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       setEditData({
         ...editData,
         [field]: event.target.value,
@@ -61,7 +62,7 @@ const CustomerInfoCard = ({ currentCustomer, onCustomerUpdate }: Props) => {
   };
 
   const handleCancel = () => {
-    setEditData({ ...currentCustomer });
+    setEditData({ ...currentClient });
     setEditMode(false);
   };
 
@@ -154,27 +155,27 @@ const CustomerInfoCard = ({ currentCustomer, onCustomerUpdate }: Props) => {
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography variant="body1">
-                  <strong>Client:</strong> {currentCustomer.name}
+                  <strong>Client:</strong> {currentClient.name}
                 </Typography>
                 <Typography variant="body1">
-                  <strong>Contact:</strong> {currentCustomer.contact}
+                  <strong>Contact:</strong> {currentClient.contact}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography variant="body1">
-                  <strong>Phone:</strong> {currentCustomer.phone}
+                  <strong>Phone:</strong> {currentClient.phone}
                 </Typography>
                 <Typography variant="body1">
-                  <strong>Email:</strong> {currentCustomer.email}
+                  <strong>Email:</strong> {currentClient.email}
                 </Typography>
               </Grid>
               <Grid size={{ xs: 12 }}>
                 <Typography variant="body1">
                   <strong>Address:</strong>{" "}
-                  {currentCustomer.buildings?.[0].address},{" "}
-                  {currentCustomer.buildings?.[0].city},{" "}
-                  {currentCustomer.buildings?.[0].state}{" "}
-                  {currentCustomer.buildings?.[0].zipCode}
+                  {currentClient.buildings?.[0].address},{" "}
+                  {currentClient.buildings?.[0].city},{" "}
+                  {currentClient.buildings?.[0].state}{" "}
+                  {currentClient.buildings?.[0].zipCode}
                 </Typography>
               </Grid>
             </Grid>

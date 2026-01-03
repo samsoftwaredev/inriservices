@@ -23,12 +23,12 @@ import {
   Edit as EditIcon,
 } from "@mui/icons-material";
 import { ClientStatus } from "@/services";
-import { ClientInfo } from "../SearchClient/SearchClient.model";
-import { useClient } from "@/context/CustomerContext";
+import { ClientFormData } from "../SearchClient/SearchClient.model";
+import { useClient } from "@/context/ClientContext";
 
 interface Props {
-  client: ClientInfo;
-  onClick?: (client: ClientInfo) => void;
+  client: ClientFormData;
+  onClick?: (client: ClientFormData) => void;
   handleMenuClose: () => void;
   handleViewDetails: () => void;
   handleOpenEditForm: () => void;
@@ -48,8 +48,8 @@ const ClientCard = ({
   handleOpenEditForm,
   handleMenuClick,
 }: Props) => {
-  const { currentCustomer } = useClient();
-  const isSelected = currentCustomer?.id === client.id;
+  const { currentClient } = useClient();
+  const isSelected = currentClient?.id === client.id;
 
   const getStatusColor = (status?: ClientStatus) => {
     switch (status) {

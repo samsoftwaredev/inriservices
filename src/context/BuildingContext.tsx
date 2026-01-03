@@ -8,7 +8,7 @@ import React, {
   useCallback,
 } from "react";
 import { LocationData, RoomOverview } from "@/interfaces/laborTypes";
-import { useClient } from "./CustomerContext";
+import { useClient } from "./ClientContext";
 import { uuidv4 } from "@/tools";
 
 interface DeleteConfirmationState {

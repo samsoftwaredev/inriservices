@@ -6,16 +6,15 @@ import { AddCircleOutline } from "@mui/icons-material";
 import CustomerHeader from "../CustomerHeader";
 import ClientForm from "../ProInteriorEstimate/ClientForm";
 import { SubmitHandler } from "react-hook-form";
-import { ClientFormData } from "../ProInteriorEstimate/ClientForm/ClientForm.model";
 import { useAuth } from "@/context";
 import { clientApi, ClientStatus, propertyApi } from "@/services";
 import { toast } from "react-toastify";
 import NewClientDialog from "../NewClientDialog";
 import SearchClient from "../SearchClient";
 import ClientDetailDialog from "../ClientDetailDialog";
-import { useClient } from "@/context/CustomerContext";
+import { useClient } from "@/context/ClientContext";
 
-interface ClientInfo {
+interface ClientFormData {
   id: string;
   fullName: string;
   email: string;
@@ -34,7 +33,7 @@ interface ClientInfo {
 
 const ClientsPage = () => {
   const { userData } = useAuth();
-  const { currentCustomer, setCurrentCustomer } = useClient();
+  const { currentClient, setCurrentClient } = useClient();
   const [isCreatingNewClient, setIsCreatingNewClient] = useState(false);
   const [isEditingClient, setIsEditingClient] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -55,23 +54,23 @@ const ClientsPage = () => {
   };
 
   const handleOpenEditForm = () => {
-    setCurrentCustomer(() => {
+    setCurrentClient(() => {
       setIsEditingClient(true);
       return {
-        id: currentCustomer!.id,
-        name: currentCustomer!.name,
-        email: currentCustomer!.email,
-        phone: currentCustomer!.phone,
-        status: currentCustomer!.status,
+        id: currentClient!.id,
+        name: currentClient!.name,
+        email: currentClient!.email,
+        phone: currentClient!.phone,
+        status: currentClient!.status,
         contact: "",
         buildings: [
           {
             id: "",
-            address: currentCustomer?.buildings![0].address || "",
-            address2: currentCustomer?.buildings![0].address2 || "",
-            city: currentCustomer?.buildings![0].city || "",
-            state: currentCustomer?.buildings![0].state || "",
-            zipCode: currentCustomer?.buildings![0].zipCode || "",
+            address: currentClient?.buildings![0].address || "",
+            address2: currentClient?.buildings![0].address2 || "",
+            city: currentClient?.buildings![0].city || "",
+            state: currentClient?.buildings![0].state || "",
+            zipCode: currentClient?.buildings![0].zipCode || "",
             measurementUnit: "ft",
             floorPlan: 0,
             rooms: [],
@@ -87,7 +86,7 @@ const ClientsPage = () => {
 
   const getClients = async () => {
     const clientRes = await clientApi.listClientsWithAddresses();
-    const clientList: ClientInfo[] = clientRes.items.map((client) => {
+    const clientList: ClientFormData[] = clientRes.items.map((client) => {
       const property =
         client.properties.length > 0 ? client.properties[0] : null;
       return {
@@ -117,9 +116,9 @@ const ClientsPage = () => {
     try {
       setIsCreatingNewClient(true);
       const newClient = await clientApi.createClient({
-        display_name: data.customerName,
-        primary_email: data.customerEmail,
-        primary_phone: data.customerPhone,
+        display_name: data.fullName,
+        primary_email: data.email,
+        primary_phone: data.phone,
         status: "lead",
         notes: "",
         client_type: "person",
@@ -129,7 +128,7 @@ const ClientsPage = () => {
         client_id: newClient.id, // Associate with the created client if needed
         address_line1: data.address,
         address_line2: data.address2 || "",
-        name: `${data.customerName}'s Property`,
+        name: `${data.fullName}'s Property`,
         property_type: "residential",
         city: data.city,
         state: data.state,
@@ -150,16 +149,16 @@ const ClientsPage = () => {
 
   const onSaveEdits: SubmitHandler<ClientFormData> = async (data) => {
     try {
-      if (!currentCustomer) return;
+      if (!currentClient) return;
       setIsUpdating(true);
       // Update client info
-      await clientApi.updateClient(currentCustomer.id, {
-        display_name: data.customerName,
-        primary_email: data.customerEmail,
-        primary_phone: data.customerPhone,
+      await clientApi.updateClient(currentClient.id, {
+        display_name: data.fullName,
+        primary_email: data.email,
+        primary_phone: data.phone,
       });
       // Update property info - assuming one property per client for simplicity
-      const property = await propertyApi.getProperty(currentCustomer.id);
+      const property = await propertyApi.getProperty(currentClient.id);
       await propertyApi.updateProperty(property.id, {
         address_line1: data.address,
         address_line2: data.address2 || "",
@@ -225,7 +224,7 @@ const ClientsPage = () => {
       <SearchClient />
 
       {/* Edit Client Dialog */}
-      {currentCustomer && (
+      {currentClient && (
         <NewClientDialog
           isOpen={isEditingClient}
           onClose={handleCloseEditForm}
@@ -233,42 +232,47 @@ const ClientsPage = () => {
           isLoading={isUpdating}
           onSubmit={onSaveEdits}
           client={{
-            id: currentCustomer.id,
-            name: currentCustomer.name,
-            email: currentCustomer.email,
-            phone: currentCustomer.phone,
+            id: currentClient.id,
+            fullName: currentClient.name,
+            email: currentClient.email,
+            phone: currentClient.phone,
             contact: "",
-            address: currentCustomer.buildings[0].address,
-            address2: currentCustomer.buildings[0].address2,
-            city: currentCustomer.buildings[0].city,
-            state: currentCustomer.buildings[0].state,
-            zipCode: currentCustomer.buildings[0].zipCode,
+            address: currentClient.buildings[0].address,
+            address2: currentClient.buildings[0].address2,
+            city: currentClient.buildings[0].city,
+            state: currentClient.buildings[0].state,
+            zipCode: currentClient.buildings[0].zipCode,
             measurementUnit: "ft",
             floorPlan: 1,
+            numberOfProjects: 0,
+            totalRevenue: 0,
+            lastProjectDate: "",
+            status: currentClient.status,
+            notes: "",
           }}
         />
       )}
 
       {/* View Client Data */}
-      {currentCustomer && (
+      {currentClient && (
         <ClientDetailDialog
           viewDetailsOpen={viewDetailsOpen}
           handleCloseDetails={handleCloseDetails}
           handleOpenEditForm={handleOpenEditForm}
           client={{
-            id: currentCustomer.id,
-            fullName: currentCustomer.name,
-            email: currentCustomer.email,
-            phone: currentCustomer.phone,
-            address: currentCustomer.buildings[0].address,
-            address2: currentCustomer.buildings[0].address2,
-            city: currentCustomer.buildings[0].city,
-            state: currentCustomer.buildings[0].state,
-            zipCode: currentCustomer.buildings[0].zipCode,
+            id: currentClient.id,
+            fullName: currentClient.name,
+            email: currentClient.email,
+            phone: currentClient.phone,
+            address: currentClient.buildings[0].address,
+            address2: currentClient.buildings[0].address2,
+            city: currentClient.buildings[0].city,
+            state: currentClient.buildings[0].state,
+            zipCode: currentClient.buildings[0].zipCode,
             numberOfProjects: 0,
             totalRevenue: 0,
             lastProjectDate: "",
-            status: currentCustomer.status,
+            status: currentClient.status,
             notes: "",
           }}
         />

@@ -163,7 +163,7 @@ export interface RoomOverview {
   floorNumber: number;
 }
 
-export interface CustomerAddress {
+export interface ClientAddress {
   address: string;
   address2?: string;
   city: string;
@@ -176,9 +176,9 @@ export type LocationData = {
   measurementUnit: MeasurementUnit;
   floorPlan: number;
   rooms: RoomOverview[];
-} & CustomerAddress;
+} & ClientAddress;
 
-export type Customer = {
+export type ClientData = {
   id: string;
   name: string;
   contact: string;

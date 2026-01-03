@@ -23,7 +23,7 @@ import {
 } from "@mui/icons-material";
 import { Person as PersonIcon } from "@mui/icons-material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import { Customer } from "@/interfaces/laborTypes";
+import { ClientData } from "@/interfaces/laborTypes";
 import Link from "next/link";
 import { drawerWidth } from "@/constants";
 import { useAuth } from "@/context";
@@ -33,9 +33,9 @@ interface Props {
   onDrawerToggle: () => void;
   onNavigation: (path: string) => void;
   onLogoClick: () => void;
-  currentCustomer?: Customer;
-  previousCustomers: Customer[];
-  onSelectPreviousCustomer: (customer: Customer) => void;
+  currentClient?: ClientData;
+  previousClient: ClientData[];
+  onSelectPreviousCustomer: (customer: ClientData) => void;
 }
 
 const navigationItems = [
@@ -76,8 +76,8 @@ const SideNav = ({
   onDrawerToggle,
   onNavigation,
   onLogoClick,
-  currentCustomer,
-  previousCustomers,
+  currentClient,
+  previousClient,
   onSelectPreviousCustomer,
 }: Props) => {
   const { logout } = useAuth();
@@ -160,7 +160,7 @@ const SideNav = ({
       <Divider sx={{ my: 2, mx: 2 }} />
 
       {/* Additional Info Section */}
-      {currentCustomer && (
+      {currentClient && (
         <Box sx={{ p: 2 }}>
           <Typography variant="caption" color="text.secondary" gutterBottom>
             Current Project
@@ -169,7 +169,7 @@ const SideNav = ({
             Interior Estimate
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {currentCustomer.name}
+            {currentClient.name}
           </Typography>
         </Box>
       )}
@@ -180,7 +180,7 @@ const SideNav = ({
       >
         Previous Customers
       </Typography>
-      {previousCustomers.map((customer) => (
+      {previousClient.map((customer) => (
         <MenuItem
           key={customer.id}
           onClick={() => onSelectPreviousCustomer(customer)}
