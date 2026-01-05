@@ -335,7 +335,7 @@ const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
           startIcon={loading ? <Receipt /> : <Download />}
           disabled={loading}
           sx={{
-            minWidth: 150,
+            width: { md: 250, xs: "100%" },
             "&:hover": {
               transform: "translateY(-1px)",
             },

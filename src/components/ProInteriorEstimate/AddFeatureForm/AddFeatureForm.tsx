@@ -69,7 +69,7 @@ const AddFeatureForm = ({ roomId }: Props) => {
         <ImageUpload />
       </Box>
       <Grid container spacing={2}>
-        <Grid size={{ xs: 12, sm: 5 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 5 }} sx={{ order: { xs: 2, md: 1 } }}>
           <FormControl fullWidth size="small">
             <InputLabel htmlFor="featureTypeList">Feature Type</InputLabel>
             <Select
@@ -88,7 +88,7 @@ const AddFeatureForm = ({ roomId }: Props) => {
             </Select>
           </FormControl>
         </Grid>
-        <Grid size={{ xs: 12, sm: 5 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 5 }} sx={{ order: { xs: 1, md: 2 } }}>
           <TextField
             name="title"
             fullWidth
@@ -99,29 +99,33 @@ const AddFeatureForm = ({ roomId }: Props) => {
             placeholder="e.g., Large Window"
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 2 }}>
+        <Grid size={{ xs: 12, sm: 12, md: 2 }} sx={{ order: { xs: 4, md: 3 } }}>
           <Button
-            fullWidth
             variant="contained"
             startIcon={<AddIcon />}
             onClick={addFeature}
             disabled={!featureName.trim()}
+            sx={{ width: "100%" }}
           >
             Add
           </Button>
         </Grid>
+        <Grid
+          size={{ xs: 12, sm: 12, md: 12 }}
+          sx={{ order: { xs: 3, md: 4 } }}
+        >
+          <TextField
+            fullWidth
+            multiline
+            minRows={2}
+            size="small"
+            label="Additional Details / Client Notes (Optional)"
+            value={featureDescription}
+            onChange={(e) => setFeatureDescription(e.target.value)}
+            placeholder="Additional details (e.g., Type of window, material, scratched, broken, etc.)"
+          />
+        </Grid>
       </Grid>
-      <TextField
-        fullWidth
-        multiline
-        minRows={2}
-        size="small"
-        label="Additional Details / Client Notes (Optional)"
-        value={featureDescription}
-        onChange={(e) => setFeatureDescription(e.target.value)}
-        sx={{ mt: 2 }}
-        placeholder="Additional details (e.g., Type of window, material, scratched, broken, etc.)"
-      />
     </Box>
   );
 };

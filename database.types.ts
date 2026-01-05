@@ -123,6 +123,63 @@ export type Database = {
           },
         ]
       }
+      project_images: {
+        Row: {
+          caption: string | null
+          company_id: string
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["project_image_kind"]
+          mime_type: string | null
+          project_id: string
+          size_bytes: number | null
+          sort_order: number
+          storage_bucket: string
+          storage_path: string
+        }
+        Insert: {
+          caption?: string | null
+          company_id: string
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["project_image_kind"]
+          mime_type?: string | null
+          project_id: string
+          size_bytes?: number | null
+          sort_order?: number
+          storage_bucket?: string
+          storage_path: string
+        }
+        Update: {
+          caption?: string | null
+          company_id?: string
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["project_image_kind"]
+          mime_type?: string | null
+          project_id?: string
+          size_bytes?: number | null
+          sort_order?: number
+          storage_bucket?: string
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_images_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_images_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           client_id: string
@@ -130,6 +187,7 @@ export type Database = {
           created_at: string
           end_date: string | null
           id: string
+          invoice_total_cents: number | null
           labor_cost_cents: number
           labor_hours_estimated: number | null
           markup_bps: number
@@ -150,6 +208,7 @@ export type Database = {
           created_at?: string
           end_date?: string | null
           id?: string
+          invoice_total_cents?: number | null
           labor_cost_cents?: number
           labor_hours_estimated?: number | null
           markup_bps?: number
@@ -170,6 +229,7 @@ export type Database = {
           created_at?: string
           end_date?: string | null
           id?: string
+          invoice_total_cents?: number | null
           labor_cost_cents?: number
           labor_hours_estimated?: number | null
           markup_bps?: number
@@ -286,6 +346,7 @@ export type Database = {
           paint_doors: boolean
           paint_trim: boolean
           paint_walls: boolean
+          project_id: string | null
           property_id: string
           room_height_ft: number | null
           sort_order: number
@@ -310,6 +371,7 @@ export type Database = {
           paint_doors?: boolean
           paint_trim?: boolean
           paint_walls?: boolean
+          project_id?: string | null
           property_id: string
           room_height_ft?: number | null
           sort_order?: number
@@ -334,6 +396,7 @@ export type Database = {
           paint_doors?: boolean
           paint_trim?: boolean
           paint_walls?: boolean
+          project_id?: string | null
           property_id?: string
           room_height_ft?: number | null
           sort_order?: number
@@ -347,6 +410,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "property_rooms_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
           {
@@ -398,11 +468,16 @@ export type Database = {
     }
     Functions: {
       current_company_id: { Args: never; Returns: string }
+      get_project_metrics_by_year_json: {
+        Args: { p_year: number }
+        Returns: Json
+      }
     }
     Enums: {
       client_status: "lead" | "active" | "inactive"
       client_type: "person" | "business"
       member_role: "owner" | "admin" | "staff" | "viewer"
+      project_image_kind: "before" | "after" | "progress" | "other"
       project_status:
         | "draft"
         | "scheduled"
@@ -549,6 +624,7 @@ export const Constants = {
       client_status: ["lead", "active", "inactive"],
       client_type: ["person", "business"],
       member_role: ["owner", "admin", "staff", "viewer"],
+      project_image_kind: ["before", "after", "progress", "other"],
       project_status: [
         "draft",
         "scheduled",

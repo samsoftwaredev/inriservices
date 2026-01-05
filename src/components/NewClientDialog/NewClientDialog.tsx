@@ -7,9 +7,11 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  IconButton,
 } from "@mui/material";
 import ClientForm from "../ProInteriorEstimate/ClientForm";
 import { ClientFormData } from "../SearchClient/SearchClient.model";
+import { Close as CloseIcon } from "@mui/icons-material";
 
 interface Props {
   isOpen: boolean;
@@ -50,7 +52,27 @@ const NewClientDialog = ({
 
   return (
     <Dialog open={isOpen} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>{isEditMode ? "Edit Client" : "New Client"}</DialogTitle>
+      <DialogTitle
+        sx={{
+          m: 0,
+          p: 2,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        {isEditMode ? "Edit Client" : "New Client"}
+        {/* closeButton */}
+        <IconButton
+          aria-label="close"
+          onClick={onClose}
+          sx={{
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
       <DialogContent>
         <ClientForm
           isLoading={isLoading}

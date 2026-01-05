@@ -10,12 +10,7 @@ import {
   Chip,
   Alert,
 } from "@mui/material";
-import {
-  CloudUpload,
-  Delete,
-  PhotoCamera,
-  Image as ImageIcon,
-} from "@mui/icons-material";
+import { CloudUpload, Delete, PhotoCamera } from "@mui/icons-material";
 
 // ============================================================================
 // TYPES & INTERFACES

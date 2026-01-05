@@ -22,7 +22,7 @@ import {
   ExpandMore as ExpandMoreIcon,
   Category as CategoryIcon,
 } from "@mui/icons-material";
-import { RoomData, FeatureType, RoomFeature } from "@/interfaces/laborTypes";
+import { FeatureType, RoomFeature } from "@/interfaces/laborTypes";
 import { featureTypes } from "@/constants/laborData";
 import FeatureCard from "./FeatureCard";
 import { calculateFeatureCost } from "@/tools";
