@@ -28,6 +28,14 @@ export type ClientWithProperties = Client & {
   properties: Property[];
 };
 
+export type UserProfile = {
+    fullName: string;
+    companyId: string;
+    id: string;
+    createdAt: string;
+    phone: string;
+}
+
 export type MemberRole = Database["public"]["Enums"]["member_role"];
 export type ClientType = Database["public"]["Enums"]["client_type"];
 export type ClientStatus = Database["public"]["Enums"]["client_status"];

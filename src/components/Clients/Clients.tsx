@@ -122,7 +122,7 @@ const ClientsPage = () => {
         status: "lead",
         notes: "",
         client_type: "person",
-        company_id: userData?.company_id || "",
+        company_id: userData?.companyId || "",
       });
       await propertyApi.createProperty({
         client_id: newClient.id, // Associate with the created client if needed
@@ -134,7 +134,7 @@ const ClientsPage = () => {
         state: data.state,
         zip: data.zipCode,
         country: "USA",
-        company_id: userData?.company_id || "",
+        company_id: userData?.companyId || "",
       });
       getClients();
       handleCloseClientForm();

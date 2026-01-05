@@ -19,12 +19,13 @@ import { Add as AddIcon, Person as PersonIcon } from "@mui/icons-material";
 import CustomerHeader from "@/components/CustomerHeader";
 import { theme } from "@/app/theme";
 import SearchClientDialog from "@/components/SearchClientDialog";
+import { ClientFormData } from "@/components/SearchClient/SearchClient.model";
 
 interface Props {
   title?: string;
   subtitle?: string;
   isNewClient?: boolean;
-  onCreateNewCustomer: () => void;
+  onCreateNewCustomer: (data: ClientFormData) => void;
   onCreateNewLocation: () => void;
 }
 
@@ -36,8 +37,9 @@ const CustomerSelectionMenu = ({
   isNewClient = true,
 }: Props) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isOpenNewClientDialog, setIsOpenNewClientDialog] = useState(false);
   const [isOpenSearchClientDialog, setIsOpenSearchClientDialog] =
-    React.useState(false);
+    useState(false);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -45,13 +47,6 @@ const CustomerSelectionMenu = ({
 
   const onClose = () => {
     setAnchorEl(null);
-  };
-
-  const [isOpenNewClientDialog, setIsOpenNewClientDialog] =
-    React.useState(false);
-
-  const onSubmitNewClient = async (data: any) => {
-    // Logic to handle new client submission
   };
 
   const onCloseNewClientDialog = () => {
@@ -154,7 +149,7 @@ const CustomerSelectionMenu = ({
       <NewClientDialog
         onClose={onCloseNewClientDialog}
         isOpen={isOpenNewClientDialog}
-        onSubmit={onSubmitNewClient}
+        onSubmit={onCreateNewCustomer}
       />
       <SearchClientDialog
         isOpen={isOpenSearchClientDialog}

@@ -9,11 +9,11 @@ import React, {
 } from "react";
 import { createClient } from "@/app/supabaseConfig";
 import { User } from "@supabase/supabase-js";
-import { Profile, profileApi } from "@/services";
+import { profileApi, UserProfile } from "@/services";
 
 interface AuthContextType {
   user: User | null;
-  userData?: Profile | null;
+  userData?: UserProfile | null;
   loading: boolean;
   // Auth methods
   signup: (
@@ -50,7 +50,7 @@ export const useAuth = (): AuthContextType => {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
-  const [userData, setUserData] = useState<Profile | null>(null);
+  const [userData, setUserData] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Sign up function
@@ -139,7 +139,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const fetchUserData = async (): Promise<void> => {
     try {
       const userData = await profileApi.getMe();
-      setUserData(userData);
+      const translatedUserData = {
+        fullName: userData.full_name!,
+        companyId: userData.company_id!,
+        id: userData.id!,
+        createdAt: userData.created_at!,
+        phone: userData.phone!,
+      };
+      setUserData(translatedUserData);
       console.log("Auth state changed. Current user:", userData);
     } catch (error) {
       console.error("Failed to fetch user data:", error);

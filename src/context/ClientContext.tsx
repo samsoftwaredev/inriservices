@@ -10,6 +10,9 @@ import React, {
 import { ClientData, LocationData } from "@/interfaces/laborTypes";
 import { uuidv4 } from "@/tools";
 import { usePathname } from "next/navigation";
+import { clientApi, propertyApi } from "@/services";
+import { toast } from "react-toastify";
+import { ClientFormData } from "@/components/SearchClient/SearchClient.model";
 
 interface ClientContextType {
   // State
@@ -24,6 +27,14 @@ interface ClientContextType {
   handleSelectPreviousClient: (customer: ClientData) => void;
   handleSaveNewClient: (newCustomerData: Omit<ClientData, "id">) => void;
   handleClientUpdate: (updatedCustomer: ClientData) => void;
+  handleCreateNewClient: (
+    data: ClientFormData,
+    companyId: string
+  ) => Promise<void>;
+  handleCreateNewProperty: (
+    data: ClientFormData,
+    companyId: string
+  ) => Promise<void>;
 
   buildingData?: LocationData;
   setBuildingData: React.Dispatch<
@@ -42,6 +53,63 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
   const [previousClient, setPreviousClient] = useState<ClientData[]>([]);
   const [currentClient, setCurrentClient] = useState<ClientData | undefined>();
   const [buildingData, setBuildingData] = useState<LocationData | undefined>();
+
+  const handleCreateNewClient = async (
+    data: ClientFormData,
+    companyId: string
+  ) => {
+    try {
+      await clientApi.createClient({
+        client_type: "person",
+        display_name: data.fullName,
+        primary_email: data.email,
+        primary_phone: data.phone,
+        status: data.status,
+        company_id: companyId, // Replace with actual company ID
+        notes: "",
+      });
+      await propertyApi.createProperty({
+        client_id: data.id,
+        address_line1: data.address,
+        address_line2: data.address2 || "",
+        city: data.city,
+        state: data.state,
+        zip: data.zipCode,
+        company_id: companyId, // Replace with actual company ID
+        name: `${data.fullName}'s Property`,
+        property_type: "residential",
+        country: "USA",
+      });
+      toast.success("New client created successfully.");
+    } catch (error) {
+      console.error("Error creating new client:", error);
+      toast.error("Failed to create new client.");
+    }
+  };
+
+  const handleCreateNewProperty = async (
+    data: ClientFormData,
+    companyId: string
+  ) => {
+    try {
+      await propertyApi.createProperty({
+        client_id: data.id,
+        address_line1: data.address,
+        address_line2: data.address2 || "",
+        city: data.city,
+        state: data.state,
+        zip: data.zipCode,
+        company_id: companyId, // Replace with actual company ID
+        name: `${data.fullName}'s Property`,
+        property_type: "residential",
+        country: "USA",
+      });
+      toast.success("New client created successfully.");
+    } catch (error) {
+      console.error("Error creating new client:", error);
+      toast.error("Failed to create new client.");
+    }
+  };
 
   const updateLocalStorage = (clientId?: string) => {
     if (clientId) {
@@ -106,6 +174,8 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
     handleSelectPreviousClient,
     handleSaveNewClient,
     handleClientUpdate,
+    handleCreateNewClient,
+    handleCreateNewProperty,
 
     buildingData,
     setBuildingData,

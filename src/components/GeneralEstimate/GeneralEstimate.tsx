@@ -4,17 +4,49 @@ import { useState } from "react";
 import { uuidv4, generateSampleInvoice } from "@/tools";
 import AddFeatureForm from "../ProInteriorEstimate/AddFeatureForm";
 import { RoomProvider } from "@/context/RoomContext";
-import { Button, Box, Typography, Paper, Divider, Grid } from "@mui/material";
+import { Button, Box, Typography, Paper, Grid, Stack } from "@mui/material";
 import FeaturesList from "../ProInteriorEstimate/FeaturesList";
 import { InvoiceGenerator } from "../InvoiceGenerator";
+import {
+  Add as AddIcon,
+  PersonAddAlt as PersonAddIcon,
+} from "@mui/icons-material";
 import CustomerSelectionMenu from "../ProInteriorEstimate/CustomerSelectionMenu";
 import RoomGeneralInfo from "./RoomGeneralInfo";
 import { useClient } from "@/context/ClientContext";
 import { Person as PersonIcon } from "@mui/icons-material";
+import NewClientDialog from "../NewClientDialog";
+import SearchClientDialog from "../SearchClientDialog";
+import { ClientFormData } from "../SearchClient/SearchClient.model";
+import { useAuth } from "@/context";
 
 const GeneralEstimate = () => {
-  const { currentClient } = useClient();
   const measurementUnit: "ft" | "m" = "ft";
+  const { userData } = useAuth();
+  const { currentClient, handleCreateNewClient } = useClient();
+  const [isOpenSearchClientDialog, setIsOpenSearchClientDialog] =
+    useState(false);
+  const [isOpenNewClientDialog, setIsOpenNewClientDialog] = useState(false);
+
+  const onOpenNewClientDialog = () => {
+    setIsOpenNewClientDialog(true);
+  };
+
+  const onOpenSearchClientDialog = () => {
+    setIsOpenSearchClientDialog(true);
+  };
+
+  const onCloseNewClientDialog = () => {
+    setIsOpenNewClientDialog(false);
+  };
+
+  const onCloseSearchClientDialog = () => {
+    setIsOpenSearchClientDialog(false);
+  };
+
+  const onSubmitNewClient = async (data: ClientFormData) => {
+    handleCreateNewClient(data, userData!.companyId);
+  };
 
   const [rooms, setRooms] = useState([
     {
@@ -72,7 +104,7 @@ const GeneralEstimate = () => {
       <CustomerSelectionMenu
         title={"General Estimate"}
         subtitle={"Select a customer for this estimate"}
-        onCreateNewCustomer={() => {}}
+        onCreateNewCustomer={onSubmitNewClient}
         onCreateNewLocation={() => {}}
       />
 
@@ -126,66 +158,100 @@ const GeneralEstimate = () => {
                 Select Client
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-                Start by adding your first client to track projects and revenue.
+                Once a client is selected, you can create an estimate.
               </Typography>
+              <Stack
+                gap={3}
+                direction={{ xs: "column", md: "row" }}
+                justifyContent="center"
+              >
+                <Button
+                  startIcon={<AddIcon />}
+                  variant="contained"
+                  color="primary"
+                  onClick={onOpenSearchClientDialog}
+                >
+                  Select Client
+                </Button>
+                <Button
+                  startIcon={<PersonAddIcon />}
+                  onClick={onOpenNewClientDialog}
+                  sx={{ ml: 2 }}
+                >
+                  Create New Client
+                </Button>
+              </Stack>
             </Box>
           </Grid>
         )}
       </Paper>
 
-      {rooms.map((room, index) => (
-        <RoomProvider
-          key={room.id}
-          roomId={room.id}
-          roomName={room.name}
-          roomDescription={room.description}
-          measurementUnit={measurementUnit}
-          floorNumber={room.floorNumber}
-        >
-          <Paper sx={{ p: 2, mb: 2 }}>
-            <RoomGeneralInfo room={room} index={index} />
-            <AddFeatureForm roomId={room.id} />
-            <FeaturesList onOpenLaborDialog={openLaborDialog} />
-          </Paper>
-        </RoomProvider>
-      ))}
+      <Box display={currentClient ? "block" : "none"}>
+        {rooms.map((room, index) => (
+          <RoomProvider
+            key={room.id}
+            roomId={room.id}
+            roomName={room.name}
+            roomDescription={room.description}
+            measurementUnit={measurementUnit}
+            floorNumber={room.floorNumber}
+          >
+            <Paper sx={{ p: 2, mb: 2 }}>
+              <RoomGeneralInfo room={room} index={index} />
+              <AddFeatureForm roomId={room.id} />
+              <FeaturesList onOpenLaborDialog={openLaborDialog} />
+            </Paper>
+          </RoomProvider>
+        ))}
 
-      <Box sx={{ mb: 3 }} display="flex" justifyContent="center">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={addNewRoom}
-          sx={{ mr: 2, width: { md: 250, xs: "100%" } }}
-        >
-          Add Room
-        </Button>
+        <Box sx={{ mb: 3 }} display="flex" justifyContent="center">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={addNewRoom}
+            startIcon={<AddIcon />}
+            sx={{ mr: 2, width: { md: 250, xs: "100%" } }}
+          >
+            Add Room
+          </Button>
+        </Box>
+
+        {/* Estimate Summary */}
+        <Paper sx={{ p: 3, mb: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            Estimate Summary
+          </Typography>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            Total Rooms: {rooms.length}
+          </Typography>
+          <Typography variant="h6" color="primary">
+            Estimated Total: ${rooms.length * 450 + (rooms.length - 1) * 50}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            *Tax not included. Final pricing may vary based on specific
+            requirements.
+          </Typography>
+        </Paper>
+
+        <Box sx={{ mb: 3 }} display="flex" justifyContent="center">
+          {/* Invoice Generator Demo */}
+          <InvoiceGenerator
+            invoiceData={generateSampleInvoice()}
+            buttonText="Download Invoice PDF"
+            variant="outlined"
+          />
+        </Box>
       </Box>
 
-      {/* Estimate Summary */}
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Estimate Summary
-        </Typography>
-        <Typography variant="body2" color="text.secondary" gutterBottom>
-          Total Rooms: {rooms.length}
-        </Typography>
-        <Typography variant="h6" color="primary">
-          Estimated Total: ${rooms.length * 450 + (rooms.length - 1) * 50}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          *Tax not included. Final pricing may vary based on specific
-          requirements.
-        </Typography>
-      </Paper>
-
-      <Box sx={{ mb: 3 }} display="flex" justifyContent="center">
-        {/* Invoice Generator Demo */}
-        <InvoiceGenerator
-          invoiceData={generateSampleInvoice()}
-          buttonText="Download Invoice PDF"
-          variant="outlined"
-        />
-      </Box>
+      <NewClientDialog
+        onClose={onCloseNewClientDialog}
+        isOpen={isOpenNewClientDialog}
+        onSubmit={onSubmitNewClient}
+      />
+      <SearchClientDialog
+        isOpen={isOpenSearchClientDialog}
+        onClose={onCloseSearchClientDialog}
+      />
     </>
   );
 };
