@@ -2,10 +2,7 @@
 
 import { useState } from "react";
 import { uuidv4, generateSampleInvoice } from "@/tools";
-import AddFeatureForm from "../ProInteriorEstimate/AddFeatureForm";
-import { RoomProvider } from "@/context/RoomContext";
 import { Button, Box, Typography, Paper, Grid, Stack } from "@mui/material";
-import FeaturesList from "../ProInteriorEstimate/FeaturesList";
 import { InvoiceGenerator } from "../InvoiceGenerator";
 import {
   Add as AddIcon,
@@ -20,6 +17,7 @@ import SearchClientDialog from "../SearchClientDialog";
 import { ClientFormData } from "../SearchClient/SearchClient.model";
 import { useAuth } from "@/context";
 import { projectApi, propertyRoomApi } from "@/services";
+import RoomFeatureForm from "../ProInteriorEstimate/RoomFeatureForm";
 
 interface RoomSections {
   id: string;
@@ -29,7 +27,6 @@ interface RoomSections {
 }
 
 const GeneralEstimate = () => {
-  const measurementUnit: "ft" | "m" = "ft";
   const { userData } = useAuth();
   const { currentClient, handleCreateNewClient } = useClient();
   const [isOpenSearchClientDialog, setIsOpenSearchClientDialog] =
@@ -143,10 +140,6 @@ const GeneralEstimate = () => {
   };
 
   const addNewRoom = async () => {
-    if (projectId === "") {
-      await createProject();
-    }
-
     const newRoom = {
       id: uuidv4(),
       name: `Room ${rooms.length + 1}`,
@@ -165,12 +158,10 @@ const GeneralEstimate = () => {
     // todo
   };
 
-  // todo
-  // pick customer first
   // upload pictures of the property
   // describe the work needed
   // customer input details and notes
-  // generate PDF estimate report
+
   return (
     <>
       <CustomerSelectionMenu
@@ -260,20 +251,10 @@ const GeneralEstimate = () => {
 
       <Box display={currentClient ? "block" : "none"}>
         {rooms.map((room, index) => (
-          <RoomProvider
-            key={room.id}
-            roomId={room.id}
-            roomName={room.name}
-            roomDescription={room.description}
-            measurementUnit={measurementUnit}
-            floorNumber={room.floorNumber}
-          >
-            <Paper sx={{ p: 2, mb: 2 }}>
-              <RoomGeneralInfo room={room} index={index} />
-              <AddFeatureForm roomId={room.id} />
-              <FeaturesList onOpenLaborDialog={openLaborDialog} />
-            </Paper>
-          </RoomProvider>
+          <Paper key={room.id} sx={{ p: 2, mb: 2 }}>
+            <RoomGeneralInfo room={room} index={index} />
+            <RoomFeatureForm />
+          </Paper>
         ))}
 
         <Box sx={{ mb: 3 }} display="flex" justifyContent="center">
