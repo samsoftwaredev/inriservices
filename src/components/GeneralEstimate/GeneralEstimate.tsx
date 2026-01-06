@@ -19,6 +19,14 @@ import NewClientDialog from "../NewClientDialog";
 import SearchClientDialog from "../SearchClientDialog";
 import { ClientFormData } from "../SearchClient/SearchClient.model";
 import { useAuth } from "@/context";
+import { projectApi, propertyRoomApi } from "@/services";
+
+interface RoomSections {
+  id: string;
+  name: string;
+  description: string;
+  floorNumber: number;
+}
 
 const GeneralEstimate = () => {
   const measurementUnit: "ft" | "m" = "ft";
@@ -27,6 +35,7 @@ const GeneralEstimate = () => {
   const [isOpenSearchClientDialog, setIsOpenSearchClientDialog] =
     useState(false);
   const [isOpenNewClientDialog, setIsOpenNewClientDialog] = useState(false);
+  const [projectId, setProjectId] = useState("");
 
   const onOpenNewClientDialog = () => {
     setIsOpenNewClientDialog(true);
@@ -48,45 +57,108 @@ const GeneralEstimate = () => {
     handleCreateNewClient(data, userData!.companyId);
   };
 
-  const [rooms, setRooms] = useState([
-    {
-      id: uuidv4(),
-      name: "Living Room",
-      description: "A cozy living room",
-      floorNumber: 1,
-    },
-  ]);
+  const [rooms, setRooms] = useState<RoomSections[]>([]);
 
-  const addNewRoom = () => {
+  const createProject = async () => {
+    const projectRes = await projectApi.createProject({
+      client_id: currentClient!.id,
+      company_id: userData!.companyId,
+      end_date: new Date().toISOString(),
+      invoice_total_cents: 0,
+      labor_cost_cents: 0,
+      labor_hours_estimated: null,
+      markup_bps: 0,
+      material_cost_cents: 0,
+      name: `General Estimate for ${currentClient?.fullName}`,
+      project_type: "interior_paint",
+      property_id: currentClient!.buildings[0].id,
+      scope_notes: null,
+      start_date: new Date().toISOString(),
+      status: "draft",
+      tax_amount_cents: 0,
+      tax_rate_bps: 0,
+    });
+    setProjectId(projectRes.id);
+  };
+
+  const createRoom = async () => {
+    await propertyRoomApi.createRoom({
+      name: "Updated Room Name",
+      property_id: currentClient!.buildings[0].id,
+      project_id: projectId,
+      level: 1,
+      sort_order: 1,
+      ceiling_area_sqft: null,
+      ceiling_height_ft: null,
+      company_id: userData!.companyId,
+      description: null,
+      floor_area_sqft: null,
+      notes_customer: null,
+      notes_internal: null,
+      openings_area_sqft: null,
+      paint_ceiling: false,
+      paint_doors: false,
+      paint_trim: false,
+      paint_walls: false,
+      room_height_ft: null,
+      wall_area_sqft: null,
+      wall_perimeter_ft: null,
+    });
+  };
+
+  const updateRoom = async (roomId: string) => {
+    await propertyRoomApi.updateRoom(roomId, {
+      name: "Updated Room Name",
+    });
+  };
+
+  const deleteRoom = async (roomId: string) => {
+    await propertyRoomApi.deleteRoom(roomId);
+  };
+
+  const deleteProject = async () => {
+    await projectApi.deleteProject(projectId);
+    setProjectId("");
+  };
+
+  const updateProject = async () => {
+    const projectRes = await projectApi.updateProject(projectId, {
+      client_id: currentClient!.id,
+      end_date: new Date().toISOString(),
+      invoice_total_cents: 0,
+      labor_cost_cents: 0,
+      labor_hours_estimated: null,
+      markup_bps: 0,
+      material_cost_cents: 0,
+      name: `General Estimate for ${currentClient?.fullName}`,
+      project_type: "interior_paint",
+      property_id: currentClient!.buildings[0].id,
+      scope_notes: null,
+      start_date: new Date().toISOString(),
+      status: "draft",
+      tax_amount_cents: 0,
+      tax_rate_bps: 0,
+    });
+    setProjectId(projectRes.id);
+  };
+
+  const addNewRoom = async () => {
+    if (projectId === "") {
+      await createProject();
+    }
+
     const newRoom = {
       id: uuidv4(),
       name: `Room ${rooms.length + 1}`,
       description: "",
       floorNumber: 1,
     };
-    setRooms([...rooms, newRoom]);
-    //     propertyRoomApi.createRoom({
-    // property_id: string;
-    //     project_id: string | null;
-    //     level: number;
-    //     sort_order: number;
-    //     name: string;
-    //     ceiling_area_sqft: number | null;
-    //     ceiling_height_ft: number | null;
-    //     company_id: string;
-    //     description: string | null;
-    //     floor_area_sqft: number | null;
-    //     notes_customer: string | null;
-    //     notes_internal: string | null;
-    //     openings_area_sqft: number | null;
-    //     paint_ceiling: boolean;
-    //     paint_doors: boolean;
-    //     paint_trim: boolean;
-    //     paint_walls: boolean;
-    //     room_height_ft: number | null;
-    //     wall_area_sqft: number | null;
-    //     wall_perimeter_ft: number | null;
-    //     });
+
+    if (rooms.length >= 1) {
+      setRooms([...rooms, newRoom]);
+    } else {
+      setRooms([newRoom]);
+    }
   };
 
   const openLaborDialog = (featureType: string, featureId: string) => {
