@@ -43,15 +43,11 @@ const validationRules = {
   },
   featureDescription: {
     maxLength: {
-      value: 500,
-      message: "Description must not exceed 500 characters",
+      value: 1000,
+      message: "Description must not exceed 1000 characters",
     },
   },
 };
-
-// ============================================================================
-// MAIN COMPONENT
-// ============================================================================
 
 const AddFeatureForm = ({
   onSubmit,

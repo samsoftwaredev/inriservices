@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { uuidv4, generateSampleInvoice } from "@/tools";
 import { Button, Box, Typography, Paper, Grid, Stack } from "@mui/material";
 import { InvoiceGenerator } from "../InvoiceGenerator";
@@ -33,6 +33,27 @@ const GeneralEstimate = () => {
     useState(false);
   const [isOpenNewClientDialog, setIsOpenNewClientDialog] = useState(false);
   const [projectId, setProjectId] = useState("");
+  const [rooms, setRooms] = useState<RoomSections[]>([]);
+
+  const getAggregatedData = useCallback(() => {
+    return {
+      projectId,
+      clientId: currentClient?.id,
+      rooms,
+    };
+  }, [projectId, currentClient, rooms]);
+
+  const setLocalStorageEstimate = () => {
+    const estimateData = JSON.stringify(getAggregatedData());
+    setTimeout(() => {
+      // Use setTimeout to ensure this runs after state updates
+      localStorage.setItem("generalEstimateRooms", estimateData);
+    }, 0);
+  };
+
+  const removeLocalStorageEstimate = () => {
+    localStorage.removeItem("generalEstimateRooms");
+  };
 
   const onOpenNewClientDialog = () => {
     setIsOpenNewClientDialog(true);
@@ -53,8 +74,6 @@ const GeneralEstimate = () => {
   const onSubmitNewClient = async (data: ClientFormData) => {
     handleCreateNewClient(data, userData!.companyId);
   };
-
-  const [rooms, setRooms] = useState<RoomSections[]>([]);
 
   const createProject = async () => {
     const projectRes = await projectApi.createProject({
@@ -107,15 +126,18 @@ const GeneralEstimate = () => {
     await propertyRoomApi.updateRoom(roomId, {
       name: "Updated Room Name",
     });
+    setLocalStorageEstimate();
   };
 
   const deleteRoom = async (roomId: string) => {
     await propertyRoomApi.deleteRoom(roomId);
+    setLocalStorageEstimate();
   };
 
   const deleteProject = async () => {
     await projectApi.deleteProject(projectId);
     setProjectId("");
+    removeLocalStorageEstimate();
   };
 
   const updateProject = async () => {
@@ -148,10 +170,11 @@ const GeneralEstimate = () => {
     };
 
     if (rooms.length >= 1) {
-      setRooms([...rooms, newRoom]);
+      setRooms(() => [...rooms, newRoom]);
     } else {
       setRooms([newRoom]);
     }
+    setLocalStorageEstimate();
   };
 
   const openLaborDialog = (featureType: string, featureId: string) => {
