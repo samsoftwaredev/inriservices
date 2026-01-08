@@ -5,24 +5,27 @@ import { Box, TextField, Grid, Alert } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import ImageUpload from "@/components/ImageUpload";
 
-// ============================================================================
-// TYPES & INTERFACES
-// ============================================================================
-
 interface RoomFeatureFormData {
   featureName: string;
   featureDescription: string;
 }
 
 interface Props {
+  room: {
+    id: string;
+    name: string;
+    title: string;
+    description: string;
+    floorNumber: number;
+  };
   onSubmit?: (data: RoomFeatureFormData) => void;
-  defaultValues?: Partial<RoomFeatureFormData>;
   disabled?: boolean;
+  onChangeRoomData?: (
+    roomId: string,
+    title: string,
+    description: string
+  ) => void;
 }
-
-// ============================================================================
-// VALIDATION RULES
-// ============================================================================
 
 const validationRules = {
   featureName: {
@@ -35,11 +38,6 @@ const validationRules = {
       value: 100,
       message: "Feature name must not exceed 100 characters",
     },
-    pattern: {
-      value: /^[a-zA-Z0-9\s\-_.,()]+$/,
-      message:
-        "Feature name can only contain letters, numbers, spaces, and basic punctuation",
-    },
   },
   featureDescription: {
     maxLength: {
@@ -50,21 +48,22 @@ const validationRules = {
 };
 
 const AddFeatureForm = ({
+  room,
   onSubmit,
-  defaultValues,
+  onChangeRoomData,
   disabled = false,
 }: Props) => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid, isDirty },
+    formState: { errors },
     watch,
     reset,
   } = useForm<RoomFeatureFormData>({
     mode: "onChange",
     defaultValues: {
-      featureName: defaultValues?.featureName || "",
-      featureDescription: defaultValues?.featureDescription || "",
+      featureName: room?.title || "",
+      featureDescription: room?.description || "",
     },
   });
 
@@ -75,6 +74,18 @@ const AddFeatureForm = ({
 
   const featureNameValue = watch("featureName");
   const featureDescriptionValue = watch("featureDescription");
+
+  const onSaveForm = () => {
+    const currentData = {
+      featureName: featureNameValue,
+      featureDescription: featureDescriptionValue,
+    };
+    onChangeRoomData?.(
+      room.id,
+      currentData.featureName,
+      currentData.featureDescription
+    );
+  };
 
   return (
     <Box
@@ -109,6 +120,7 @@ const AddFeatureForm = ({
                 label="Title / Name of Feature"
                 placeholder="e.g., Large Window, Crown Molding, Built-in Shelving"
                 error={!!fieldState.error}
+                onBlur={onSaveForm}
                 helperText={
                   fieldState.error?.message ||
                   `${featureNameValue.length}/100 characters`
@@ -137,6 +149,7 @@ const AddFeatureForm = ({
                 label="Additional Details / Client Notes (Optional)"
                 placeholder="Additional details (e.g., Type of window, material, condition, special requirements, etc.)"
                 error={!!fieldState.error}
+                onBlur={onSaveForm}
                 helperText={
                   fieldState.error?.message ||
                   `${featureDescriptionValue.length}/500 characters (Optional)`

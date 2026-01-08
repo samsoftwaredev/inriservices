@@ -5,17 +5,20 @@ interface Props {
   room: {
     id: string;
     name: string;
+    title: string;
     description: string;
     floorNumber: number;
   };
   index: number;
+  onChangeRoomName: (roomId: string, name: string) => void;
 }
 
-const RoomGeneralInfo = ({ room, index }: Props) => {
+const RoomGeneralInfo = ({ room, index, onChangeRoomName }: Props) => {
   const [roomName, setRoomName] = useState(room.name);
 
   const handleRoomNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRoomName(e.target.value);
+    onChangeRoomName(room.id, e.target.value);
   };
 
   return (

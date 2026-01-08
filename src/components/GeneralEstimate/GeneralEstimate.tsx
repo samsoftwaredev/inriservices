@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { uuidv4, generateSampleInvoice } from "@/tools";
 import { Button, Box, Typography, Paper, Grid, Stack } from "@mui/material";
 import { InvoiceGenerator } from "../InvoiceGenerator";
@@ -22,6 +22,7 @@ import RoomFeatureForm from "../ProInteriorEstimate/RoomFeatureForm";
 interface RoomSections {
   id: string;
   name: string;
+  title: string;
   description: string;
   floorNumber: number;
 }
@@ -165,6 +166,7 @@ const GeneralEstimate = () => {
     const newRoom = {
       id: uuidv4(),
       name: `Room ${rooms.length + 1}`,
+      title: "",
       description: "",
       floorNumber: 1,
     };
@@ -181,9 +183,36 @@ const GeneralEstimate = () => {
     // todo
   };
 
-  // upload pictures of the property
-  // describe the work needed
-  // customer input details and notes
+  const onChangeRoomName = (roomId: string, roomName: string) => {
+    setRooms((prevRooms) =>
+      prevRooms.map((room) =>
+        room.id === roomId ? { ...room, name: roomName } : room
+      )
+    );
+    setLocalStorageEstimate();
+  };
+
+  const onChangeRoomData = (
+    roomId: string,
+    title: string,
+    description: string
+  ) => {
+    setRooms((prevRooms) =>
+      prevRooms.map((room) =>
+        room.id === roomId ? { ...room, title, description } : room
+      )
+    );
+    setLocalStorageEstimate();
+  };
+
+  useEffect(() => {
+    const storedEstimate = localStorage.getItem("generalEstimateRooms");
+    if (storedEstimate) {
+      const parsedEstimate = JSON.parse(storedEstimate);
+      setProjectId(parsedEstimate.projectId || "");
+      setRooms(parsedEstimate.rooms || []);
+    }
+  }, []);
 
   return (
     <>
@@ -275,8 +304,12 @@ const GeneralEstimate = () => {
       <Box display={currentClient ? "block" : "none"}>
         {rooms.map((room, index) => (
           <Paper key={room.id} sx={{ p: 2, mb: 2 }}>
-            <RoomGeneralInfo room={room} index={index} />
-            <RoomFeatureForm />
+            <RoomGeneralInfo
+              room={room}
+              index={index}
+              onChangeRoomName={onChangeRoomName}
+            />
+            <RoomFeatureForm room={room} onChangeRoomData={onChangeRoomData} />
           </Paper>
         ))}
 
