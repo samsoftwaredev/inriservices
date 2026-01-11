@@ -3,18 +3,22 @@
 import React, {
   createContext,
   useContext,
-  useEffect,
   useState,
   ReactNode,
+  useEffect,
 } from "react";
-import { createClient } from "@/app/supabaseConfig";
-import { User } from "@supabase/supabase-js";
+import { supabase } from "@/app/supabaseConfig";
+import { Session, User } from "@supabase/supabase-js";
 import { profileApi, UserProfile } from "@/services";
 
 interface AuthContextType {
   user: User | null;
   userData?: UserProfile | null;
   loading: boolean;
+  verifying: boolean;
+  authError: string | null;
+  authSuccess: boolean;
+  session: Session | null;
   // Auth methods
   signup: (
     email: string,
@@ -28,6 +32,7 @@ interface AuthContextType {
   updateUserProfile: (displayName: string) => Promise<void>;
   sendVerificationEmail: () => Promise<void>;
   confirmPasswordReset: (newPassword: string) => Promise<void>;
+  checkUserIsLoggedIn: () => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -48,10 +53,17 @@ export const useAuth = (): AuthContextType => {
 
 // Auth Provider component
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
   const [userData, setUserData] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  // auth state
+  const [session, setSession] = useState<Session | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [authSuccess, setAuthSuccess] = useState(false);
+  // Check URL params on initial render
+  const params = new URLSearchParams(window.location.search);
+  const hasTokenHash = params.get("token_hash");
+  const [verifying, setVerifying] = useState(!!hasTokenHash);
 
   // Sign up function
   const signup = async (
@@ -98,7 +110,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Reset password function
   const resetPassword = async (email: string): Promise<void> => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + "/auth/reset-password",
+    });
     if (error) throw error;
   };
 
@@ -150,25 +164,31 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.log("Auth state changed. Current user:", userData);
     } catch (error) {
       console.error("Failed to fetch user data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Set up auth state observer
+  const checkUserIsLoggedIn = async (): Promise<void> => {
+    // Check for existing session
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      setSession(data.session);
+      fetchUserData();
+    } else {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await fetchUserData();
-        } else {
-          setUserData(null);
-        }
-        setLoading(false);
-      }
-    );
+    checkUserIsLoggedIn();
+
+    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
 
     return () => {
-      authListener.subscription.unsubscribe();
+      data.subscription.unsubscribe();
     };
   }, []);
 
@@ -176,6 +196,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user,
     userData,
     loading,
+    verifying,
+    authError,
+    authSuccess,
+    session,
+    // Auth methods
     signup,
     login,
     logout,
@@ -183,6 +208,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     updateUserProfile,
     sendVerificationEmail,
     confirmPasswordReset,
+    checkUserIsLoggedIn,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

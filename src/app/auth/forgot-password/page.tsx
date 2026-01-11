@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Box,
@@ -38,7 +38,7 @@ const ForgotPasswordPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const { resetPassword } = useAuth();
+  const { resetPassword, checkUserIsLoggedIn } = useAuth();
 
   const {
     control,
@@ -78,6 +78,10 @@ const ForgotPasswordPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    checkUserIsLoggedIn();
+  }, []);
 
   return (
     <Container maxWidth="sm">

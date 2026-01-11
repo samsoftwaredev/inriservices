@@ -5,6 +5,7 @@ import Script from "next/script";
 import { AuthProvider } from "@/context";
 import { ClientProvider } from "@/context/ClientContext";
 import { ToastContainer } from "react-toastify";
+
 export const metadata: Metadata = {
   title: companyName,
   description:

@@ -11,21 +11,14 @@ import {
   Alert,
 } from "@mui/material";
 import { CloudUpload, Delete, PhotoCamera } from "@mui/icons-material";
+import { ImageFile } from "./ImageUpload.model";
 
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
 
-interface ImageFile {
-  id: string;
-  file: File;
-  url: string;
-  name: string;
-  size: number;
-}
-
 interface Props {
-  onImagesChange?: (images: ImageFile[]) => void;
+  onImagesChange: (images: ImageFile[]) => void;
   maxFiles?: number;
   maxSizeInMB?: number;
   acceptedFormats?: string[];
@@ -113,7 +106,7 @@ const ImageUpload = ({
   const updateImages = useCallback(
     (newImages: ImageFile[]) => {
       setImages(newImages);
-      onImagesChange?.(newImages);
+      onImagesChange(newImages);
     },
     [onImagesChange]
   );

@@ -3,34 +3,34 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Box, CircularProgress, Typography } from "@mui/material";
+import { Session } from "@supabase/supabase-js";
+import { supabase } from "@/app/supabaseConfig";
 import { useAuth } from "@/context";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  redirectTo?: string;
-  requireEmailVerification?: boolean;
 }
 
-const ProtectedRoute = ({
-  children,
-  redirectTo = "/auth/login",
-  requireEmailVerification = false,
-}: ProtectedRouteProps) => {
-  const { user, loading } = useAuth();
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  const { verifying, authError, authSuccess, session, loading } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        router.push(redirectTo);
-      } else if (requireEmailVerification && !user.email_confirmed_at) {
-        router.push("/auth/verify-email");
-      }
-    }
-  }, [user, loading, router, redirectTo, requireEmailVerification]);
+  if (verifying || loading) {
+    return (
+      <div>
+        <h1>Authentication</h1>
+        <p>Confirming your magic link...</p>
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
+  if (authError) {
+    router.push("/auth/login");
+    return null;
+  }
   // Show loading spinner while checking authentication
-  if (loading) {
+  if (authSuccess && !session) {
     return (
       <Box
         sx={{
@@ -50,13 +50,8 @@ const ProtectedRoute = ({
     );
   }
 
-  // Show nothing if not authenticated (user will be redirected)
-  if (!user) {
-    return null;
-  }
-
-  // Show nothing if email verification is required but not completed
-  if (requireEmailVerification && !user.email_confirmed_at) {
+  if (!session) {
+    router.push("/auth/login");
     return null;
   }
 

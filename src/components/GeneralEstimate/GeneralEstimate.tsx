@@ -16,8 +16,9 @@ import NewClientDialog from "../NewClientDialog";
 import SearchClientDialog from "../SearchClientDialog";
 import { ClientFormData } from "../SearchClient/SearchClient.model";
 import { useAuth } from "@/context";
-import { projectApi, propertyRoomApi } from "@/services";
+import { projectApi, propertyRoomApi, uploadProjectImages } from "@/services";
 import RoomFeatureForm from "../ProInteriorEstimate/RoomFeatureForm";
+import { ImageFile } from "../ImageUpload/ImageUpload.model";
 
 interface RoomSections {
   id: string;
@@ -80,6 +81,7 @@ const GeneralEstimate = () => {
     const projectRes = await projectApi.createProject({
       client_id: currentClient!.id,
       company_id: userData!.companyId,
+      property_id: currentClient!.buildings[0].id,
       end_date: new Date().toISOString(),
       invoice_total_cents: 0,
       labor_cost_cents: 0,
@@ -88,7 +90,6 @@ const GeneralEstimate = () => {
       material_cost_cents: 0,
       name: `General Estimate for ${currentClient?.fullName}`,
       project_type: "interior_paint",
-      property_id: currentClient!.buildings[0].id,
       scope_notes: null,
       start_date: new Date().toISOString(),
       status: "draft",
@@ -96,6 +97,7 @@ const GeneralEstimate = () => {
       tax_rate_bps: 0,
     });
     setProjectId(projectRes.id);
+    setLocalStorageEstimate();
   };
 
   const createRoom = async () => {
@@ -162,6 +164,16 @@ const GeneralEstimate = () => {
     setProjectId(projectRes.id);
   };
 
+  const onImagesChange = async (images: ImageFile[]) => {
+    await uploadProjectImages({
+      projectId,
+      companyId: userData!.companyId,
+      kind: "before",
+      files: images.map((image) => image.file),
+      caption: "",
+    });
+  };
+
   const addNewRoom = async () => {
     const newRoom = {
       id: uuidv4(),
@@ -177,10 +189,6 @@ const GeneralEstimate = () => {
       setRooms([newRoom]);
     }
     setLocalStorageEstimate();
-  };
-
-  const openLaborDialog = (featureType: string, featureId: string) => {
-    // todo
   };
 
   const onChangeRoomName = (roomId: string, roomName: string) => {
@@ -213,6 +221,12 @@ const GeneralEstimate = () => {
       setRooms(parsedEstimate.rooms || []);
     }
   }, []);
+
+  useEffect(() => {
+    if (currentClient && projectId === "") {
+      createProject();
+    }
+  }, [currentClient, projectId]);
 
   return (
     <>
@@ -301,7 +315,7 @@ const GeneralEstimate = () => {
         )}
       </Paper>
 
-      <Box display={currentClient ? "block" : "none"}>
+      <Box>
         {rooms.map((room, index) => (
           <Paper key={room.id} sx={{ p: 2, mb: 2 }}>
             <RoomGeneralInfo
@@ -309,7 +323,11 @@ const GeneralEstimate = () => {
               index={index}
               onChangeRoomName={onChangeRoomName}
             />
-            <RoomFeatureForm room={room} onChangeRoomData={onChangeRoomData} />
+            <RoomFeatureForm
+              room={room}
+              onChangeRoomData={onChangeRoomData}
+              onImagesChange={onImagesChange}
+            />
           </Paper>
         ))}
 

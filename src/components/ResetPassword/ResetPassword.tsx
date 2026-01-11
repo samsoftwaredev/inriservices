@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -13,65 +13,26 @@ import {
   Alert,
   IconButton,
   InputAdornment,
-  Divider,
   CircularProgress,
   Container,
-  FormControlLabel,
-  Checkbox,
 } from "@mui/material";
 import {
   Visibility,
   VisibilityOff,
-  Email,
   Lock,
-  Person,
-  PersonAdd,
-  Business,
+  CheckCircle,
 } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
 import { useAuth } from "@/context";
 
 // Form data interface
-interface SignupFormData {
-  displayName: string;
-  email: string;
+interface ResetPasswordFormData {
   password: string;
   confirmPassword: string;
-  acceptTerms: boolean;
-  companyId: string;
 }
 
 // Validation rules
 const validationRules = {
-  displayName: {
-    required: "Full name is required",
-    minLength: {
-      value: 2,
-      message: "Name must be at least 2 characters",
-    },
-    pattern: {
-      value: /^[a-zA-Z'-]+\s+[a-zA-Z\s'-]+$/,
-      message: "Please enter both first and last name separated by a space",
-    },
-  },
-  companyId: {
-    required: "Company ID is required",
-    minLength: {
-      value: 2,
-      message: "Company ID must be at least 2 characters",
-    },
-    pattern: {
-      value: /^[a-zA-Z0-9-]+$/,
-      message: "Please enter a valid company ID",
-    },
-  },
-  email: {
-    required: "Email is required",
-    pattern: {
-      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-      message: "Please enter a valid email address",
-    },
-  },
   password: {
     required: "Password is required",
     minLength: {
@@ -87,18 +48,15 @@ const validationRules = {
   confirmPassword: {
     required: "Please confirm your password",
   },
-  acceptTerms: {
-    required: "You must accept the terms and conditions",
-  },
 };
 
-const SignupPage = () => {
+const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const { signup, checkUserIsLoggedIn } = useAuth();
+  const [success, setSuccess] = useState(false);
+  const { confirmPasswordReset } = useAuth();
   const router = useRouter();
 
   const {
@@ -106,24 +64,19 @@ const SignupPage = () => {
     handleSubmit,
     watch,
     formState: { errors, isValid },
-  } = useForm<SignupFormData>({
+  } = useForm<ResetPasswordFormData>({
     mode: "onChange",
     defaultValues: {
-      displayName: "",
-      companyId: "",
-      email: "",
       password: "",
       confirmPassword: "",
-      acceptTerms: false,
     },
   });
 
   const password = watch("password");
 
-  const onSubmit = async (data: SignupFormData) => {
+  const onSubmit = async (data: ResetPasswordFormData) => {
     try {
       setError("");
-      setSuccess("");
       setLoading(true);
 
       // Check password confirmation
@@ -132,16 +85,25 @@ const SignupPage = () => {
         return;
       }
 
-      await signup(data.email, data.password, data.displayName, data.companyId);
+      await confirmPasswordReset(data.password);
 
-      setSuccess(
-        "Account created successfully! Please check your email to verify your account."
-      );
+      setSuccess(true);
 
-      // Redirect to login after a short delay
-      router.push("/dashboard");
-    } catch (error: unknown) {
-      let errorMessage = "Failed to create account";
+      // Redirect to login after success
+      setTimeout(() => {
+        router.push("/auth/login");
+      }, 3000);
+    } catch (error: any) {
+      console.error(error);
+      let errorMessage = "Failed to reset password";
+
+      if (error.message.includes("expired-action-code")) {
+        errorMessage = "Reset link has expired. Please request a new one.";
+      } else if (error.message.includes("invalid-action-code")) {
+        errorMessage = "Invalid reset link. Please request a new one.";
+      } else if (error.message.includes("weak-password")) {
+        errorMessage = "Password is too weak";
+      }
 
       setError(errorMessage);
     } finally {
@@ -157,9 +119,59 @@ const SignupPage = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  useEffect(() => {
-    checkUserIsLoggedIn();
-  }, []);
+  // Success view
+  if (success) {
+    return (
+      <Container maxWidth="sm">
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            minHeight: "100vh",
+            justifyContent: "center",
+            py: 4,
+          }}
+        >
+          <Card
+            elevation={3}
+            sx={{
+              width: "100%",
+              maxWidth: 400,
+            }}
+          >
+            <CardContent sx={{ p: 4, textAlign: "center" }}>
+              <CheckCircle
+                sx={{
+                  fontSize: 64,
+                  color: "success.main",
+                  mb: 2,
+                }}
+              />
+              <Typography variant="h4" component="h1" gutterBottom>
+                Password Reset Successfully!
+              </Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                Your password has been reset successfully. You can now sign in
+                with your new password.
+              </Typography>
+              <Alert severity="info" sx={{ mb: 3 }}>
+                You will be redirected to the sign in page in a few seconds...
+              </Alert>
+              <Button
+                variant="contained"
+                fullWidth
+                onClick={() => router.push("/auth/login")}
+                size="large"
+              >
+                Go to Sign In
+              </Button>
+            </CardContent>
+          </Card>
+        </Box>
+      </Container>
+    );
+  }
 
   return (
     <Container maxWidth="sm">
@@ -177,13 +189,13 @@ const SignupPage = () => {
           elevation={3}
           sx={{
             width: "100%",
-            maxWidth: 450,
+            maxWidth: 400,
           }}
         >
           <CardContent sx={{ p: 4 }}>
             {/* Header */}
             <Box sx={{ textAlign: "center", mb: 3 }}>
-              <PersonAdd
+              <Lock
                 sx={{
                   fontSize: 48,
                   color: "primary.main",
@@ -191,102 +203,21 @@ const SignupPage = () => {
                 }}
               />
               <Typography variant="h4" component="h1" gutterBottom>
-                Create Account
+                Reset Password
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Join us today! Please fill in your information
+                Enter your new password below
               </Typography>
             </Box>
 
-            {/* Error/Success Alert */}
+            {/* Error Alert */}
             {error && (
               <Alert severity="error" sx={{ mb: 2 }}>
                 {error}
               </Alert>
             )}
-            {success && (
-              <Alert severity="success" sx={{ mb: 2 }}>
-                {success}
-              </Alert>
-            )}
 
-            {/* Signup Form */}
             <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-              {/* Display Name Field */}
-              <Controller
-                name="displayName"
-                control={control}
-                rules={validationRules.displayName}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Full Name"
-                    margin="normal"
-                    error={!!errors.displayName}
-                    helperText={errors.displayName?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Person color="action" />
-                        </InputAdornment>
-                      ),
-                    }}
-                    disabled={loading}
-                  />
-                )}
-              />
-
-              <Controller
-                name="companyId"
-                control={control}
-                rules={validationRules.companyId}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Company ID"
-                    margin="normal"
-                    error={!!errors.companyId}
-                    helperText={errors.companyId?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Business color="action" />
-                        </InputAdornment>
-                      ),
-                    }}
-                    disabled={loading}
-                  />
-                )}
-              />
-
-              {/* Email Field */}
-              <Controller
-                name="email"
-                control={control}
-                rules={validationRules.email}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Email Address"
-                    type="email"
-                    margin="normal"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Email color="action" />
-                        </InputAdornment>
-                      ),
-                    }}
-                    disabled={loading}
-                  />
-                )}
-              />
-
               {/* Password Field */}
               <Controller
                 name="password"
@@ -296,7 +227,7 @@ const SignupPage = () => {
                   <TextField
                     {...field}
                     fullWidth
-                    label="Password"
+                    label="New Password"
                     type={showPassword ? "text" : "password"}
                     margin="normal"
                     error={!!errors.password}
@@ -320,6 +251,7 @@ const SignupPage = () => {
                       ),
                     }}
                     disabled={loading}
+                    autoFocus
                   />
                 )}
               />
@@ -337,7 +269,7 @@ const SignupPage = () => {
                   <TextField
                     {...field}
                     fullWidth
-                    label="Confirm Password"
+                    label="Confirm New Password"
                     type={showConfirmPassword ? "text" : "password"}
                     margin="normal"
                     error={!!errors.confirmPassword}
@@ -369,42 +301,26 @@ const SignupPage = () => {
                 )}
               />
 
-              {/* Accept Terms Checkbox */}
-              <Controller
-                name="acceptTerms"
-                control={control}
-                rules={validationRules.acceptTerms}
-                render={({ field }) => (
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        {...field}
-                        checked={field.value}
-                        disabled={loading}
-                        color="primary"
-                      />
-                    }
-                    label={
-                      <Typography variant="body2" color="text.secondary">
-                        I agree to the{" "}
-                        <Link href="/terms" style={{ color: "inherit" }}>
-                          Terms of Service
-                        </Link>{" "}
-                        and{" "}
-                        <Link href="/privacy" style={{ color: "inherit" }}>
-                          Privacy Policy
-                        </Link>
-                      </Typography>
-                    }
-                    sx={{ mt: 2, alignItems: "flex-start" }}
-                  />
-                )}
-              />
-              {errors.acceptTerms && (
-                <Typography variant="caption" color="error" sx={{ ml: 4 }}>
-                  {errors.acceptTerms.message}
+              {/* Password Requirements */}
+              <Box sx={{ mt: 2, p: 2, bgcolor: "grey.50", borderRadius: 1 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 1 }}
+                >
+                  <strong>Password Requirements:</strong>
                 </Typography>
-              )}
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  component="ul"
+                  sx={{ pl: 2, mb: 0 }}
+                >
+                  <li>At least 8 characters long</li>
+                  <li>Contains uppercase and lowercase letters</li>
+                  <li>Contains at least one number</li>
+                </Typography>
+              </Box>
 
               {/* Submit Button */}
               <Button
@@ -422,29 +338,21 @@ const SignupPage = () => {
                 {loading ? (
                   <CircularProgress size={24} color="inherit" />
                 ) : (
-                  "Create Account"
+                  "Reset Password"
                 )}
               </Button>
             </Box>
 
-            {/* Divider */}
-            <Divider sx={{ my: 3 }}>
+            {/* Back to Login Link */}
+            <Box sx={{ textAlign: "center", mt: 2 }}>
               <Typography variant="body2" color="text.secondary">
-                OR
-              </Typography>
-            </Divider>
-
-            {/* Sign In Link */}
-            <Box sx={{ textAlign: "center" }}>
-              <Typography variant="body2" color="text.secondary">
-                Already have an account?{" "}
+                Remember your password?{" "}
                 <Link href="/auth/login" style={{ textDecoration: "none" }}>
                   <Typography
                     component="span"
                     variant="body2"
                     color="primary"
                     sx={{
-                      fontWeight: "medium",
                       "&:hover": {
                         textDecoration: "underline",
                       },
@@ -455,6 +363,20 @@ const SignupPage = () => {
                 </Link>
               </Typography>
             </Box>
+
+            {/* Request New Reset Link */}
+            {error && error.includes("expired") && (
+              <Box sx={{ textAlign: "center", mt: 2 }}>
+                <Link
+                  href="/auth/forgot-password"
+                  style={{ textDecoration: "none" }}
+                >
+                  <Button variant="outlined" size="small">
+                    Request New Reset Link
+                  </Button>
+                </Link>
+              </Box>
+            )}
           </CardContent>
         </Card>
       </Box>
@@ -462,4 +384,4 @@ const SignupPage = () => {
   );
 };
 
-export default SignupPage;
+export default ResetPassword;

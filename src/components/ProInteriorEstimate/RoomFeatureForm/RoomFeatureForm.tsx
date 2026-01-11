@@ -4,6 +4,7 @@ import React from "react";
 import { Box, TextField, Grid, Alert } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import ImageUpload from "@/components/ImageUpload";
+import { ImageFile } from "@/components/ImageUpload/ImageUpload.model";
 
 interface RoomFeatureFormData {
   featureName: string;
@@ -25,6 +26,7 @@ interface Props {
     title: string,
     description: string
   ) => void;
+  onImagesChange: (images: ImageFile[]) => void;
 }
 
 const validationRules = {
@@ -52,6 +54,7 @@ const AddFeatureForm = ({
   onSubmit,
   onChangeRoomData,
   disabled = false,
+  onImagesChange,
 }: Props) => {
   const {
     control,
@@ -94,7 +97,7 @@ const AddFeatureForm = ({
       sx={{ mb: 3, bgcolor: "grey.50", borderRadius: 1, p: 2 }}
     >
       <Box sx={{ mb: 2 }}>
-        <ImageUpload />
+        <ImageUpload onImagesChange={onImagesChange} />
       </Box>
 
       {/* Display form errors */}

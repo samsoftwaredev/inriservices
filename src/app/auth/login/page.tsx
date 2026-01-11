@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -55,7 +55,7 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const { login, checkUserIsLoggedIn } = useAuth();
   const router = useRouter();
 
   const {
@@ -103,6 +103,10 @@ const LoginPage = () => {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  useEffect(() => {
+    checkUserIsLoggedIn();
+  }, [checkUserIsLoggedIn]);
 
   return (
     <Container maxWidth="sm">
