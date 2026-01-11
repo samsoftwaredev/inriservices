@@ -158,7 +158,7 @@ const SignupPage = () => {
   };
 
   useEffect(() => {
-    checkUserIsLoggedIn();
+    checkUserIsLoggedIn(() => router.push("/dashboard"));
   }, []);
 
   return (

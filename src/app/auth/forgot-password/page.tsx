@@ -17,6 +17,7 @@ import {
 import { Email, ArrowBack, LockReset } from "@mui/icons-material";
 import { useForm, Controller } from "react-hook-form";
 import { useAuth } from "@/context";
+import { useRouter } from "next/navigation";
 
 // Form data interface
 interface ForgotPasswordFormData {
@@ -35,6 +36,7 @@ const validationRules = {
 };
 
 const ForgotPasswordPage = () => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -80,7 +82,7 @@ const ForgotPasswordPage = () => {
   };
 
   useEffect(() => {
-    checkUserIsLoggedIn();
+    checkUserIsLoggedIn(() => router.push("/dashboard"));
   }, []);
 
   return (

@@ -165,6 +165,7 @@ const GeneralEstimate = () => {
   };
 
   const onImagesChange = async (images: ImageFile[]) => {
+    console.log("Uploading images to project:", projectId, images, userData);
     await uploadProjectImages({
       projectId,
       companyId: userData!.companyId,

@@ -12,14 +12,13 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-  const { verifying, authError, authSuccess, session, loading } = useAuth();
+  const { authError, authSuccess, session, loading } = useAuth();
   const router = useRouter();
 
-  if (verifying || loading) {
+  if (loading) {
     return (
       <div>
         <h1>Authentication</h1>
-        <p>Confirming your magic link...</p>
         <p>Loading...</p>
       </div>
     );
@@ -27,7 +26,12 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   if (authError) {
     router.push("/auth/login");
-    return null;
+    return (
+      <div>
+        <h1>Authentication Error</h1>
+        <p>Navigation to login...</p>
+      </div>
+    );
   }
   // Show loading spinner while checking authentication
   if (authSuccess && !session) {
@@ -52,7 +56,12 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   if (!session) {
     router.push("/auth/login");
-    return null;
+    return (
+      <div>
+        <h1>Invalid Session</h1>
+        <p>Navigation to login...</p>
+      </div>
+    );
   }
 
   return <>{children}</>;

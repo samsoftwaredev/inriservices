@@ -15,7 +15,6 @@ interface AuthContextType {
   user: User | null;
   userData?: UserProfile | null;
   loading: boolean;
-  verifying: boolean;
   authError: string | null;
   authSuccess: boolean;
   session: Session | null;
@@ -32,7 +31,7 @@ interface AuthContextType {
   updateUserProfile: (displayName: string) => Promise<void>;
   sendVerificationEmail: () => Promise<void>;
   confirmPasswordReset: (newPassword: string) => Promise<void>;
-  checkUserIsLoggedIn: () => Promise<void>;
+  checkUserIsLoggedIn: (callback: () => void) => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -61,9 +60,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [authError, setAuthError] = useState<string | null>(null);
   const [authSuccess, setAuthSuccess] = useState(false);
   // Check URL params on initial render
-  const params = new URLSearchParams(window.location.search);
-  const hasTokenHash = params.get("token_hash");
-  const [verifying, setVerifying] = useState(!!hasTokenHash);
 
   // Sign up function
   const signup = async (
@@ -169,18 +165,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const checkUserIsLoggedIn = async (): Promise<void> => {
+  const checkUserIsLoggedIn = async (callback?: () => void): Promise<void> => {
     // Check for existing session
     const { data } = await supabase.auth.getSession();
     if (data.session) {
       setSession(data.session);
       fetchUserData();
+      if (typeof callback === "function") callback();
     } else {
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    console.log("AuthProvider mounted, checking auth state...");
     checkUserIsLoggedIn();
 
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -196,7 +194,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     user,
     userData,
     loading,
-    verifying,
     authError,
     authSuccess,
     session,

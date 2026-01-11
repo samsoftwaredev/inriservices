@@ -105,8 +105,8 @@ const LoginPage = () => {
   };
 
   useEffect(() => {
-    checkUserIsLoggedIn();
-  }, [checkUserIsLoggedIn]);
+    checkUserIsLoggedIn(() => router.push("/dashboard"));
+  }, []);
 
   return (
     <Container maxWidth="sm">
