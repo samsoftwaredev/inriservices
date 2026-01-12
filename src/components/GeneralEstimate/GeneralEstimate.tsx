@@ -19,6 +19,7 @@ import { useAuth } from "@/context";
 import { projectApi, propertyRoomApi, uploadProjectImages } from "@/services";
 import RoomFeatureForm from "../ProInteriorEstimate/RoomFeatureForm";
 import { ImageFile } from "../ImageUpload/ImageUpload.model";
+import EstimateSummary from "./EstimateSummary";
 
 interface RoomSections {
   id: string;
@@ -350,22 +351,7 @@ const GeneralEstimate = () => {
           </Button>
         </Box>
 
-        {/* Estimate Summary */}
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <Typography variant="h6" gutterBottom>
-            Estimate Summary
-          </Typography>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
-            Total Rooms: {rooms.length}
-          </Typography>
-          <Typography variant="h6" color="primary">
-            Estimated Total: ${rooms.length * 450 + (rooms.length - 1) * 50}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            *Tax not included. Final pricing may vary based on specific
-            requirements.
-          </Typography>
-        </Paper>
+        <EstimateSummary rooms={rooms} onCostsChange={() => {}} />
 
         <Box sx={{ mb: 3 }} display="flex" justifyContent="center">
           {/* Invoice Generator Demo */}
