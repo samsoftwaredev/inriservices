@@ -5,6 +5,7 @@ export interface ClientFormData {
   fullName: string;
   email: string;
   phone: string;
+  addressId: string;
   address: string;
   address2?: string;
   contact: string;

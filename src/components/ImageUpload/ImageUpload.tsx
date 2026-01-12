@@ -39,7 +39,7 @@ const DEFAULT_ACCEPTED_FORMATS = [
 ];
 
 const DEFAULT_MAX_SIZE_MB = 5;
-const DEFAULT_MAX_FILES = 3;
+const DEFAULT_MAX_FILES = 25;
 
 // ============================================================================
 // UTILITY FUNCTIONS

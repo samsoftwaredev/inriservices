@@ -36,6 +36,7 @@ const NewClientDialog = ({
     email: client?.email || "",
     phone: client?.phone || "",
     contact: client?.contact || "",
+    addressId: client?.addressId || "",
     address: client?.address || "",
     address2: client?.address2 || "",
     city: client?.city || "",

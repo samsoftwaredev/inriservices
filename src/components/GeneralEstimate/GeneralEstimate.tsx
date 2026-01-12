@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { uuidv4, generateSampleInvoice } from "@/tools";
 import { Button, Box, Typography, Paper, Grid, Stack } from "@mui/material";
 import { InvoiceGenerator } from "../InvoiceGenerator";
@@ -37,20 +37,19 @@ const GeneralEstimate = () => {
   const [projectId, setProjectId] = useState("");
   const [rooms, setRooms] = useState<RoomSections[]>([]);
 
-  const getAggregatedData = useCallback(() => {
-    return {
+  const updateLocalStorageEstimate = ({
+    ...updates
+  }: {
+    projectId?: string;
+    rooms?: RoomSections[];
+  }) => {
+    const estimateData = JSON.stringify({
       projectId,
       clientId: currentClient?.id,
       rooms,
-    };
-  }, [projectId, currentClient, rooms]);
-
-  const setLocalStorageEstimate = () => {
-    const estimateData = JSON.stringify(getAggregatedData());
-    setTimeout(() => {
-      // Use setTimeout to ensure this runs after state updates
-      localStorage.setItem("generalEstimateRooms", estimateData);
-    }, 0);
+      ...updates,
+    });
+    localStorage.setItem("generalEstimateRooms", estimateData);
   };
 
   const removeLocalStorageEstimate = () => {
@@ -97,7 +96,7 @@ const GeneralEstimate = () => {
       tax_rate_bps: 0,
     });
     setProjectId(projectRes.id);
-    setLocalStorageEstimate();
+    updateLocalStorageEstimate({ projectId: projectRes.id });
   };
 
   const createRoom = async () => {
@@ -129,12 +128,20 @@ const GeneralEstimate = () => {
     await propertyRoomApi.updateRoom(roomId, {
       name: "Updated Room Name",
     });
-    setLocalStorageEstimate();
+    const updatedRooms = rooms.filter((room) => {
+      if (room.id === roomId) {
+        return { ...room, name: "Updated Room Name" };
+      } else {
+        return room;
+      }
+    });
+    updateLocalStorageEstimate({ rooms: updatedRooms });
   };
 
   const deleteRoom = async (roomId: string) => {
     await propertyRoomApi.deleteRoom(roomId);
-    setLocalStorageEstimate();
+    const filteredRooms = rooms.filter((room) => room.id !== roomId);
+    updateLocalStorageEstimate({ rooms: filteredRooms });
   };
 
   const deleteProject = async () => {
@@ -165,7 +172,6 @@ const GeneralEstimate = () => {
   };
 
   const onImagesChange = async (images: ImageFile[]) => {
-    console.log("Uploading images to project:", projectId, images, userData);
     await uploadProjectImages({
       projectId,
       companyId: userData!.companyId,
@@ -189,7 +195,7 @@ const GeneralEstimate = () => {
     } else {
       setRooms([newRoom]);
     }
-    setLocalStorageEstimate();
+    updateLocalStorageEstimate({ rooms });
   };
 
   const onChangeRoomName = (roomId: string, roomName: string) => {
@@ -198,7 +204,7 @@ const GeneralEstimate = () => {
         room.id === roomId ? { ...room, name: roomName } : room
       )
     );
-    setLocalStorageEstimate();
+    updateLocalStorageEstimate({ rooms });
   };
 
   const onChangeRoomData = (
@@ -211,23 +217,23 @@ const GeneralEstimate = () => {
         room.id === roomId ? { ...room, title, description } : room
       )
     );
-    setLocalStorageEstimate();
+    updateLocalStorageEstimate({ rooms });
   };
 
   useEffect(() => {
     const storedEstimate = localStorage.getItem("generalEstimateRooms");
+    const { projectId = "", rooms = [] } = JSON.parse(storedEstimate || "{}");
     if (storedEstimate) {
-      const parsedEstimate = JSON.parse(storedEstimate);
-      setProjectId(parsedEstimate.projectId || "");
-      setRooms(parsedEstimate.rooms || []);
+      setProjectId(projectId);
+      setRooms(rooms);
     }
   }, []);
 
   useEffect(() => {
-    if (currentClient && projectId === "") {
+    if (currentClient && !projectId) {
       createProject();
     }
-  }, [currentClient, projectId]);
+  }, [currentClient]);
 
   return (
     <>

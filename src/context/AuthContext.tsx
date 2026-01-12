@@ -157,7 +157,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         phone: userData.phone!,
       };
       setUserData(translatedUserData);
-      console.log("Auth state changed. Current user:", userData);
     } catch (error) {
       console.error("Failed to fetch user data:", error);
     } finally {
@@ -170,7 +169,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const { data } = await supabase.auth.getSession();
     if (data.session) {
       setSession(data.session);
-      fetchUserData();
+      await fetchUserData();
       if (typeof callback === "function") callback();
     } else {
       setLoading(false);
@@ -178,7 +177,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
-    console.log("AuthProvider mounted, checking auth state...");
     checkUserIsLoggedIn();
 
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {

@@ -59,6 +59,7 @@ const SearchClient = () => {
         fullName: client.display_name,
         email: client.primary_email || "",
         phone: client.primary_phone || "",
+        addressId: property?.id || "",
         address: property?.address_line1 || "",
         address2: property?.address_line2 || "",
         city: property?.city || "",
@@ -101,7 +102,7 @@ const SearchClient = () => {
       status: client.status,
       buildings: [
         {
-          id: "",
+          id: client.addressId,
           address: client.address,
           address2: client.address2,
           city: client.city,
@@ -292,6 +293,7 @@ const SearchClient = () => {
             email: currentClient.email,
             phone: currentClient.phone,
             contact: "",
+            addressId: currentClient.buildings[0].id,
             address: currentClient.buildings[0].address,
             address2: currentClient.buildings[0].address2,
             city: currentClient.buildings[0].city,

@@ -65,7 +65,7 @@ const ClientsPage = () => {
         contact: "",
         buildings: [
           {
-            id: "",
+            id: currentClient?.buildings![0].id || "",
             address: currentClient?.buildings![0].address || "",
             address2: currentClient?.buildings![0].address2 || "",
             city: currentClient?.buildings![0].city || "",
@@ -237,6 +237,7 @@ const ClientsPage = () => {
             email: currentClient.email,
             phone: currentClient.phone,
             contact: "",
+            addressId: currentClient.buildings[0].id,
             address: currentClient.buildings[0].address,
             address2: currentClient.buildings[0].address2,
             city: currentClient.buildings[0].city,
