@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { uuidv4, generateSampleInvoice } from "@/tools";
+import { useEffect, useMemo, useState } from "react";
+import { EstimateData, uuidv4 } from "@/tools";
 import { Button, Box, Typography, Paper, Grid, Stack } from "@mui/material";
-import { InvoiceGenerator } from "../InvoiceGenerator";
+import { InvoiceData, InvoiceGenerator } from "../InvoiceGenerator";
 import {
   Add as AddIcon,
   PersonAddAlt as PersonAddIcon,
@@ -221,6 +221,41 @@ const GeneralEstimate = () => {
     updateLocalStorageEstimate({ rooms });
   };
 
+  const invoiceData: InvoiceData = useMemo(
+    () => ({
+      customer: {
+        name: currentClient?.fullName || "",
+        email: currentClient?.email || "",
+        address: currentClient?.buildings[0].address || "",
+        city: currentClient?.buildings[0].city || "",
+        state: currentClient?.buildings[0].state || "",
+        zipCode: currentClient?.buildings[0].zipCode || "",
+      },
+      items: rooms.map((room) => ({
+        id: room.id,
+        description: `${room.name} - ${
+          room.description || "Interior Painting & Preparation"
+        }`,
+        quantity: 1,
+        rate: 500,
+        amount: 500,
+      })),
+      projectName: "Whole House Interior Refresh",
+      notes:
+        "Customer requested eco-friendly paint. All furniture will be covered and protected during work.",
+      invoiceNumber: "GE-1001",
+      date: new Date().toLocaleDateString(),
+      dueDate: new Date(
+        new Date().setDate(new Date().getDate() + 30)
+      ).toLocaleDateString(),
+      subtotal: rooms.length * 500,
+      taxRate: 0.0825,
+      tax: rooms.length * 500 * 0.0825,
+      total: rooms.length * 500 * 1.0825,
+    }),
+    [rooms, currentClient]
+  );
+
   useEffect(() => {
     const storedEstimate = localStorage.getItem("generalEstimateRooms");
     const { projectId = "", rooms = [] } = JSON.parse(storedEstimate || "{}");
@@ -356,7 +391,7 @@ const GeneralEstimate = () => {
         <Box sx={{ mb: 3 }} display="flex" justifyContent="center">
           {/* Invoice Generator Demo */}
           <InvoiceGenerator
-            invoiceData={generateSampleInvoice()}
+            invoiceData={invoiceData}
             buttonText="Download Invoice PDF"
             variant="outlined"
           />

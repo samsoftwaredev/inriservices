@@ -14,6 +14,8 @@ import {
   DialogActions,
 } from "@mui/material";
 import { ClientStatus } from "@/services";
+import { ClientProfile } from "../ClientProfile";
+import { ClientFormData } from "../SearchClient/SearchClient.model";
 
 interface Props {
   viewDetailsOpen: boolean;
@@ -24,6 +26,7 @@ interface Props {
     fullName: string;
     email: string;
     phone: string;
+    addressId: string;
     address: string;
     address2?: string;
     city: string;
@@ -95,76 +98,7 @@ const ClientDetailDialog = ({
         </Box>
       </DialogTitle>
       <DialogContent>
-        {client && (
-          <Grid container spacing={3}>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Typography variant="subtitle1" gutterBottom fontWeight="bold">
-                Contact Information
-              </Typography>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">
-                  Email
-                </Typography>
-                <Typography variant="body1">{client.email}</Typography>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">
-                  Phone
-                </Typography>
-                <Typography variant="body1">{client.phone}</Typography>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">
-                  Address
-                </Typography>
-                <Typography variant="body1">
-                  {client.address} {client.address2}
-                  <br />
-                  {client.city}, {client.state} {client.zipCode}
-                </Typography>
-              </Box>
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Typography variant="subtitle1" gutterBottom fontWeight="bold">
-                Project Statistics
-              </Typography>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">
-                  Number of Projects
-                </Typography>
-                <Typography variant="body1">
-                  {client.numberOfProjects}
-                </Typography>
-              </Box>
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="body2" color="text.secondary">
-                  Total Revenue
-                </Typography>
-                <Typography variant="body1">
-                  ${client.totalRevenue.toLocaleString()}
-                </Typography>
-              </Box>
-              {client.lastProjectDate && (
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="body2" color="text.secondary">
-                    Last Project
-                  </Typography>
-                  <Typography variant="body1">
-                    {new Date(client.lastProjectDate).toLocaleDateString()}
-                  </Typography>
-                </Box>
-              )}
-            </Grid>
-            {client.notes && (
-              <Grid size={{ xs: 12 }}>
-                <Typography variant="subtitle1" gutterBottom fontWeight="bold">
-                  Notes
-                </Typography>
-                <Typography variant="body1">{client.notes}</Typography>
-              </Grid>
-            )}
-          </Grid>
-        )}
+        <ClientProfile client={client} />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleCloseDetails}>Close</Button>

@@ -13,6 +13,7 @@ import NewClientDialog from "../NewClientDialog";
 import SearchClient from "../SearchClient";
 import ClientDetailDialog from "../ClientDetailDialog";
 import { useClient } from "@/context/ClientContext";
+import { useRouter } from "next/navigation";
 
 interface ClientFormData {
   id: string;
@@ -32,6 +33,7 @@ interface ClientFormData {
 }
 
 const ClientsPage = () => {
+  const router = useRouter();
   const { userData } = useAuth();
   const { currentClient, setCurrentClient } = useClient();
   const [isCreatingNewClient, setIsCreatingNewClient] = useState(false);
@@ -177,6 +179,10 @@ const ClientsPage = () => {
     }
   };
 
+  const handleViewClientProfile = (clientId: string) => {
+    router.push(`/clients/${clientId}`);
+  };
+
   return (
     <Box sx={{ py: 3 }}>
       <CustomerHeader
@@ -221,7 +227,7 @@ const ClientsPage = () => {
         </Box>
       )}
 
-      <SearchClient />
+      <SearchClient onViewClientProfile={handleViewClientProfile} />
 
       {/* Edit Client Dialog */}
       {currentClient && (
@@ -265,6 +271,7 @@ const ClientsPage = () => {
             fullName: currentClient.fullName,
             email: currentClient.email,
             phone: currentClient.phone,
+            addressId: currentClient.buildings[0].id,
             address: currentClient.buildings[0].address,
             address2: currentClient.buildings[0].address2,
             city: currentClient.buildings[0].city,

@@ -21,7 +21,6 @@ import {
   Add as AddIcon,
   Delete as DeleteIcon,
   Preview as PreviewIcon,
-  Download as DownloadIcon,
 } from "@mui/icons-material";
 import {
   InvoiceGenerator,
@@ -29,10 +28,7 @@ import {
   InvoiceItem,
   Customer,
 } from "../InvoiceGenerator";
-import {
-  generateInvoiceFromEstimate,
-  formatInvoiceCurrency,
-} from "@/tools/invoiceUtils";
+import { formatInvoiceCurrency } from "@/tools/invoiceUtils";
 
 // Types for the demo
 interface DemoInvoiceItem {

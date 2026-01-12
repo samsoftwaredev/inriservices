@@ -8,7 +8,6 @@ import {
   View,
   StyleSheet,
   PDFDownloadLink,
-  Font,
 } from "@react-pdf/renderer";
 import { Button } from "@mui/material";
 import { Download, Receipt } from "@mui/icons-material";

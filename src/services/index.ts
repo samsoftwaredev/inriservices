@@ -199,6 +199,14 @@ export const profileApi = {
  * Clients API
  * ------------------------------------------------------ */
 
+export type ClientWithRelations = Client & {
+  properties: Array<
+    Property & {
+      projects: Project[];
+    }
+  >;
+};
+
 export const clientApi = {
   async listClients(params?: {
     status?: ClientStatus;
@@ -237,10 +245,21 @@ export const clientApi = {
     };
   },
 
-  async getClient(id: string): Promise<Client> {
-    const res = await supabase.from("clients").select("*").eq("id", id).single();
-    return assertOk(res, `Client not found: ${id}`);
-  },
+async getClient(id: string): Promise<ClientWithRelations> {
+  const res = await supabase
+    .from("clients")
+    .select(`
+      *,
+      properties (
+        *,
+        projects (*)
+      )
+    `)
+    .eq("id", id)
+    .single();
+
+  return assertOk(res, `Client not found: ${id}`);
+},
 
   async createClient(input: Omit<Client, "id" | "created_at" | "normalized_email" | "normalized_phone">): Promise<Client> {
     const res = await supabase.from("clients").insert(input).select("*").single();

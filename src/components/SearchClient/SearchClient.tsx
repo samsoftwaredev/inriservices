@@ -23,7 +23,11 @@ import { toast } from "react-toastify";
 import { SubmitHandler } from "react-hook-form";
 import { ClientFormData } from "./SearchClient.model";
 
-const SearchClient = () => {
+interface Props {
+  onViewClientProfile: (clientId: string) => void;
+}
+
+const SearchClient = ({ onViewClientProfile }: Props) => {
   const { setCurrentClient, currentClient } = useClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
@@ -93,6 +97,7 @@ const SearchClient = () => {
   );
 
   const onClientClick = (client: ClientFormData) => {
+    onViewClientProfile(client.id);
     setCurrentClient({
       id: client.id,
       fullName: client.fullName,
@@ -321,6 +326,7 @@ const SearchClient = () => {
             fullName: currentClient.fullName,
             email: currentClient.email,
             phone: currentClient.phone,
+            addressId: currentClient.buildings[0].id,
             address: currentClient.buildings[0].address,
             address2: currentClient.buildings[0].address2,
             city: currentClient.buildings[0].city,
