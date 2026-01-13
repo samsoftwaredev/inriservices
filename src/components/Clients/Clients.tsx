@@ -7,13 +7,14 @@ import CustomerHeader from "../CustomerHeader";
 import ClientForm from "../ProInteriorEstimate/ClientForm";
 import { SubmitHandler } from "react-hook-form";
 import { useAuth } from "@/context";
-import { clientApi, ClientStatus, propertyApi } from "@/services";
+import { clientApi, propertyApi } from "@/services";
 import { toast } from "react-toastify";
 import NewClientDialog from "../NewClientDialog";
 import SearchClient from "../SearchClient";
 import ClientDetailDialog from "../ClientDetailDialog";
 import { useClient } from "@/context/ClientContext";
 import { useRouter } from "next/navigation";
+import { ClientStatus } from "@/types";
 
 interface ClientFormData {
   id: string;

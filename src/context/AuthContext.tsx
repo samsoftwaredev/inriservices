@@ -9,7 +9,8 @@ import React, {
 } from "react";
 import { supabase } from "@/app/supabaseConfig";
 import { Session, User } from "@supabase/supabase-js";
-import { profileApi, UserProfile } from "@/services";
+import { profileApi } from "@/services";
+import { UserProfile } from "@/types";
 
 interface AuthContextType {
   user: User | null;
