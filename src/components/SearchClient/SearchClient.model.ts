@@ -1,4 +1,4 @@
-import { ClientStatus } from "@/services";
+import { ClientStatus } from "@/types";
 
 export interface ClientFormData {
   id: string;

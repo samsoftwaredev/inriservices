@@ -5,7 +5,6 @@ import {
   Box,
   Button,
   Typography,
-  Grid,
   Chip,
   Avatar,
   Dialog,
@@ -13,9 +12,8 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
-import { ClientStatus } from "@/services";
 import { ClientProfile } from "../ClientProfile";
-import { ClientFormData } from "../SearchClient/SearchClient.model";
+import { ClientStatus } from "@/types";
 
 interface Props {
   viewDetailsOpen: boolean;

@@ -37,14 +37,9 @@ import {
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import CustomerHeader from "../CustomerHeader";
-import {
-  DashboardMetricsJson,
-  getDashboardMetrics,
-  projectApi,
-  ProjectStatus,
-  ProjectType,
-} from "@/services";
+import { getDashboardMetrics, projectApi } from "@/services";
 import { toast } from "react-toastify";
+import { ProjectStatus, ProjectType } from "@/types";
 
 interface WorkHistoryItem {
   id: string;

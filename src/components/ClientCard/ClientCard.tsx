@@ -22,9 +22,9 @@ import {
   Visibility as VisibilityIcon,
   Edit as EditIcon,
 } from "@mui/icons-material";
-import { ClientStatus } from "@/services";
 import { ClientFormData } from "../SearchClient/SearchClient.model";
 import { useClient } from "@/context/ClientContext";
+import { ClientStatus } from "@/types";
 
 interface Props {
   client: ClientFormData;

@@ -66,7 +66,7 @@ const AddFeatureForm = ({ roomId }: Props) => {
   return (
     <Box sx={{ mb: 3, bgcolor: "grey.50", borderRadius: 1 }}>
       <Box sx={{ mb: 2 }}>
-        <ImageUpload />
+        <ImageUpload onImagesChange={() => {}} />
       </Box>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, sm: 6, md: 5 }} sx={{ order: { xs: 2, md: 1 } }}>
