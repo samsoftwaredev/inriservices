@@ -1,9 +1,28 @@
 import { supabase } from "@/app/supabaseConfig";
 import { assertOk } from "@/tools";
-import { ListResult, Project, ProjectStatus, ProjectType, ProjectWithRelationsAndRooms,   } from "@/types";
+import {
+  Client,
+  ListResult,
+  Project,
+  ProjectStatus,
+  ProjectType,
+  ProjectWithRelationsAndRooms,
+  Property,
+  PropertyRoom,
+} from "@/types";
 
 type ProjectInsert = Omit<Project, "id" | "created_at" | "updated_at">;
-type ProjectUpdate = Partial<Omit<Project, "id" | "company_id" | "client_id" | "property_id" | "created_at" | "updated_at">> &
+type ProjectUpdate = Partial<
+  Omit<
+    Project,
+    | "id"
+    | "company_id"
+    | "client_id"
+    | "property_id"
+    | "created_at"
+    | "updated_at"
+  >
+> &
   // allow these to be updated intentionally if you want; remove if you want to lock them
   Partial<Pick<Project, "client_id" | "property_id">>;
 
@@ -18,10 +37,8 @@ export const projectApi = {
     const limit = params?.limit ?? 50;
     const offset = params?.offset ?? 0;
 
-    let query = supabase
-      .from("projects")
-      .select(
-        `
+    let query = supabase.from("projects").select(
+      `
         *,
         client:clients(*),
         property:properties(
@@ -29,11 +46,12 @@ export const projectApi = {
           rooms:property_rooms(*)
         )
         `,
-        { count: "exact" }
-      );
+      { count: "exact" }
+    );
 
     if (params?.status) query = query.eq("status", params.status);
-    if (params?.project_type) query = query.eq("project_type", params.project_type);
+    if (params?.project_type)
+      query = query.eq("project_type", params.project_type);
 
     if (params?.q && params.q.trim()) {
       const q = params.q.trim();
@@ -53,7 +71,9 @@ export const projectApi = {
     };
   },
 
-  async getProjectWithClientPropertyAndRooms(projectId: string): Promise<ProjectWithRelationsAndRooms> {
+  async getProjectWithClientPropertyAndRooms(
+    projectId: string
+  ): Promise<ProjectWithRelationsAndRooms> {
     const res = await supabase
       .from("projects")
       .select(
@@ -69,7 +89,10 @@ export const projectApi = {
       .eq("id", projectId)
       .single();
 
-    return assertOk(res, `Project not found: ${projectId}`) as unknown as ProjectWithRelationsAndRooms;
+    return assertOk(
+      res,
+      `Project not found: ${projectId}`
+    ) as unknown as ProjectWithRelationsAndRooms;
   },
 
   async listProjects(params?: {
@@ -87,9 +110,11 @@ export const projectApi = {
     let query = supabase.from("projects").select("*", { count: "exact" });
 
     if (params?.status) query = query.eq("status", params.status);
-    if (params?.project_type) query = query.eq("project_type", params.project_type);
+    if (params?.project_type)
+      query = query.eq("project_type", params.project_type);
     if (params?.client_id) query = query.eq("client_id", params.client_id);
-    if (params?.property_id) query = query.eq("property_id", params.property_id);
+    if (params?.property_id)
+      query = query.eq("property_id", params.property_id);
 
     // end_date year filter (requires end_date not null)
     if (typeof params?.year_end_date === "number") {
@@ -112,20 +137,27 @@ export const projectApi = {
   /** ----------------------------------------
    * Get single (no embeds)
    * --------------------------------------- */
-  async getProject(projectId: string): Promise<Project> {
+  async getProject(projectId: string): Promise<
+    Project & {
+      client: Client;
+      property: Property & { rooms: PropertyRoom[] };
+    }
+  > {
     const res = await supabase
-        .from("projects")
-        .select(`
+      .from("projects")
+      .select(
+        `
             *,
             client:clients(*),
             property:properties(
             *,
             rooms:property_rooms(*)
             )
-        `)
-        .eq("id", projectId)
-        .single();
-    return assertOk(res, `Project not found: ${projectId}`) as Project;
+        `
+      )
+      .eq("id", projectId)
+      .single();
+    return assertOk(res, `Project not found: ${projectId}`);
   },
 
   /** ----------------------------------------
@@ -135,12 +167,18 @@ export const projectApi = {
    * - Triggers enforce company consistency vs client/property
    * --------------------------------------- */
   async createProject(input: ProjectInsert): Promise<Project> {
-    const res = await supabase.from("projects").insert(input).select("*").single();
+    const res = await supabase
+      .from("projects")
+      .insert(input)
+      .select("*")
+      .single();
     return assertOk(res, "Failed to create project") as Project;
   },
 
   /** Create + return embedded relations (client/property/rooms) */
-  async createProjectWithRelations(input: ProjectInsert): Promise<ProjectWithRelationsAndRooms> {
+  async createProjectWithRelations(
+    input: ProjectInsert
+  ): Promise<ProjectWithRelationsAndRooms> {
     // Insert first
     const created = await this.createProject(input);
 
@@ -151,13 +189,24 @@ export const projectApi = {
   /** ----------------------------------------
    * Update
    * --------------------------------------- */
-  async updateProject(projectId: string, patch: ProjectUpdate): Promise<Project> {
-    const res = await supabase.from("projects").update(patch).eq("id", projectId).select("*").single();
+  async updateProject(
+    projectId: string,
+    patch: ProjectUpdate
+  ): Promise<Project> {
+    const res = await supabase
+      .from("projects")
+      .update(patch)
+      .eq("id", projectId)
+      .select("*")
+      .single();
     return assertOk(res, "Failed to update project") as Project;
   },
 
   /** Update + return embedded relations */
-  async updateProjectWithRelations(projectId: string, patch: ProjectUpdate): Promise<ProjectWithRelationsAndRooms> {
+  async updateProjectWithRelations(
+    projectId: string,
+    patch: ProjectUpdate
+  ): Promise<ProjectWithRelationsAndRooms> {
     await this.updateProject(projectId, patch);
     return this.getProjectWithClientPropertyAndRooms(projectId);
   },
@@ -166,7 +215,10 @@ export const projectApi = {
    * Delete (hard delete)
    * --------------------------------------- */
   async deleteProject(projectId: string): Promise<void> {
-    const { error } = await supabase.from("projects").delete().eq("id", projectId);
+    const { error } = await supabase
+      .from("projects")
+      .delete()
+      .eq("id", projectId);
     if (error) throw error;
   },
 
@@ -178,11 +230,19 @@ export const projectApi = {
     return this.updateProject(projectId, { status });
   },
 
-  async setDates(projectId: string, patch: { start_date?: string | null; end_date?: string | null }): Promise<Project> {
+  async setDates(
+    projectId: string,
+    patch: { start_date?: string | null; end_date?: string | null }
+  ): Promise<Project> {
     return this.updateProject(projectId, patch);
   },
 
-  async setInvoiceTotal(projectId: string, invoice_total_cents: number | null): Promise<Project> {
-    return this.updateProject(projectId, { invoice_total_cents } as unknown as ProjectUpdate);
+  async setInvoiceTotal(
+    projectId: string,
+    invoice_total_cents: number | null
+  ): Promise<Project> {
+    return this.updateProject(projectId, {
+      invoice_total_cents,
+    } as unknown as ProjectUpdate);
   },
 };

@@ -12,28 +12,27 @@
  * - user -> profiles (id = auth.users.id), user belongs to exactly one company via profiles.company_id
  */
 
-
 import { Database } from "../../database.types";
 
 export type Company = Database["public"]["Tables"]["companies"]["Row"];
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Client = Database["public"]["Tables"]["clients"]["Row"];
 export type Property = Database["public"]["Tables"]["properties"]["Row"];
-export type Project = Database["public"]["Tables"]["projects"]["Row"]; 
-export type PropertyRoom = Database["public"]["Tables"]["property_rooms"]["Row"];
-
+export type Project = Database["public"]["Tables"]["projects"]["Row"];
+export type PropertyRoom =
+  Database["public"]["Tables"]["property_rooms"]["Row"];
 
 export type ClientWithProperties = Client & {
   properties: Property[];
 };
 
 export type UserProfile = {
-    fullName: string;
-    companyId: string;
-    id: string;
-    createdAt: string;
-    phone: string;
-}
+  fullName: string;
+  companyId: string;
+  id: string;
+  createdAt: string;
+  phone: string;
+};
 
 export type MemberRole = Database["public"]["Enums"]["member_role"];
 export type ClientType = Database["public"]["Enums"]["client_type"];
@@ -69,7 +68,6 @@ export interface ListResult<T> {
   items: WithMeta<T>[];
   total?: number;
 }
- 
 
 export type DateFilterType =
   | "current-year"
@@ -110,10 +108,102 @@ export interface SummaryCard {
 }
 
 export interface MetricCard {
-        title: string,
-        value: number,
-        icon: React.ReactNode,
-        color: string,
-        bgColor: string,
-        format: (value: number) => string,
+  title: string;
+  value: number;
+  icon: React.ReactNode;
+  color: string;
+  bgColor: string;
+  format: (value: number) => string;
 }
+
+export type ClientTransformed = {
+  id: string;
+  notes: string | null;
+  status: ClientStatus;
+  companyId: string;
+  createdAt: string;
+  clientType: ClientType;
+  displayName: string;
+  email: string;
+  phone: string;
+};
+
+export type PropertyTransformed = {
+  id: string;
+  zip: string;
+  city: string;
+  name: string;
+  state: string;
+  country: string;
+  clientId: string;
+  companyId: string;
+  createdAt: string;
+  addressLine1: string;
+  addressLine2: string | null;
+  propertyType: PropertyType;
+};
+
+export type PropertyRoomTransformed = {
+  id: string;
+  name: string;
+  level: number;
+  companyId: string;
+  createdAt: string;
+  paintTrim: boolean;
+  projectId: string | null;
+  sortOrder: number;
+  updatedAt: string;
+  description: string;
+  paintDoors: boolean;
+  paintWalls: boolean;
+  propertyId: string;
+  paintCeiling: boolean;
+  notesCustomer: string | null;
+  notesInternal: string | null;
+  roomHeightFt: number | null;
+  wallAreaSqft: number | null;
+  floorAreaSqft: number | null;
+  ceilingAreaSqft: number | null;
+  ceilingHeightFt: number | null;
+  wallPerimeterFt: number | null;
+  openingsAreaSqft: number | null;
+};
+
+export type ProjectTransformed = {
+  id: string;
+  companyId: string;
+  clientId: string;
+  propertyId: string;
+  name: string;
+  projectType: string;
+  status: string;
+  startDate: string | null;
+  endDate: string | null;
+  scopeNotes: string | null;
+  materialCostCents: number;
+  laborCostCents: number;
+  markupBps: number;
+  taxRateBps: number;
+  taxAmountCents: number;
+  laborHoursEstimated: number | null;
+  createdAt: string;
+  updatedAt: string;
+  invoiceTotalCents: number | null;
+};
+
+export type ProfileTransformed = {
+  id: string;
+  companyId: string;
+  fullName: string;
+  phone: string | null;
+  role: MemberRole;
+  createdAt: string;
+};
+
+export type CompanyTransformed = {
+  id: string;
+  name: string;
+  phone: string;
+  createdAt: string;
+  billingEmail: string;
+};

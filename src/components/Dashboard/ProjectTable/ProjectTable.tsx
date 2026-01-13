@@ -1,6 +1,12 @@
 import {
   Box,
+  Button,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   IconButton,
   Menu,
@@ -23,14 +29,22 @@ import {
 } from "@mui/icons-material";
 import { useState } from "react";
 import { WorkHistoryItem } from "@/types";
+import { projectApi } from "@/services";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 interface Props {
   workHistory: WorkHistoryItem[];
+  onRefreshTable: () => void;
 }
 
-const ProjectTable = ({ workHistory }: Props) => {
+const ProjectTable = ({ workHistory, onRefreshTable }: Props) => {
+  const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedWorkId, setSelectedWorkId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] =
+    useState<WorkHistoryItem | null>(null);
 
   const handleMenuClick = (
     event: React.MouseEvent<HTMLElement>,
@@ -75,7 +89,56 @@ const ProjectTable = ({ workHistory }: Props) => {
     }
   };
 
-  const handleDeleteProject = () => {};
+  const handleDeleteProject = () => {
+    const projectToDelete = workHistory.find(
+      (work) => work.id === selectedWorkId
+    );
+    if (projectToDelete) {
+      setProjectToDelete(projectToDelete);
+      setDeleteDialogOpen(true);
+    }
+    handleMenuClose();
+  };
+
+  const handleConfirmDelete = async () => {
+    if (projectToDelete) {
+      try {
+        await projectApi.deleteProject(projectToDelete.id);
+        toast.success("Project deleted successfully");
+        onRefreshTable();
+      } catch (error) {
+        console.error("Error deleting project:", error);
+        toast.error("Failed to delete project");
+      }
+    }
+    setDeleteDialogOpen(false);
+    setProjectToDelete(null);
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteDialogOpen(false);
+    setProjectToDelete(null);
+  };
+
+  const handleViewProjectDetails = () => {
+    const projectToView = workHistory.find(
+      (work) => work.id === selectedWorkId
+    );
+    if (projectToView) {
+      router.push(`/dashboard/${projectToView.id}`);
+    }
+    handleMenuClose();
+  };
+
+  const handleEditProjectDetails = () => {
+    const projectToView = workHistory.find(
+      (work) => work.id === selectedWorkId
+    );
+    if (projectToView) {
+      router.push(`/dashboard/${projectToView.id}?edit=true`);
+    }
+    handleMenuClose();
+  };
 
   return (
     <>
@@ -179,7 +242,7 @@ const ProjectTable = ({ workHistory }: Props) => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleMenuClose}>
+        <MenuItem onClick={handleViewProjectDetails}>
           <VisibilityIcon sx={{ mr: 1, fontSize: 18 }} />
           View Details
         </MenuItem>
@@ -187,7 +250,7 @@ const ProjectTable = ({ workHistory }: Props) => {
           <DeleteIcon sx={{ mr: 1, fontSize: 18 }} />
           Delete Estimate
         </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
+        <MenuItem onClick={handleEditProjectDetails}>
           <EditIcon sx={{ mr: 1, fontSize: 18 }} />
           Edit Estimate
         </MenuItem>
@@ -197,6 +260,42 @@ const ProjectTable = ({ workHistory }: Props) => {
           Send Document
         </MenuItem>
       </Menu>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleCancelDelete}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">
+          Delete Project Estimate
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            Are you sure you want to delete the estimate for{" "}
+            <strong>{projectToDelete?.customerName}</strong> at{" "}
+            <strong>{projectToDelete?.address}</strong>?
+            <br />
+            <br />
+            This action cannot be undone and will permanently remove all project
+            data.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancelDelete} color="inherit">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmDelete}
+            color="error"
+            variant="contained"
+            startIcon={<DeleteIcon />}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

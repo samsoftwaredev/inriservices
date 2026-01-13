@@ -403,7 +403,10 @@ const DashboardPage = () => {
             </Button>
           </Box>
 
-          <ProjectTable workHistory={workHistory} />
+          <ProjectTable
+            workHistory={workHistory}
+            onRefreshTable={getProjects}
+          />
 
           <ProjectProgress
             jobsCompleted={stats.jobsCompleted}
