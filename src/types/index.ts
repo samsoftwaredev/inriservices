@@ -70,3 +70,50 @@ export interface ListResult<T> {
   total?: number;
 }
  
+
+export type DateFilterType =
+  | "current-year"
+  | "current-month"
+  | "last-3-months"
+  | "last-6-months"
+  | "custom-year"
+  | "custom-month";
+
+export interface DateFilter {
+  type: DateFilterType;
+  year?: number;
+  month?: number;
+}
+
+export interface WorkHistoryItem {
+  id: string;
+  customerName: string;
+  address: string;
+  city: string;
+  state: string;
+  totalCost: number;
+  numberOfRooms: number;
+  date: string;
+  status: ProjectStatus;
+  projectType: ProjectType;
+}
+
+export interface SummaryCard {
+  jobsCompleted: number;
+  amountEarnedCents: number;
+  numberOfCustomers: number;
+  pendingWork: number;
+  laborCostCents: number;
+  taxesCents: number;
+  averageAmountSpentByClientCents: number;
+  profitCents: number;
+}
+
+export interface MetricCard {
+        title: string,
+        value: number,
+        icon: React.ReactNode,
+        color: string,
+        bgColor: string,
+        format: (value: number) => string,
+}

@@ -2,7 +2,6 @@
 
 import React from "react";
 
-import Dashboard from "@/components/Dashboard";
 import AppLayout from "@/components/AppLayout";
 import { ProtectedRoute } from "@/components";
 
@@ -10,7 +9,7 @@ const DashboardPage = () => {
   return (
     <ProtectedRoute>
       <AppLayout>
-        <Dashboard />
+        <h1>Project Id</h1>
       </AppLayout>
     </ProtectedRoute>
   );
