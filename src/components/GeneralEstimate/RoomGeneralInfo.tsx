@@ -1,14 +1,9 @@
+import { PropertyRoomTransformed } from "@/types";
 import { Input, Typography } from "@mui/material";
 import { useState } from "react";
 
 interface Props {
-  room: {
-    id: string;
-    name: string;
-    title: string;
-    description: string;
-    floorNumber: number;
-  };
+  room: PropertyRoomTransformed;
   index: number;
   onChangeRoomName: (roomId: string, name: string) => void;
 }

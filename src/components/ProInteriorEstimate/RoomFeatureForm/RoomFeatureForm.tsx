@@ -5,6 +5,7 @@ import { Box, TextField, Grid, Alert } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import ImageUpload from "@/components/ImageUpload";
 import { ImageFile } from "@/components/ImageUpload/ImageUpload.model";
+import { PropertyRoomTransformed } from "@/types";
 
 interface RoomFeatureFormData {
   featureName: string;
@@ -12,13 +13,7 @@ interface RoomFeatureFormData {
 }
 
 interface Props {
-  room: {
-    id: string;
-    name: string;
-    title: string;
-    description: string;
-    floorNumber: number;
-  };
+  room: PropertyRoomTransformed;
   onSubmit?: (data: RoomFeatureFormData) => void;
   disabled?: boolean;
   onChangeRoomData?: (
@@ -65,7 +60,7 @@ const AddFeatureForm = ({
   } = useForm<RoomFeatureFormData>({
     mode: "onChange",
     defaultValues: {
-      featureName: room?.title || "",
+      featureName: room?.name || "",
       featureDescription: room?.description || "",
     },
   });

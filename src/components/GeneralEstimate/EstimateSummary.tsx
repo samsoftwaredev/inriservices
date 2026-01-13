@@ -16,14 +16,7 @@ import {
   Save as SaveIcon,
   Cancel as CancelIcon,
 } from "@mui/icons-material";
-
-interface RoomSections {
-  id: string;
-  name: string;
-  title: string;
-  description: string;
-  floorNumber: number;
-}
+import { PropertyRoomTransformed } from "@/types";
 
 interface EstimateCosts {
   laborCost: number;
@@ -34,7 +27,7 @@ interface EstimateCosts {
 }
 
 interface Props {
-  rooms: RoomSections[];
+  rooms: PropertyRoomTransformed[];
   onCostsChange?: (costs: EstimateCosts) => void;
   initialCosts?: Partial<EstimateCosts>;
 }

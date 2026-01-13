@@ -2,10 +2,23 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { uuidv4 } from "@/tools";
-import { Button, Box, Typography, Paper, Grid, Stack } from "@mui/material";
+import {
+  Button,
+  Box,
+  Typography,
+  Paper,
+  Grid,
+  Stack,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
 import { InvoiceData, InvoiceGenerator } from "../InvoiceGenerator";
 import {
   Add as AddIcon,
+  Delete,
   PersonAddAlt as PersonAddIcon,
 } from "@mui/icons-material";
 import CustomerSelectionMenu from "../ProInteriorEstimate/CustomerSelectionMenu";
@@ -20,29 +33,24 @@ import { projectApi, propertyRoomApi, uploadProjectImages } from "@/services";
 import RoomFeatureForm from "../ProInteriorEstimate/RoomFeatureForm";
 import { ImageFile } from "../ImageUpload/ImageUpload.model";
 import EstimateSummary from "./EstimateSummary";
-
-interface RoomSections {
-  id: string;
-  name: string;
-  title: string;
-  description: string;
-  floorNumber: number;
-}
+import { PropertyRoomTransformed } from "@/types";
 
 const GeneralEstimate = () => {
   const { userData } = useAuth();
   const { currentClient, handleCreateNewClient } = useClient();
+  const [error, setError] = useState("");
   const [isOpenSearchClientDialog, setIsOpenSearchClientDialog] =
     useState(false);
   const [isOpenNewClientDialog, setIsOpenNewClientDialog] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [projectId, setProjectId] = useState("");
-  const [rooms, setRooms] = useState<RoomSections[]>([]);
+  const [rooms, setRooms] = useState<PropertyRoomTransformed[]>([]);
 
   const updateLocalStorageEstimate = ({
     ...updates
   }: {
     projectId?: string;
-    rooms?: RoomSections[];
+    rooms?: PropertyRoomTransformed[];
   }) => {
     const estimateData = JSON.stringify({
       projectId,
@@ -77,7 +85,7 @@ const GeneralEstimate = () => {
     handleCreateNewClient(data, userData!.companyId);
   };
 
-  const createProject = async () => {
+  const createProject = async (): Promise<string> => {
     const projectRes = await projectApi.createProject({
       client_id: currentClient!.id,
       company_id: userData!.companyId,
@@ -96,31 +104,34 @@ const GeneralEstimate = () => {
       tax_amount_cents: 0,
       tax_rate_bps: 0,
     });
-    setProjectId(projectRes.id);
+    return projectRes.id;
   };
 
-  const createRoom = async () => {
+  const createRoom = async (
+    roomDetails: PropertyRoomTransformed,
+    pId: string
+  ) => {
     await propertyRoomApi.createRoom({
-      name: "Updated Room Name",
+      name: roomDetails.name,
       property_id: currentClient!.buildings[0].id,
-      project_id: projectId,
-      level: 1,
-      sort_order: 1,
-      ceiling_area_sqft: null,
-      ceiling_height_ft: null,
+      project_id: pId,
+      level: roomDetails.level,
+      sort_order: roomDetails.sortOrder,
+      ceiling_area_sqft: roomDetails.ceilingAreaSqft,
+      ceiling_height_ft: roomDetails.ceilingHeightFt,
       company_id: userData!.companyId,
-      description: null,
-      floor_area_sqft: null,
-      notes_customer: null,
-      notes_internal: null,
-      openings_area_sqft: null,
-      paint_ceiling: false,
-      paint_doors: false,
-      paint_trim: false,
-      paint_walls: false,
-      room_height_ft: null,
-      wall_area_sqft: null,
-      wall_perimeter_ft: null,
+      description: roomDetails.description,
+      floor_area_sqft: roomDetails.floorAreaSqft,
+      notes_customer: roomDetails.notesCustomer,
+      notes_internal: roomDetails.notesInternal,
+      openings_area_sqft: roomDetails.openingsAreaSqft,
+      paint_ceiling: roomDetails.paintCeiling,
+      paint_doors: roomDetails.paintDoors,
+      paint_trim: roomDetails.paintTrim,
+      paint_walls: roomDetails.paintWalls,
+      room_height_ft: roomDetails.roomHeightFt,
+      wall_area_sqft: roomDetails.wallAreaSqft,
+      wall_perimeter_ft: roomDetails.wallPerimeterFt,
     });
   };
 
@@ -144,10 +155,27 @@ const GeneralEstimate = () => {
     updateLocalStorageEstimate({ rooms: filteredRooms });
   };
 
-  const deleteProject = async () => {
-    await projectApi.deleteProject(projectId);
-    setProjectId("");
-    removeLocalStorageEstimate();
+  const handleDeleteClick = () => {
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteConfirmOpen(false);
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      if (projectId) {
+        await projectApi.deleteProject(projectId);
+      }
+      setProjectId("");
+      removeLocalStorageEstimate();
+      setDeleteConfirmOpen(false);
+      // Optionally redirect or show success message
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      setError("Failed to delete estimate. Please try again.");
+    }
   };
 
   const updateProject = async () => {
@@ -182,19 +210,42 @@ const GeneralEstimate = () => {
   };
 
   const addNewRoom = async () => {
-    const newRoom = {
-      id: uuidv4(),
+    const newRoom: PropertyRoomTransformed = {
       name: `Room ${rooms.length + 1}`,
-      title: "",
       description: "",
-      floorNumber: 1,
+      level: 1,
+      companyId: userData!.companyId,
+      createdAt: new Date().toISOString(),
+      paintTrim: false,
+      projectId: projectId || null,
+      sortOrder: rooms.length + 1,
+      updatedAt: new Date().toISOString(),
+      paintDoors: false,
+      paintWalls: false,
+      propertyId: currentClient!.buildings[0].id,
+      paintCeiling: false,
+      notesCustomer: null,
+      notesInternal: null,
+      roomHeightFt: null,
+      wallAreaSqft: null,
+      floorAreaSqft: null,
+      ceilingAreaSqft: null,
+      ceilingHeightFt: null,
+      wallPerimeterFt: null,
+      openingsAreaSqft: null,
+      id: uuidv4(),
     };
 
     if (rooms.length >= 1) {
-      setRooms(() => [...rooms, newRoom]);
+      setRooms((prevRooms) => [...prevRooms, newRoom]);
     } else {
+      const projectId = await createProject();
+      setProjectId(projectId);
+      await createRoom(newRoom, projectId);
       setRooms([newRoom]);
+      updateLocalStorageEstimate({ projectId });
     }
+
     updateLocalStorageEstimate({ rooms });
   };
 
@@ -261,15 +312,6 @@ const GeneralEstimate = () => {
     if (storedEstimate) {
       setProjectId(projectId);
       setRooms(rooms);
-    }
-  }, []);
-
-  useEffect(() => {
-    const storedEstimate = localStorage.getItem("generalEstimateRooms");
-    const { projectId = "" } = JSON.parse(storedEstimate || "{}");
-    if (!projectId) {
-      createProject();
-      updateLocalStorageEstimate({ projectId });
     }
   }, []);
 
@@ -381,6 +423,7 @@ const GeneralEstimate = () => {
             variant="contained"
             color="primary"
             onClick={addNewRoom}
+            disabled={!currentClient}
             startIcon={<AddIcon />}
             sx={{ mr: 2, width: { md: 250, xs: "100%" } }}
           >
@@ -397,6 +440,15 @@ const GeneralEstimate = () => {
             buttonText="Download Invoice PDF"
             variant="outlined"
           />
+          <Button
+            variant="text"
+            color="error"
+            startIcon={<Delete />}
+            onClick={handleDeleteClick}
+            disabled={!projectId}
+          >
+            Delete Estimate
+          </Button>
         </Box>
       </Box>
 
@@ -409,6 +461,48 @@ const GeneralEstimate = () => {
         isOpen={isOpenSearchClientDialog}
         onClose={onCloseSearchClientDialog}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteConfirmOpen}
+        onClose={handleDeleteCancel}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">Delete Estimate</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            Are you sure you want to delete this estimate?
+            {currentClient && (
+              <>
+                <br />
+                <br />
+                <strong>Client:</strong> {currentClient.fullName}
+                <br />
+                <strong>Rooms:</strong> {rooms.length} room
+                {rooms.length !== 1 ? "s" : ""}
+                <br />
+                <br />
+              </>
+            )}
+            This action cannot be undone and will permanently remove all
+            estimate data.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel} color="inherit">
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            color="error"
+            variant="contained"
+            startIcon={<Delete />}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
