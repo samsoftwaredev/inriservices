@@ -97,7 +97,6 @@ const GeneralEstimate = () => {
       tax_rate_bps: 0,
     });
     setProjectId(projectRes.id);
-    updateLocalStorageEstimate({ projectId: projectRes.id });
   };
 
   const createRoom = async () => {
@@ -266,10 +265,13 @@ const GeneralEstimate = () => {
   }, []);
 
   useEffect(() => {
-    if (currentClient && !projectId) {
+    const storedEstimate = localStorage.getItem("generalEstimateRooms");
+    const { projectId = "" } = JSON.parse(storedEstimate || "{}");
+    if (!projectId) {
       createProject();
+      updateLocalStorageEstimate({ projectId });
     }
-  }, [currentClient]);
+  }, []);
 
   return (
     <>

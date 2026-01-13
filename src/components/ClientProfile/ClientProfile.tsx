@@ -23,25 +23,7 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import MapIcon from "@mui/icons-material/Map";
-
-export type ClientProfileType = {
-  id: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  addressId: string;
-  address: string;
-  address2?: string;
-  city: string;
-  state: string;
-  zipCode: string;
-
-  numberOfProjects: number;
-  totalRevenue: number;
-  lastProjectDate: string;
-  status: string; // e.g. "active" | "inactive"
-  notes?: string;
-};
+import { ClientFullData } from "@/types";
 
 type StatCardProps = {
   label: string;
@@ -112,9 +94,7 @@ function InfoRow({
       >
         {icon}
       </Box>
-      <Typography variant="body2" sx={{ color: "text.primary", flex: 1 }}>
-        {children}
-      </Typography>
+      <Box sx={{ color: "text.primary", flex: 1 }}>{children}</Box>
       {onCopy && (
         <IconButton
           size="small"
@@ -129,7 +109,7 @@ function InfoRow({
 }
 
 interface ClientProfileProps {
-  client: ClientProfileType;
+  client: ClientFullData;
 
   /** Optional callbacks for modal-like behavior */
   onClose?: () => void;
@@ -152,7 +132,6 @@ const ClientProfile = ({
   projectHistory,
 }: ClientProfileProps) => {
   const [copySuccess, setCopySuccess] = React.useState<string | null>(null);
-  const [showMap, setShowMap] = React.useState(false);
 
   const hasProjects = (projectHistory?.length ?? 0) > 0;
 
@@ -162,11 +141,20 @@ const ClientProfile = ({
     return projectHistory.filter((p) => p.status === "completed").length;
   }, [projectHistory]);
 
-  const revenue = client.totalRevenue ?? 0;
+  const revenue = client.properties.reduce(
+    (acc, property) =>
+      acc +
+      (property.projects?.reduce(
+        (projAcc, project) => projAcc + (project.invoiceTotalCents ?? 0),
+        0
+      ) ?? 0),
+    0
+  );
+  const properties = client.properties[0];
 
-  const addressLine = `${client.address}${
-    client.address2 ? `, ${client.address2}` : ""
-  }, ${client.city}, ${client.state} ${client.zipCode}`;
+  const addressLine = `${properties.addressLine1}${
+    properties.addressLine2 ? `, ${properties.addressLine2}` : ""
+  }, ${properties.city}, ${properties.state} ${properties.zip}`;
 
   const copyToClipboard = async (text: string, label: string) => {
     try {
@@ -178,11 +166,6 @@ const ClientProfile = ({
       setCopySuccess("Failed to copy");
       setTimeout(() => setCopySuccess(null), 3000);
     }
-  };
-
-  const getMapUrl = () => {
-    const query = encodeURIComponent(addressLine);
-    return `https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=${query}`;
   };
 
   const openInGoogleMaps = () => {
@@ -223,7 +206,7 @@ const ClientProfile = ({
             sx={{ mb: 0.25 }}
           >
             <Typography variant="h6" sx={{ fontWeight: 800, lineHeight: 1.2 }}>
-              {client.fullName}
+              {client.displayName}
             </Typography>
 
             {/* Optional status pill */}
@@ -321,11 +304,7 @@ const ClientProfile = ({
             gap: 2,
           }}
         >
-          <StatCard
-            tint="blue"
-            label="Total Projects"
-            value={client.numberOfProjects ?? 0}
-          />
+          <StatCard tint="blue" label="Total Projects" value={revenue ?? 0} />
           <StatCard tint="green" label="Completed" value={completedCount} />
           <StatCard
             tint="purple"
@@ -361,7 +340,7 @@ const ClientProfile = ({
             allowFullScreen
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            title={`Map showing location of ${client.fullName}`}
+            title={`Map showing location of ${client.displayName}`}
           />
           <Box
             sx={{

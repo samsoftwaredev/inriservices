@@ -1,9 +1,13 @@
-import { supabase } from "@/app/supabaseConfig"; 
+import { supabase } from "@/app/supabaseConfig";
 import { assertOk } from "@/tools";
-import { Client, ClientStatus, ClientWithProperties, ListResult, Project, Property } from "@/types";
-/** -------------------------------------------------------
- * Clients API
- * ------------------------------------------------------ */
+import {
+  Client,
+  ClientStatus,
+  ClientWithProperties,
+  ListResult,
+  Project,
+  Property,
+} from "@/types";
 
 export type ClientWithRelations = Client & {
   properties: Array<
@@ -51,32 +55,57 @@ export const clientApi = {
     };
   },
 
-async getClient(id: string): Promise<ClientWithRelations> {
-  const res = await supabase
-    .from("clients")
-    .select(`
+  async getClient(id: string): Promise<ClientWithRelations> {
+    const res = await supabase
+      .from("clients")
+      .select(
+        `
       *,
       properties (
         *,
         projects (*)
       )
-    `)
-    .eq("id", id)
-    .single();
+    `
+      )
+      .eq("id", id)
+      .single();
 
-  return assertOk(res, `Client not found: ${id}`);
-},
+    return assertOk(res, `Client not found: ${id}`);
+  },
 
-  async createClient(input: Omit<Client, "id" | "created_at" | "normalized_email" | "normalized_phone">): Promise<Client> {
-    const res = await supabase.from("clients").insert(input).select("*").single();
+  async createClient(
+    input: Omit<
+      Client,
+      "id" | "created_at" | "normalized_email" | "normalized_phone"
+    >
+  ): Promise<Client> {
+    const res = await supabase
+      .from("clients")
+      .insert(input)
+      .select("*")
+      .single();
     return assertOk(res, "Failed to create client");
   },
 
   async updateClient(
     id: string,
-    patch: Partial<Omit<Client, "id" | "company_id" | "created_at" | "normalized_email" | "normalized_phone">>
+    patch: Partial<
+      Omit<
+        Client,
+        | "id"
+        | "company_id"
+        | "created_at"
+        | "normalized_email"
+        | "normalized_phone"
+      >
+    >
   ): Promise<Client> {
-    const res = await supabase.from("clients").update(patch).eq("id", id).select("*").single();
+    const res = await supabase
+      .from("clients")
+      .update(patch)
+      .eq("id", id)
+      .select("*")
+      .single();
     return assertOk(res, "Failed to update client");
   },
 
@@ -89,7 +118,11 @@ async getClient(id: string): Promise<ClientWithRelations> {
    * Convenience: find possible duplicates WITHIN the company by normalized keys.
    * Pass raw email/phone; DB has generated normalized columns but we also normalize here for query.
    */
-  async findDuplicates(args: { company_id: string; email?: string | null; phone?: string | null }): Promise<Client[]> {
+  async findDuplicates(args: {
+    company_id: string;
+    email?: string | null;
+    phone?: string | null;
+  }): Promise<Client[]> {
     const normEmail =
       args.email && args.email.trim() ? args.email.trim().toLowerCase() : null;
     const normPhone =
@@ -100,10 +133,15 @@ async getClient(id: string): Promise<ClientWithRelations> {
     // If no keys, return empty
     if (!normEmail && !normPhone) return [];
 
-    let query = supabase.from("clients").select("*").eq("company_id", args.company_id);
+    let query = supabase
+      .from("clients")
+      .select("*")
+      .eq("company_id", args.company_id);
 
     if (normEmail && normPhone) {
-      query = query.or(`normalized_email.eq.${normEmail},normalized_phone.eq.${normPhone}`);
+      query = query.or(
+        `normalized_email.eq.${normEmail},normalized_phone.eq.${normPhone}`
+      );
     } else if (normEmail) {
       query = query.eq("normalized_email", normEmail);
     } else if (normPhone) {
@@ -125,15 +163,13 @@ async getClient(id: string): Promise<ClientWithRelations> {
     const offset = params?.offset ?? 0;
 
     // Join properties as nested array: properties(*)
-    let query = supabase
-      .from("clients")
-      .select(
-        `
+    let query = supabase.from("clients").select(
+      `
         *,
         properties:properties(*)
       `,
-        { count: "exact" }
-      );
+      { count: "exact" }
+    );
 
     if (params?.status) query = query.eq("status", params.status);
 
@@ -167,12 +203,14 @@ async getClient(id: string): Promise<ClientWithRelations> {
     if (error) throw error;
 
     return {
-      items: ((data ?? []) as unknown) as ClientWithProperties[],
+      items: (data ?? []) as unknown as ClientWithProperties[],
       total: count ?? undefined,
     };
   },
 
-  async getClientWithAddresses(clientId: string): Promise<ClientWithProperties> {
+  async getClientWithAddresses(
+    clientId: string
+  ): Promise<ClientWithProperties> {
     const res = await supabase
       .from("clients")
       .select(
@@ -184,6 +222,9 @@ async getClient(id: string): Promise<ClientWithRelations> {
       .eq("id", clientId)
       .single();
 
-    return assertOk(res, `Client not found: ${clientId}`) as unknown as ClientWithProperties;
+    return assertOk(
+      res,
+      `Client not found: ${clientId}`
+    ) as unknown as ClientWithProperties;
   },
 };

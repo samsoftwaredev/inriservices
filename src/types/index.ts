@@ -207,3 +207,7 @@ export type CompanyTransformed = {
   createdAt: string;
   billingEmail: string;
 };
+
+export type ClientFullData = ClientTransformed & {
+  properties: Array<PropertyTransformed & { projects: ProjectTransformed[] }>;
+};

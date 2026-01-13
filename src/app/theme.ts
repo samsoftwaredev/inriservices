@@ -42,6 +42,7 @@ export const theme = createTheme({
   },
   palette: {
     primary: {
+      light: "#e1ebffff", // Deep Blue
       main: "#3b82f6", // Bright Blue
       contrastText: "#fff", // Black text for contrast
     },
@@ -50,6 +51,7 @@ export const theme = createTheme({
       colorful: "radial-gradient(circle, #3b82f6, #0554e7ff)",
     },
     secondary: {
+      light: "#ffe8deff", // Soft Orange
       main: "#ff3131", // Bold Red
     },
     background: {
@@ -60,14 +62,16 @@ export const theme = createTheme({
     },
     // Adding custom colors as additional palette fields.
     info: {
+      light: "#e8f7faff", // Soft blue-green
       main: "#c7ebf2", // Soft blue-green
     },
     warning: {
+      light: "#fff7e2ff", // Light yellow-orange
       main: "#f7bd59", // Warm yellow-orange
       contrastText: "#fff", // Black text for contrast
     },
     success: {
-      light: "#a8e6a1", // Medium green
+      light: "#f4fff3ff", // Medium green
       main: "#4caf50", // Bright yellow
     },
   },
