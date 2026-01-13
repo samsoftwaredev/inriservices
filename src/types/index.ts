@@ -112,6 +112,7 @@ export interface MetricCard {
   value: number;
   icon: React.ReactNode;
   color: string;
+  iconWrapperColor: string;
   bgColor: string;
   format: (value: number) => string;
 }

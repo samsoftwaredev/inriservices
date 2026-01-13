@@ -22,7 +22,6 @@ const MetricCards = ({ summaryCards }: Props) => {
             sx={{
               height: "100%",
               background: `linear-gradient(135deg, ${card.bgColor} 0%, white 100%)`,
-              border: "1px solid",
               borderColor: "divider",
               "&:hover": {
                 transform: "translateY(-2px)",
@@ -30,6 +29,7 @@ const MetricCards = ({ summaryCards }: Props) => {
                 transition: "all 0.3s ease",
               },
             }}
+            elevation={4}
           >
             <CardContent>
               <Box
@@ -42,10 +42,11 @@ const MetricCards = ({ summaryCards }: Props) => {
                 <Box
                   sx={{
                     bgcolor: card.color,
-                    width: 250,
-                    height: 250,
+                    width: 200,
+                    height: 200,
                     borderRadius: 50,
-                    left: -180,
+                    left: -100,
+                    bottom: -20,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -56,52 +57,58 @@ const MetricCards = ({ summaryCards }: Props) => {
                 />
                 <Avatar
                   sx={{
+                    borderRadius: 2,
                     zIndex: 2,
-                    bgcolor: card.color,
-                    width: 56,
-                    height: 56,
+                    bgcolor: card.iconWrapperColor,
+                    width: 36,
+                    height: 36,
                     mr: 2,
+                    mt: -4,
                   }}
                 >
                   {card.icon}
                 </Avatar>
 
                 <Box sx={{ zIndex: 2 }}>
-                  <Typography variant="h4" fontWeight="bold">
-                    {card.format(card.value)}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    fontSize="small"
+                  >
                     {card.title}
+                  </Typography>
+                  {card.title === "Amount Earned" && (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        mt: 1,
+                        zIndex: 2,
+                      }}
+                    >
+                      <TrendingUpIcon
+                        sx={{
+                          fontSize: 16,
+                          color: "success.main",
+                          mr: 0.5,
+                          zIndex: 2,
+                        }}
+                      />
+                      <Typography
+                        variant="caption"
+                        color="success.main"
+                        sx={{ zIndex: 2 }}
+                      >
+                        +12% from last month
+                      </Typography>
+                    </Box>
+                  )}
+
+                  <Typography variant="h6" fontWeight="bold">
+                    {card.format(card.value)}
                   </Typography>
                 </Box>
               </Box>
-
-              {card.title === "Amount Earned" && (
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    mt: 1,
-                    zIndex: 2,
-                  }}
-                >
-                  <TrendingUpIcon
-                    sx={{
-                      fontSize: 16,
-                      color: "success.main",
-                      mr: 0.5,
-                      zIndex: 2,
-                    }}
-                  />
-                  <Typography
-                    variant="caption"
-                    color="success.main"
-                    sx={{ zIndex: 2 }}
-                  >
-                    +12% from last month
-                  </Typography>
-                </Box>
-              )}
             </CardContent>
           </Card>
         </Grid>
