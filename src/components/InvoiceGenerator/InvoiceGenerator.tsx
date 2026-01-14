@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Document,
   Page,
@@ -320,8 +320,15 @@ const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
   }-${invoiceData.date.replace(/\//g, "-")}.pdf`;
   const pdfFileName = fileName || defaultFileName;
 
+  // prevent PDF error by updating key on invoiceData change
+  const count = useRef(0);
+  useEffect(() => {
+    count.current++;
+  }, [invoiceData]);
+
   return (
     <PDFDownloadLink
+      key={count.current}
       document={<InvoicePDF data={invoiceData} />}
       fileName={pdfFileName}
       style={{ textDecoration: "none" }}

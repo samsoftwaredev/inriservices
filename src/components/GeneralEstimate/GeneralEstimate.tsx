@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { calculateProfits, uuidv4 } from "@/tools";
+import { calculateProfits, debounce, uuidv4 } from "@/tools";
 import {
   Button,
   Box,
@@ -48,6 +48,7 @@ import {
 } from "@/tools/transformers";
 import { TAX_RATE } from "@/constants";
 import { compareAsc } from "date-fns/compareAsc";
+import { format } from "date-fns";
 
 const initialCosts: ProjectCost = {
   laborCost: 300,
@@ -199,10 +200,11 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
     }
   };
 
-  const deleteRoom = async (roomId: string) => {
+  const onDeleteRoom = async (roomId: string) => {
     try {
       await propertyRoomApi.deleteRoom(roomId);
       const filteredRooms = rooms.filter((room) => room.id !== roomId);
+      setRooms(filteredRooms);
       updateLocalStorageEstimate({ rooms: filteredRooms });
     } catch (error) {
       console.error("Error deleting room:", error);
@@ -369,11 +371,13 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
       await updateProject({
         ...projectData,
         name: data.name,
-        startDate: data.startDate ? data.startDate.toString() : "",
-        endDate: data.endDate ? data.endDate.toString() : "",
+        startDate: data.startDate ? format(data.startDate, "yyyy-MM-dd") : "",
+        endDate: data.endDate ? format(data.endDate, "yyyy-MM-dd") : "",
       });
     }
   };
+
+  const debouncedOnProjectDataChange = debounce(onProjectDataChange, 500);
 
   const onCostsChange = async (newCosts: ProjectCost) => {
     if (projectId && projectData) {
@@ -534,7 +538,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
       {projectId && (
         <GeneralData
           initialData={projectData}
-          onFormChange={onProjectDataChange}
+          onFormChange={debouncedOnProjectDataChange}
         />
       )}
 
@@ -545,6 +549,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
               room={room}
               index={index}
               onChangeRoomName={onChangeRoomName}
+              onDeleteRoom={onDeleteRoom}
             />
             <RoomFeatureForm
               room={room}

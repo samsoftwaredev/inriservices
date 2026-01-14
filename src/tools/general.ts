@@ -35,3 +35,21 @@ export const calculateTaxes = (subtotal: number) => {
 export const calculateProfits = (labor: number, material: number) => {
   return Math.round((labor + material) * PROFIT_MARGIN);
 };
+
+export function debounce<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): (...args: Parameters<T>) => void {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+
+  return function (this: ThisParameterType<T>, ...args: Parameters<T>): void {
+    const context = this;
+    const later = () => {
+      timeout = undefined;
+      func.apply(context, args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}

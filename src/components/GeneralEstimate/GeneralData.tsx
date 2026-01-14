@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Box, Paper, TextField, Typography, Grid } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -8,6 +8,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { addDays, format } from "date-fns";
 import { ProjectFormData } from "@/types";
+import { debounce } from "@/tools";
 
 interface Props {
   initialData: {
@@ -44,7 +45,7 @@ const GeneralData = ({ initialData, onFormChange }: Props) => {
 
   // Watch form changes and notify parent
   const formData = watch();
-  React.useEffect(() => {
+  useEffect(() => {
     if (onFormChange) {
       onFormChange(formData);
     }
