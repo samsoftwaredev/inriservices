@@ -18,12 +18,14 @@ const CustomerHeader = ({
     <Box
       sx={{
         display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
+        flexDirection: { xs: "column", sm: "row" },
+        justifyContent: { xs: "flex-start", sm: "space-between" },
+        alignItems: { xs: "stretch", sm: "flex-start" },
+        gap: { xs: 2, sm: 0 },
         mb: 2,
       }}
     >
-      <Box sx={{ flex: 1 }}>
+      <Box sx={{ flex: 1, mb: { xs: 1, sm: 0 } }}>
         <Typography variant="h4" gutterBottom>
           {headerName}
         </Typography>
@@ -31,8 +33,9 @@ const CustomerHeader = ({
           {headerDescription}
         </Typography>
       </Box>
-
-      {children}
+      <Box sx={{ alignSelf: { xs: "stretch", sm: "flex-start" } }}>
+        {children}
+      </Box>
     </Box>
   );
 };

@@ -74,6 +74,10 @@ export const theme = createTheme({
       light: "#f4fff3ff", // Medium green
       main: "#4caf50", // Bright yellow
     },
+    error: {
+      light: "#ffbfbfff", // Medium green
+      main: "#e62525ff", // Bright yellow
+    },
   },
   components: {
     // all input fields from have white background

@@ -14,13 +14,13 @@ import {
   Stack,
 } from "@mui/material";
 import {
-  AddCircleOutline,
   Work as WorkIcon,
   AttachMoney as MoneyIcon,
   People as PeopleIcon,
   Pending as PendingIcon,
   TrendingUp as TrendingUpIcon,
   FilterList as FilterListIcon,
+  Add as AddIcon,
 } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import CustomerHeader from "../CustomerHeader";
@@ -189,29 +189,29 @@ const DashboardPage = () => {
     },
     {
       title: "Taxes Collected",
-      iconWrapperColor: "tertiary.main",
+      iconWrapperColor: "error.main",
       value: stats.taxesCents / 100,
       icon: <MoneyIcon sx={{ fontSize: 20, color: "white" }} />,
-      color: "tertiary.light",
-      bgColor: "tertiary.50",
+      color: "error.light",
+      bgColor: "error.50",
       format: (value: number) => `$${value.toLocaleString()}`,
     },
     {
       title: "Avg. Spent by Client",
-      iconWrapperColor: "dark.main",
+      iconWrapperColor: "info.main",
       value: stats.averageAmountSpentByClientCents / 100,
       icon: <MoneyIcon sx={{ fontSize: 20, color: "white" }} />,
-      color: "dark.light",
-      bgColor: "dark.50",
+      color: "info.light",
+      bgColor: "info.50",
       format: (value: number) => `$${value.toLocaleString()}`,
     },
     {
       title: "Profit",
-      iconWrapperColor: "green.main",
+      iconWrapperColor: "success.main",
       value: stats.profitCents / 100,
       icon: <TrendingUpIcon sx={{ fontSize: 20, color: "white" }} />,
-      color: "green.light",
-      bgColor: "green.50",
+      color: "success.light",
+      bgColor: "success.50",
       format: (value: number) => `$${value.toLocaleString()}`,
     },
   ];
@@ -374,15 +374,6 @@ const DashboardPage = () => {
               </FormControl>
             </>
           )}
-
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddCircleOutline />}
-            onClick={handleNewEstimate}
-          >
-            New Estimate
-          </Button>
         </Stack>
       </CustomerHeader>
       <MetricCards summaryCards={summaryCards} />
@@ -406,8 +397,14 @@ const DashboardPage = () => {
                 projects)
               </Typography>
             </Box>
-            <Button variant="outlined" size="small">
-              View All
+            <Button
+              variant="outlined"
+              size="small"
+              color="primary"
+              startIcon={<AddIcon />}
+              onClick={handleNewEstimate}
+            >
+              New Estimate
             </Button>
           </Box>
 
