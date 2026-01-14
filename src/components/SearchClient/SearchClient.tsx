@@ -22,16 +22,20 @@ import NewClientDialog from "../NewClientDialog";
 import { toast } from "react-toastify";
 import { SubmitHandler } from "react-hook-form";
 import { ClientFormData } from "./SearchClient.model";
+import { ClientFullData } from "@/types";
 
 interface Props {
   onViewClientProfile: (clientId: string) => void;
 }
 
 const SearchClient = ({ onViewClientProfile }: Props) => {
-  const { setCurrentClient, currentClient } = useClient();
+  const {
+    currentClient,
+    handleSelectClient,
+    allClients: clients,
+  } = useClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
-  const [clients, setClients] = useState<ClientFormData[]>([]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isEditingClient, setIsEditingClient] = useState(false);
   const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
@@ -53,72 +57,23 @@ const SearchClient = ({ onViewClientProfile }: Props) => {
     setSearchTerm("");
   };
 
-  const getClients = async () => {
-    const clientRes = await clientApi.listClientsWithAddresses();
-    const clientList: ClientFormData[] = clientRes.items.map((client) => {
-      const property =
-        client.properties.length > 0 ? client.properties[0] : null;
-      return {
-        id: client.id,
-        fullName: client.display_name,
-        email: client.primary_email || "",
-        phone: client.primary_phone || "",
-        addressId: property?.id || "",
-        address: property?.address_line1 || "",
-        address2: property?.address_line2 || "",
-        city: property?.city || "",
-        state: property?.state || "",
-        zipCode: property?.zip || "",
-        numberOfProjects: 0,
-        totalRevenue: 0,
-        lastProjectDate: "",
-        status: client.status,
-        notes: client.notes || "",
-        contact: "",
-        floorPlan: 0,
-        measurementUnit: "ft",
-      };
-    });
-    setClients(clientList);
-  };
-
-  useEffect(() => {
-    getClients();
-  }, []);
-
   // Filter clients based on search term
   const filteredClients = clients.filter(
     (client) =>
-      client.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       client.phone.includes(searchTerm) ||
-      client.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.state.toLowerCase().includes(searchTerm.toLowerCase())
+      client.properties[0].city
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      client.properties[0].state
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
   );
 
-  const onClientClick = (client: ClientFormData) => {
+  const onClientClick = (client: ClientFullData) => {
     onViewClientProfile(client.id);
-    setCurrentClient({
-      id: client.id,
-      fullName: client.fullName,
-      contact: "",
-      email: client.email,
-      phone: client.phone,
-      status: client.status,
-      buildings: [
-        {
-          id: client.addressId,
-          address: client.address,
-          address2: client.address2,
-          city: client.city,
-          state: client.state,
-          zipCode: client.zipCode,
-          measurementUnit: "ft",
-          floorPlan: 0,
-          rooms: [],
-        },
-      ],
-    });
+    handleSelectClient(client.id);
   };
 
   const handleCloseDetails = () => {
@@ -174,7 +129,7 @@ const SearchClient = ({ onViewClientProfile }: Props) => {
         state: data.state,
         zip: data.zipCode,
       });
-      getClients();
+
       setIsEditingClient(false);
       toast.success("Client updated successfully");
     } catch (error) {
@@ -292,26 +247,7 @@ const SearchClient = ({ onViewClientProfile }: Props) => {
           isEditMode={true}
           isLoading={isUpdating}
           onSubmit={onSaveEdits}
-          client={{
-            id: currentClient.id,
-            fullName: currentClient.fullName,
-            email: currentClient.email,
-            phone: currentClient.phone,
-            contact: "",
-            addressId: currentClient.buildings[0].id,
-            address: currentClient.buildings[0].address,
-            address2: currentClient.buildings[0].address2,
-            city: currentClient.buildings[0].city,
-            state: currentClient.buildings[0].state,
-            zipCode: currentClient.buildings[0].zipCode,
-            measurementUnit: "ft",
-            floorPlan: 1,
-            numberOfProjects: 0,
-            totalRevenue: 0,
-            lastProjectDate: "",
-            status: currentClient.status,
-            notes: "",
-          }}
+          client={currentClient}
         />
       )}
 
@@ -321,23 +257,7 @@ const SearchClient = ({ onViewClientProfile }: Props) => {
           viewDetailsOpen={viewDetailsOpen}
           handleCloseDetails={handleCloseDetails}
           handleOpenEditForm={handleOpenEditForm}
-          client={{
-            id: currentClient.id,
-            fullName: currentClient.fullName,
-            email: currentClient.email,
-            phone: currentClient.phone,
-            addressId: currentClient.buildings[0].id,
-            address: currentClient.buildings[0].address,
-            address2: currentClient.buildings[0].address2,
-            city: currentClient.buildings[0].city,
-            state: currentClient.buildings[0].state,
-            zipCode: currentClient.buildings[0].zipCode,
-            numberOfProjects: 0,
-            totalRevenue: 0,
-            lastProjectDate: "",
-            status: currentClient.status,
-            notes: "",
-          }}
+          client={currentClient}
         />
       )}
     </>

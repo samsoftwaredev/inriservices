@@ -12,7 +12,7 @@ import AppTopNav from "../AppTopNav";
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const { mobileOpen, handleDrawerToggle, handleNavigation, handleLogoClick } =
     useAppNavigation();
-  const { currentClient, previousClient, handleSelectPreviousClient } =
+  const { currentClient, previousClientIds, allClients, handleSelectClient } =
     useClient();
 
   return (
@@ -31,8 +31,9 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
           onNavigation={handleNavigation}
           onLogoClick={handleLogoClick}
           currentClient={currentClient}
-          previousClient={previousClient}
-          onSelectPreviousCustomer={handleSelectPreviousClient}
+          previousClientIds={previousClientIds}
+          allClients={allClients}
+          onSelectClient={handleSelectClient}
         />
         <Container maxWidth="md" sx={{ mt: 8, mb: 4 }}>
           {children}

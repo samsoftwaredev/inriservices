@@ -9,6 +9,10 @@ import {
   Property,
 } from "@/types";
 
+export type ClientWithPropertiesAndProjects = Client & {
+  properties: (Property & { projects: Project[] })[];
+};
+
 export type ClientWithRelations = Client & {
   properties: Array<
     Property & {
@@ -154,38 +158,38 @@ export const clientApi = {
   },
 
   async listClientsWithAddresses(params?: {
-    q?: string; // searches client display_name/email/phone + property address fields
+    q?: string; // searches client display_name/email/phone + (attempt) property fields
     status?: ClientStatus;
     limit?: number;
     offset?: number;
-  }): Promise<ListResult<ClientWithProperties>> {
+  }): Promise<ListResult<ClientWithPropertiesAndProjects>> {
     const limit = params?.limit ?? 50;
     const offset = params?.offset ?? 0;
 
-    // Join properties as nested array: properties(*)
     let query = supabase.from("clients").select(
       `
+      *,
+      properties:properties(
         *,
-        properties:properties(*)
-      `,
+        projects:projects(*)
+      )
+    `,
       { count: "exact" }
     );
 
     if (params?.status) query = query.eq("status", params.status);
 
-    // Search across clients + properties
     if (params?.q && params.q.trim()) {
       const q = params.q.trim();
 
-      // NOTE: PostgREST "or" does not reliably span nested relations in all cases.
-      // This works for many setups, but if it doesn't in your project,
-      // use the RPC approach (below).
+      // Reliable client-side fields
+      // (Embedded relation filters may or may not work depending on PostgREST config.)
       query = query.or(
         [
           `display_name.ilike.%${q}%`,
           `primary_email.ilike.%${q}%`,
           `primary_phone.ilike.%${q}%`,
-          // property fields (may or may not work depending on PostgREST config)
+          // Attempt property fields (may not work in every setup)
           `properties.name.ilike.%${q}%`,
           `properties.address_line1.ilike.%${q}%`,
           `properties.address_line2.ilike.%${q}%`,
@@ -203,7 +207,7 @@ export const clientApi = {
     if (error) throw error;
 
     return {
-      items: (data ?? []) as unknown as ClientWithProperties[],
+      items: (data ?? []) as unknown as ClientWithPropertiesAndProjects[],
       total: count ?? undefined,
     };
   },

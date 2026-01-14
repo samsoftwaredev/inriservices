@@ -7,16 +7,12 @@ import { ProtectedRoute } from "@/components";
 import { ClientProfile } from "@/components/ClientProfile";
 import { useRouter } from "next/navigation";
 import { clientApi } from "@/services";
-import {
-  ClientFullData,
-  ClientTransformed,
-  ProjectTransformed,
-  PropertyTransformed,
-} from "@/types";
+import { ClientFullData } from "@/types";
 import {
   allProjectTransformer,
   allPropertyTransformer,
   clientTransformer,
+  transformedClientFullData,
 } from "@/tools/transformers";
 
 interface Props {
@@ -43,24 +39,7 @@ const ClientIdPage = ({ params }: Props) => {
       setIsLoading(true);
       try {
         const clientData = await clientApi.getClient(id);
-
-        const transformedClient = (): ClientFullData => {
-          const transformed = {
-            ...clientTransformer(clientData),
-            properties: [...allPropertyTransformer(clientData.properties)],
-          };
-          transformed.properties = transformed.properties.map((property) => {
-            return {
-              ...property,
-              projects: allProjectTransformer(
-                clientData.properties.find((p) => p.id === property.id)
-                  ?.projects || []
-              ),
-            };
-          });
-          return transformed as ClientFullData;
-        };
-        setClient(transformedClient());
+        setClient(transformedClientFullData(clientData));
       } catch (error) {
         console.error("Error fetching client data:", error);
         router.push("/clients");

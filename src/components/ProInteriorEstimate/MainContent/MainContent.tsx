@@ -28,7 +28,7 @@ import { ClientFormData } from "@/components/SearchClient/SearchClient.model";
 
 const MainContent = () => {
   const {
-    buildingData,
+    propertyData,
     deleteConfirmation,
     addNewRoom,
     handleDeleteSectionClick,
@@ -40,49 +40,28 @@ const MainContent = () => {
 
   const newCustomer = () => {};
 
-  const defaultValues: ClientFormData | undefined =
-    currentClient && buildingData
-      ? {
-          id: currentClient?.id,
-          fullName: currentClient?.fullName,
-          email: currentClient?.email,
-          phone: currentClient?.phone,
-          contact: currentClient?.contact,
-          addressId: buildingData?.id,
-          address: buildingData?.address,
-          address2: buildingData?.address2,
-          city: buildingData?.city,
-          state: buildingData?.state,
-          zipCode: buildingData?.zipCode,
-          measurementUnit:
-            buildingData?.measurementUnit || ("ft" as MeasurementUnit),
-          floorPlan: buildingData?.floorPlan || 0,
-          numberOfProjects: 0,
-          totalRevenue: 0,
-          lastProjectDate: "",
-          status: "active",
-        }
-      : currentClient
-      ? {
-          id: currentClient?.id,
-          fullName: currentClient?.fullName,
-          email: currentClient?.email,
-          phone: currentClient?.phone,
-          contact: currentClient?.contact,
-          addressId: "",
-          address: "",
-          address2: "",
-          city: "",
-          state: "",
-          zipCode: "",
-          measurementUnit: "ft" as MeasurementUnit,
-          floorPlan: 0,
-          numberOfProjects: 0,
-          totalRevenue: 0,
-          lastProjectDate: "",
-          status: "active",
-        }
-      : undefined;
+  const defaultValues: ClientFormData | undefined = currentClient
+    ? {
+        id: currentClient?.id,
+        fullName: currentClient?.displayName,
+        email: currentClient?.email,
+        phone: currentClient?.phone,
+        contact: currentClient?.clientType,
+        addressId: currentClient?.properties[0].id || "",
+        address: currentClient?.properties[0].addressLine1 || "",
+        address2: currentClient?.properties[0].addressLine2 || "",
+        city: currentClient?.properties[0].city || "",
+        state: currentClient?.properties[0].state || "",
+        zipCode: currentClient?.properties[0].zip || "",
+        measurementUnit:
+          propertyData?.measurementUnit || ("ft" as MeasurementUnit),
+        floorPlan: propertyData?.floorPlan || 0,
+        numberOfProjects: 0,
+        totalRevenue: 0,
+        lastProjectDate: "",
+        status: "active",
+      }
+    : undefined;
 
   return (
     <Box component="main" my={2}>
@@ -108,13 +87,13 @@ const MainContent = () => {
 
       <Divider sx={{ mb: 2 }} />
 
-      {buildingData === undefined || buildingData.rooms.length === 0 ? (
+      {propertyData === undefined || propertyData.rooms.length === 0 ? (
         <Typography variant="body2" color="text.secondary">
           No rooms added yet.
         </Typography>
       ) : null}
 
-      {buildingData?.rooms.map((room) => (
+      {/* {propertyData?.rooms.map((room) => (
         <Box key={room.id} sx={{ mb: 2, position: "relative" }}>
           <Box
             sx={{
@@ -146,13 +125,13 @@ const MainContent = () => {
             roomId={room.id}
             roomName={room.name}
             roomDescription={room.description}
-            measurementUnit={buildingData.measurementUnit}
+            measurementUnit={propertyData.measurementUnit}
             floorNumber={room.floorNumber}
           >
             <Room onRoomUpdate={onRoomUpdate} />
           </RoomProvider>
         </Box>
-      ))}
+      ))} */}
 
       <Button
         variant="contained"

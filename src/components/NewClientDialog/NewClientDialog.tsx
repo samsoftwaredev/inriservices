@@ -12,10 +12,11 @@ import {
 import ClientForm from "../ProInteriorEstimate/ClientForm";
 import { ClientFormData } from "../SearchClient/SearchClient.model";
 import { Close as CloseIcon } from "@mui/icons-material";
+import { ClientFullData } from "@/types";
 
 interface Props {
   isOpen: boolean;
-  client?: ClientFormData;
+  client?: ClientFullData;
   isEditMode?: boolean;
   onSubmit: (data: ClientFormData) => void;
   onClose: () => void;
@@ -32,21 +33,21 @@ const NewClientDialog = ({
 }: Props) => {
   const defaultValues: ClientFormData = {
     id: client?.id || "",
-    fullName: client?.fullName || "",
+    fullName: client?.displayName || "",
     email: client?.email || "",
     phone: client?.phone || "",
-    contact: client?.contact || "",
-    addressId: client?.addressId || "",
-    address: client?.address || "",
-    address2: client?.address2 || "",
-    city: client?.city || "",
-    state: client?.state || "",
-    zipCode: client?.zipCode || "",
-    measurementUnit: client?.measurementUnit || "ft",
-    floorPlan: client?.floorPlan || 1,
-    numberOfProjects: client?.numberOfProjects || 0,
-    totalRevenue: client?.totalRevenue || 0,
-    lastProjectDate: client?.lastProjectDate || "",
+    contact: "",
+    addressId: client?.properties[0]?.id || "",
+    address: client?.properties[0]?.addressLine1 || "",
+    address2: client?.properties[0]?.addressLine2 || "",
+    city: client?.properties[0]?.city || "",
+    state: client?.properties[0]?.state || "",
+    zipCode: client?.properties[0]?.zip || "",
+    measurementUnit: "ft",
+    floorPlan: 1,
+    numberOfProjects: client?.properties[0]?.projects.length || 0,
+    totalRevenue: 0,
+    lastProjectDate: "",
     status: client?.status || "active",
     notes: client?.notes || "",
   };

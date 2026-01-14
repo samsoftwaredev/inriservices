@@ -42,9 +42,9 @@ const EstimateSummary = () => {
     totalHours,
     totalDays,
   } = useGallons();
-  const { buildingData } = useBuilding();
+  const { propertyData } = useBuilding();
 
-  const totalRooms = buildingData?.rooms.length || 0;
+  const totalRooms = propertyData?.rooms.length || 0;
 
   const estimateWorkItems = useMemo(
     () => [

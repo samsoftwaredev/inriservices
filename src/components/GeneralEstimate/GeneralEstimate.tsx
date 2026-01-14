@@ -89,14 +89,14 @@ const GeneralEstimate = () => {
     const projectRes = await projectApi.createProject({
       client_id: currentClient!.id,
       company_id: userData!.companyId,
-      property_id: currentClient!.buildings[0].id,
+      property_id: currentClient!.properties[0].id,
       end_date: new Date().toISOString(),
       invoice_total_cents: 0,
       labor_cost_cents: 0,
       labor_hours_estimated: null,
       markup_bps: 0,
       material_cost_cents: 0,
-      name: `General Estimate for ${currentClient?.fullName}`,
+      name: `General Estimate for ${currentClient?.displayName}`,
       project_type: "interior_paint",
       scope_notes: null,
       start_date: new Date().toISOString(),
@@ -113,7 +113,7 @@ const GeneralEstimate = () => {
   ) => {
     await propertyRoomApi.createRoom({
       name: roomDetails.name,
-      property_id: currentClient!.buildings[0].id,
+      property_id: currentClient!.properties[0].id,
       project_id: pId,
       level: roomDetails.level,
       sort_order: roomDetails.sortOrder,
@@ -187,9 +187,9 @@ const GeneralEstimate = () => {
       labor_hours_estimated: null,
       markup_bps: 0,
       material_cost_cents: 0,
-      name: `General Estimate for ${currentClient?.fullName}`,
+      name: `General Estimate for ${currentClient?.displayName}`,
       project_type: "interior_paint",
-      property_id: currentClient!.buildings[0].id,
+      property_id: currentClient!.properties[0].id,
       scope_notes: null,
       start_date: new Date().toISOString(),
       status: "draft",
@@ -222,7 +222,7 @@ const GeneralEstimate = () => {
       updatedAt: new Date().toISOString(),
       paintDoors: false,
       paintWalls: false,
-      propertyId: currentClient!.buildings[0].id,
+      propertyId: currentClient!.properties[0].id,
       paintCeiling: false,
       notesCustomer: null,
       notesInternal: null,
@@ -274,12 +274,12 @@ const GeneralEstimate = () => {
   const invoiceData: InvoiceData = useMemo(
     () => ({
       customer: {
-        name: currentClient?.fullName || "",
+        name: currentClient?.displayName || "",
         email: currentClient?.email || "",
-        address: currentClient?.buildings[0].address || "",
-        city: currentClient?.buildings[0].city || "",
-        state: currentClient?.buildings[0].state || "",
-        zipCode: currentClient?.buildings[0].zipCode || "",
+        address: currentClient?.properties[0].addressLine1 || "",
+        city: currentClient?.properties[0].city || "",
+        state: currentClient?.properties[0].state || "",
+        zipCode: currentClient?.properties[0].zip || "",
       },
       items: rooms.map((room) => ({
         id: room.id,
@@ -336,7 +336,9 @@ const GeneralEstimate = () => {
               <Typography variant="body2" color="text.secondary">
                 Name
               </Typography>
-              <Typography variant="body1">{currentClient.fullName}</Typography>
+              <Typography variant="body1">
+                {currentClient.displayName}
+              </Typography>
             </Grid>
             <Grid size={{ md: 6, xs: 12 }}>
               <Typography variant="body2" color="text.secondary">
@@ -355,12 +357,12 @@ const GeneralEstimate = () => {
                 Address
               </Typography>
               <Typography variant="body1">
-                {currentClient?.buildings[0].address}{" "}
-                {currentClient?.buildings[0].address2}
+                {currentClient?.properties[0].addressLine1}{" "}
+                {currentClient?.properties[0].addressLine2}
                 <br />
-                {currentClient?.buildings[0].city},{" "}
-                {currentClient?.buildings[0].state}{" "}
-                {currentClient?.buildings[0].zipCode}
+                {currentClient?.properties[0].city},{" "}
+                {currentClient?.properties[0].state}{" "}
+                {currentClient?.properties[0].zip}
               </Typography>
             </Grid>
           </Grid>
@@ -477,7 +479,7 @@ const GeneralEstimate = () => {
               <>
                 <br />
                 <br />
-                <strong>Client:</strong> {currentClient.fullName}
+                <strong>Client:</strong> {currentClient.displayName}
                 <br />
                 <strong>Rooms:</strong> {rooms.length} room
                 {rooms.length !== 1 ? "s" : ""}

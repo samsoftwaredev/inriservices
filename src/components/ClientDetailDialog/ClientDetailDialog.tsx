@@ -13,29 +13,13 @@ import {
   DialogActions,
 } from "@mui/material";
 import { ClientProfile } from "../ClientProfile";
-import { ClientStatus } from "@/types";
+import { ClientFullData, ClientStatus } from "@/types";
 
 interface Props {
   viewDetailsOpen: boolean;
   handleCloseDetails: () => void;
   handleOpenEditForm: () => void;
-  client: {
-    id: string;
-    fullName: string;
-    email: string;
-    phone: string;
-    addressId: string;
-    address: string;
-    address2?: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    numberOfProjects: number;
-    totalRevenue: number;
-    lastProjectDate: string;
-    status: ClientStatus;
-    notes?: string;
-  };
+  client: ClientFullData;
 }
 const ClientDetailDialog = ({
   viewDetailsOpen,
@@ -83,10 +67,10 @@ const ClientDetailDialog = ({
             fontWeight: "bold",
           }}
         >
-          {client && getInitials(client.fullName)}
+          {client && getInitials(client.displayName)}
         </Avatar>
         <Box>
-          <Typography variant="h6">{client?.fullName}</Typography>
+          <Typography variant="h6">{client?.displayName}</Typography>
           <Chip
             label={client?.status}
             size="small"

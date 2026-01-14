@@ -1,5 +1,7 @@
+import { ClientWithRelations } from "@/services/clientApi";
 import {
   Client,
+  ClientFullData,
   ClientTransformed,
   Company,
   CompanyTransformed,
@@ -145,4 +147,22 @@ export const allPropertyTransformer = (
   res: Property[]
 ): PropertyTransformed[] => {
   return res.map(transformSingleProperty);
+};
+
+export const transformedClientFullData = (
+  clientData: ClientWithRelations
+): ClientFullData => {
+  const transformed = {
+    ...clientTransformer(clientData),
+    properties: [...allPropertyTransformer(clientData.properties)],
+  };
+  transformed.properties = transformed.properties.map((property) => {
+    return {
+      ...property,
+      projects: allProjectTransformer(
+        clientData.properties.find((p) => p.id === property.id)?.projects || []
+      ),
+    };
+  });
+  return transformed as ClientFullData;
 };

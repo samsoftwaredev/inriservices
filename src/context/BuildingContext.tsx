@@ -19,10 +19,8 @@ interface DeleteConfirmationState {
 
 interface BuildingContextType {
   // State
-  buildingData?: LocationData;
-  setBuildingData: React.Dispatch<
-    React.SetStateAction<LocationData | undefined>
-  >;
+  propertyData?: any;
+  setPropertyData: React.Dispatch<React.SetStateAction<any | undefined>>;
   deleteConfirmation: DeleteConfirmationState;
   setDeleteConfirmation: React.Dispatch<
     React.SetStateAction<DeleteConfirmationState>
@@ -39,7 +37,7 @@ interface BuildingContextType {
     roomDescription: string;
     floorNumber: number;
   }) => void;
-  getAddresses: () => { id: string; address: string }[];
+  getAddresses: () => void;
 }
 
 const BuildingContext = createContext<BuildingContextType | undefined>(
@@ -51,7 +49,7 @@ interface BuildingProviderProps {
 }
 
 export const BuildingProvider = ({ children }: BuildingProviderProps) => {
-  const { buildingData, setBuildingData } = useClient();
+  const { propertyData, setPropertyData } = useClient();
   const [currentBuildingId, setCurrentBuildingId] = useState<
     string | undefined
   >();
@@ -64,22 +62,7 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
       sectionName: null,
     });
 
-  const addNewRoom = () => {
-    const id = uuidv4();
-    const newRoom: RoomOverview = {
-      id,
-      name: `Room ${id.slice(0, 8)}`,
-      description: "New room section",
-      floorNumber: 1,
-    };
-
-    setBuildingData((previousBuildingData) => ({
-      ...previousBuildingData!,
-      rooms: previousBuildingData?.rooms
-        ? [...previousBuildingData.rooms, newRoom]
-        : [newRoom],
-    }));
-  };
+  const addNewRoom = () => {};
 
   const handleDeleteSectionClick = (roomId: string, sectionName: string) => {
     setDeleteConfirmation({
@@ -97,59 +80,21 @@ export const BuildingProvider = ({ children }: BuildingProviderProps) => {
     });
   };
 
-  const handleDeleteConfirm = () => {
-    if (deleteConfirmation.roomId) {
-      const copyBuildingData = { ...buildingData! };
-      copyBuildingData.rooms = copyBuildingData.rooms.filter(
-        (room) => room.id !== deleteConfirmation.roomId
-      );
-      setBuildingData(copyBuildingData);
-      // If no rooms left, reset building data
-      if (copyBuildingData.rooms.length === 0) {
-        setBuildingData(undefined);
-      }
-    }
-    handleDeleteCancel();
-  };
+  const handleDeleteConfirm = () => {};
 
   const onRoomUpdate = (updates: {
     roomId: string;
     roomName: string;
     roomDescription: string;
     floorNumber: number;
-  }) => {
-    setBuildingData((prevData) => {
-      if (!prevData) return prevData;
-      const updatedRooms = prevData.rooms.map((room) =>
-        room.id === updates.roomId
-          ? {
-              ...room,
-              name: updates.roomName,
-              description: updates.roomDescription,
-              floorNumber: updates.floorNumber,
-            }
-          : room
-      );
-      return {
-        ...prevData,
-        rooms: updatedRooms,
-      };
-    });
-  };
+  }) => {};
 
-  const getAddresses = useCallback((): { id: string; address: string }[] => {
-    return (
-      buildingData?.rooms.map((room) => ({
-        id: room.id,
-        address: room.name,
-      })) || []
-    );
-  }, [buildingData]);
+  const getAddresses = () => {};
 
   const value: BuildingContextType = {
     // State
-    buildingData,
-    setBuildingData,
+    propertyData,
+    setPropertyData,
     deleteConfirmation,
     setDeleteConfirmation,
     currentBuildingId,

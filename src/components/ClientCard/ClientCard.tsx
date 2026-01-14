@@ -24,11 +24,11 @@ import {
 } from "@mui/icons-material";
 import { ClientFormData } from "../SearchClient/SearchClient.model";
 import { useClient } from "@/context/ClientContext";
-import { ClientStatus } from "@/types";
+import { ClientFullData, ClientStatus } from "@/types";
 
 interface Props {
-  client: ClientFormData;
-  onClick?: (client: ClientFormData) => void;
+  client: ClientFullData;
+  onClick?: (client: ClientFullData) => void;
   handleMenuClose: () => void;
   handleViewDetails: () => void;
   handleOpenEditForm: () => void;
@@ -129,11 +129,11 @@ const ClientCard = ({
                   fontWeight: "bold",
                 }}
               >
-                {getInitials(client.fullName)}
+                {getInitials(client.displayName)}
               </Avatar>
               <Box sx={{ flexGrow: 1 }}>
                 <Typography variant="h6" fontWeight="bold" gutterBottom>
-                  {client.fullName}
+                  {client.displayName}
                 </Typography>
                 <Chip
                   label={client.status}
@@ -172,7 +172,8 @@ const ClientCard = ({
 
             {/* Address */}
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {client.address}, {client.city}, {client.state} {client.zipCode}
+              {client.properties[0].addressLine1}, {client.properties[0].city},{" "}
+              {client.properties[0].state} {client.properties[0].zip}
             </Typography>
 
             <Divider sx={{ my: 2 }} />
@@ -201,7 +202,7 @@ const ClientCard = ({
                       color="primary.main"
                       fontWeight="bold"
                     >
-                      {client.numberOfProjects}
+                      {/* {client.numberOfProjects} */}0
                     </Typography>
                   </Box>
                   <Typography variant="caption" color="text.secondary">
@@ -224,7 +225,7 @@ const ClientCard = ({
                       color="success.main"
                       fontWeight="bold"
                     >
-                      ${client.totalRevenue.toLocaleString()}
+                      {/* ${client.totalRevenue.toLocaleString()} */}0
                     </Typography>
                   </Box>
                   <Typography variant="caption" color="text.secondary">
@@ -235,11 +236,13 @@ const ClientCard = ({
             </Grid>
 
             {/* Last Project Date */}
-            {client.lastProjectDate && (
+            {client.properties[0].projects.length > 0 && (
               <Box sx={{ mt: 2, textAlign: "center" }}>
                 <Typography variant="caption" color="text.secondary">
                   Last Project:{" "}
-                  {new Date(client.lastProjectDate).toLocaleDateString()}
+                  {new Date(
+                    client.properties[0].projects[0].createdAt
+                  ).toLocaleDateString()}
                 </Typography>
               </Box>
             )}

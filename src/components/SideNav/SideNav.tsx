@@ -27,15 +27,17 @@ import { ClientData } from "@/interfaces/laborTypes";
 import Link from "next/link";
 import { drawerWidth } from "@/constants";
 import { useAuth } from "@/context";
+import { ClientFullData } from "@/types";
 
 interface Props {
   mobileOpen: boolean;
   onDrawerToggle: () => void;
   onNavigation: (path: string) => void;
   onLogoClick: () => void;
-  currentClient?: ClientData;
-  previousClient: ClientData[];
-  onSelectPreviousCustomer: (client: ClientData) => void;
+  currentClient?: ClientFullData;
+  previousClientIds: string[];
+  allClients: ClientFullData[];
+  onSelectClient: (clientId: string) => void;
 }
 
 const navigationItems = [
@@ -77,8 +79,9 @@ const SideNav = ({
   onNavigation,
   onLogoClick,
   currentClient,
-  previousClient,
-  onSelectPreviousCustomer,
+  previousClientIds,
+  allClients,
+  onSelectClient,
 }: Props) => {
   const { logout } = useAuth();
   const drawerContent = (
@@ -169,7 +172,7 @@ const SideNav = ({
             Interior Estimate
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {currentClient.fullName}
+            {currentClient.displayName} • {currentClient.phone}
           </Typography>
         </Box>
       )}
@@ -180,26 +183,30 @@ const SideNav = ({
       >
         Previous Customers
       </Typography>
-      {previousClient.map((client) => (
-        <MenuItem
-          key={client.id}
-          onClick={() => onSelectPreviousCustomer(client)}
-          sx={{ minWidth: 250 }}
-        >
-          <ListItemIcon>
-            <PersonIcon />
-          </ListItemIcon>
-          <Link
-            href={`/interior-estimate/${client.id}`}
-            style={{ textDecoration: "none", color: "inherit" }}
+      {previousClientIds.map((clientId) => {
+        const client = allClients.find((c) => c.id === clientId);
+        if (!client) return null;
+        return (
+          <MenuItem
+            key={client.id}
+            onClick={() => onSelectClient(clientId)}
+            sx={{ minWidth: 250 }}
           >
-            <ListItemText
-              primary={client.fullName}
-              secondary={`${client.contact} • ${client.phone}`}
-            />
-          </Link>
-        </MenuItem>
-      ))}
+            <ListItemIcon>
+              <PersonIcon />
+            </ListItemIcon>
+            <Link
+              href={`/interior-estimate/${client.id}`}
+              style={{ textDecoration: "none", color: "inherit" }}
+            >
+              <ListItemText
+                primary={client.displayName}
+                secondary={`${client.clientType} • ${client.phone}`}
+              />
+            </Link>
+          </MenuItem>
+        );
+      })}
       <Box sx={{ position: "absolute", bottom: 16, width: "100%" }}>
         <MenuItem onClick={logout} sx={{ minWidth: 250 }}>
           <ListItemIcon>

@@ -7,26 +7,20 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-import { ClientData, LocationData } from "@/interfaces/laborTypes";
-import { uuidv4 } from "@/tools";
 import { usePathname } from "next/navigation";
 import { clientApi, propertyApi } from "@/services";
 import { toast } from "react-toastify";
 import { ClientFormData } from "@/components/SearchClient/SearchClient.model";
+import { ClientFullData, PropertyTransformed } from "@/types";
+import { transformedClientFullData } from "@/tools/transformers";
 
 interface ClientContextType {
   // State
-  previousClient: ClientData[];
-  setPreviousClient: React.Dispatch<React.SetStateAction<ClientData[]>>;
-  currentClient?: ClientData;
-  setCurrentClient: React.Dispatch<
-    React.SetStateAction<ClientData | undefined>
-  >;
-
+  previousClientIds: string[];
+  allClients: ClientFullData[];
+  currentClient?: ClientFullData;
   // Handlers
-  handleSelectPreviousClient: (customer: ClientData) => void;
-  handleSaveNewClient: (newCustomerData: Omit<ClientData, "id">) => void;
-  handleClientUpdate: (updatedCustomer: ClientData) => void;
+  handleSelectClient: (clientId: string) => void;
   handleCreateNewClient: (
     data: ClientFormData,
     companyId: string
@@ -36,9 +30,9 @@ interface ClientContextType {
     companyId: string
   ) => Promise<void>;
 
-  buildingData?: LocationData;
-  setBuildingData: React.Dispatch<
-    React.SetStateAction<LocationData | undefined>
+  propertyData?: PropertyTransformed;
+  setPropertyData: React.Dispatch<
+    React.SetStateAction<PropertyTransformed | undefined>
   >;
 }
 
@@ -50,9 +44,14 @@ const ClientContext = createContext<ClientContextType | undefined>(undefined);
 
 export const ClientProvider = ({ children }: ClientProviderProps) => {
   const pathname = usePathname();
-  const [previousClient, setPreviousClient] = useState<ClientData[]>([]);
-  const [currentClient, setCurrentClient] = useState<ClientData | undefined>();
-  const [buildingData, setBuildingData] = useState<LocationData | undefined>();
+  const [previousClientIds, setPreviousClientIds] = useState<string[]>([]);
+  const [allClients, setAllClients] = useState<ClientFullData[]>([]);
+  const [currentClient, setCurrentClient] = useState<
+    ClientFullData | undefined
+  >();
+  const [propertyData, setPropertyData] = useState<
+    PropertyTransformed | undefined
+  >();
 
   const handleCreateNewClient = async (
     data: ClientFormData,
@@ -119,28 +118,14 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
     }
   };
 
-  const handleSelectPreviousClient = (client: ClientData) => {
-    updateLocalStorage(client.id);
-  };
-
-  const handleSaveNewClient = (newCustomerData: Omit<ClientData, "id">) => {
-    const newCustomer: ClientData = {
-      ...newCustomerData,
-      id: uuidv4(),
-    };
-
-    setCurrentClient(newCustomer);
-    updateLocalStorage(newCustomer.id);
-    setPreviousClient((prev) => [...prev, newCustomer]);
-  };
-
-  const handleClientUpdate = (updatedClient: ClientData) => {
-    setCurrentClient(updatedClient);
-    setPreviousClient((prev) =>
-      prev.map((client) =>
-        client.id === updatedClient.id ? updatedClient : client
-      )
-    );
+  const handleSelectClient = (clientId: string) => {
+    const client = allClients.find((client) => client.id === clientId);
+    if (client) {
+      setCurrentClient(client);
+      updateLocalStorage(client.id);
+      setPropertyData(client.properties[0]);
+    }
+    setPreviousClientIds((prevIds) => [clientId, ...prevIds]);
   };
 
   function getCustomerIdURL(url: string): string | undefined {
@@ -150,13 +135,25 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
   }
 
   const getCustomerById = (clientId?: string) => {
-    const client = previousClient.find((client) => client.id === clientId);
+    const client = allClients.find((client) => client.id === clientId);
     if (client) {
       setCurrentClient(client);
       updateLocalStorage(client.id);
-      setBuildingData(client.buildings[0]);
+      setPropertyData(client.properties[0]);
     }
   };
+
+  const getClients = async () => {
+    const clientRes = await clientApi.listClientsWithAddresses();
+    const transformed = clientRes.items.map((client) =>
+      transformedClientFullData(client)
+    );
+    setAllClients(transformed);
+  };
+
+  useEffect(() => {
+    getClients();
+  }, []);
 
   useEffect(() => {
     const clientId = getCustomerIdURL(window.location.href);
@@ -165,20 +162,16 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
 
   const value: ClientContextType = {
     // State
-    previousClient,
-    setPreviousClient,
+    previousClientIds,
+    allClients,
     currentClient,
-    setCurrentClient,
-
     // Handlers
-    handleSelectPreviousClient,
-    handleSaveNewClient,
-    handleClientUpdate,
+    handleSelectClient,
     handleCreateNewClient,
     handleCreateNewProperty,
 
-    buildingData,
-    setBuildingData,
+    propertyData,
+    setPropertyData,
   };
 
   return (
