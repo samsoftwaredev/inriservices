@@ -24,8 +24,6 @@ const Footer = () => {
     { text: "About", href: "/about" },
     { text: "Contact Us", href: "/contact" },
     { text: "FAQs", href: "/frequently-asked-questions" },
-    { text: "Interior Estimate", href: "/interior-checklist" },
-    { text: "Exterior Estimate", href: "/exterior-checklist" },
     { text: "Our Services", href: "/service" },
     { text: "Our Work", href: "/our-work" },
     { text: "Reviews", href: "/reviews" },

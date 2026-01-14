@@ -3,9 +3,10 @@
 import React, { useEffect } from "react";
 
 import AppLayout from "@/components/AppLayout";
-import { ProtectedRoute } from "@/components";
+import { GeneralEstimate, ProtectedRoute } from "@/components";
 import { useRouter } from "next/navigation";
 import { ProjectTransformed } from "@/types";
+import { ProjectCostProvider } from "@/context/ProjectCostContext";
 
 interface Props {
   params: Promise<{
@@ -29,7 +30,9 @@ const Estimates = ({ params }: Props) => {
   return (
     <ProtectedRoute>
       <AppLayout>
-        <h1>Estimate Project ID: {projectId}</h1>
+        <ProjectCostProvider>
+          <GeneralEstimate />
+        </ProjectCostProvider>
       </AppLayout>
     </ProtectedRoute>
   );

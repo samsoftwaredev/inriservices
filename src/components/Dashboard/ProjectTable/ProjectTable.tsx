@@ -128,7 +128,13 @@ const ProjectTable = ({ workHistory, onRefreshTable }: Props) => {
       (work) => work.id === selectedWorkId
     );
     if (projectToView) {
-      router.push(`/dashboard/${projectToView.id}?edit=true`);
+      if (projectToView.projectType === "interior_paint") {
+        router.push(`/estimates/interior/${projectToView.id}?edit=true`);
+      } else if (projectToView.projectType === "exterior_paint") {
+        router.push(`/estimates/exterior/${projectToView.id}?edit=true`);
+      } else {
+        router.push(`/estimates/general/${projectToView.id}?edit=true`);
+      }
     }
     handleMenuClose();
   };
@@ -197,7 +203,7 @@ const ProjectTable = ({ workHistory, onRefreshTable }: Props) => {
                 </TableCell>
                 <TableCell align="right">
                   <Typography variant="body2" fontWeight="medium">
-                    ${work.totalCost.toLocaleString()}
+                    ${(work.totalCostCents / 100).toLocaleString()}
                   </Typography>
                 </TableCell>
                 <TableCell align="center">

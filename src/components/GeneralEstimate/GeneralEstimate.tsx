@@ -47,6 +47,13 @@ const GeneralEstimate = () => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [projectId, setProjectId] = useState("");
   const [rooms, setRooms] = useState<PropertyRoomTransformed[]>([]);
+  const initialCosts = {
+    laborCost: 300,
+    materialCost: 120,
+    companyFee: 200,
+    companyProfit: 50,
+    total: 680,
+  };
 
   const updateLocalStorageEstimate = ({
     ...updates
@@ -99,7 +106,7 @@ const GeneralEstimate = () => {
       markup_bps: 0,
       material_cost_cents: 0,
       name: `General Estimate for ${currentClient?.displayName}`,
-      project_type: "interior_paint",
+      project_type: "other",
       scope_notes: null,
       start_date: new Date().toISOString(),
       status: "draft",
@@ -436,7 +443,11 @@ const GeneralEstimate = () => {
           </Button>
         </Box>
 
-        <EstimateSummary rooms={rooms} onCostsChange={() => {}} />
+        <EstimateSummary
+          rooms={rooms}
+          onCostsChange={() => {}}
+          initialCosts={initialCosts}
+        />
 
         <Box sx={{ mb: 3 }} display="flex" justifyContent="center">
           {/* Invoice Generator Demo */}

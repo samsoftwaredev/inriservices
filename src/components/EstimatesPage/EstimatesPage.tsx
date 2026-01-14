@@ -28,11 +28,11 @@ const EstimatesPage = () => {
 
   const handleContinue = (id: EstimationType) => {
     if (id === "interior") {
-      router.push("/interior-estimate");
+      router.push("/estimates/interior");
     } else if (id === "exterior") {
-      router.push("/exterior-estimate");
+      router.push("/estimates/exterior");
     } else if (id === "general") {
-      router.push("/general-estimate");
+      router.push("/estimates/general");
     }
   };
 

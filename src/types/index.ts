@@ -89,7 +89,7 @@ export interface WorkHistoryItem {
   address: string;
   city: string;
   state: string;
-  totalCost: number;
+  totalCostCents: number;
   numberOfRooms: number;
   date: string;
   status: ProjectStatus;

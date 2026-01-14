@@ -117,7 +117,7 @@ const DashboardPage = () => {
       const uniqueCustomers = new Set(projects.map((p) => p.customerName)).size;
 
       const totalEarned = completedProjects.reduce(
-        (sum, p) => sum + p.totalCost,
+        (sum, p) => sum + p.totalCostCents / 100,
         0
       );
       const averageSpent =
@@ -226,7 +226,7 @@ const DashboardPage = () => {
         address: project.property.address_line1,
         city: project.property.city,
         state: project.property.state,
-        totalCost:
+        totalCostCents:
           project.labor_cost_cents +
           project.material_cost_cents +
           project.tax_amount_cents,
