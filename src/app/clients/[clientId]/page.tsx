@@ -8,12 +8,7 @@ import { ClientProfile } from "@/components/ClientProfile";
 import { useRouter } from "next/navigation";
 import { clientApi } from "@/services";
 import { ClientFullData } from "@/types";
-import {
-  allProjectTransformer,
-  allPropertyTransformer,
-  clientTransformer,
-  transformedClientFullData,
-} from "@/tools/transformers";
+import { transformedClientFullData } from "@/tools/transformers";
 
 interface Props {
   params: Promise<{
@@ -56,6 +51,10 @@ const ClientIdPage = ({ params }: Props) => {
     }
   }, [clientId, onInit]);
 
+  const onNewProject = () => {
+    router.push(`/estimates`);
+  };
+
   return (
     <ProtectedRoute>
       <AppLayout>
@@ -64,7 +63,7 @@ const ClientIdPage = ({ params }: Props) => {
             <h1>Loading Client...</h1>
           </div>
         ) : (
-          <ClientProfile client={client} />
+          <ClientProfile client={client} onNewProject={onNewProject} />
         )}
       </AppLayout>
     </ProtectedRoute>

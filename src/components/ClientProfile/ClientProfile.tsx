@@ -24,6 +24,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import MapIcon from "@mui/icons-material/Map";
 import { ClientFullData } from "@/types";
+import { formatPhoneNumber } from "@/tools";
 
 type StatCardProps = {
   label: string;
@@ -110,28 +111,18 @@ function InfoRow({
 
 interface ClientProfileProps {
   client: ClientFullData;
-
-  /** Optional callbacks for modal-like behavior */
-  onClose?: () => void;
   onNewProject?: () => void;
-
-  /** Optional: if you already have project history items */
-  projectHistory?: Array<{
-    id: string;
-    name: string;
-    status: string;
-    endDate?: string | null;
-    invoiceTotal?: number | null;
-  }>;
 }
 
-const ClientProfile = ({
-  client,
-  onClose,
-  onNewProject,
-  projectHistory,
-}: ClientProfileProps) => {
+const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
   const [copySuccess, setCopySuccess] = React.useState<string | null>(null);
+  const projectHistory = client.properties
+    .flatMap((property) => property.projects || [])
+    .sort((a, b) => {
+      const dateA = a.endDate ? new Date(a.endDate).getTime() : 0;
+      const dateB = b.endDate ? new Date(b.endDate).getTime() : 0;
+      return dateB - dateA;
+    });
 
   const hasProjects = (projectHistory?.length ?? 0) > 0;
 
@@ -150,11 +141,12 @@ const ClientProfile = ({
       ) ?? 0),
     0
   );
-  const properties = client.properties[0];
 
-  const addressLine = `${properties.addressLine1}${
-    properties.addressLine2 ? `, ${properties.addressLine2}` : ""
-  }, ${properties.city}, ${properties.state} ${properties.zip}`;
+  const property = client.properties[0];
+
+  const addressLine = `${property.addressLine1}${
+    property.addressLine2 ? `, ${property.addressLine2}` : ""
+  }, ${property.city}, ${property.state} ${property.zip}`;
 
   const copyToClipboard = async (text: string, label: string) => {
     try {
@@ -236,7 +228,7 @@ const ClientProfile = ({
               icon={<PhoneOutlinedIcon fontSize="small" />}
               onCopy={() => copyToClipboard(client.phone, "Phone")}
             >
-              {client.phone}
+              {formatPhoneNumber(client.phone)}
             </InfoRow>
             <InfoRow
               icon={<LocationOnOutlinedIcon fontSize="small" />}
@@ -263,15 +255,6 @@ const ClientProfile = ({
             </InfoRow>
           </Stack>
         </Box>
-
-        <IconButton
-          onClick={onClose}
-          size="small"
-          aria-label="Close"
-          sx={{ mt: 0.25 }}
-        >
-          <CloseIcon fontSize="small" />
-        </IconButton>
       </Box>
 
       {/* Notes */}
@@ -448,8 +431,8 @@ const ClientProfile = ({
                 </Box>
 
                 <Typography sx={{ fontWeight: 800 }}>
-                  {typeof p.invoiceTotal === "number"
-                    ? `$${p.invoiceTotal.toLocaleString()}`
+                  {typeof p.invoiceTotalCents === "number"
+                    ? `$${(p.invoiceTotalCents / 100).toLocaleString()}`
                     : ""}
                 </Typography>
               </Paper>

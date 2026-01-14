@@ -1,12 +1,9 @@
-import * as React from "react";
+import React, { useState } from "react";
 import {
   AppBar,
   Avatar,
-  Badge,
   Box,
   Button,
-  Card,
-  CardContent,
   Chip,
   CircularProgress,
   Container,
@@ -1676,9 +1673,9 @@ function ScanReceiptScreen(props: {
   onConfirmAdd: (draft: ReceiptDraft) => void;
   defaultSystem: BudgetSystem;
 }) {
-  const [extracting, setExtracting] = React.useState(false);
-  const [draft, setDraft] = React.useState<ReceiptDraft | null>(null);
-  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const [extracting, setExtracting] = useState(false);
+  const [draft, setDraft] = useState<ReceiptDraft | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const { control, handleSubmit, watch, reset, formState } =
     useForm<ReceiptForm>({
