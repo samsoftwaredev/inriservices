@@ -37,6 +37,14 @@ import { PropertyRoomTransformed } from "@/types";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
+const initialCosts = {
+  laborCost: 300,
+  materialCost: 120,
+  companyFee: 200,
+  companyProfit: 84,
+  total: 704,
+};
+
 const GeneralEstimate = () => {
   const router = useRouter();
   const { userData } = useAuth();
@@ -47,13 +55,6 @@ const GeneralEstimate = () => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [projectId, setProjectId] = useState("");
   const [rooms, setRooms] = useState<PropertyRoomTransformed[]>([]);
-  const initialCosts = {
-    laborCost: 300,
-    materialCost: 120,
-    companyFee: 200,
-    companyProfit: 50,
-    total: 680,
-  };
 
   const updateLocalStorageEstimate = ({
     ...updates
@@ -449,22 +450,32 @@ const GeneralEstimate = () => {
           initialCosts={initialCosts}
         />
 
-        <Box sx={{ mb: 3 }} display="flex" justifyContent="center">
+        <Box
+          sx={{ mb: 3 }}
+          display="flex"
+          justifyContent="center"
+          flexDirection={{ xs: "column", md: "row" }}
+        >
           {/* Invoice Generator Demo */}
           <InvoiceGenerator
             invoiceData={invoiceData}
             buttonText="Download Invoice PDF"
             variant="outlined"
           />
-          <Button
-            variant="text"
-            color="error"
-            startIcon={<Delete />}
-            onClick={handleDeleteClick}
-            disabled={!projectId}
-          >
-            Delete Estimate
-          </Button>
+          <Box>
+            <Button
+              variant="text"
+              color="error"
+              sx={{
+                width: { md: 200, xs: "100%" },
+              }}
+              startIcon={<Delete />}
+              onClick={handleDeleteClick}
+              disabled={!projectId}
+            >
+              Delete Estimate
+            </Button>
+          </Box>
         </Box>
       </Box>
 
