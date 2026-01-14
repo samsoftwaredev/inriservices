@@ -9,8 +9,20 @@ export const uuidv4 = () => {
   );
 };
 
-export function assertOk<T>(res: { data: T | null; error: PostgrestError | null }, msg?: string): T {
+export function assertOk<T>(
+  res: { data: T | null; error: PostgrestError | null },
+  msg?: string
+): T {
   if (res.error) throw res.error;
   if (res.data == null) throw new Error(msg ?? "No data returned");
   return res.data;
+}
+
+export function formatPhoneNumber(phoneNumberString: string): string {
+  const cleaned = ("" + phoneNumberString).replace(/\D/g, "");
+  const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+  if (match) {
+    return "(" + match[1] + ") " + match[2] + "-" + match[3];
+  }
+  return phoneNumberString;
 }

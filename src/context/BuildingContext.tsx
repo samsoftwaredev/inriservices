@@ -1,15 +1,7 @@
 "use client";
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  ReactNode,
-  useCallback,
-} from "react";
-import { LocationData, RoomOverview } from "@/interfaces/laborTypes";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 import { useClient } from "./ClientContext";
-import { uuidv4 } from "@/tools";
 
 interface DeleteConfirmationState {
   open: boolean;

@@ -125,7 +125,12 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
       updateLocalStorage(client.id);
       setPropertyData(client.properties[0]);
     }
-    setPreviousClientIds((prevIds) => [clientId, ...prevIds]);
+    setPreviousClientIds((prevIds) => {
+      const filtered = prevIds.filter((id) => id !== clientId);
+      // max 5 previous clients
+      if (filtered.length >= 5) filtered.pop();
+      return [clientId, ...filtered];
+    });
   };
 
   function getCustomerIdURL(url: string): string | undefined {

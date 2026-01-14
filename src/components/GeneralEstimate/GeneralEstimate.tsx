@@ -34,11 +34,13 @@ import RoomFeatureForm from "../ProInteriorEstimate/RoomFeatureForm";
 import { ImageFile } from "../ImageUpload/ImageUpload.model";
 import EstimateSummary from "./EstimateSummary";
 import { PropertyRoomTransformed } from "@/types";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const GeneralEstimate = () => {
+  const router = useRouter();
   const { userData } = useAuth();
   const { currentClient, handleCreateNewClient } = useClient();
-  const [error, setError] = useState("");
   const [isOpenSearchClientDialog, setIsOpenSearchClientDialog] =
     useState(false);
   const [isOpenNewClientDialog, setIsOpenNewClientDialog] = useState(false);
@@ -171,10 +173,11 @@ const GeneralEstimate = () => {
       setProjectId("");
       removeLocalStorageEstimate();
       setDeleteConfirmOpen(false);
+      router.push("/estimates");
       // Optionally redirect or show success message
     } catch (error) {
       console.error("Error deleting project:", error);
-      setError("Failed to delete estimate. Please try again.");
+      toast.error("Failed to delete estimate");
     }
   };
 

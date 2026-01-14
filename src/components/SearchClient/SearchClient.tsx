@@ -25,10 +25,10 @@ import { ClientFormData } from "./SearchClient.model";
 import { ClientFullData } from "@/types";
 
 interface Props {
-  onViewClientProfile: (clientId: string) => void;
+  onClientSelected: (clientId: string) => void;
 }
 
-const SearchClient = ({ onViewClientProfile }: Props) => {
+const SearchClient = ({ onClientSelected }: Props) => {
   const {
     currentClient,
     handleSelectClient,
@@ -72,7 +72,7 @@ const SearchClient = ({ onViewClientProfile }: Props) => {
   );
 
   const onClientClick = (client: ClientFullData) => {
-    onViewClientProfile(client.id);
+    onClientSelected(client.id);
     handleSelectClient(client.id);
   };
 

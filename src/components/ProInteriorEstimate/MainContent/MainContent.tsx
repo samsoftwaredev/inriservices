@@ -87,11 +87,11 @@ const MainContent = () => {
 
       <Divider sx={{ mb: 2 }} />
 
-      {propertyData === undefined || propertyData.rooms.length === 0 ? (
+      {/* {propertyData === undefined || propertyData.rooms.length === 0 ? (
         <Typography variant="body2" color="text.secondary">
           No rooms added yet.
         </Typography>
-      ) : null}
+      ) : null} */}
 
       {/* {propertyData?.rooms.map((room) => (
         <Box key={room.id} sx={{ mb: 2, position: "relative" }}>

@@ -176,7 +176,7 @@ const ClientsPage = () => {
         </Box>
       )}
 
-      <SearchClient onViewClientProfile={handleViewClientProfile} />
+      <SearchClient onClientSelected={handleViewClientProfile} />
 
       {/* Edit Client Dialog */}
       {currentClient && (

@@ -28,6 +28,7 @@ import Link from "next/link";
 import { drawerWidth } from "@/constants";
 import { useAuth } from "@/context";
 import { ClientFullData } from "@/types";
+import { formatPhoneNumber } from "@/tools";
 
 interface Props {
   mobileOpen: boolean;
@@ -196,12 +197,14 @@ const SideNav = ({
               <PersonIcon />
             </ListItemIcon>
             <Link
-              href={`/interior-estimate/${client.id}`}
+              href={`/clients/${client.id}`}
               style={{ textDecoration: "none", color: "inherit" }}
             >
               <ListItemText
                 primary={client.displayName}
-                secondary={`${client.clientType} • ${client.phone}`}
+                secondary={`${client.clientType} • ${formatPhoneNumber(
+                  client.phone
+                )}`}
               />
             </Link>
           </MenuItem>
