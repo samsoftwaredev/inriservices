@@ -32,6 +32,10 @@ import { WorkHistoryItem } from "@/types";
 import { projectApi } from "@/services";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import {
+  translateProjectStatus,
+  translateProjectType,
+} from "@/tools/transformers";
 
 interface Props {
   workHistory: WorkHistoryItem[];
@@ -61,31 +65,20 @@ const ProjectTable = ({ workHistory, onRefreshTable }: Props) => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
+      case "draft":
+        return "primary";
+      case "scheduled":
+        return "info";
+      case "in_progress":
+        return "warning";
+      case "on_hold":
+        return "error";
       case "completed":
         return "success";
-      case "in_progress":
-        return "primary";
-      case "pending_signature":
-        return "warning";
-      case "document_sent":
-        return "info";
+      case "canceled":
+        return "error";
       default:
         return "default";
-    }
-  };
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "completed":
-        return "Completed";
-      case "in_progress":
-        return "In Progress";
-      case "pending_signature":
-        return "Pending Signature";
-      case "document_sent":
-        return "Document Sent";
-      default:
-        return status;
     }
   };
 
@@ -192,7 +185,7 @@ const ProjectTable = ({ workHistory, onRefreshTable }: Props) => {
                 </TableCell>
                 <TableCell align="center">
                   <Chip
-                    label={work.projectType}
+                    label={translateProjectType(work.projectType)}
                     size="small"
                     color={
                       work.projectType === "interior_paint"
@@ -214,7 +207,7 @@ const ProjectTable = ({ workHistory, onRefreshTable }: Props) => {
                 </TableCell>
                 <TableCell align="center">
                   <Chip
-                    label={getStatusLabel(work.status)}
+                    label={translateProjectStatus(work.status)}
                     size="small"
                     color={getStatusColor(work.status) as any}
                     variant="filled"

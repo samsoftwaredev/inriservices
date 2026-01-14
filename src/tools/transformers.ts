@@ -15,6 +15,46 @@ import {
   PropertyTransformed,
 } from "@/types";
 
+export const translateProjectStatus = (status: string): string => {
+  switch (status) {
+    case "draft":
+      return "Draft";
+    case "scheduled":
+      return "Scheduled";
+    case "in_progress":
+      return "In Progress";
+    case "on_hold":
+      return "On Hold";
+    case "completed":
+      return "Completed";
+    case "canceled":
+      return "Canceled";
+    default:
+      return status;
+  }
+};
+
+export const translateProjectType = (type: string): string => {
+  switch (type) {
+    case "interior_paint":
+      return "Interior Paint";
+    case "exterior_paint":
+      return "Exterior Paint";
+    case "drywall_repair":
+      return "Drywall Repair";
+    case "trim_paint":
+      return "Trim Paint";
+    case "cabinet_paint":
+      return "Cabinet Paint";
+    case "wallpaper":
+      return "Wallpaper";
+    case "other":
+      return "Other";
+    default:
+      return type;
+  }
+};
+
 const transformSingleClient = (client: Client): ClientTransformed => ({
   id: client.id,
   displayName: client.display_name,

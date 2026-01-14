@@ -418,7 +418,7 @@ const DashboardPage = () => {
 
           <ProjectProgress
             jobsCompleted={stats.jobsCompleted}
-            goalProjectCompleted={4}
+            goalProjectCompleted={goalProjectCompleted}
           />
         </CardContent>
       </Card>
