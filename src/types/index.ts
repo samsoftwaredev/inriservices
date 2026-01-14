@@ -186,10 +186,10 @@ export type ProjectTransformed = {
   markupBps: number;
   taxRateBps: number;
   taxAmountCents: number;
-  laborHoursEstimated: number | null;
+  laborHoursEstimated: number;
   createdAt: string;
   updatedAt: string;
-  invoiceTotalCents: number | null;
+  invoiceTotalCents: number;
 };
 
 export type ProfileTransformed = {
@@ -212,3 +212,18 @@ export type CompanyTransformed = {
 export type ClientFullData = ClientTransformed & {
   properties: Array<PropertyTransformed & { projects: ProjectTransformed[] }>;
 };
+
+export interface ProjectCost {
+  laborCost: number;
+  materialCost: number;
+  companyFee: number;
+  taxes: number;
+  companyProfit: number;
+  total: number;
+}
+
+export interface ProjectFormData {
+  name: string;
+  startDate: Date | null;
+  endDate: Date | null;
+}

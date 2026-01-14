@@ -8,7 +8,7 @@ import { ClientProfile } from "@/components/ClientProfile";
 import { useRouter } from "next/navigation";
 import { clientApi } from "@/services";
 import { ClientFullData } from "@/types";
-import { transformedClientFullData } from "@/tools/transformers";
+import { clientFullDataTransformer } from "@/tools/transformers";
 
 interface Props {
   params: Promise<{
@@ -34,7 +34,7 @@ const ClientIdPage = ({ params }: Props) => {
       setIsLoading(true);
       try {
         const clientData = await clientApi.getClient(id);
-        setClient(transformedClientFullData(clientData));
+        setClient(clientFullDataTransformer(clientData));
       } catch (error) {
         console.error("Error fetching client data:", error);
         router.push("/clients");

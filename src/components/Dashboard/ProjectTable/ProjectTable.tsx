@@ -33,8 +33,8 @@ import { projectApi } from "@/services";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import {
-  translateProjectStatus,
-  translateProjectType,
+  projectStatusTransformer,
+  projectTypeTransformer,
 } from "@/tools/transformers";
 
 interface Props {
@@ -191,7 +191,7 @@ const ProjectTable = ({ workHistory, onRefreshTable }: Props) => {
                 </TableCell>
                 <TableCell align="center">
                   <Chip
-                    label={translateProjectType(work.projectType)}
+                    label={projectTypeTransformer(work.projectType)}
                     size="small"
                     color={
                       work.projectType === "interior_paint"
@@ -213,7 +213,7 @@ const ProjectTable = ({ workHistory, onRefreshTable }: Props) => {
                 </TableCell>
                 <TableCell align="center">
                   <Chip
-                    label={translateProjectStatus(work.status)}
+                    label={projectStatusTransformer(work.status)}
                     size="small"
                     color={getStatusColor(work.status) as any}
                     variant="filled"

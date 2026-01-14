@@ -4,8 +4,6 @@ import React, { useEffect } from "react";
 
 import AppLayout from "@/components/AppLayout";
 import { GeneralEstimate, ProtectedRoute } from "@/components";
-import { useRouter } from "next/navigation";
-import { ProjectTransformed } from "@/types";
 import { ProjectCostProvider } from "@/context/ProjectCostContext";
 
 interface Props {
@@ -15,10 +13,7 @@ interface Props {
 }
 
 const Estimates = ({ params }: Props) => {
-  const router = useRouter();
   const [projectId, setProjectId] = React.useState<string | null>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [project, setProject] = React.useState<null | ProjectTransformed>(null);
 
   // Resolve params first
   useEffect(() => {
@@ -31,7 +26,7 @@ const Estimates = ({ params }: Props) => {
     <ProtectedRoute>
       <AppLayout>
         <ProjectCostProvider>
-          <GeneralEstimate />
+          <GeneralEstimate paramsProjectId={projectId ?? undefined} />
         </ProjectCostProvider>
       </AppLayout>
     </ProtectedRoute>

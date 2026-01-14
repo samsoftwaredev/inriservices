@@ -8,14 +8,16 @@ import {
   Profile,
   ProfileTransformed,
   Project,
+  ProjectStatus,
   ProjectTransformed,
+  ProjectType,
   Property,
   PropertyRoom,
   PropertyRoomTransformed,
   PropertyTransformed,
 } from "@/types";
 
-export const translateProjectStatus = (status: string): string => {
+export const projectStatusTransformer = (status: string): string => {
   switch (status) {
     case "draft":
       return "Draft";
@@ -34,7 +36,7 @@ export const translateProjectStatus = (status: string): string => {
   }
 };
 
-export const translateProjectType = (type: string): string => {
+export const projectTypeTransformer = (type: string): string => {
   switch (type) {
     case "interior_paint":
       return "Interior Paint";
@@ -75,6 +77,30 @@ export const clientTransformer = (res: Client): ClientTransformed => {
   return transformSingleClient(res);
 };
 
+export const reversedProjectTransformer = (
+  project: ProjectTransformed
+): Project => ({
+  id: project.id,
+  company_id: project.companyId,
+  client_id: project.clientId,
+  property_id: project.propertyId,
+  name: project.name,
+  project_type: project.projectType as ProjectType,
+  status: project.status as ProjectStatus,
+  start_date: project.startDate,
+  end_date: project.endDate,
+  scope_notes: project.scopeNotes,
+  material_cost_cents: project.materialCostCents,
+  labor_cost_cents: project.laborCostCents,
+  markup_bps: project.markupBps,
+  tax_rate_bps: project.taxRateBps,
+  tax_amount_cents: project.taxAmountCents,
+  labor_hours_estimated: project.laborHoursEstimated,
+  created_at: new Date(project.createdAt).toISOString(),
+  updated_at: new Date(project.updatedAt).toISOString(),
+  invoice_total_cents: project.invoiceTotalCents,
+});
+
 const transformSingleProject = (project: Project): ProjectTransformed => ({
   id: project.id,
   companyId: project.company_id,
@@ -91,10 +117,10 @@ const transformSingleProject = (project: Project): ProjectTransformed => ({
   markupBps: project.markup_bps,
   taxRateBps: project.tax_rate_bps,
   taxAmountCents: project.tax_amount_cents,
-  laborHoursEstimated: project.labor_hours_estimated,
+  laborHoursEstimated: project.labor_hours_estimated || 0,
   createdAt: new Date(project.created_at).toISOString(),
   updatedAt: new Date(project.updated_at).toISOString(),
-  invoiceTotalCents: project.invoice_total_cents,
+  invoiceTotalCents: project.invoice_total_cents || 0,
 });
 
 export const projectTransformer = (res: Project): ProjectTransformed => {
@@ -189,7 +215,7 @@ export const allPropertyTransformer = (
   return res.map(transformSingleProperty);
 };
 
-export const transformedClientFullData = (
+export const clientFullDataTransformer = (
   clientData: ClientWithRelations
 ): ClientFullData => {
   const transformed = {

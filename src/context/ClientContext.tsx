@@ -12,7 +12,7 @@ import { clientApi, propertyApi } from "@/services";
 import { toast } from "react-toastify";
 import { ClientFormData } from "@/components/SearchClient/SearchClient.model";
 import { ClientFullData, PropertyTransformed } from "@/types";
-import { transformedClientFullData } from "@/tools/transformers";
+import { clientFullDataTransformer } from "@/tools/transformers";
 
 interface ClientContextType {
   // State
@@ -151,7 +151,7 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
   const getClients = async () => {
     const clientRes = await clientApi.listClientsWithAddresses();
     const transformed = clientRes.items.map((client) =>
-      transformedClientFullData(client)
+      clientFullDataTransformer(client)
     );
     setAllClients(transformed);
   };

@@ -1,3 +1,4 @@
+import { PROFIT_MARGIN, TAX_RATE } from "@/constants";
 import type { PostgrestError } from "@supabase/supabase-js";
 
 export const uuidv4 = () => {
@@ -26,3 +27,11 @@ export function formatPhoneNumber(phoneNumberString: string): string {
   }
   return phoneNumberString;
 }
+
+export const calculateTaxes = (subtotal: number) => {
+  return Math.round(subtotal * TAX_RATE);
+};
+
+export const calculateProfits = (labor: number, material: number) => {
+  return Math.round((labor + material) * PROFIT_MARGIN);
+};

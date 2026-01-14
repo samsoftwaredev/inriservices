@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Paper,
@@ -16,54 +16,29 @@ import {
   Save as SaveIcon,
   Cancel as CancelIcon,
 } from "@mui/icons-material";
-import { PropertyRoomTransformed } from "@/types";
-
-interface EstimateCosts {
-  laborCost: number;
-  materialCost: number;
-  companyFee: number;
-  companyProfit: number;
-  total: number;
-}
+import { ProjectCost, PropertyRoomTransformed } from "@/types";
+import { PROFIT_MARGIN } from "@/constants";
+import { calculateProfits, calculateTaxes, formatCurrency } from "@/tools";
 
 interface Props {
   rooms: PropertyRoomTransformed[];
-  onCostsChange?: (costs: EstimateCosts) => void;
-  initialCosts?: Partial<EstimateCosts>;
+  onCostsChange?: (costs: ProjectCost) => void;
+  initialCosts: ProjectCost;
 }
 
 const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [costs, setCosts] = useState<EstimateCosts>(() => {
-    // Calculate initial estimates based on room count
-    const baseEstimate = rooms.length * 450 + (rooms.length - 1) * 50;
-    const defaultLaborCost = Math.round(baseEstimate * 0.4);
-    const defaultMaterialCost = Math.round(baseEstimate * 0.3);
-    const defaultCompanyFee = Math.round(baseEstimate * 0.15);
-    const defaultCompanyProfit = Math.round(
-      (defaultLaborCost + defaultMaterialCost) * 0.2
-    );
-
+  const [costs, setCosts] = useState<ProjectCost>(() => {
     return {
-      laborCost: initialCosts?.laborCost ?? defaultLaborCost,
-      materialCost: initialCosts?.materialCost ?? defaultMaterialCost,
-      companyFee: initialCosts?.companyFee ?? defaultCompanyFee,
-      companyProfit: initialCosts?.companyProfit ?? defaultCompanyProfit,
-      total: initialCosts?.total ?? baseEstimate,
+      laborCost: initialCosts.laborCost,
+      materialCost: initialCosts.materialCost,
+      companyFee: initialCosts.companyFee,
+      companyProfit: initialCosts.companyProfit,
+      taxes: initialCosts.taxes, // 8% tax
+      total: initialCosts.total, // Including 8% tax
     };
   });
-
   const [tempCosts, setTempCosts] = useState(costs);
-
-  // Calculate and update total whenever costs change
-  const updateTotal = useCallback(() => {
-    const newTotal = costs.laborCost + costs.materialCost + costs.companyFee;
-    if (newTotal !== costs.total) {
-      const updatedCosts = { ...costs, total: newTotal };
-      setCosts(updatedCosts);
-      onCostsChange?.(updatedCosts);
-    }
-  }, [costs, onCostsChange]);
 
   const handleEdit = () => {
     setTempCosts(costs);
@@ -72,15 +47,30 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
 
   const handleSave = () => {
     // Calculate company profit as 20% of labor + material costs
-    const companyProfit = Math.round(
-      (tempCosts.laborCost + tempCosts.materialCost) * 0.2
+    const companyProfit = calculateProfits(
+      tempCosts.laborCost,
+      tempCosts.materialCost
     );
-    const newTotal =
+
+    // Calculate subtotal
+    const subtotal =
       tempCosts.laborCost +
       tempCosts.materialCost +
       tempCosts.companyFee +
       companyProfit;
-    const updatedCosts = { ...tempCosts, companyProfit, total: newTotal };
+
+    // Calculate taxes as 8% of subtotal
+    const taxes = calculateTaxes(subtotal);
+
+    // Calculate final total including taxes
+    const newTotal = subtotal + taxes;
+
+    const updatedCosts = {
+      ...tempCosts,
+      companyProfit,
+      taxes,
+      total: newTotal,
+    };
     setCosts(updatedCosts);
     onCostsChange?.(updatedCosts);
     setIsEditing(false);
@@ -91,7 +81,7 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
     setIsEditing(false);
   };
 
-  const handleCostChange = (field: keyof EstimateCosts, value: string) => {
+  const handleCostChange = (field: keyof ProjectCost, value: string) => {
     const numValue = parseFloat(value) || 0;
     setTempCosts((prev) => ({
       ...prev,
@@ -99,22 +89,19 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
     }));
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-    }).format(amount);
-  };
-
-  const tempCompanyProfit = Math.round(
-    (tempCosts.laborCost + tempCosts.materialCost) * 0.2
+  const tempCompanyProfit = calculateProfits(
+    tempCosts.laborCost,
+    tempCosts.materialCost
   );
-  const tempTotal =
+
+  const tempSubtotal =
     tempCosts.laborCost +
     tempCosts.materialCost +
     tempCosts.companyFee +
     tempCompanyProfit;
+  const tempTaxes = calculateTaxes(tempSubtotal);
+  const tempTotal = tempSubtotal + tempTaxes;
+
   return (
     <Box>
       {/* Estimate Summary */}
@@ -258,7 +245,7 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
           {/* Company Profit (20% of Labor + Material) */}
           <Box sx={{ flex: 1 }}>
             <Typography variant="body2" color="text.secondary" gutterBottom>
-              Company Profit (20%)
+              Company Profit ({PROFIT_MARGIN * 100}%)
             </Typography>
             <Typography
               variant="body1"
@@ -273,6 +260,19 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
               Auto-calculated
             </Typography>
           </Box>
+        </Box>
+
+        {/* Taxes Section */}
+        <Box sx={{ mt: 2 }}>
+          <Typography variant="body2" color="text.secondary" gutterBottom>
+            Taxes (8%)
+          </Typography>
+          <Typography variant="body1" fontWeight="medium" color="warning.main">
+            {formatCurrency(isEditing ? tempTaxes : costs.taxes)}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            Auto-calculated
+          </Typography>
         </Box>
 
         <Divider sx={{ my: 2 }} />
@@ -296,8 +296,7 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
           color="text.secondary"
           sx={{ mt: 1, display: "block" }}
         >
-          *Tax not included. Final pricing may vary based on specific
-          requirements.
+          *Final pricing may vary based on specific requirements.
         </Typography>
       </Paper>
     </Box>

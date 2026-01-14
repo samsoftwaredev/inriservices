@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { uuidv4 } from "@/tools";
+import { calculateProfits, uuidv4 } from "@/tools";
 import {
   Button,
   Box,
@@ -33,21 +33,44 @@ import { projectApi, propertyRoomApi, uploadProjectImages } from "@/services";
 import RoomFeatureForm from "../ProInteriorEstimate/RoomFeatureForm";
 import { ImageFile } from "../ImageUpload/ImageUpload.model";
 import EstimateSummary from "./EstimateSummary";
-import { PropertyRoomTransformed } from "@/types";
+import {
+  Project,
+  ProjectCost,
+  ProjectFormData,
+  ProjectTransformed,
+  PropertyRoomTransformed,
+} from "@/types";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import GeneralData from "./GeneralData";
+import {
+  projectTransformer,
+  reversedProjectTransformer,
+} from "@/tools/transformers";
+import { TAX_RATE } from "@/constants";
+import { compareAsc } from "date-fns/compareAsc";
 
-const initialCosts = {
+const initialCosts: ProjectCost = {
   laborCost: 300,
   materialCost: 120,
   companyFee: 200,
   companyProfit: 84,
+  taxes: 58,
   total: 704,
 };
 
-const GeneralEstimate = () => {
+interface Props {
+  paramsProjectId?: string;
+}
+
+const GeneralEstimate = ({ paramsProjectId }: Props) => {
   const router = useRouter();
   const { userData } = useAuth();
+  const [isLoading, setIsLoading] = useState(paramsProjectId ? true : false);
+  const [projectCost, setProjectCost] = useState<ProjectCost>(initialCosts);
+  const [projectData, setProjectData] = useState<ProjectTransformed | null>(
+    null
+  );
   const { currentClient, handleCreateNewClient } = useClient();
   const [isOpenSearchClientDialog, setIsOpenSearchClientDialog] =
     useState(false);
@@ -96,73 +119,94 @@ const GeneralEstimate = () => {
   };
 
   const createProject = async (): Promise<string> => {
-    const projectRes = await projectApi.createProject({
-      client_id: currentClient!.id,
-      company_id: userData!.companyId,
-      property_id: currentClient!.properties[0].id,
-      end_date: new Date().toISOString(),
-      invoice_total_cents: 0,
-      labor_cost_cents: 0,
-      labor_hours_estimated: null,
-      markup_bps: 0,
-      material_cost_cents: 0,
-      name: `General Estimate for ${currentClient?.displayName}`,
-      project_type: "other",
-      scope_notes: null,
-      start_date: new Date().toISOString(),
-      status: "draft",
-      tax_amount_cents: 0,
-      tax_rate_bps: 0,
-    });
-    return projectRes.id;
+    try {
+      const projectRes = await projectApi.createProject({
+        client_id: currentClient!.id,
+        company_id: userData!.companyId,
+        property_id: currentClient!.properties[0].id,
+        end_date: new Date().toISOString(),
+        invoice_total_cents: 0,
+        labor_cost_cents: 0,
+        labor_hours_estimated: null,
+        markup_bps: 0,
+        material_cost_cents: 0,
+        name: `General Estimate for ${currentClient?.displayName}`,
+        project_type: "other",
+        scope_notes: null,
+        start_date: new Date().toISOString(),
+        status: "draft",
+        tax_amount_cents: 0,
+        tax_rate_bps: 0,
+      });
+      return projectRes.id;
+    } catch (error) {
+      console.error("Error creating project:", error);
+      toast.error("Failed to create project");
+      return "";
+    }
   };
 
   const createRoom = async (
     roomDetails: PropertyRoomTransformed,
     pId: string
   ) => {
-    await propertyRoomApi.createRoom({
-      name: roomDetails.name,
-      property_id: currentClient!.properties[0].id,
-      project_id: pId,
-      level: roomDetails.level,
-      sort_order: roomDetails.sortOrder,
-      ceiling_area_sqft: roomDetails.ceilingAreaSqft,
-      ceiling_height_ft: roomDetails.ceilingHeightFt,
-      company_id: userData!.companyId,
-      description: roomDetails.description,
-      floor_area_sqft: roomDetails.floorAreaSqft,
-      notes_customer: roomDetails.notesCustomer,
-      notes_internal: roomDetails.notesInternal,
-      openings_area_sqft: roomDetails.openingsAreaSqft,
-      paint_ceiling: roomDetails.paintCeiling,
-      paint_doors: roomDetails.paintDoors,
-      paint_trim: roomDetails.paintTrim,
-      paint_walls: roomDetails.paintWalls,
-      room_height_ft: roomDetails.roomHeightFt,
-      wall_area_sqft: roomDetails.wallAreaSqft,
-      wall_perimeter_ft: roomDetails.wallPerimeterFt,
-    });
+    try {
+      await propertyRoomApi.createRoom({
+        name: roomDetails.name,
+        property_id: currentClient!.properties[0].id,
+        project_id: pId,
+        level: roomDetails.level,
+        sort_order: roomDetails.sortOrder,
+        ceiling_area_sqft: roomDetails.ceilingAreaSqft,
+        ceiling_height_ft: roomDetails.ceilingHeightFt,
+        company_id: userData!.companyId,
+        description: roomDetails.description,
+        floor_area_sqft: roomDetails.floorAreaSqft,
+        notes_customer: roomDetails.notesCustomer,
+        notes_internal: roomDetails.notesInternal,
+        openings_area_sqft: roomDetails.openingsAreaSqft,
+        paint_ceiling: roomDetails.paintCeiling,
+        paint_doors: roomDetails.paintDoors,
+        paint_trim: roomDetails.paintTrim,
+        paint_walls: roomDetails.paintWalls,
+        room_height_ft: roomDetails.roomHeightFt,
+        wall_area_sqft: roomDetails.wallAreaSqft,
+        wall_perimeter_ft: roomDetails.wallPerimeterFt,
+      });
+    } catch (error) {
+      console.error("Error creating room:", error);
+      toast.error("Failed to create room");
+    }
   };
 
   const updateRoom = async (roomId: string) => {
-    await propertyRoomApi.updateRoom(roomId, {
-      name: "Updated Room Name",
-    });
-    const updatedRooms = rooms.filter((room) => {
-      if (room.id === roomId) {
-        return { ...room, name: "Updated Room Name" };
-      } else {
-        return room;
-      }
-    });
-    updateLocalStorageEstimate({ rooms: updatedRooms });
+    try {
+      await propertyRoomApi.updateRoom(roomId, {
+        name: "Updated Room Name",
+      });
+      const updatedRooms = rooms.filter((room) => {
+        if (room.id === roomId) {
+          return { ...room, name: "Updated Room Name" };
+        } else {
+          return room;
+        }
+      });
+      updateLocalStorageEstimate({ rooms: updatedRooms });
+    } catch (error) {
+      console.error("Error updating room:", error);
+      toast.error("Failed to update room");
+    }
   };
 
   const deleteRoom = async (roomId: string) => {
-    await propertyRoomApi.deleteRoom(roomId);
-    const filteredRooms = rooms.filter((room) => room.id !== roomId);
-    updateLocalStorageEstimate({ rooms: filteredRooms });
+    try {
+      await propertyRoomApi.deleteRoom(roomId);
+      const filteredRooms = rooms.filter((room) => room.id !== roomId);
+      updateLocalStorageEstimate({ rooms: filteredRooms });
+    } catch (error) {
+      console.error("Error deleting room:", error);
+      toast.error("Failed to delete room");
+    }
   };
 
   const handleDeleteClick = () => {
@@ -189,25 +233,16 @@ const GeneralEstimate = () => {
     }
   };
 
-  const updateProject = async () => {
-    const projectRes = await projectApi.updateProject(projectId, {
-      client_id: currentClient!.id,
-      end_date: new Date().toISOString(),
-      invoice_total_cents: 0,
-      labor_cost_cents: 0,
-      labor_hours_estimated: null,
-      markup_bps: 0,
-      material_cost_cents: 0,
-      name: `General Estimate for ${currentClient?.displayName}`,
-      project_type: "interior_paint",
-      property_id: currentClient!.properties[0].id,
-      scope_notes: null,
-      start_date: new Date().toISOString(),
-      status: "draft",
-      tax_amount_cents: 0,
-      tax_rate_bps: 0,
-    });
-    setProjectId(projectRes.id);
+  const updateProject = async (data: ProjectTransformed) => {
+    try {
+      await projectApi.updateProject(
+        projectId,
+        reversedProjectTransformer(data)
+      );
+    } catch (error) {
+      console.error("Error updating project:", error);
+      toast.error("Failed to update project");
+    }
   };
 
   const onImagesChange = async (images: ImageFile[]) => {
@@ -309,22 +344,102 @@ const GeneralEstimate = () => {
       dueDate: new Date(
         new Date().setDate(new Date().getDate() + 30)
       ).toLocaleDateString(),
-      subtotal: rooms.length * 500,
-      taxRate: 0.0825,
-      tax: rooms.length * 500 * 0.0825,
-      total: rooms.length * 500 * 1.0825,
+      subtotal:
+        projectCost.materialCost +
+        projectCost.laborCost +
+        projectCost.companyFee,
+      taxRate: TAX_RATE,
+      tax: projectCost.taxes,
+      total: projectCost.total,
     }),
-    [rooms, currentClient]
+    [rooms, currentClient, projectCost]
   );
 
-  useEffect(() => {
-    const storedEstimate = localStorage.getItem("generalEstimateRooms");
-    const { projectId = "", rooms = [] } = JSON.parse(storedEstimate || "{}");
-    if (storedEstimate) {
-      setProjectId(projectId);
-      setRooms(rooms);
+  const onProjectDataChange = async (data: ProjectFormData) => {
+    const dataChanged =
+      data.endDate &&
+      data.startDate &&
+      projectData?.endDate &&
+      projectData?.startDate &&
+      compareAsc(data.endDate, projectData?.endDate) === 0 &&
+      compareAsc(data.startDate, projectData?.startDate) === 0;
+
+    if (dataChanged || data.name === projectData?.name) {
+      return;
+    } else if (projectId && projectData) {
+      await updateProject({
+        ...projectData,
+        name: data.name,
+        startDate: data.startDate ? data.startDate.toString() : "",
+        endDate: data.endDate ? data.endDate.toString() : "",
+      });
     }
-  }, []);
+  };
+
+  const onCostsChange = async (newCosts: ProjectCost) => {
+    if (projectId && projectData) {
+      await updateProject({
+        ...projectData,
+        materialCostCents: newCosts.materialCost,
+        laborCostCents: newCosts.laborCost,
+        taxAmountCents: newCosts.taxes,
+        invoiceTotalCents: newCosts.total,
+      });
+      setProjectCost(newCosts);
+    }
+  };
+
+  const getProjectData = async (pId: string) => {
+    setIsLoading(true);
+    try {
+      const projectRes = await projectApi.getProject(pId);
+      const transformedProject = projectTransformer(projectRes);
+      setProjectData(transformedProject);
+      setProjectCost({
+        laborCost: transformedProject.laborCostCents,
+        materialCost: transformedProject.materialCostCents,
+        companyFee:
+          transformedProject.laborCostCents -
+          transformedProject.materialCostCents -
+          transformedProject.taxAmountCents,
+        companyProfit: calculateProfits(
+          transformedProject.laborCostCents,
+          transformedProject.materialCostCents
+        ),
+        taxes: transformedProject.taxAmountCents,
+        total: transformedProject.invoiceTotalCents,
+      });
+    } catch (error) {
+      console.error("Error fetching project data:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // useEffect(() => {
+  //   const storedEstimate = localStorage.getItem("generalEstimateRooms");
+  //   const { projectId = "", rooms = [] } = JSON.parse(storedEstimate || "{}");
+  //   if (storedEstimate) {
+  //     setProjectId(projectId);
+  //     getProjectData(projectId);
+  //     setRooms(rooms);
+  //   }
+  // }, []);
+
+  useEffect(() => {
+    if (paramsProjectId) {
+      setProjectId(paramsProjectId);
+      getProjectData(paramsProjectId);
+    }
+  }, [paramsProjectId]);
+
+  if (isLoading) {
+    return (
+      <Box>
+        <Typography variant="h6">Loading Estimate...</Typography>
+      </Box>
+    );
+  }
 
   return (
     <>
@@ -415,6 +530,11 @@ const GeneralEstimate = () => {
         )}
       </Paper>
 
+      <GeneralData
+        initialData={projectData}
+        onFormChange={onProjectDataChange}
+      />
+
       <Box>
         {rooms.map((room, index) => (
           <Paper key={room.id} sx={{ p: 2, mb: 2 }}>
@@ -446,8 +566,8 @@ const GeneralEstimate = () => {
 
         <EstimateSummary
           rooms={rooms}
-          onCostsChange={() => {}}
-          initialCosts={initialCosts}
+          onCostsChange={onCostsChange}
+          initialCosts={projectCost}
         />
 
         <Box
@@ -484,6 +604,7 @@ const GeneralEstimate = () => {
         isOpen={isOpenNewClientDialog}
         onSubmit={onSubmitNewClient}
       />
+
       <SearchClientDialog
         isOpen={isOpenSearchClientDialog}
         onClose={onCloseSearchClientDialog}
