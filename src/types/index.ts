@@ -213,6 +213,11 @@ export type ClientFullData = ClientTransformed & {
   properties: Array<PropertyTransformed & { projects: ProjectTransformed[] }>;
 };
 
+export type ProjectFullData = ProjectTransformed & {
+  client: ClientTransformed;
+  property: PropertyTransformed & { rooms: PropertyRoomTransformed[] };
+};
+
 export interface ProjectCost {
   laborCost: number;
   materialCost: number;

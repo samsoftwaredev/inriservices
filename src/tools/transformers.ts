@@ -8,9 +8,11 @@ import {
   Profile,
   ProfileTransformed,
   Project,
+  ProjectFullData,
   ProjectStatus,
   ProjectTransformed,
   ProjectType,
+  ProjectWithRelationsAndRooms,
   Property,
   PropertyRoom,
   PropertyRoomTransformed,
@@ -213,6 +215,19 @@ export const allPropertyTransformer = (
   res: Property[]
 ): PropertyTransformed[] => {
   return res.map(transformSingleProperty);
+};
+
+export const projectFullDataTransformer = (
+  project: ProjectWithRelationsAndRooms
+): ProjectFullData => {
+  return {
+    ...transformSingleProject(project),
+    client: transformSingleClient(project.client),
+    property: {
+      ...transformSingleProperty(project.property),
+      rooms: project.property.rooms.map(transformSingleRoom),
+    },
+  };
 };
 
 export const clientFullDataTransformer = (

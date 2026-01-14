@@ -137,12 +137,7 @@ export const projectApi = {
   /** ----------------------------------------
    * Get single (no embeds)
    * --------------------------------------- */
-  async getProject(projectId: string): Promise<
-    Project & {
-      client: Client;
-      property: Property & { rooms: PropertyRoom[] };
-    }
-  > {
+  async getProject(projectId: string): Promise<ProjectWithRelationsAndRooms> {
     const res = await supabase
       .from("projects")
       .select(

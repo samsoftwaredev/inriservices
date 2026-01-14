@@ -34,7 +34,6 @@ import RoomFeatureForm from "../ProInteriorEstimate/RoomFeatureForm";
 import { ImageFile } from "../ImageUpload/ImageUpload.model";
 import EstimateSummary from "./EstimateSummary";
 import {
-  Project,
   ProjectCost,
   ProjectFormData,
   ProjectTransformed,
@@ -44,7 +43,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import GeneralData from "./GeneralData";
 import {
-  projectTransformer,
+  projectFullDataTransformer,
   reversedProjectTransformer,
 } from "@/tools/transformers";
 import { TAX_RATE } from "@/constants";
@@ -66,12 +65,14 @@ interface Props {
 const GeneralEstimate = ({ paramsProjectId }: Props) => {
   const router = useRouter();
   const { userData } = useAuth();
+  const { currentClient, handleCreateNewClient, handleSelectClient } =
+    useClient();
+
   const [isLoading, setIsLoading] = useState(paramsProjectId ? true : false);
   const [projectCost, setProjectCost] = useState<ProjectCost>(initialCosts);
   const [projectData, setProjectData] = useState<ProjectTransformed | null>(
     null
   );
-  const { currentClient, handleCreateNewClient } = useClient();
   const [isOpenSearchClientDialog, setIsOpenSearchClientDialog] =
     useState(false);
   const [isOpenNewClientDialog, setIsOpenNewClientDialog] = useState(false);
@@ -329,17 +330,15 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
       },
       items: rooms.map((room) => ({
         id: room.id,
-        description: `${room.name} - ${
-          room.description || "Interior Painting & Preparation"
-        }`,
+        description: `${room.name} - ${room.description || ""}`,
         quantity: 1,
-        rate: 500,
-        amount: 500,
+        rate: 0,
+        amount: 0,
       })),
-      projectName: "Whole House Interior Refresh",
+      projectName: projectData?.name || "Whole House Interior Refresh",
       notes:
         "Customer requested eco-friendly paint. All furniture will be covered and protected during work.",
-      invoiceNumber: "GE-1001",
+      invoiceNumber: projectId.slice(-7), // Using last 7 characters of projectId as invoice number
       date: new Date().toLocaleDateString(),
       dueDate: new Date(
         new Date().setDate(new Date().getDate() + 30)
@@ -393,7 +392,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
     setIsLoading(true);
     try {
       const projectRes = await projectApi.getProject(pId);
-      const transformedProject = projectTransformer(projectRes);
+      const transformedProject = projectFullDataTransformer(projectRes);
       setProjectData(transformedProject);
       setProjectCost({
         laborCost: transformedProject.laborCostCents,
@@ -409,6 +408,8 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
         taxes: transformedProject.taxAmountCents,
         total: transformedProject.invoiceTotalCents,
       });
+      handleSelectClient(transformedProject.clientId);
+      setRooms(transformedProject.property.rooms || []);
     } catch (error) {
       console.error("Error fetching project data:", error);
     } finally {
@@ -530,10 +531,12 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
         )}
       </Paper>
 
-      <GeneralData
-        initialData={projectData}
-        onFormChange={onProjectDataChange}
-      />
+      {projectId && (
+        <GeneralData
+          initialData={projectData}
+          onFormChange={onProjectDataChange}
+        />
+      )}
 
       <Box>
         {rooms.map((room, index) => (
