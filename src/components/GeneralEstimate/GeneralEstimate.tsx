@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { debounce, uuidv4 } from "@/tools";
+import { calculateProfits, debounce, uuidv4 } from "@/tools";
 import {
   Button,
   Box,
@@ -46,7 +46,7 @@ import {
   projectFullDataTransformer,
   reversedProjectTransformer,
 } from "@/tools/transformers";
-import { PROFIT_MARGIN, TAX_RATE } from "@/constants";
+import { PROFIT_MARGIN_PERCNT, TAX_RATE_PERCNT } from "@/constants";
 import { compareAsc } from "date-fns/compareAsc";
 import { format } from "date-fns";
 
@@ -342,7 +342,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
         projectCost.materialCost +
         projectCost.laborCost +
         projectCost.companyFee,
-      taxRate: TAX_RATE,
+      taxRate: TAX_RATE_PERCNT,
       tax: projectCost.taxes,
       total: projectCost.total,
     }),
@@ -366,6 +366,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
         name: data.name,
         startDate: data.startDate ? format(data.startDate, "yyyy-MM-dd") : "",
         endDate: data.endDate ? format(data.endDate, "yyyy-MM-dd") : "",
+        scopeNotes: data.scopeNotes || "",
       });
     }
   };
@@ -384,6 +385,8 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
         laborCostCents: convertToFloatCents2Decimal(newCosts.laborCost),
         taxAmountCents: convertToFloatCents2Decimal(newCosts.taxes),
         invoiceTotalCents: convertToFloatCents2Decimal(newCosts.total),
+        taxRateBps: TAX_RATE_PERCNT * 10000,
+        markupBps: PROFIT_MARGIN_PERCNT * 10000,
       });
       setProjectCost(newCosts);
     }
@@ -402,9 +405,10 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
           transformedProject.materialCostCents
         ),
         companyFee: 200, // Placeholder as company fee is not stored
-        companyProfit:
-          convertCentsToDollar(transformedProject.laborCostCents) +
-          convertCentsToDollar(transformedProject.materialCostCents),
+        companyProfit: calculateProfits(
+          convertCentsToDollar(transformedProject.laborCostCents),
+          convertCentsToDollar(transformedProject.materialCostCents)
+        ),
         taxes: convertCentsToDollar(transformedProject.taxAmountCents),
         total: convertCentsToDollar(transformedProject.invoiceTotalCents),
       });

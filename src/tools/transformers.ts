@@ -113,7 +113,7 @@ const transformSingleProject = (project: Project): ProjectTransformed => ({
   status: project.status,
   startDate: project.start_date,
   endDate: project.end_date,
-  scopeNotes: project.scope_notes,
+  scopeNotes: project.scope_notes || "",
   materialCostCents: project.material_cost_cents,
   laborCostCents: project.labor_cost_cents,
   markupBps: project.markup_bps,

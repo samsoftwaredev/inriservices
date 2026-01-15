@@ -17,7 +17,7 @@ import {
   Cancel as CancelIcon,
 } from "@mui/icons-material";
 import { ProjectCost, PropertyRoomTransformed } from "@/types";
-import { PROFIT_MARGIN, TAX_RATE } from "@/constants";
+import { PROFIT_MARGIN_PERCNT, TAX_RATE_PERCNT } from "@/constants";
 import {
   calculateProfits,
   calculateSubtotal,
@@ -85,6 +85,7 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
 
     setCosts(updatedCosts);
     onCostsChange(updatedCosts);
+    setTempCosts(updatedCosts);
     setIsEditing(false);
   };
 
@@ -231,7 +232,7 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
           {/* Company Profit (20% of Labor + Material) */}
           <Box sx={{ flex: 1 }}>
             <Typography variant="body2" color="text.secondary" gutterBottom>
-              Company Profit ({PROFIT_MARGIN * 100}%)
+              Company Profit ({PROFIT_MARGIN_PERCNT * 100}%)
             </Typography>
             <Typography
               variant="body1"
@@ -251,7 +252,7 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
         {/* Taxes Section */}
         <Box sx={{ mt: 2 }}>
           <Typography variant="body2" color="text.secondary" gutterBottom>
-            Taxes ({TAX_RATE * 100}%)
+            Taxes ({TAX_RATE_PERCNT * 100}%)
           </Typography>
           <Typography variant="body1" fontWeight="medium" color="warning.main">
             {formatCurrency(isEditing ? tempCosts.taxes : costs.taxes)}

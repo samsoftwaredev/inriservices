@@ -1,4 +1,4 @@
-import { PROFIT_MARGIN, TAX_RATE } from "@/constants";
+import { PROFIT_MARGIN_PERCNT, TAX_RATE_PERCNT } from "@/constants";
 import type { PostgrestError } from "@supabase/supabase-js";
 
 export const uuidv4 = () => {
@@ -58,13 +58,13 @@ export const calculateTotal = (
 
 export const calculateTaxes = (subtotal: number) => {
   if (isNaN(subtotal)) subtotal = 0;
-  return Math.round(subtotal * TAX_RATE);
+  return Math.round(subtotal * TAX_RATE_PERCNT);
 };
 
 export const calculateProfits = (labor: number, material: number) => {
   if (isNaN(labor)) labor = 0;
   if (isNaN(material)) material = 0;
-  return Math.round((labor + material) * PROFIT_MARGIN);
+  return Math.round((labor + material) * PROFIT_MARGIN_PERCNT);
 };
 
 export function debounce<T extends (...args: any[]) => any>(

@@ -8,13 +8,13 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { addDays, format } from "date-fns";
 import { ProjectFormData } from "@/types";
-import { debounce } from "@/tools";
 
 interface Props {
   initialData: {
     name: string;
     startDate: string | null;
     endDate: string | null;
+    scopeNotes: string;
   } | null;
   onFormChange: (data: ProjectFormData) => void;
 }
@@ -39,6 +39,7 @@ const GeneralData = ({ initialData, onFormChange }: Props) => {
       endDate: initialData?.endDate
         ? new Date(initialData.endDate)
         : defaultEndDate,
+      scopeNotes: initialData?.scopeNotes || "",
     },
     mode: "onChange",
   });
@@ -146,6 +147,36 @@ const GeneralData = ({ initialData, onFormChange }: Props) => {
                         onBlur: onSaveForm,
                       },
                     }}
+                  />
+                )}
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <Controller
+                name="scopeNotes"
+                control={control}
+                rules={{
+                  maxLength: {
+                    value: 1000,
+                    message: "Scope notes cannot exceed 1000 characters",
+                  },
+                }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    multiline
+                    rows={4}
+                    label="Scope Notes"
+                    placeholder="Enter project scope notes, special requirements, or additional details. Is the client only looking for an estimate? Are they selling the property soon? Will you have access to the property? HOA? etc."
+                    error={!!errors.scopeNotes}
+                    helperText={
+                      errors.scopeNotes?.message ||
+                      `${(field.value || "").length}/1000 characters`
+                    }
+                    variant="outlined"
+                    onBlur={onSaveForm}
                   />
                 )}
               />

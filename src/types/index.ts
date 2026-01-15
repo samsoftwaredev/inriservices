@@ -180,7 +180,7 @@ export type ProjectTransformed = {
   status: string;
   startDate: string | null;
   endDate: string | null;
-  scopeNotes: string | null;
+  scopeNotes: string;
   materialCostCents: number;
   laborCostCents: number;
   markupBps: number;
@@ -231,4 +231,5 @@ export interface ProjectFormData {
   name: string;
   startDate: Date | null;
   endDate: Date | null;
+  scopeNotes: string;
 }

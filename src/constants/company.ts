@@ -11,8 +11,8 @@ export const companyAddressRegion = "TX";
 export const companyPostalCode = "78731";
 export const companyAddressCountry = "US";
 
-export const TAX_RATE = 0.0825;
-export const PROFIT_MARGIN = 0.2;
+export const TAX_RATE_PERCNT = 0.0825;
+export const PROFIT_MARGIN_PERCNT = 0.2;
 
 export const BUSINESS_OPERATION_FEES = {
   insurance: 25.0,
