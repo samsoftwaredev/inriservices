@@ -16,7 +16,7 @@ interface Props {
     startDate: string | null;
     endDate: string | null;
   } | null;
-  onFormChange?: (data: ProjectFormData) => void;
+  onFormChange: (data: ProjectFormData) => void;
 }
 
 const GeneralData = ({ initialData, onFormChange }: Props) => {
@@ -45,11 +45,8 @@ const GeneralData = ({ initialData, onFormChange }: Props) => {
 
   // Watch form changes and notify parent
   const formData = watch();
-  useEffect(() => {
-    if (onFormChange) {
-      onFormChange(formData);
-    }
-  }, [formData, onFormChange]);
+
+  const onSaveForm = () => onFormChange(formData);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -80,6 +77,7 @@ const GeneralData = ({ initialData, onFormChange }: Props) => {
                     error={!!errors.name}
                     helperText={errors.name?.message}
                     variant="outlined"
+                    onBlur={onSaveForm}
                   />
                 )}
               />
@@ -105,6 +103,7 @@ const GeneralData = ({ initialData, onFormChange }: Props) => {
                     }}
                     onChange={(date) => {
                       field.onChange(date);
+                      onSaveForm();
                       // Auto-adjust end date if start date is after end date
                       const currentEndDate = watch("endDate");
                       if (date && currentEndDate && date > currentEndDate) {
@@ -135,11 +134,16 @@ const GeneralData = ({ initialData, onFormChange }: Props) => {
                     {...field}
                     label="End Date"
                     minDate={watch("startDate") || undefined}
+                    onChange={(date) => {
+                      field.onChange(date);
+                      onSaveForm();
+                    }}
                     slotProps={{
                       textField: {
                         fullWidth: true,
                         error: !!errors.endDate,
                         helperText: errors.endDate?.message,
+                        onBlur: onSaveForm,
                       },
                     }}
                   />

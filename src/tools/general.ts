@@ -28,11 +28,42 @@ export function formatPhoneNumber(phoneNumberString: string): string {
   return phoneNumberString;
 }
 
+export const calculateSubtotal = (
+  labor: number,
+  material: number,
+  companyFee: number,
+  companyProfit: number
+) => {
+  if (isNaN(labor)) labor = 0;
+  if (isNaN(material)) material = 0;
+  if (isNaN(companyFee)) companyFee = 0;
+  if (isNaN(companyProfit)) companyProfit = 0;
+  return labor + material + companyFee + companyProfit;
+};
+
+export const calculateTotal = (
+  labor: number,
+  material: number,
+  companyFee: number,
+  taxes: number,
+  companyProfit: number
+) => {
+  if (isNaN(labor)) labor = 0;
+  if (isNaN(material)) material = 0;
+  if (isNaN(companyFee)) companyFee = 0;
+  if (isNaN(taxes)) taxes = 0;
+  if (isNaN(companyProfit)) companyProfit = 0;
+  return labor + material + companyFee + taxes + companyProfit;
+};
+
 export const calculateTaxes = (subtotal: number) => {
+  if (isNaN(subtotal)) subtotal = 0;
   return Math.round(subtotal * TAX_RATE);
 };
 
 export const calculateProfits = (labor: number, material: number) => {
+  if (isNaN(labor)) labor = 0;
+  if (isNaN(material)) material = 0;
   return Math.round((labor + material) * PROFIT_MARGIN);
 };
 

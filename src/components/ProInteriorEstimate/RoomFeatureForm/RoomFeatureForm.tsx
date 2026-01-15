@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, TextField, Grid, Alert } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import ImageUpload from "@/components/ImageUpload";
@@ -16,7 +16,7 @@ interface Props {
   room: PropertyRoomTransformed;
   onSubmit?: (data: RoomFeatureFormData) => void;
   disabled?: boolean;
-  onChangeRoomData?: (
+  onChangeRoomData: (
     roomId: string,
     title: string,
     description: string
@@ -31,17 +31,8 @@ const validationRules = {
       value: 2,
       message: "Feature name must be at least 2 characters",
     },
-    maxLength: {
-      value: 100,
-      message: "Feature name must not exceed 100 characters",
-    },
   },
-  featureDescription: {
-    maxLength: {
-      value: 1000,
-      message: "Description must not exceed 1000 characters",
-    },
-  },
+  featureDescription: {},
 };
 
 const AddFeatureForm = ({
@@ -70,20 +61,14 @@ const AddFeatureForm = ({
     reset(); // Reset form after successful submission
   };
 
-  const featureNameValue = watch("featureName");
-  const featureDescriptionValue = watch("featureDescription");
+  const formData = watch();
 
-  const onSaveForm = () => {
-    const currentData = {
-      featureName: featureNameValue,
-      featureDescription: featureDescriptionValue,
-    };
-    onChangeRoomData?.(
+  const onSaveForm = () =>
+    onChangeRoomData(
       room.id,
-      currentData.featureName,
-      currentData.featureDescription
+      formData.featureName,
+      formData.featureDescription
     );
-  };
 
   return (
     <Box
@@ -111,6 +96,7 @@ const AddFeatureForm = ({
             render={({ field, fieldState }) => (
               <TextField
                 {...field}
+                onBlur={onSaveForm}
                 fullWidth
                 multiline
                 minRows={2}
@@ -118,11 +104,6 @@ const AddFeatureForm = ({
                 label="Title / Name of Feature"
                 placeholder="e.g., Large Window, Crown Molding, Built-in Shelving"
                 error={!!fieldState.error}
-                onBlur={onSaveForm}
-                helperText={
-                  fieldState.error?.message ||
-                  `${featureNameValue.length}/100 characters`
-                }
                 disabled={disabled}
                 inputProps={{
                   maxLength: 100,
@@ -141,17 +122,13 @@ const AddFeatureForm = ({
               <TextField
                 {...field}
                 fullWidth
+                onBlur={onSaveForm}
                 multiline
                 minRows={4}
                 size="small"
                 label="Additional Details / Client Notes (Optional)"
                 placeholder="Additional details (e.g., Type of window, material, condition, special requirements, etc.)"
                 error={!!fieldState.error}
-                onBlur={onSaveForm}
-                helperText={
-                  fieldState.error?.message ||
-                  `${featureDescriptionValue.length}/500 characters (Optional)`
-                }
                 disabled={disabled}
                 inputProps={{
                   maxLength: 500,

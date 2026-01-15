@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { calculateProfits, debounce, uuidv4 } from "@/tools";
+import { debounce, uuidv4 } from "@/tools";
 import {
   Button,
   Box,
@@ -46,7 +46,7 @@ import {
   projectFullDataTransformer,
   reversedProjectTransformer,
 } from "@/tools/transformers";
-import { TAX_RATE } from "@/constants";
+import { PROFIT_MARGIN, TAX_RATE } from "@/constants";
 import { compareAsc } from "date-fns/compareAsc";
 import { format } from "date-fns";
 
@@ -96,7 +96,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
     localStorage.setItem("generalEstimateRooms", estimateData);
   };
 
-  const removeLocalStorageEstimate = () => {
+  const clearLocalStorageEstimate = () => {
     localStorage.removeItem("generalEstimateRooms");
   };
 
@@ -143,7 +143,9 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
       return projectRes.id;
     } catch (error) {
       console.error("Error creating project:", error);
-      toast.error("Failed to create project");
+      toast.error("Failed to create project", {
+        toastId: "create-project-error",
+      });
       return "";
     }
   };
@@ -177,26 +179,19 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
       });
     } catch (error) {
       console.error("Error creating room:", error);
-      toast.error("Failed to create room");
+      toast.error("Failed to create room", { toastId: "create-room-error" });
     }
   };
 
-  const updateRoom = async (roomId: string) => {
+  const updateRoom = async (
+    roomId: string,
+    updatedData: Partial<PropertyRoomTransformed>
+  ) => {
     try {
-      await propertyRoomApi.updateRoom(roomId, {
-        name: "Updated Room Name",
-      });
-      const updatedRooms = rooms.filter((room) => {
-        if (room.id === roomId) {
-          return { ...room, name: "Updated Room Name" };
-        } else {
-          return room;
-        }
-      });
-      updateLocalStorageEstimate({ rooms: updatedRooms });
+      await propertyRoomApi.updateRoom(roomId, updatedData);
     } catch (error) {
       console.error("Error updating room:", error);
-      toast.error("Failed to update room");
+      toast.error("Failed to update room", { toastId: "update-room-error" });
     }
   };
 
@@ -208,7 +203,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
       updateLocalStorageEstimate({ rooms: filteredRooms });
     } catch (error) {
       console.error("Error deleting room:", error);
-      toast.error("Failed to delete room");
+      toast.error("Failed to delete room", { toastId: "delete-room-error" });
     }
   };
 
@@ -226,13 +221,15 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
         await projectApi.deleteProject(projectId);
       }
       setProjectId("");
-      removeLocalStorageEstimate();
+      clearLocalStorageEstimate();
       setDeleteConfirmOpen(false);
       router.push("/estimates");
       // Optionally redirect or show success message
     } catch (error) {
       console.error("Error deleting project:", error);
-      toast.error("Failed to delete estimate");
+      toast.error("Failed to delete estimate", {
+        toastId: "delete-project-error",
+      });
     }
   };
 
@@ -244,7 +241,9 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
       );
     } catch (error) {
       console.error("Error updating project:", error);
-      toast.error("Failed to update project");
+      toast.error("Failed to update project", {
+        toastId: "update-project-error",
+      });
     }
   };
 
@@ -290,20 +289,11 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
     } else {
       const projectId = await createProject();
       setProjectId(projectId);
-      await createRoom(newRoom, projectId);
       setRooms([newRoom]);
       updateLocalStorageEstimate({ projectId });
     }
 
-    updateLocalStorageEstimate({ rooms });
-  };
-
-  const onChangeRoomName = (roomId: string, roomName: string) => {
-    setRooms((prevRooms) =>
-      prevRooms.map((room) =>
-        room.id === roomId ? { ...room, name: roomName } : room
-      )
-    );
+    await createRoom(newRoom, projectId);
     updateLocalStorageEstimate({ rooms });
   };
 
@@ -314,11 +304,14 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
   ) => {
     setRooms((prevRooms) =>
       prevRooms.map((room) =>
-        room.id === roomId ? { ...room, title, description } : room
+        room.id === roomId ? { ...room, name: title, description } : room
       )
     );
     updateLocalStorageEstimate({ rooms });
+    updateRoom(roomId, { name: title, description });
   };
+
+  const debouncedOnChangeRoomData = debounce(onChangeRoomData, 500);
 
   const invoiceData: InvoiceData = useMemo(
     () => ({
@@ -380,13 +373,17 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
   const debouncedOnProjectDataChange = debounce(onProjectDataChange, 500);
 
   const onCostsChange = async (newCosts: ProjectCost) => {
+    const convertToFloatCents2Decimal = (amount: string | number) => {
+      return Math.round(Number(amount) * 100);
+    };
+
     if (projectId && projectData) {
       await updateProject({
         ...projectData,
-        materialCostCents: newCosts.materialCost,
-        laborCostCents: newCosts.laborCost,
-        taxAmountCents: newCosts.taxes,
-        invoiceTotalCents: newCosts.total,
+        materialCostCents: convertToFloatCents2Decimal(newCosts.materialCost),
+        laborCostCents: convertToFloatCents2Decimal(newCosts.laborCost),
+        taxAmountCents: convertToFloatCents2Decimal(newCosts.taxes),
+        invoiceTotalCents: convertToFloatCents2Decimal(newCosts.total),
       });
       setProjectCost(newCosts);
     }
@@ -398,19 +395,18 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
       const projectRes = await projectApi.getProject(pId);
       const transformedProject = projectFullDataTransformer(projectRes);
       setProjectData(transformedProject);
+      const convertCentsToDollar = (cents: number) => cents / 100;
       setProjectCost({
-        laborCost: transformedProject.laborCostCents,
-        materialCost: transformedProject.materialCostCents,
-        companyFee:
-          transformedProject.laborCostCents -
-          transformedProject.materialCostCents -
-          transformedProject.taxAmountCents,
-        companyProfit: calculateProfits(
-          transformedProject.laborCostCents,
+        laborCost: convertCentsToDollar(transformedProject.laborCostCents),
+        materialCost: convertCentsToDollar(
           transformedProject.materialCostCents
         ),
-        taxes: transformedProject.taxAmountCents,
-        total: transformedProject.invoiceTotalCents,
+        companyFee: 200, // Placeholder as company fee is not stored
+        companyProfit:
+          convertCentsToDollar(transformedProject.laborCostCents) +
+          convertCentsToDollar(transformedProject.materialCostCents),
+        taxes: convertCentsToDollar(transformedProject.taxAmountCents),
+        total: convertCentsToDollar(transformedProject.invoiceTotalCents),
       });
       handleSelectClient(transformedProject.clientId);
       setRooms(transformedProject.property.rooms || []);
@@ -433,6 +429,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
 
   useEffect(() => {
     if (paramsProjectId) {
+      clearLocalStorageEstimate();
       setProjectId(paramsProjectId);
       getProjectData(paramsProjectId);
     }
@@ -548,12 +545,11 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
             <RoomGeneralInfo
               room={room}
               index={index}
-              onChangeRoomName={onChangeRoomName}
               onDeleteRoom={onDeleteRoom}
             />
             <RoomFeatureForm
               room={room}
-              onChangeRoomData={onChangeRoomData}
+              onChangeRoomData={debouncedOnChangeRoomData}
               onImagesChange={onImagesChange}
             />
           </Paper>

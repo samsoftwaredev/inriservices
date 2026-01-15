@@ -6,6 +6,9 @@ import {
 } from "@/interfaces/laborTypes";
 
 export const formatCurrency = (amount: number): string => {
+  if (isNaN(amount)) {
+    amount = 0;
+  }
   return `$${amount.toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,

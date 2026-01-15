@@ -35,16 +35,6 @@ export const formatInvoiceCurrency = (amount: number): string => {
 };
 
 /**
- * Calculate tax amount
- */
-export const calculateTax = (
-  subtotal: number,
-  taxRate: number = 0.0825
-): number => {
-  return subtotal * taxRate;
-};
-
-/**
  * Generate unique invoice number
  */
 export const generateInvoiceNumber = (prefix: string = "INV"): string => {

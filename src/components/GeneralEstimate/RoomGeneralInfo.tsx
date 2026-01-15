@@ -21,23 +21,11 @@ import { useState } from "react";
 interface Props {
   room: PropertyRoomTransformed;
   index: number;
-  onChangeRoomName: (roomId: string, name: string) => void;
   onDeleteRoom: (roomId: string) => void;
 }
 
-const RoomGeneralInfo = ({
-  room,
-  index,
-  onChangeRoomName,
-  onDeleteRoom,
-}: Props) => {
-  const [roomName, setRoomName] = useState(room.name);
+const RoomGeneralInfo = ({ room, index, onDeleteRoom }: Props) => {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-
-  const handleRoomNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRoomName(e.target.value);
-    onChangeRoomName(room.id, e.target.value);
-  };
 
   const handleDeleteClick = () => {
     setDeleteConfirmOpen(true);
@@ -65,13 +53,6 @@ const RoomGeneralInfo = ({
         </Tooltip>
       </Box>
 
-      <Input
-        value={roomName}
-        fullWidth
-        sx={{ mb: 2 }}
-        onChange={handleRoomNameChange}
-      />
-
       {/* Delete Confirmation Dialog */}
       <Dialog
         open={deleteConfirmOpen}
@@ -83,7 +64,7 @@ const RoomGeneralInfo = ({
         <DialogContent>
           <DialogContentText id="delete-room-dialog-description">
             Are you sure you want to delete{" "}
-            <strong>{roomName || `Room ${index + 1}`}</strong>?
+            <strong>{room.name || `Room ${index + 1}`}</strong>?
             <br />
             <br />
             This action cannot be undone and will permanently remove all room
