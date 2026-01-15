@@ -161,19 +161,6 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
             mt: 2,
           }}
         >
-          {/* Labor Hours Section */}
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Labor Hours
-            </Typography>
-            <Typography variant="body1" fontWeight="medium">
-              {laborHours} hrs
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              Auto-calculated
-            </Typography>
-          </Box>
-
           {/* Labor Cost */}
           <Box sx={{ flex: 1 }}>
             <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -256,10 +243,24 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
           sx={{
             display: "flex",
             flexDirection: { xs: "column", sm: "row" },
+            alignItems: "center",
             gap: 2,
             mt: 2,
           }}
         >
+          {/* Labor Hours Section */}
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              Labor Hours
+            </Typography>
+            <Typography variant="body1" fontWeight="medium">
+              {laborHours} hrs
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Auto-calculated
+            </Typography>
+          </Box>
+
           {/* Company Profit (20% of Labor + Material) */}
           <Box sx={{ flex: 1 }}>
             <Typography variant="body2" color="text.secondary" gutterBottom>
