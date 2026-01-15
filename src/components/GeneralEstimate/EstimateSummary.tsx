@@ -25,6 +25,7 @@ import {
   calculateTotal,
   formatCurrency,
 } from "@/tools";
+import CalcLaborHours from "./CalcLaborHours";
 
 interface Props {
   rooms: PropertyRoomTransformed[];
@@ -34,6 +35,7 @@ interface Props {
 
 const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [laborHours, setLaborHours] = useState(0);
   const [costs, setCosts] = useState<ProjectCost>({
     laborCost: initialCosts.laborCost,
     materialCost: initialCosts.materialCost,
@@ -144,6 +146,13 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
           Total Rooms: {rooms.length}
         </Typography>
 
+        <CalcLaborHours
+          onLaborChange={(summary) => {
+            setLaborHours(summary.totalHours);
+            handleCostChange("laborCost", summary.totalCost.toString());
+          }}
+        />
+
         <Box
           sx={{
             display: "flex",
@@ -152,6 +161,19 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
             mt: 2,
           }}
         >
+          {/* Labor Hours Section */}
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              Labor Hours
+            </Typography>
+            <Typography variant="body1" fontWeight="medium">
+              {laborHours} hrs
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Auto-calculated
+            </Typography>
+          </Box>
+
           {/* Labor Cost */}
           <Box sx={{ flex: 1 }}>
             <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -228,7 +250,16 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
               </Typography>
             )}
           </Box>
+        </Box>
 
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: 2,
+            mt: 2,
+          }}
+        >
           {/* Company Profit (20% of Labor + Material) */}
           <Box sx={{ flex: 1 }}>
             <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -247,19 +278,23 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
               Auto-calculated
             </Typography>
           </Box>
-        </Box>
 
-        {/* Taxes Section */}
-        <Box sx={{ mt: 2 }}>
-          <Typography variant="body2" color="text.secondary" gutterBottom>
-            Taxes ({TAX_RATE_PERCNT * 100}%)
-          </Typography>
-          <Typography variant="body1" fontWeight="medium" color="warning.main">
-            {formatCurrency(isEditing ? tempCosts.taxes : costs.taxes)}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            Auto-calculated
-          </Typography>
+          {/* Taxes Section */}
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              Taxes ({TAX_RATE_PERCNT * 100}%)
+            </Typography>
+            <Typography
+              variant="body1"
+              fontWeight="medium"
+              color="warning.main"
+            >
+              {formatCurrency(isEditing ? tempCosts.taxes : costs.taxes)}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Auto-calculated
+            </Typography>
+          </Box>
         </Box>
 
         <Divider sx={{ my: 2 }} />
