@@ -3,12 +3,27 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import AppLayout from "@/components/AppLayout";
-import { ProtectedRoute } from "@/components";
+import {
+  NewClientDialog,
+  ProtectedRoute,
+  SearchClientDialog,
+} from "@/components";
 import Receipt from "@/components/Receipt";
 import { useRouter } from "next/navigation";
 import { receiptApi } from "@/services/receiptApi";
 import { transformSingleReceipt } from "@/tools/transformers";
 import { ReceiptTransformed } from "@/types";
+import { useClient } from "@/context/ClientContext";
+import {
+  companyEmail,
+  companyName,
+  companyStreetAddress,
+  companyAddressLocality,
+  companyPhoneFormatted,
+} from "@/constants/company";
+import RequireClient from "@/components/RequireClient";
+import { ClientFormData } from "@/components/SearchClient/SearchClient.model";
+import { useAuth } from "@/context";
 
 interface Props {
   params: Promise<{
@@ -18,9 +33,14 @@ interface Props {
 
 const ReceiptPage = ({ params }: Props) => {
   const router = useRouter();
+  const { userData } = useAuth();
+  const { currentClient, handleCreateNewClient } = useClient();
   const [rId, setRId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [receipt, setReceipt] = useState<null | ReceiptTransformed>(null);
+  const [isOpenSearchClientDialog, setIsOpenSearchClientDialog] =
+    useState(false);
+  const [isOpenNewClientDialog, setIsOpenNewClientDialog] = useState(false);
 
   // Resolve params first
   useEffect(() => {
@@ -45,19 +65,47 @@ const ReceiptPage = ({ params }: Props) => {
     [router]
   );
 
+  const onSubmitNewClient = async (data: ClientFormData) => {
+    handleCreateNewClient(data, userData!.companyId);
+  };
+
+  const onOpenSearchClientDialog = () => {
+    setIsOpenSearchClientDialog(true);
+  };
+
+  const onOpenNewClientDialog = () => {
+    setIsOpenNewClientDialog(true);
+  };
+
+  const onCloseSearchClientDialog = () => {
+    setIsOpenSearchClientDialog(false);
+  };
+
+  const onCloseNewClientDialog = () => {
+    setIsOpenNewClientDialog(false);
+  };
+
   useEffect(() => {
     if (rId) {
       onInit(rId);
     }
   }, [rId, onInit]);
 
+  if (isLoading || !receipt || !rId)
+    return (
+      <div>
+        <h1>Loading Receipt...</h1>
+      </div>
+    );
+
   return (
     <ProtectedRoute>
       <AppLayout>
-        {isLoading || !receipt || !rId ? (
-          <div>
-            <h1>Loading Receipt...</h1>
-          </div>
+        {!currentClient ? (
+          <RequireClient
+            onOpenSearchClientDialog={onOpenSearchClientDialog}
+            onOpenNewClientDialog={onOpenNewClientDialog}
+          />
         ) : (
           <Receipt
             receiptId={rId}
@@ -65,9 +113,28 @@ const ReceiptPage = ({ params }: Props) => {
             onEdit={() => {}}
             onVoid={() => {}}
             onRefund={() => {}}
+            company={{
+              name: companyName,
+              addressLine: companyStreetAddress,
+              cityStateZip: companyAddressLocality,
+              phone: companyPhoneFormatted,
+              email: companyEmail,
+            }}
+            client={currentClient}
           />
         )}
       </AppLayout>
+
+      <NewClientDialog
+        onClose={onCloseNewClientDialog}
+        isOpen={isOpenNewClientDialog}
+        onSubmit={onSubmitNewClient}
+      />
+
+      <SearchClientDialog
+        isOpen={isOpenSearchClientDialog}
+        onClose={onCloseSearchClientDialog}
+      />
     </ProtectedRoute>
   );
 };

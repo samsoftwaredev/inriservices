@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 interface Props {
   params: Promise<{ slugName: string }>;
 }
-// eslint-disable-next-line
+
 export default async function Service({ params }: Props) {
   const data = {
     id: "1",
