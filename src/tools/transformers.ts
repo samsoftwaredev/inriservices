@@ -17,6 +17,8 @@ import {
   PropertyRoom,
   PropertyRoomTransformed,
   PropertyTransformed,
+  Receipt,
+  ReceiptTransformed,
 } from "@/types";
 
 export const projectStatusTransformer = (status: string): string => {
@@ -247,3 +249,22 @@ export const clientFullDataTransformer = (
   });
   return transformed as ClientFullData;
 };
+
+export const transformSingleReceipt = (
+  receipt: Receipt
+): ReceiptTransformed => ({
+  amountCents: receipt.amount_cents,
+  clientId: receipt.client_id,
+  companyId: receipt.company_id,
+  createdAt: receipt.created_at,
+  createdBy: receipt.created_by,
+  currency: receipt.currency,
+  id: receipt.id,
+  invoiceId: receipt.invoice_id,
+  notes: receipt.notes,
+  paidAt: receipt.paid_at,
+  paymentMethod: receipt.payment_method,
+  projectId: receipt.project_id,
+  referenceNumber: receipt.reference_number,
+  status: receipt.status,
+});

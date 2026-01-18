@@ -243,7 +243,6 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
           sx={{
             display: "flex",
             flexDirection: { xs: "column", sm: "row" },
-            alignItems: "center",
             gap: 2,
             mt: 2,
           }}

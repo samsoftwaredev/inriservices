@@ -19,6 +19,9 @@ export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 export type Client = Database["public"]["Tables"]["clients"]["Row"];
 export type Property = Database["public"]["Tables"]["properties"]["Row"];
 export type Project = Database["public"]["Tables"]["projects"]["Row"];
+export type Receipt = Database["public"]["Tables"]["receipts"]["Row"];
+export type Invoice = Database["public"]["Tables"]["invoices"]["Row"];
+export type InvoiceItem = Database["public"]["Tables"]["invoice_items"]["Row"];
 export type PropertyRoom =
   Database["public"]["Tables"]["property_rooms"]["Row"];
 
@@ -192,6 +195,23 @@ export type ProjectTransformed = {
   invoiceTotalCents: number;
 };
 
+export type ReceiptTransformed = {
+  amountCents: number;
+  clientId: string;
+  companyId: string;
+  createdAt: string;
+  createdBy: string | null;
+  currency: string;
+  id: string;
+  invoiceId: string | null;
+  notes: string | null;
+  paidAt: string;
+  paymentMethod: PaymentMethod;
+  projectId: string | null;
+  referenceNumber: string | null;
+  status: ReceiptStatus;
+};
+
 export type ProfileTransformed = {
   id: string;
   companyId: string;
@@ -233,3 +253,34 @@ export interface ProjectFormData {
   endDate: Date | null;
   scopeNotes: string;
 }
+
+export type InvoiceStatus =
+  | "draft"
+  | "sent"
+  | "partially_paid"
+  | "paid"
+  | "overdue"
+  | "void";
+
+export type PaymentMethod =
+  | "cash"
+  | "check"
+  | "zelle"
+  | "cash_app"
+  | "venmo"
+  | "credit_card"
+  | "debit_card"
+  | "ach"
+  | "wire"
+  | "other";
+
+export type InvoiceWithItems = Invoice & { items: InvoiceItem[] };
+
+export type InvoiceWithRelations = Invoice & {
+  client?: Client | null;
+  property?: Property | null;
+  project?: Project | null;
+  items: InvoiceItem[];
+};
+
+export type ReceiptStatus = "posted" | "refunded" | "voided";

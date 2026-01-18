@@ -88,6 +88,170 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_items: {
+        Row: {
+          company_id: string
+          created_at: string
+          description: string | null
+          id: string
+          invoice_id: string
+          line_subtotal_cents: number
+          line_tax_cents: number
+          line_total_cents: number
+          name: string
+          quantity: number
+          sort_order: number
+          tax_rate_bps: number | null
+          unit_price_cents: number
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          invoice_id: string
+          line_subtotal_cents?: number
+          line_tax_cents?: number
+          line_total_cents?: number
+          name: string
+          quantity?: number
+          sort_order?: number
+          tax_rate_bps?: number | null
+          unit_price_cents?: number
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          invoice_id?: string
+          line_subtotal_cents?: number
+          line_tax_cents?: number
+          line_total_cents?: number
+          name?: string
+          quantity?: number
+          sort_order?: number
+          tax_rate_bps?: number | null
+          unit_price_cents?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          balance_cents: number | null
+          client_id: string
+          company_id: string
+          created_at: string
+          currency: string
+          due_date: string | null
+          id: string
+          invoice_number: string
+          issued_date: string
+          notes: string | null
+          paid_cents: number
+          project_id: string | null
+          property_id: string | null
+          status: Database["public"]["Enums"]["invoice_status"]
+          subtotal_cents: number
+          tax_cents: number
+          tax_rate_bps: number
+          terms: string | null
+          total_cents: number
+          updated_at: string
+        }
+        Insert: {
+          balance_cents?: number | null
+          client_id: string
+          company_id: string
+          created_at?: string
+          currency?: string
+          due_date?: string | null
+          id?: string
+          invoice_number: string
+          issued_date?: string
+          notes?: string | null
+          paid_cents?: number
+          project_id?: string | null
+          property_id?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal_cents?: number
+          tax_cents?: number
+          tax_rate_bps?: number
+          terms?: string | null
+          total_cents?: number
+          updated_at?: string
+        }
+        Update: {
+          balance_cents?: number | null
+          client_id?: string
+          company_id?: string
+          created_at?: string
+          currency?: string
+          due_date?: string | null
+          id?: string
+          invoice_number?: string
+          issued_date?: string
+          notes?: string | null
+          paid_cents?: number
+          project_id?: string | null
+          property_id?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          subtotal_cents?: number
+          tax_cents?: number
+          tax_rate_bps?: number
+          terms?: string | null
+          total_cents?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           company_id: string
@@ -428,6 +592,86 @@ export type Database = {
           },
         ]
       }
+      receipts: {
+        Row: {
+          amount_cents: number
+          client_id: string
+          company_id: string
+          created_at: string
+          created_by: string | null
+          currency: string
+          id: string
+          invoice_id: string | null
+          notes: string | null
+          paid_at: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          project_id: string | null
+          reference_number: string | null
+          status: Database["public"]["Enums"]["receipt_status"]
+        }
+        Insert: {
+          amount_cents: number
+          client_id: string
+          company_id: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          id?: string
+          invoice_id?: string | null
+          notes?: string | null
+          paid_at?: string
+          payment_method: Database["public"]["Enums"]["payment_method"]
+          project_id?: string | null
+          reference_number?: string | null
+          status?: Database["public"]["Enums"]["receipt_status"]
+        }
+        Update: {
+          amount_cents?: number
+          client_id?: string
+          company_id?: string
+          created_at?: string
+          created_by?: string | null
+          currency?: string
+          id?: string
+          invoice_id?: string | null
+          notes?: string | null
+          paid_at?: string
+          payment_method?: Database["public"]["Enums"]["payment_method"]
+          project_id?: string | null
+          reference_number?: string | null
+          status?: Database["public"]["Enums"]["receipt_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receipts_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipts_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receipts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       my_profile: {
@@ -472,11 +716,37 @@ export type Database = {
         Args: { p_year: number }
         Returns: Json
       }
+      recalc_invoice_paid: {
+        Args: { p_invoice_id: string }
+        Returns: undefined
+      }
+      recalc_invoice_totals: {
+        Args: { p_invoice_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       client_status: "lead" | "active" | "inactive"
       client_type: "person" | "business"
+      invoice_status:
+        | "draft"
+        | "sent"
+        | "partially_paid"
+        | "paid"
+        | "overdue"
+        | "void"
       member_role: "owner" | "admin" | "staff" | "viewer"
+      payment_method:
+        | "cash"
+        | "check"
+        | "zelle"
+        | "cash_app"
+        | "venmo"
+        | "credit_card"
+        | "debit_card"
+        | "ach"
+        | "wire"
+        | "other"
       project_image_kind: "before" | "after" | "progress" | "other"
       project_status:
         | "draft"
@@ -494,6 +764,7 @@ export type Database = {
         | "wallpaper"
         | "other"
       property_type: "residential" | "commercial"
+      receipt_status: "posted" | "refunded" | "voided"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -623,7 +894,27 @@ export const Constants = {
     Enums: {
       client_status: ["lead", "active", "inactive"],
       client_type: ["person", "business"],
+      invoice_status: [
+        "draft",
+        "sent",
+        "partially_paid",
+        "paid",
+        "overdue",
+        "void",
+      ],
       member_role: ["owner", "admin", "staff", "viewer"],
+      payment_method: [
+        "cash",
+        "check",
+        "zelle",
+        "cash_app",
+        "venmo",
+        "credit_card",
+        "debit_card",
+        "ach",
+        "wire",
+        "other",
+      ],
       project_image_kind: ["before", "after", "progress", "other"],
       project_status: [
         "draft",
@@ -643,6 +934,7 @@ export const Constants = {
         "other",
       ],
       property_type: ["residential", "commercial"],
+      receipt_status: ["posted", "refunded", "voided"],
     },
   },
 } as const

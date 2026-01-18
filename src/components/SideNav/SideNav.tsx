@@ -20,10 +20,10 @@ import {
   PunchClock,
   DocumentScannerOutlined,
   Logout as LogoutIcon,
+  Receipt as ReceiptIcon,
 } from "@mui/icons-material";
 import { Person as PersonIcon } from "@mui/icons-material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import { ClientData } from "@/interfaces/laborTypes";
 import Link from "next/link";
 import { drawerWidth } from "@/constants";
 import { useAuth } from "@/context";
@@ -71,6 +71,11 @@ const navigationItems = [
     text: "Money Tracker",
     icon: <AttachMoneyIcon />,
     path: "/money-tracker",
+  },
+  {
+    text: "Receipts",
+    icon: <ReceiptIcon />,
+    path: "/receipts",
   },
 ];
 

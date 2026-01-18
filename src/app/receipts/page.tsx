@@ -3,17 +3,17 @@
 import React from "react";
 
 import AppLayout from "@/components/AppLayout";
-import { ExpenseTrackerApp } from "@/components/ExpenseTrackerApp";
 import { ProtectedRoute } from "@/components";
+import ReceiptDashboard from "@/components/ReceiptDashboard";
 
-const MoneyTrackerPage = () => {
+const ReceiptPage = () => {
   return (
     <ProtectedRoute>
       <AppLayout>
-        <ExpenseTrackerApp />
+        <ReceiptDashboard />
       </AppLayout>
     </ProtectedRoute>
   );
 };
 
-export default MoneyTrackerPage;
+export default ReceiptPage;

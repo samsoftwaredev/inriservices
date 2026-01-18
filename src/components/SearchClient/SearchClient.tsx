@@ -142,9 +142,9 @@ const SearchClient = ({ onClientSelected }: Props) => {
 
   return (
     <>
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ py: 3 }}>
         {/* Search Bar */}
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: 4, p: 0 }}>
           <TextField
             fullWidth
             placeholder="Search clients by name, email, phone, or location..."
