@@ -27,6 +27,7 @@ import {
   Divider,
   Stack,
   Chip,
+  CircularProgress,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -41,7 +42,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { invoiceApi, invoiceItemApi, clientApi, projectApi } from "@/services";
-import { Client, Project, Property, InvoiceStatus } from "@/types";
+import { Client, Project, Property, InvoiceStatus, Invoice } from "@/types";
 import { useAuth } from "@/context";
 import { generateInvoiceNumber } from "@/tools/invoiceUtils";
 import { toast } from "react-toastify";
@@ -69,7 +70,11 @@ interface CreateInvoiceFormData {
   items: InvoiceItem[];
 }
 
-const CreateInvoice = () => {
+interface CreateInvoiceProps {
+  invoiceId?: string;
+}
+
+const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
   const router = useRouter();
   const { userData } = useAuth();
   const [clients, setClients] = useState<Client[]>([]);
@@ -77,6 +82,8 @@ const CreateInvoice = () => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isEditing] = useState(!!invoiceId);
+  const [initialDataLoaded, setInitialDataLoaded] = useState(!invoiceId);
 
   const {
     control,
@@ -112,6 +119,51 @@ const CreateInvoice = () => {
   const watchedItems = watch("items");
   const watchedTaxRate = watch("tax_rate_bps");
   const watchedClientId = watch("client_id");
+
+  // Load existing invoice data for editing
+  useEffect(() => {
+    const loadInvoiceData = async () => {
+      if (!invoiceId) return;
+
+      try {
+        setLoading(true);
+        const invoiceData = await invoiceApi.getInvoiceFull(invoiceId);
+        
+        // Set form values from existing invoice
+        setValue("client_id", invoiceData.client_id);
+        setValue("project_id", invoiceData.project_id || "");
+        setValue("property_id", invoiceData.property_id || "");
+        setValue("invoice_number", invoiceData.invoice_number);
+        setValue("issued_date", new Date(invoiceData.issued_date));
+        setValue("due_date", invoiceData.due_date ? new Date(invoiceData.due_date) : undefined);
+        setValue("status", invoiceData.status);
+        setValue("notes", invoiceData.notes || "");
+        setValue("terms", invoiceData.terms || "");
+        setValue("tax_rate_bps", invoiceData.tax_rate_bps);
+        
+        // Set invoice items
+        const formItems = invoiceData.items.map(item => ({
+          id: item.id,
+          name: item.name,
+          description: item.description || "",
+          quantity: item.quantity,
+          unit_price_cents: item.unit_price_cents,
+          tax_rate_bps: item.tax_rate_bps || invoiceData.tax_rate_bps
+        }));
+        setValue("items", formItems);
+        
+        setInitialDataLoaded(true);
+      } catch (err) {
+        console.error("Error loading invoice:", err);
+        setError("Failed to load invoice data");
+        toast.error("Failed to load invoice data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadInvoiceData();
+  }, [invoiceId, setValue]);
 
   // Load clients on mount
   useEffect(() => {
@@ -156,7 +208,9 @@ const CreateInvoice = () => {
     const loadProperties = async () => {
       if (!watchedClientId) {
         setProperties([]);
-        setValue("property_id", "");
+        if (!isEditing) {
+          setValue("property_id", "");
+        }
         return;
       }
 
@@ -174,10 +228,10 @@ const CreateInvoice = () => {
       }
     };
 
-    if (clients.length > 0 && watchedClientId) {
+    if (clients.length > 0 && watchedClientId && initialDataLoaded) {
       loadProperties();
     }
-  }, [watchedClientId, clients, setValue]);
+  }, [watchedClientId, clients, setValue, isEditing, initialDataLoaded]);
 
   // Calculate totals
   const calculateTotals = () => {
@@ -209,7 +263,7 @@ const CreateInvoice = () => {
   // Add new item
   const addItem = () => {
     append({
-      id: Date.now().toString(),
+      id: `temp_${Date.now()}`,
       name: "New Item",
       description: "",
       quantity: 1,
@@ -229,46 +283,113 @@ const CreateInvoice = () => {
     setError(null);
 
     try {
-      // Create the invoice first
-      const invoiceInput = {
-        company_id: userData.companyId,
-        client_id: data.client_id,
-        project_id: data.project_id || null,
-        property_id: data.property_id || null,
-        invoice_number: data.invoice_number,
-        issued_date: data.issued_date.toISOString().split("T")[0],
-        due_date: data.due_date
-          ? data.due_date.toISOString().split("T")[0]
-          : null,
-        status: data.status,
-        currency: "USD",
-        subtotal_cents: subtotal,
-        tax_cents: tax,
-        tax_rate_bps: data.tax_rate_bps,
-        total_cents: total,
-        notes: data.notes || null,
-        terms: data.terms || null,
-      };
+      let invoice: Invoice;
+      
+      if (isEditing && invoiceId) {
+        // Update existing invoice
+        const invoiceInput = {
+          client_id: data.client_id,
+          project_id: data.project_id || null,
+          property_id: data.property_id || null,
+          invoice_number: data.invoice_number,
+          issued_date: data.issued_date.toISOString().split("T")[0],
+          due_date: data.due_date
+            ? data.due_date.toISOString().split("T")[0]
+            : null,
+          status: data.status,
+          currency: "USD",
+          subtotal_cents: subtotal,
+          tax_cents: tax,
+          tax_rate_bps: data.tax_rate_bps,
+          total_cents: total,
+          notes: data.notes || null,
+          terms: data.terms || null,
+        };
 
-      const invoice = await invoiceApi.createInvoice(invoiceInput);
-
-      // Create invoice items
-      const itemPromises = data.items.map((item) =>
-        invoiceItemApi.createInvoiceItem({
+        invoice = await invoiceApi.updateInvoice(invoiceId, invoiceInput);
+        
+        // Get existing items to compare
+        const existingItems = await invoiceItemApi.listInvoiceItems(invoiceId);
+        
+        // Delete items that are no longer in the form
+        const formItemIds = data.items.filter(item => !item.id.startsWith('temp_')).map(item => item.id);
+        const itemsToDelete = existingItems.filter(item => !formItemIds.includes(item.id));
+        
+        for (const item of itemsToDelete) {
+          await invoiceItemApi.deleteInvoiceItem(item.id);
+        }
+        
+        // Update or create items
+        const itemPromises = data.items.map(async (item) => {
+          if (item.id.startsWith('temp_') || !existingItems.find(ei => ei.id === item.id)) {
+            // Create new item
+            return invoiceItemApi.createInvoiceItem({
+              company_id: userData.companyId,
+              invoice_id: invoiceId,
+              name: item.name,
+              description: item.description || null,
+              quantity: item.quantity,
+              unit_price_cents: item.unit_price_cents,
+              tax_rate_bps: item.tax_rate_bps || data.tax_rate_bps,
+              sort_order: data.items.indexOf(item),
+            });
+          } else {
+            // Update existing item
+            return invoiceItemApi.updateInvoiceItem(item.id, {
+              name: item.name,
+              description: item.description || null,
+              quantity: item.quantity,
+              unit_price_cents: item.unit_price_cents,
+              tax_rate_bps: item.tax_rate_bps || data.tax_rate_bps,
+              sort_order: data.items.indexOf(item),
+            });
+          }
+        });
+        
+        await Promise.all(itemPromises);
+        
+      } else {
+        // Create new invoice
+        const invoiceInput = {
           company_id: userData.companyId,
-          invoice_id: invoice.id,
-          name: item.name,
-          description: item.description || null,
-          quantity: item.quantity,
-          unit_price_cents: item.unit_price_cents,
-          tax_rate_bps: item.tax_rate_bps || data.tax_rate_bps,
-          sort_order: data.items.indexOf(item),
-        })
-      );
+          client_id: data.client_id,
+          project_id: data.project_id || null,
+          property_id: data.property_id || null,
+          invoice_number: data.invoice_number,
+          issued_date: data.issued_date.toISOString().split("T")[0],
+          due_date: data.due_date
+            ? data.due_date.toISOString().split("T")[0]
+            : null,
+          status: data.status,
+          currency: "USD",
+          subtotal_cents: subtotal,
+          tax_cents: tax,
+          tax_rate_bps: data.tax_rate_bps,
+          total_cents: total,
+          notes: data.notes || null,
+          terms: data.terms || null,
+        };
 
-      await Promise.all(itemPromises);
+        invoice = await invoiceApi.createInvoice(invoiceInput);
+        
+        // Create invoice items
+        const itemPromises = data.items.map((item) =>
+          invoiceItemApi.createInvoiceItem({
+            company_id: userData.companyId,
+            invoice_id: invoice.id,
+            name: item.name,
+            description: item.description || null,
+            quantity: item.quantity,
+            unit_price_cents: item.unit_price_cents,
+            tax_rate_bps: item.tax_rate_bps || data.tax_rate_bps,
+            sort_order: data.items.indexOf(item),
+          })
+        );
 
-      toast.success("Invoice created successfully!");
+        await Promise.all(itemPromises);
+      }
+
+      toast.success(isEditing ? "Invoice updated successfully!" : "Invoice created successfully!");
       router.push(`/invoices/${invoice.id}`);
     } catch (err) {
       console.error("Error creating invoice:", err);
@@ -284,29 +405,36 @@ const CreateInvoice = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Box sx={{ p: 3, maxWidth: 1200, mx: "auto" }}>
-        {/* Header */}
-        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
-          <Button
-            startIcon={<ArrowBackIcon />}
-            onClick={() => router.back()}
-            variant="outlined"
-          >
-            Back
-          </Button>
-          <Box>
-            <Typography
-              variant="h4"
-              gutterBottom
-              sx={{ display: "flex", alignItems: "center" }}
-            >
-              <InvoiceIcon sx={{ mr: 2, fontSize: 40 }} />
-              Create New Invoice
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Fill in the details to create a new invoice
-            </Typography>
+        {/* Show loading state while loading initial data in edit mode */}
+        {isEditing && !initialDataLoaded ? (
+          <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+            <CircularProgress />
           </Box>
-        </Stack>
+        ) : (
+          <>
+            {/* Header */}
+            <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
+              <Button
+                startIcon={<ArrowBackIcon />}
+                onClick={() => router.back()}
+                variant="outlined"
+              >
+                Back
+              </Button>
+              <Box>
+                <Typography
+                  variant="h4"
+                  gutterBottom
+                  sx={{ display: "flex", alignItems: "center" }}
+                >
+                  <InvoiceIcon sx={{ mr: 2, fontSize: 40 }} />
+                  {isEditing ? "Edit Invoice" : "Create New Invoice"}
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  {isEditing ? "Update invoice details" : "Fill in the details to create a new invoice"}
+                </Typography>
+              </Box>
+            </Stack>
 
         {error && (
           <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
@@ -756,12 +884,17 @@ const CreateInvoice = () => {
                   onClick={() => setValue("status", "sent")}
                 >
                   <SendIcon sx={{ mr: 1 }} />
-                  {loading ? "Creating..." : "Create & Send Invoice"}
+                  {loading 
+                    ? (isEditing ? "Updating..." : "Creating...") 
+                    : (isEditing ? "Update & Send Invoice" : "Create & Send Invoice")
+                  }
                 </Button>
               </Stack>
             </Grid>
           </Grid>
         </form>
+          </>
+        )}
       </Box>
     </LocalizationProvider>
   );

@@ -3,7 +3,7 @@
 import React, { use } from "react";
 import AppLayout from "@/components/AppLayout";
 import { ProtectedRoute } from "@/components";
-import { InvoiceDetails } from "@/components";
+import CreateInvoice from "@/components/CreateInvoice";
 
 interface InvoicePageProps {
   params: Promise<{
@@ -13,11 +13,10 @@ interface InvoicePageProps {
 
 const InvoicePage = ({ params }: InvoicePageProps) => {
   const { invoiceId } = use(params);
-
   return (
     <ProtectedRoute>
       <AppLayout>
-        <InvoiceDetails invoiceId={invoiceId} />
+        <CreateInvoice invoiceId={invoiceId} />
       </AppLayout>
     </ProtectedRoute>
   );

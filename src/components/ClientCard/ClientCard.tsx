@@ -13,6 +13,7 @@ import {
   Divider,
   Menu,
   MenuItem,
+  Button,
 } from "@mui/material";
 import {
   Phone as PhoneIcon,
@@ -50,6 +51,13 @@ const ClientCard = ({
 }: Props) => {
   const { currentClient } = useClient();
   const isSelected = currentClient?.id === client.id;
+
+  const onClientSelect = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (onClick) {
+      onClick(client);
+      e.stopPropagation();
+    }
+  };
 
   const getStatusColor = (status?: ClientStatus) => {
     switch (status) {
@@ -110,7 +118,6 @@ const ClientCard = ({
               transition: "all 0.3s ease",
             },
           }}
-          onClick={() => onClick && onClick(client)}
         >
           <CardContent
             sx={{
@@ -246,6 +253,15 @@ const ClientCard = ({
                 </Typography>
               </Box>
             )}
+
+            <Button
+              variant="outlined"
+              fullWidth
+              sx={{ mt: 3 }}
+              onClick={onClientSelect}
+            >
+              Select Client
+            </Button>
           </CardContent>
         </Card>
       </Grid>
