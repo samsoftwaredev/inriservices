@@ -128,30 +128,33 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
       try {
         setLoading(true);
         const invoiceData = await invoiceApi.getInvoiceFull(invoiceId);
-        
+
         // Set form values from existing invoice
         setValue("client_id", invoiceData.client_id);
         setValue("project_id", invoiceData.project_id || "");
         setValue("property_id", invoiceData.property_id || "");
         setValue("invoice_number", invoiceData.invoice_number);
         setValue("issued_date", new Date(invoiceData.issued_date));
-        setValue("due_date", invoiceData.due_date ? new Date(invoiceData.due_date) : undefined);
+        setValue(
+          "due_date",
+          invoiceData.due_date ? new Date(invoiceData.due_date) : undefined
+        );
         setValue("status", invoiceData.status);
         setValue("notes", invoiceData.notes || "");
         setValue("terms", invoiceData.terms || "");
         setValue("tax_rate_bps", invoiceData.tax_rate_bps);
-        
+
         // Set invoice items
-        const formItems = invoiceData.items.map(item => ({
+        const formItems = invoiceData.items.map((item) => ({
           id: item.id,
           name: item.name,
           description: item.description || "",
           quantity: item.quantity,
           unit_price_cents: item.unit_price_cents,
-          tax_rate_bps: item.tax_rate_bps || invoiceData.tax_rate_bps
+          tax_rate_bps: item.tax_rate_bps || invoiceData.tax_rate_bps,
         }));
         setValue("items", formItems);
-        
+
         setInitialDataLoaded(true);
       } catch (err) {
         console.error("Error loading invoice:", err);
@@ -284,7 +287,7 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
 
     try {
       let invoice: Invoice;
-      
+
       if (isEditing && invoiceId) {
         // Update existing invoice
         const invoiceInput = {
@@ -307,21 +310,28 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
         };
 
         invoice = await invoiceApi.updateInvoice(invoiceId, invoiceInput);
-        
+
         // Get existing items to compare
         const existingItems = await invoiceItemApi.listInvoiceItems(invoiceId);
-        
+
         // Delete items that are no longer in the form
-        const formItemIds = data.items.filter(item => !item.id.startsWith('temp_')).map(item => item.id);
-        const itemsToDelete = existingItems.filter(item => !formItemIds.includes(item.id));
-        
+        const formItemIds = data.items
+          .filter((item) => !item.id.startsWith("temp_"))
+          .map((item) => item.id);
+        const itemsToDelete = existingItems.filter(
+          (item) => !formItemIds.includes(item.id)
+        );
+
         for (const item of itemsToDelete) {
           await invoiceItemApi.deleteInvoiceItem(item.id);
         }
-        
+
         // Update or create items
         const itemPromises = data.items.map(async (item) => {
-          if (item.id.startsWith('temp_') || !existingItems.find(ei => ei.id === item.id)) {
+          if (
+            item.id.startsWith("temp_") ||
+            !existingItems.find((ei) => ei.id === item.id)
+          ) {
             // Create new item
             return invoiceItemApi.createInvoiceItem({
               company_id: userData.companyId,
@@ -345,9 +355,8 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
             });
           }
         });
-        
+
         await Promise.all(itemPromises);
-        
       } else {
         // Create new invoice
         const invoiceInput = {
@@ -371,7 +380,7 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
         };
 
         invoice = await invoiceApi.createInvoice(invoiceInput);
-        
+
         // Create invoice items
         const itemPromises = data.items.map((item) =>
           invoiceItemApi.createInvoiceItem({
@@ -389,7 +398,11 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
         await Promise.all(itemPromises);
       }
 
-      toast.success(isEditing ? "Invoice updated successfully!" : "Invoice created successfully!");
+      toast.success(
+        isEditing
+          ? "Invoice updated successfully!"
+          : "Invoice created successfully!"
+      );
       router.push(`/invoices/${invoice.id}`);
     } catch (err) {
       console.error("Error creating invoice:", err);
@@ -413,7 +426,12 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
         ) : (
           <>
             {/* Header */}
-            <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={2}
+              sx={{ mb: 4 }}
+            >
               <Button
                 startIcon={<ArrowBackIcon />}
                 onClick={() => router.back()}
@@ -431,468 +449,493 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
                   {isEditing ? "Edit Invoice" : "Create New Invoice"}
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
-                  {isEditing ? "Update invoice details" : "Fill in the details to create a new invoice"}
+                  {isEditing
+                    ? "Update invoice details"
+                    : "Fill in the details to create a new invoice"}
                 </Typography>
               </Box>
             </Stack>
 
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
-            {error}
-          </Alert>
-        )}
+            {error && (
+              <Alert
+                severity="error"
+                sx={{ mb: 3 }}
+                onClose={() => setError(null)}
+              >
+                {error}
+              </Alert>
+            )}
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <Grid container spacing={3}>
-            {/* Invoice Details Card */}
-            <Grid size={{ xs: 12, md: 8 }}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Invoice Details
-                  </Typography>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Grid container spacing={3}>
+                {/* Invoice Details Card */}
+                <Grid size={{ xs: 12, md: 8 }}>
+                  <Card>
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom>
+                        Invoice Details
+                      </Typography>
 
-                  <Grid container spacing={3}>
-                    <Grid size={{ xs: 12, sm: 6 }}>
-                      <Controller
-                        name="client_id"
-                        control={control}
-                        rules={{ required: "Client is required" }}
-                        render={({ field }) => (
-                          <FormControl fullWidth error={!!errors.client_id}>
-                            <InputLabel>Client *</InputLabel>
-                            <Select {...field} label="Client *">
-                              {clients.map((client) => (
-                                <MenuItem key={client.id} value={client.id}>
-                                  {client.display_name}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                            {errors.client_id && (
-                              <Typography variant="caption" color="error">
-                                {errors.client_id.message}
-                              </Typography>
+                      <Grid container spacing={3}>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                          <Controller
+                            name="client_id"
+                            control={control}
+                            rules={{ required: "Client is required" }}
+                            render={({ field }) => (
+                              <FormControl fullWidth error={!!errors.client_id}>
+                                <InputLabel>Client *</InputLabel>
+                                <Select {...field} label="Client *">
+                                  {clients.map((client) => (
+                                    <MenuItem key={client.id} value={client.id}>
+                                      {client.display_name}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                                {errors.client_id && (
+                                  <Typography variant="caption" color="error">
+                                    {errors.client_id.message}
+                                  </Typography>
+                                )}
+                              </FormControl>
                             )}
-                          </FormControl>
-                        )}
-                      />
-                    </Grid>
-
-                    <Grid size={{ xs: 12, sm: 6 }}>
-                      <Controller
-                        name="project_id"
-                        control={control}
-                        render={({ field }) => (
-                          <FormControl fullWidth>
-                            <InputLabel>Project (Optional)</InputLabel>
-                            <Select
-                              {...field}
-                              label="Project (Optional)"
-                              value={field.value || ""}
-                            >
-                              <MenuItem value="">
-                                <em>No Project</em>
-                              </MenuItem>
-                              {projects.map((project) => (
-                                <MenuItem key={project.id} value={project.id}>
-                                  {project.name}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        )}
-                      />
-                    </Grid>
-
-                    <Grid size={{ xs: 12, sm: 6 }}>
-                      <Controller
-                        name="property_id"
-                        control={control}
-                        render={({ field }) => (
-                          <FormControl fullWidth disabled={!watchedClientId}>
-                            <InputLabel>Property (Optional)</InputLabel>
-                            <Select
-                              {...field}
-                              label="Property (Optional)"
-                              value={field.value || ""}
-                            >
-                              <MenuItem value="">
-                                <em>No Property</em>
-                              </MenuItem>
-                              {properties.map((property) => (
-                                <MenuItem key={property.id} value={property.id}>
-                                  <Box>
-                                    <Typography variant="body2" component="div">
-                                      {property.address_line1}
-                                      {property.address_line2 &&
-                                        `, ${property.address_line2}`}
-                                    </Typography>
-                                    <Typography
-                                      variant="caption"
-                                      color="text.secondary"
-                                    >
-                                      {property.city}, {property.state}{" "}
-                                      {property.zip}
-                                    </Typography>
-                                  </Box>
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        )}
-                      />
-                    </Grid>
-
-                    <Grid size={{ xs: 12, sm: 6 }}>
-                      <Controller
-                        name="invoice_number"
-                        control={control}
-                        rules={{ required: "Invoice number is required" }}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            fullWidth
-                            label="Invoice Number *"
-                            error={!!errors.invoice_number}
-                            helperText={errors.invoice_number?.message}
                           />
-                        )}
-                      />
-                    </Grid>
+                        </Grid>
 
-                    <Grid size={{ xs: 12, sm: 6 }}>
-                      <Controller
-                        name="status"
-                        control={control}
-                        render={({ field }) => (
-                          <FormControl fullWidth>
-                            <InputLabel>Status</InputLabel>
-                            <Select {...field} label="Status">
-                              <MenuItem value="draft">Draft</MenuItem>
-                              <MenuItem value="sent">Sent</MenuItem>
-                              <MenuItem value="paid">Paid</MenuItem>
-                              <MenuItem value="void">Void</MenuItem>
-                            </Select>
-                          </FormControl>
-                        )}
-                      />
-                    </Grid>
-
-                    <Grid size={{ xs: 12, sm: 6 }}>
-                      <Controller
-                        name="issued_date"
-                        control={control}
-                        rules={{ required: "Issue date is required" }}
-                        render={({ field }) => (
-                          <DatePicker
-                            {...field}
-                            label="Issue Date *"
-                            slotProps={{
-                              textField: {
-                                fullWidth: true,
-                                error: !!errors.issued_date,
-                                helperText: errors.issued_date?.message,
-                              },
-                            }}
-                          />
-                        )}
-                      />
-                    </Grid>
-
-                    <Grid size={{ xs: 12, sm: 6 }}>
-                      <Controller
-                        name="due_date"
-                        control={control}
-                        render={({ field }) => (
-                          <DatePicker
-                            {...field}
-                            label="Due Date"
-                            slotProps={{
-                              textField: {
-                                fullWidth: true,
-                              },
-                            }}
-                          />
-                        )}
-                      />
-                    </Grid>
-
-                    <Grid size={{ xs: 12, sm: 6 }}>
-                      <Controller
-                        name="tax_rate_bps"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            fullWidth
-                            label="Tax Rate (%)"
-                            type="number"
-                            value={field.value / 100} // Convert basis points to percentage
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value) * 100)
-                            } // Convert percentage to basis points
-                            inputProps={{ min: 0, max: 50, step: 0.25 }}
-                          />
-                        )}
-                      />
-                    </Grid>
-                  </Grid>
-
-                  <Box sx={{ mt: 3 }}>
-                    <Controller
-                      name="notes"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          fullWidth
-                          label="Notes"
-                          multiline
-                          rows={3}
-                          placeholder="Add any additional notes for this invoice..."
-                        />
-                      )}
-                    />
-                  </Box>
-
-                  <Box sx={{ mt: 2 }}>
-                    <Controller
-                      name="terms"
-                      control={control}
-                      render={({ field }) => (
-                        <TextField
-                          {...field}
-                          fullWidth
-                          label="Payment Terms"
-                          multiline
-                          rows={2}
-                          placeholder="Payment terms and conditions..."
-                        />
-                      )}
-                    />
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Invoice Summary Card */}
-            <Grid size={{ xs: 12, md: 4 }}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    Invoice Summary
-                  </Typography>
-
-                  <Stack spacing={2}>
-                    <Box display="flex" justifyContent="space-between">
-                      <Typography>Subtotal:</Typography>
-                      <Typography fontWeight="medium">
-                        {formatCurrency(subtotal)}
-                      </Typography>
-                    </Box>
-
-                    <Box display="flex" justifyContent="space-between">
-                      <Typography>
-                        Tax ({(watchedTaxRate / 100).toFixed(1)}%):
-                      </Typography>
-                      <Typography fontWeight="medium">
-                        {formatCurrency(tax)}
-                      </Typography>
-                    </Box>
-
-                    <Divider />
-
-                    <Box display="flex" justifyContent="space-between">
-                      <Typography variant="h6">Total:</Typography>
-                      <Typography
-                        variant="h6"
-                        color="primary"
-                        fontWeight="bold"
-                      >
-                        {formatCurrency(total)}
-                      </Typography>
-                    </Box>
-                  </Stack>
-                </CardContent>
-              </Card>
-            </Grid>
-
-            {/* Invoice Items */}
-            <Grid size={{ xs: 12 }}>
-              <Card>
-                <CardContent>
-                  <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    mb={2}
-                  >
-                    <Typography variant="h6">Invoice Items</Typography>
-                    <Button
-                      startIcon={<AddIcon />}
-                      onClick={addItem}
-                      variant="outlined"
-                    >
-                      Add Item
-                    </Button>
-                  </Box>
-
-                  <TableContainer component={Paper} variant="outlined">
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Item Name</TableCell>
-                          <TableCell>Description</TableCell>
-                          <TableCell width="100px">Qty</TableCell>
-                          <TableCell width="130px">Unit Price</TableCell>
-                          <TableCell width="130px">Total</TableCell>
-                          <TableCell width="60px">Actions</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {fields.map((field, index) => (
-                          <TableRow key={field.id}>
-                            <TableCell>
-                              <Controller
-                                name={`items.${index}.name`}
-                                control={control}
-                                rules={{ required: true }}
-                                render={({ field }) => (
-                                  <TextField
-                                    {...field}
-                                    size="small"
-                                    variant="outlined"
-                                    placeholder="Item name"
-                                    error={!!errors.items?.[index]?.name}
-                                  />
-                                )}
-                              />
-                            </TableCell>
-
-                            <TableCell>
-                              <Controller
-                                name={`items.${index}.description`}
-                                control={control}
-                                render={({ field }) => (
-                                  <TextField
-                                    {...field}
-                                    size="small"
-                                    variant="outlined"
-                                    placeholder="Description"
-                                    multiline
-                                    maxRows={2}
-                                  />
-                                )}
-                              />
-                            </TableCell>
-
-                            <TableCell>
-                              <Controller
-                                name={`items.${index}.quantity`}
-                                control={control}
-                                render={({ field }) => (
-                                  <TextField
-                                    {...field}
-                                    size="small"
-                                    type="number"
-                                    inputProps={{ min: 1 }}
-                                    onChange={(e) =>
-                                      field.onChange(Number(e.target.value))
-                                    }
-                                  />
-                                )}
-                              />
-                            </TableCell>
-
-                            <TableCell>
-                              <Controller
-                                name={`items.${index}.unit_price_cents`}
-                                control={control}
-                                render={({ field }) => (
-                                  <TextField
-                                    {...field}
-                                    size="small"
-                                    type="number"
-                                    inputProps={{ min: 0, step: 0.01 }}
-                                    value={field.value / 100} // Convert cents to dollars
-                                    onChange={(e) =>
-                                      field.onChange(
-                                        Number(e.target.value) * 100
-                                      )
-                                    } // Convert dollars to cents
-                                    placeholder="0.00"
-                                  />
-                                )}
-                              />
-                            </TableCell>
-
-                            <TableCell>
-                              <Typography variant="body2" fontWeight="medium">
-                                {formatCurrency(
-                                  watchedItems[index]?.quantity *
-                                    watchedItems[index]?.unit_price_cents || 0
-                                )}
-                              </Typography>
-                            </TableCell>
-
-                            <TableCell>
-                              {fields.length > 1 && (
-                                <IconButton
-                                  size="small"
-                                  color="error"
-                                  onClick={() => remove(index)}
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                          <Controller
+                            name="project_id"
+                            control={control}
+                            render={({ field }) => (
+                              <FormControl fullWidth>
+                                <InputLabel>Project (Optional)</InputLabel>
+                                <Select
+                                  {...field}
+                                  label="Project (Optional)"
+                                  value={field.value || ""}
                                 >
-                                  <DeleteIcon />
-                                </IconButton>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </CardContent>
-              </Card>
-            </Grid>
+                                  <MenuItem value="">
+                                    <em>No Project</em>
+                                  </MenuItem>
+                                  {projects.map((project) => (
+                                    <MenuItem
+                                      key={project.id}
+                                      value={project.id}
+                                    >
+                                      {project.name}
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                              </FormControl>
+                            )}
+                          />
+                        </Grid>
 
-            {/* Submit Buttons */}
-            <Grid size={{ xs: 12 }}>
-              <Stack direction="row" spacing={2} justifyContent="flex-end">
-                <Button
-                  type="button"
-                  variant="outlined"
-                  onClick={() => router.back()}
-                  disabled={loading}
-                >
-                  Cancel
-                </Button>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                          <Controller
+                            name="property_id"
+                            control={control}
+                            render={({ field }) => (
+                              <FormControl
+                                fullWidth
+                                disabled={!watchedClientId}
+                              >
+                                <InputLabel>Property (Optional)</InputLabel>
+                                <Select
+                                  {...field}
+                                  label="Property (Optional)"
+                                  value={field.value || ""}
+                                >
+                                  <MenuItem value="">
+                                    <em>No Property</em>
+                                  </MenuItem>
+                                  {properties.map((property) => (
+                                    <MenuItem
+                                      key={property.id}
+                                      value={property.id}
+                                    >
+                                      <Box>
+                                        <Typography
+                                          variant="body2"
+                                          component="div"
+                                        >
+                                          {property.address_line1}
+                                          {property.address_line2 &&
+                                            `, ${property.address_line2}`}
+                                        </Typography>
+                                        <Typography
+                                          variant="caption"
+                                          color="text.secondary"
+                                        >
+                                          {property.city}, {property.state}{" "}
+                                          {property.zip}
+                                        </Typography>
+                                      </Box>
+                                    </MenuItem>
+                                  ))}
+                                </Select>
+                              </FormControl>
+                            )}
+                          />
+                        </Grid>
 
-                <Button
-                  type="button"
-                  variant="outlined"
-                  onClick={() => setValue("status", "draft")}
-                  disabled={loading}
-                >
-                  <SaveIcon sx={{ mr: 1 }} />
-                  Save as Draft
-                </Button>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                          <Controller
+                            name="invoice_number"
+                            control={control}
+                            rules={{ required: "Invoice number is required" }}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                label="Invoice Number *"
+                                error={!!errors.invoice_number}
+                                helperText={errors.invoice_number?.message}
+                              />
+                            )}
+                          />
+                        </Grid>
 
-                <Button
-                  type="submit"
-                  variant="contained"
-                  disabled={loading}
-                  onClick={() => setValue("status", "sent")}
-                >
-                  <SendIcon sx={{ mr: 1 }} />
-                  {loading 
-                    ? (isEditing ? "Updating..." : "Creating...") 
-                    : (isEditing ? "Update & Send Invoice" : "Create & Send Invoice")
-                  }
-                </Button>
-              </Stack>
-            </Grid>
-          </Grid>
-        </form>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                          <Controller
+                            name="status"
+                            control={control}
+                            render={({ field }) => (
+                              <FormControl fullWidth>
+                                <InputLabel>Status</InputLabel>
+                                <Select {...field} label="Status">
+                                  <MenuItem value="draft">Draft</MenuItem>
+                                  <MenuItem value="sent">Sent</MenuItem>
+                                  <MenuItem value="paid">Paid</MenuItem>
+                                  <MenuItem value="void">Void</MenuItem>
+                                </Select>
+                              </FormControl>
+                            )}
+                          />
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                          <Controller
+                            name="issued_date"
+                            control={control}
+                            rules={{ required: "Issue date is required" }}
+                            render={({ field }) => (
+                              <DatePicker
+                                {...field}
+                                label="Issue Date *"
+                                slotProps={{
+                                  textField: {
+                                    fullWidth: true,
+                                    error: !!errors.issued_date,
+                                    helperText: errors.issued_date?.message,
+                                  },
+                                }}
+                              />
+                            )}
+                          />
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                          <Controller
+                            name="due_date"
+                            control={control}
+                            render={({ field }) => (
+                              <DatePicker
+                                {...field}
+                                label="Due Date"
+                                slotProps={{
+                                  textField: {
+                                    fullWidth: true,
+                                  },
+                                }}
+                              />
+                            )}
+                          />
+                        </Grid>
+
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                          <Controller
+                            name="tax_rate_bps"
+                            control={control}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                fullWidth
+                                label="Tax Rate (%)"
+                                type="number"
+                                value={field.value / 100} // Convert basis points to percentage
+                                onChange={(e) =>
+                                  field.onChange(Number(e.target.value) * 100)
+                                } // Convert percentage to basis points
+                                inputProps={{ min: 0, max: 50, step: 0.25 }}
+                              />
+                            )}
+                          />
+                        </Grid>
+                      </Grid>
+
+                      <Box sx={{ mt: 3 }}>
+                        <Controller
+                          name="notes"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              fullWidth
+                              label="Notes"
+                              multiline
+                              rows={3}
+                              placeholder="Add any additional notes for this invoice..."
+                            />
+                          )}
+                        />
+                      </Box>
+
+                      <Box sx={{ mt: 2 }}>
+                        <Controller
+                          name="terms"
+                          control={control}
+                          render={({ field }) => (
+                            <TextField
+                              {...field}
+                              fullWidth
+                              label="Payment Terms"
+                              multiline
+                              rows={2}
+                              placeholder="Payment terms and conditions..."
+                            />
+                          )}
+                        />
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+
+                {/* Invoice Summary Card */}
+                <Grid size={{ xs: 12, md: 4 }}>
+                  <Card>
+                    <CardContent>
+                      <Typography variant="h6" gutterBottom>
+                        Invoice Summary
+                      </Typography>
+
+                      <Stack spacing={2}>
+                        <Box display="flex" justifyContent="space-between">
+                          <Typography>Subtotal:</Typography>
+                          <Typography fontWeight="medium">
+                            {formatCurrency(subtotal)}
+                          </Typography>
+                        </Box>
+
+                        <Box display="flex" justifyContent="space-between">
+                          <Typography>
+                            Tax ({(watchedTaxRate / 100).toFixed(1)}%):
+                          </Typography>
+                          <Typography fontWeight="medium">
+                            {formatCurrency(tax)}
+                          </Typography>
+                        </Box>
+
+                        <Divider />
+
+                        <Box display="flex" justifyContent="space-between">
+                          <Typography variant="h6">Total:</Typography>
+                          <Typography
+                            variant="h6"
+                            color="primary"
+                            fontWeight="bold"
+                          >
+                            {formatCurrency(total)}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                </Grid>
+
+                {/* Invoice Items */}
+                <Grid size={{ xs: 12 }}>
+                  <Card>
+                    <CardContent>
+                      <Box
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        mb={2}
+                      >
+                        <Typography variant="h6">Invoice Items</Typography>
+                        <Button
+                          startIcon={<AddIcon />}
+                          onClick={addItem}
+                          variant="outlined"
+                        >
+                          Add Item
+                        </Button>
+                      </Box>
+
+                      <TableContainer component={Paper} variant="outlined">
+                        <Table>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell>Item Name</TableCell>
+                              <TableCell>Description</TableCell>
+                              <TableCell width="100px">Qty</TableCell>
+                              <TableCell width="130px">Unit Price</TableCell>
+                              <TableCell width="130px">Total</TableCell>
+                              <TableCell width="60px">Actions</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {fields.map((field, index) => (
+                              <TableRow key={field.id}>
+                                <TableCell>
+                                  <Controller
+                                    name={`items.${index}.name`}
+                                    control={control}
+                                    rules={{ required: true }}
+                                    render={({ field }) => (
+                                      <TextField
+                                        {...field}
+                                        size="small"
+                                        variant="outlined"
+                                        placeholder="Item name"
+                                        error={!!errors.items?.[index]?.name}
+                                      />
+                                    )}
+                                  />
+                                </TableCell>
+
+                                <TableCell>
+                                  <Controller
+                                    name={`items.${index}.description`}
+                                    control={control}
+                                    render={({ field }) => (
+                                      <TextField
+                                        {...field}
+                                        size="small"
+                                        variant="outlined"
+                                        placeholder="Description"
+                                        multiline
+                                        maxRows={2}
+                                      />
+                                    )}
+                                  />
+                                </TableCell>
+
+                                <TableCell>
+                                  <Controller
+                                    name={`items.${index}.quantity`}
+                                    control={control}
+                                    render={({ field }) => (
+                                      <TextField
+                                        {...field}
+                                        size="small"
+                                        type="number"
+                                        inputProps={{ min: 1 }}
+                                        onChange={(e) =>
+                                          field.onChange(Number(e.target.value))
+                                        }
+                                      />
+                                    )}
+                                  />
+                                </TableCell>
+
+                                <TableCell>
+                                  <Controller
+                                    name={`items.${index}.unit_price_cents`}
+                                    control={control}
+                                    render={({ field }) => (
+                                      <TextField
+                                        {...field}
+                                        size="small"
+                                        type="number"
+                                        inputProps={{ min: 0, step: 0.01 }}
+                                        value={field.value / 100} // Convert cents to dollars
+                                        onChange={(e) =>
+                                          field.onChange(
+                                            Number(e.target.value) * 100
+                                          )
+                                        } // Convert dollars to cents
+                                        placeholder="0.00"
+                                      />
+                                    )}
+                                  />
+                                </TableCell>
+
+                                <TableCell>
+                                  <Typography
+                                    variant="body2"
+                                    fontWeight="medium"
+                                  >
+                                    {formatCurrency(
+                                      watchedItems[index]?.quantity *
+                                        watchedItems[index]?.unit_price_cents ||
+                                        0
+                                    )}
+                                  </Typography>
+                                </TableCell>
+
+                                <TableCell>
+                                  {fields.length > 1 && (
+                                    <IconButton
+                                      size="small"
+                                      color="error"
+                                      onClick={() => remove(index)}
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </TableContainer>
+                    </CardContent>
+                  </Card>
+                </Grid>
+
+                {/* Submit Buttons */}
+                <Grid size={{ xs: 12 }}>
+                  <Stack direction="row" spacing={2} justifyContent="flex-end">
+                    <Button
+                      type="button"
+                      variant="outlined"
+                      onClick={() => router.back()}
+                      disabled={loading}
+                    >
+                      Cancel
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outlined"
+                      onClick={() => setValue("status", "draft")}
+                      disabled={loading}
+                    >
+                      <SaveIcon sx={{ mr: 1 }} />
+                      Save as Draft
+                    </Button>
+
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      disabled={loading}
+                      onClick={() => setValue("status", "sent")}
+                    >
+                      <SendIcon sx={{ mr: 1 }} />
+                      {loading
+                        ? isEditing
+                          ? "Updating..."
+                          : "Creating..."
+                        : isEditing
+                        ? "Update & Send Invoice"
+                        : "Create & Send Invoice"}
+                    </Button>
+                  </Stack>
+                </Grid>
+              </Grid>
+            </form>
           </>
         )}
       </Box>
