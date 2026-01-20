@@ -31,3 +31,5 @@ export { default as CustomerSelectionMenu } from "./ProInteriorEstimate/Customer
 export { InvoiceGenerator } from "./InvoiceGenerator";
 export type { InvoiceData, InvoiceItem, Customer } from "./InvoiceGenerator";
 export { InvoiceDemo } from "./InvoiceDemo";
+export { default as CreateInvoice } from "./CreateInvoice";
+export { default as InvoiceDetails } from "./InvoiceDetails";

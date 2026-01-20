@@ -18,37 +18,7 @@ import {
   companyPhoneFormatted,
   companySlogan,
 } from "@/constants";
-
-// Define types for invoice data
-interface InvoiceItem {
-  id: string;
-  description: string;
-  quantity: number;
-  rate: number;
-  amount: number;
-}
-
-interface Customer {
-  name: string;
-  email: string;
-  address: string;
-  city: string;
-  state: string;
-  zipCode: string;
-}
-
-interface InvoiceData {
-  invoiceNumber: string;
-  date: string;
-  dueDate: string;
-  customer: Customer;
-  items: InvoiceItem[];
-  subtotal: number;
-  tax: number;
-  taxRate: number;
-  total: number;
-  notes?: string;
-}
+import { ReceiptDisplayData } from "@/types";
 
 // PDF Styles
 const styles = StyleSheet.create({
@@ -202,7 +172,7 @@ const styles = StyleSheet.create({
 });
 
 // PDF Document Component
-const InvoicePDF: React.FC<{ data: InvoiceData }> = ({ data }) => (
+const ReceiptPDF: React.FC<{ data: ReceiptDisplayData }> = ({ data }) => (
   <Document>
     <Page size="A4" style={styles.page}>
       {/* Header */}
@@ -219,71 +189,57 @@ const InvoicePDF: React.FC<{ data: InvoiceData }> = ({ data }) => (
           </Text>
         </View>
         <View style={styles.invoiceInfo}>
-          <Text style={styles.invoiceTitle}>INVOICE</Text>
-          <Text style={styles.invoiceNumber}>#{data.invoiceNumber}</Text>
+          <Text style={styles.invoiceTitle}>RECEIPT</Text>
+          <Text style={styles.invoiceNumber}>#{data.receiptNumber}</Text>
           <Text style={styles.invoiceNumber}>Date: {data.date}</Text>
-          <Text style={styles.invoiceNumber}>Due: {data.dueDate}</Text>
+          <Text style={styles.invoiceNumber}>Status: {data.status}</Text>
         </View>
       </View>
 
       {/* Customer Information */}
       <View style={styles.customerSection}>
-        <Text style={styles.sectionTitle}>Bill To:</Text>
+        <Text style={styles.sectionTitle}>Received From:</Text>
         <Text style={styles.customerInfo}>
-          {data.customer.name}
-          {"\n"}
-          {data.customer.address}
-          {"\n"}
-          {data.customer.city}, {data.customer.state} {data.customer.zipCode}
-          {"\n"}
-          {data.customer.email}
+          {data.customerName}
+          {data.customerEmail && `\n${data.customerEmail}`}
+          {data.customerAddress && `\n${data.customerAddress}`}
         </Text>
       </View>
 
-      {/* Items Table */}
+      {/* Payment Details */}
       <View style={styles.table}>
-        {/* Table Header */}
         <View style={styles.tableHeader}>
           <Text style={[styles.tableCell, styles.description]}>
             Description
           </Text>
-          <Text style={[styles.tableCell, styles.quantity]}>Qty</Text>
-          <Text style={[styles.tableCell, styles.rate]}>Rate</Text>
           <Text style={[styles.tableCell, styles.amount]}>Amount</Text>
         </View>
 
-        {/* Table Rows */}
-        {data.items.map((item) => (
-          <View key={item.id} style={styles.tableRow}>
-            <Text style={[styles.tableCell, styles.description]}>
-              {item.description}
-            </Text>
-            <Text style={[styles.tableCell, styles.quantity]}>
-              {item.quantity}
-            </Text>
-            <Text style={[styles.tableCell, styles.rate]}>
-              ${item.rate.toFixed(2)}
-            </Text>
-            <Text style={[styles.tableCell, styles.amount]}>
-              ${item.amount.toFixed(2)}
-            </Text>
-          </View>
-        ))}
+        <View style={styles.tableRow}>
+          <Text style={[styles.tableCell, styles.description]}>
+            {data.projectDescription || "Payment Received"}
+          </Text>
+          <Text style={[styles.tableCell, styles.amount]}>
+            ${(data.amount / 100).toFixed(2)}
+          </Text>
+        </View>
       </View>
 
-      {/* Totals Section */}
+      {/* Payment Information */}
       <View style={styles.totalsSection}>
         <View style={styles.totalRow}>
-          <Text>Subtotal:</Text>
-          <Text>${data.subtotal.toFixed(2)}</Text>
+          <Text>Payment Method:</Text>
+          <Text>{data.paymentMethod}</Text>
         </View>
-        <View style={styles.totalRow}>
-          <Text>Tax ({(data.taxRate * 100).toFixed(1)}%):</Text>
-          <Text>${data.tax.toFixed(2)}</Text>
-        </View>
+        {data.referenceNumber && (
+          <View style={styles.totalRow}>
+            <Text>Reference #:</Text>
+            <Text>{data.referenceNumber}</Text>
+          </View>
+        )}
         <View style={styles.grandTotal}>
-          <Text>Total:</Text>
-          <Text>${data.total.toFixed(2)}</Text>
+          <Text>Total Received:</Text>
+          <Text>${(data.amount / 100).toFixed(2)}</Text>
         </View>
       </View>
 
@@ -298,17 +254,16 @@ const InvoicePDF: React.FC<{ data: InvoiceData }> = ({ data }) => (
       {/* Footer */}
       <View style={styles.footer}>
         <Text>
-          Thank you for your business! Payment is due within 30 days of invoice
-          date.
+          Thank you for your payment! This receipt serves as proof of payment.
         </Text>
       </View>
     </Page>
   </Document>
 );
 
-// Invoice Generator Component
-interface InvoiceGeneratorProps {
-  invoiceData: InvoiceData;
+// Receipt Generator Component
+interface ReceiptGeneratorProps {
+  receiptData: ReceiptDisplayData;
   buttonText?: string;
   fileName?: string;
   variant?: "contained" | "outlined" | "text";
@@ -316,29 +271,29 @@ interface InvoiceGeneratorProps {
   fullWidth?: boolean;
 }
 
-const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
-  invoiceData,
-  buttonText = "Download Invoice",
+const ReceiptGenerator: React.FC<ReceiptGeneratorProps> = ({
+  receiptData,
+  buttonText = "Download Receipt",
   fileName,
   variant = "contained",
   size = "medium",
   fullWidth = false,
 }) => {
-  const defaultFileName = `invoice-${
-    invoiceData.invoiceNumber
-  }-${invoiceData.date.replace(/\//g, "-")}.pdf`;
+  const defaultFileName = `receipt-${
+    receiptData.receiptNumber
+  }-${receiptData.date.replace(/\//g, "-")}.pdf`;
   const pdfFileName = fileName || defaultFileName;
 
-  // prevent PDF error by updating key on invoiceData change
+  // prevent PDF error by updating key on receiptData change
   const count = useRef(0);
   useEffect(() => {
     count.current++;
-  }, [invoiceData]);
+  }, [receiptData]);
 
   return (
     <PDFDownloadLink
       key={count.current}
-      document={<InvoicePDF data={invoiceData} />}
+      document={<ReceiptPDF data={receiptData} />}
       fileName={pdfFileName}
       style={{ textDecoration: "none" }}
     >
@@ -364,5 +319,22 @@ const InvoiceGenerator: React.FC<InvoiceGeneratorProps> = ({
   );
 };
 
-export default InvoiceGenerator;
-export type { InvoiceData, InvoiceItem, Customer };
+export default ReceiptGenerator;
+
+/* Usage Example:
+import ReceiptGenerator, { transformReceiptForPDF } from '@/components/ReceiptGenerator';
+
+const receiptData = transformReceiptForPDF(
+  receiptFromDB,
+  'John Doe',
+  'john@example.com', 
+  '123 Main St, City, State',
+  'Kitchen painting project'
+);
+
+<ReceiptGenerator 
+  receiptData={receiptData}
+  buttonText="Download Receipt"
+  fileName="my-receipt.pdf"
+/>
+*/

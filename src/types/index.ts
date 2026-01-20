@@ -284,3 +284,19 @@ export type InvoiceWithRelations = Invoice & {
 };
 
 export type ReceiptStatus = "posted" | "refunded" | "voided";
+
+// Define types for receipt data
+export interface ReceiptDisplayData {
+  id: string;
+  receiptNumber: string;
+  date: string;
+  customerName: string;
+  customerEmail?: string;
+  customerAddress?: string;
+  amount: number;
+  paymentMethod: string;
+  referenceNumber?: string;
+  projectDescription?: string;
+  notes?: string;
+  status: string;
+}

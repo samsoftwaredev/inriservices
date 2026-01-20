@@ -1,4 +1,5 @@
 export const companyName = "INRI Paint & Wall LLC";
+export const companySlogan = "Expert Painting & Drywall Repair";
 
 export const companyPhoneFormatted = "(214) 400-1397";
 export const companyPhone = "+12144001397";
@@ -10,6 +11,7 @@ export const companyAddressLocality = "Austin";
 export const companyAddressRegion = "TX";
 export const companyPostalCode = "78731";
 export const companyAddressCountry = "US";
+export const companyFullAddress = `${companyStreetAddress}, ${companyAddressLocality}, ${companyAddressRegion} ${companyPostalCode}, ${companyAddressCountry}`;
 
 export const TAX_RATE_PERCNT = 0.0825;
 export const PROFIT_MARGIN_PERCNT = 0.2;

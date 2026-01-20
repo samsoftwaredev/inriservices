@@ -21,6 +21,7 @@ import {
   DocumentScannerOutlined,
   Logout as LogoutIcon,
   Receipt as ReceiptIcon,
+  Money,
 } from "@mui/icons-material";
 import { Person as PersonIcon } from "@mui/icons-material";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
@@ -71,6 +72,11 @@ const navigationItems = [
     text: "Money Tracker",
     icon: <AttachMoneyIcon />,
     path: "/money-tracker",
+  },
+  {
+    text: "Invoices",
+    icon: <Money />,
+    path: "/invoices",
   },
   {
     text: "Receipts",
@@ -215,8 +221,8 @@ const SideNav = ({
           </MenuItem>
         );
       })}
-      <Box sx={{ position: "absolute", bottom: 16, width: "100%" }}>
-        <MenuItem onClick={logout} sx={{ minWidth: 250 }}>
+      <Box sx={{ width: "100%" }}>
+        <MenuItem onClick={logout}>
           <ListItemIcon>
             <LogoutIcon />
           </ListItemIcon>

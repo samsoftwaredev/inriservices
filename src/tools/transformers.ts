@@ -5,6 +5,7 @@ import {
   ClientTransformed,
   Company,
   CompanyTransformed,
+  PaymentMethod,
   Profile,
   ProfileTransformed,
   Project,
@@ -18,6 +19,7 @@ import {
   PropertyRoomTransformed,
   PropertyTransformed,
   Receipt,
+  ReceiptDisplayData,
   ReceiptTransformed,
 } from "@/types";
 
@@ -268,3 +270,40 @@ export const transformSingleReceipt = (
   referenceNumber: receipt.reference_number,
   status: receipt.status,
 });
+
+// Helper function to transform ReceiptTransformed to display format
+export const transformReceiptForPDF = (
+  receipt: ReceiptTransformed,
+  customerName?: string,
+  customerEmail?: string,
+  customerAddress?: string,
+  projectDescription?: string
+): ReceiptDisplayData => {
+  const paymentMethodMap: Record<PaymentMethod, string> = {
+    cash: "Cash",
+    check: "Check",
+    zelle: "Zelle",
+    cash_app: "Cash App",
+    venmo: "Venmo",
+    credit_card: "Credit Card",
+    debit_card: "Debit Card",
+    ach: "ACH Transfer",
+    wire: "Wire Transfer",
+    other: "Other",
+  };
+
+  return {
+    id: receipt.id,
+    receiptNumber: receipt.id.slice(-8).toUpperCase(),
+    date: new Date(receipt.paidAt).toLocaleDateString(),
+    customerName: customerName || "Customer",
+    customerEmail,
+    customerAddress,
+    amount: receipt.amountCents,
+    paymentMethod: paymentMethodMap[receipt.paymentMethod],
+    referenceNumber: receipt.referenceNumber || undefined,
+    projectDescription,
+    notes: receipt.notes || undefined,
+    status: receipt.status.charAt(0).toUpperCase() + receipt.status.slice(1),
+  };
+};
