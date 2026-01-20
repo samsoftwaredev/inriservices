@@ -41,7 +41,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { invoiceApi, invoiceItemApi, clientApi, projectApi } from "@/services";
-import { Client, Project, InvoiceStatus } from "@/types";
+import { Client, Project, Property, InvoiceStatus } from "@/types";
 import { useAuth } from "@/context";
 import { generateInvoiceNumber } from "@/tools/invoiceUtils";
 import { toast } from "react-toastify";
@@ -58,6 +58,7 @@ interface InvoiceItem {
 interface CreateInvoiceFormData {
   client_id: string;
   project_id?: string;
+  property_id?: string;
   invoice_number: string;
   issued_date: Date;
   due_date?: Date;
@@ -73,6 +74,7 @@ const CreateInvoice = () => {
   const { userData } = useAuth();
   const [clients, setClients] = useState<Client[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
+  const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -149,6 +151,34 @@ const CreateInvoice = () => {
     loadProjects();
   }, [watchedClientId]);
 
+  // Load properties when client changes
+  useEffect(() => {
+    const loadProperties = async () => {
+      if (!watchedClientId) {
+        setProperties([]);
+        setValue("property_id", "");
+        return;
+      }
+
+      try {
+        const selectedClient = clients.find((c) => c.id === watchedClientId);
+        if (selectedClient) {
+          const clientWithProperties = await clientApi.getClient(
+            selectedClient.id
+          );
+          setProperties(clientWithProperties.properties || []);
+        }
+      } catch (err) {
+        console.error("Error loading properties:", err);
+        setProperties([]);
+      }
+    };
+
+    if (clients.length > 0 && watchedClientId) {
+      loadProperties();
+    }
+  }, [watchedClientId, clients, setValue]);
+
   // Calculate totals
   const calculateTotals = () => {
     const subtotal = watchedItems.reduce(
@@ -204,7 +234,7 @@ const CreateInvoice = () => {
         company_id: userData.companyId,
         client_id: data.client_id,
         project_id: data.project_id || null,
-        property_id: null, // We'll handle property later if needed
+        property_id: data.property_id || null,
         invoice_number: data.invoice_number,
         issued_date: data.issued_date.toISOString().split("T")[0],
         due_date: data.due_date
@@ -338,6 +368,45 @@ const CreateInvoice = () => {
                               {projects.map((project) => (
                                 <MenuItem key={project.id} value={project.id}>
                                   {project.name}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        )}
+                      />
+                    </Grid>
+
+                    <Grid size={{ xs: 12, sm: 6 }}>
+                      <Controller
+                        name="property_id"
+                        control={control}
+                        render={({ field }) => (
+                          <FormControl fullWidth disabled={!watchedClientId}>
+                            <InputLabel>Property (Optional)</InputLabel>
+                            <Select
+                              {...field}
+                              label="Property (Optional)"
+                              value={field.value || ""}
+                            >
+                              <MenuItem value="">
+                                <em>No Property</em>
+                              </MenuItem>
+                              {properties.map((property) => (
+                                <MenuItem key={property.id} value={property.id}>
+                                  <Box>
+                                    <Typography variant="body2" component="div">
+                                      {property.address_line1}
+                                      {property.address_line2 &&
+                                        `, ${property.address_line2}`}
+                                    </Typography>
+                                    <Typography
+                                      variant="caption"
+                                      color="text.secondary"
+                                    >
+                                      {property.city}, {property.state}{" "}
+                                      {property.zip}
+                                    </Typography>
+                                  </Box>
                                 </MenuItem>
                               ))}
                             </Select>

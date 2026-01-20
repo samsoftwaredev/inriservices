@@ -27,15 +27,12 @@ import {
 import {
   ArrowBack as ArrowBackIcon,
   Edit as EditIcon,
-  Download as DownloadIcon,
   Send as SendIcon,
   Payment as PaymentIcon,
   Receipt as ReceiptIcon,
-  Business as BusinessIcon,
   Person as PersonIcon,
   Home as HomeIcon,
   Work as WorkIcon,
-  CalendarToday as CalendarIcon,
   AttachMoney as MoneyIcon,
   Description as DescriptionIcon,
   Email as EmailIcon,
@@ -244,7 +241,7 @@ const InvoiceDetails = ({ invoiceId }: InvoiceDetailsProps) => {
           {invoiceData && (
             <InvoiceGenerator
               invoiceData={invoiceData}
-              buttonText=""
+              buttonText="Download PDF"
               variant="outlined"
               size="small"
             />
