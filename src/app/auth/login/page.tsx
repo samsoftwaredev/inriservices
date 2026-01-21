@@ -17,6 +17,7 @@ import {
   CircularProgress,
   Container,
 } from "@mui/material";
+import { Footer, TopNavbar } from "@/components";
 import {
   Visibility,
   VisibilityOff,
@@ -109,187 +110,195 @@ const LoginPage = () => {
   }, []);
 
   return (
-    <Container maxWidth="sm">
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          minHeight: "100vh",
-          justifyContent: "center",
-          py: 4,
-        }}
-      >
-        <Card
-          elevation={3}
+    <>
+      <TopNavbar />
+      <Container maxWidth="sm">
+        <Box
           sx={{
-            width: "100%",
-            maxWidth: 400,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            minHeight: "100vh",
+            justifyContent: "center",
+            py: 4,
           }}
         >
-          <CardContent sx={{ p: 4 }}>
-            {/* Header */}
-            <Box sx={{ textAlign: "center", mb: 3 }}>
-              <LoginIcon
-                sx={{
-                  fontSize: 48,
-                  color: "primary.main",
-                  mb: 2,
-                }}
-              />
-              <Typography variant="h4" component="h1" gutterBottom>
-                Sign In
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Welcome back! Please sign in to your account
-              </Typography>
-            </Box>
-
-            {/* Error Alert */}
-            {error && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {error}
-              </Alert>
-            )}
-
-            {/* Login Form */}
-            <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-              {/* Email Field */}
-              <Controller
-                name="email"
-                control={control}
-                rules={validationRules.email}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Email Address"
-                    type="email"
-                    margin="normal"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Email color="action" />
-                        </InputAdornment>
-                      ),
-                    }}
-                    disabled={loading}
-                  />
-                )}
-              />
-
-              {/* Password Field */}
-              <Controller
-                name="password"
-                control={control}
-                rules={validationRules.password}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Password"
-                    type={showPassword ? "text" : "password"}
-                    margin="normal"
-                    error={!!errors.password}
-                    helperText={errors.password?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Lock color="action" />
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={togglePasswordVisibility}
-                            edge="end"
-                            disabled={loading}
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                    disabled={loading}
-                  />
-                )}
-              />
-
-              {/* Forgot Password Link */}
-              <Box sx={{ textAlign: "right", mt: 1, mb: 2 }}>
-                <Link
-                  href="/auth/forgot-password"
-                  style={{ textDecoration: "none" }}
-                >
-                  <Typography
-                    variant="body2"
-                    color="primary"
-                    sx={{
-                      "&:hover": {
-                        textDecoration: "underline",
-                      },
-                    }}
-                  >
-                    Forgot your password?
-                  </Typography>
-                </Link>
+          <Card
+            elevation={3}
+            sx={{
+              width: "100%",
+              maxWidth: 400,
+            }}
+          >
+            <CardContent sx={{ p: 4 }}>
+              {/* Header */}
+              <Box sx={{ textAlign: "center", mb: 3 }}>
+                <LoginIcon
+                  sx={{
+                    fontSize: 48,
+                    color: "primary.main",
+                    mb: 2,
+                  }}
+                />
+                <Typography variant="h4" component="h1" gutterBottom>
+                  Sign In
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Welcome back! Please sign in to your account
+                </Typography>
               </Box>
 
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                disabled={!isValid || loading}
-                sx={{
-                  mt: 2,
-                  mb: 2,
-                  height: 48,
-                }}
-              >
-                {loading ? (
-                  <CircularProgress size={24} color="inherit" />
-                ) : (
-                  "Sign In"
-                )}
-              </Button>
-            </Box>
+              {/* Error Alert */}
+              {error && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {error}
+                </Alert>
+              )}
 
-            {/* Divider */}
-            <Divider sx={{ my: 3 }}>
-              <Typography variant="body2" color="text.secondary">
-                OR
-              </Typography>
-            </Divider>
+              {/* Login Form */}
+              <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+                {/* Email Field */}
+                <Controller
+                  name="email"
+                  control={control}
+                  rules={validationRules.email}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Email Address"
+                      type="email"
+                      margin="normal"
+                      error={!!errors.email}
+                      helperText={errors.email?.message}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Email color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                      disabled={loading}
+                    />
+                  )}
+                />
 
-            {/* Sign Up Link */}
-            <Box sx={{ textAlign: "center" }}>
-              <Typography variant="body2" color="text.secondary">
-                Don't have an account?{" "}
-                <Link href="/auth/signup" style={{ textDecoration: "none" }}>
-                  <Typography
-                    component="span"
-                    variant="body2"
-                    color="primary"
-                    sx={{
-                      fontWeight: "medium",
-                      "&:hover": {
-                        textDecoration: "underline",
-                      },
-                    }}
+                {/* Password Field */}
+                <Controller
+                  name="password"
+                  control={control}
+                  rules={validationRules.password}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Password"
+                      type={showPassword ? "text" : "password"}
+                      margin="normal"
+                      error={!!errors.password}
+                      helperText={errors.password?.message}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Lock color="action" />
+                          </InputAdornment>
+                        ),
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={togglePasswordVisibility}
+                              edge="end"
+                              disabled={loading}
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                      disabled={loading}
+                    />
+                  )}
+                />
+
+                {/* Forgot Password Link */}
+                <Box sx={{ textAlign: "right", mt: 1, mb: 2 }}>
+                  <Link
+                    href="/auth/forgot-password"
+                    style={{ textDecoration: "none" }}
                   >
-                    Sign up here
-                  </Typography>
-                </Link>
-              </Typography>
-            </Box>
-          </CardContent>
-        </Card>
-      </Box>
-    </Container>
+                    <Typography
+                      variant="body2"
+                      color="primary"
+                      sx={{
+                        "&:hover": {
+                          textDecoration: "underline",
+                        },
+                      }}
+                    >
+                      Forgot your password?
+                    </Typography>
+                  </Link>
+                </Box>
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  size="large"
+                  disabled={!isValid || loading}
+                  sx={{
+                    mt: 2,
+                    mb: 2,
+                    height: 48,
+                  }}
+                >
+                  {loading ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    "Sign In"
+                  )}
+                </Button>
+              </Box>
+
+              {/* Divider */}
+              <Divider sx={{ my: 3 }}>
+                <Typography variant="body2" color="text.secondary">
+                  OR
+                </Typography>
+              </Divider>
+
+              {/* Sign Up Link */}
+              <Box sx={{ textAlign: "center" }}>
+                <Typography variant="body2" color="text.secondary">
+                  Don't have an account?{" "}
+                  <Link href="/auth/signup" style={{ textDecoration: "none" }}>
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      color="primary"
+                      sx={{
+                        fontWeight: "medium",
+                        "&:hover": {
+                          textDecoration: "underline",
+                        },
+                      }}
+                    >
+                      Sign up here
+                    </Typography>
+                  </Link>
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
+      </Container>
+      <Footer />
+    </>
   );
 };
 

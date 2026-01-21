@@ -27,6 +27,7 @@ const Footer = () => {
     { text: "Our Services", href: "/service" },
     { text: "Our Work", href: "/our-work" },
     { text: "Reviews", href: "/reviews" },
+    { text: "Log In", href: "/auth/login" },
   ];
 
   const backlinkData = [

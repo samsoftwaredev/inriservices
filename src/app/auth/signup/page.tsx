@@ -28,6 +28,7 @@ import {
   PersonAdd,
   Business,
 } from "@mui/icons-material";
+import { Footer, TopNavbar } from "@/components";
 import { useForm, Controller } from "react-hook-form";
 import { useAuth } from "@/context";
 
@@ -162,303 +163,311 @@ const SignupPage = () => {
   }, []);
 
   return (
-    <Container maxWidth="sm">
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          minHeight: "100vh",
-          justifyContent: "center",
-          py: 4,
-        }}
-      >
-        <Card
-          elevation={3}
+    <>
+      <TopNavbar />
+      <Container maxWidth="sm">
+        <Box
           sx={{
-            width: "100%",
-            maxWidth: 450,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            minHeight: "100vh",
+            justifyContent: "center",
+            py: 4,
           }}
         >
-          <CardContent sx={{ p: 4 }}>
-            {/* Header */}
-            <Box sx={{ textAlign: "center", mb: 3 }}>
-              <PersonAdd
-                sx={{
-                  fontSize: 48,
-                  color: "primary.main",
-                  mb: 2,
-                }}
-              />
-              <Typography variant="h4" component="h1" gutterBottom>
-                Create Account
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Join us today! Please fill in your information
-              </Typography>
-            </Box>
-
-            {/* Error/Success Alert */}
-            {error && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {error}
-              </Alert>
-            )}
-            {success && (
-              <Alert severity="success" sx={{ mb: 2 }}>
-                {success}
-              </Alert>
-            )}
-
-            {/* Signup Form */}
-            <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-              {/* Display Name Field */}
-              <Controller
-                name="displayName"
-                control={control}
-                rules={validationRules.displayName}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Full Name"
-                    margin="normal"
-                    error={!!errors.displayName}
-                    helperText={errors.displayName?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Person color="action" />
-                        </InputAdornment>
-                      ),
-                    }}
-                    disabled={loading}
-                  />
-                )}
-              />
-
-              <Controller
-                name="companyId"
-                control={control}
-                rules={validationRules.companyId}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Company ID"
-                    margin="normal"
-                    error={!!errors.companyId}
-                    helperText={errors.companyId?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Business color="action" />
-                        </InputAdornment>
-                      ),
-                    }}
-                    disabled={loading}
-                  />
-                )}
-              />
-
-              {/* Email Field */}
-              <Controller
-                name="email"
-                control={control}
-                rules={validationRules.email}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Email Address"
-                    type="email"
-                    margin="normal"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Email color="action" />
-                        </InputAdornment>
-                      ),
-                    }}
-                    disabled={loading}
-                  />
-                )}
-              />
-
-              {/* Password Field */}
-              <Controller
-                name="password"
-                control={control}
-                rules={validationRules.password}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Password"
-                    type={showPassword ? "text" : "password"}
-                    margin="normal"
-                    error={!!errors.password}
-                    helperText={errors.password?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Lock color="action" />
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={togglePasswordVisibility}
-                            edge="end"
-                            disabled={loading}
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                    disabled={loading}
-                  />
-                )}
-              />
-
-              {/* Confirm Password Field */}
-              <Controller
-                name="confirmPassword"
-                control={control}
-                rules={{
-                  ...validationRules.confirmPassword,
-                  validate: (value) =>
-                    value === password || "Passwords do not match",
-                }}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    fullWidth
-                    label="Confirm Password"
-                    type={showConfirmPassword ? "text" : "password"}
-                    margin="normal"
-                    error={!!errors.confirmPassword}
-                    helperText={errors.confirmPassword?.message}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <Lock color="action" />
-                        </InputAdornment>
-                      ),
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            onClick={toggleConfirmPasswordVisibility}
-                            edge="end"
-                            disabled={loading}
-                          >
-                            {showConfirmPassword ? (
-                              <VisibilityOff />
-                            ) : (
-                              <Visibility />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                    disabled={loading}
-                  />
-                )}
-              />
-
-              {/* Accept Terms Checkbox */}
-              <Controller
-                name="acceptTerms"
-                control={control}
-                rules={validationRules.acceptTerms}
-                render={({ field }) => (
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        {...field}
-                        checked={field.value}
-                        disabled={loading}
-                        color="primary"
-                      />
-                    }
-                    label={
-                      <Typography variant="body2" color="text.secondary">
-                        I agree to the{" "}
-                        <Link href="/terms" style={{ color: "inherit" }}>
-                          Terms of Service
-                        </Link>{" "}
-                        and{" "}
-                        <Link href="/privacy" style={{ color: "inherit" }}>
-                          Privacy Policy
-                        </Link>
-                      </Typography>
-                    }
-                    sx={{ mt: 2, alignItems: "flex-start" }}
-                  />
-                )}
-              />
-              {errors.acceptTerms && (
-                <Typography variant="caption" color="error" sx={{ ml: 4 }}>
-                  {errors.acceptTerms.message}
+          <Card
+            elevation={3}
+            sx={{
+              width: "100%",
+              maxWidth: 450,
+            }}
+          >
+            <CardContent sx={{ p: 4 }}>
+              {/* Header */}
+              <Box sx={{ textAlign: "center", mb: 3 }}>
+                <PersonAdd
+                  sx={{
+                    fontSize: 48,
+                    color: "primary.main",
+                    mb: 2,
+                  }}
+                />
+                <Typography variant="h4" component="h1" gutterBottom>
+                  Create Account
                 </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Join us today! Please fill in your information
+                </Typography>
+              </Box>
+
+              {/* Error/Success Alert */}
+              {error && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {error}
+                </Alert>
+              )}
+              {success && (
+                <Alert severity="success" sx={{ mb: 2 }}>
+                  {success}
+                </Alert>
               )}
 
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                size="large"
-                disabled={!isValid || loading}
-                sx={{
-                  mt: 3,
-                  mb: 2,
-                  height: 48,
-                }}
-              >
-                {loading ? (
-                  <CircularProgress size={24} color="inherit" />
-                ) : (
-                  "Create Account"
-                )}
-              </Button>
-            </Box>
+              {/* Signup Form */}
+              <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+                {/* Display Name Field */}
+                <Controller
+                  name="displayName"
+                  control={control}
+                  rules={validationRules.displayName}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Full Name"
+                      margin="normal"
+                      error={!!errors.displayName}
+                      helperText={errors.displayName?.message}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Person color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                      disabled={loading}
+                    />
+                  )}
+                />
 
-            {/* Divider */}
-            <Divider sx={{ my: 3 }}>
-              <Typography variant="body2" color="text.secondary">
-                OR
-              </Typography>
-            </Divider>
+                <Controller
+                  name="companyId"
+                  control={control}
+                  rules={validationRules.companyId}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Company ID"
+                      margin="normal"
+                      error={!!errors.companyId}
+                      helperText={errors.companyId?.message}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Business color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                      disabled={loading}
+                    />
+                  )}
+                />
 
-            {/* Sign In Link */}
-            <Box sx={{ textAlign: "center" }}>
-              <Typography variant="body2" color="text.secondary">
-                Already have an account?{" "}
-                <Link href="/auth/login" style={{ textDecoration: "none" }}>
-                  <Typography
-                    component="span"
-                    variant="body2"
-                    color="primary"
-                    sx={{
-                      fontWeight: "medium",
-                      "&:hover": {
-                        textDecoration: "underline",
-                      },
-                    }}
-                  >
-                    Sign in here
+                {/* Email Field */}
+                <Controller
+                  name="email"
+                  control={control}
+                  rules={validationRules.email}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Email Address"
+                      type="email"
+                      margin="normal"
+                      error={!!errors.email}
+                      helperText={errors.email?.message}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Email color="action" />
+                          </InputAdornment>
+                        ),
+                      }}
+                      disabled={loading}
+                    />
+                  )}
+                />
+
+                {/* Password Field */}
+                <Controller
+                  name="password"
+                  control={control}
+                  rules={validationRules.password}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Password"
+                      type={showPassword ? "text" : "password"}
+                      margin="normal"
+                      error={!!errors.password}
+                      helperText={errors.password?.message}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Lock color="action" />
+                          </InputAdornment>
+                        ),
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={togglePasswordVisibility}
+                              edge="end"
+                              disabled={loading}
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                      disabled={loading}
+                    />
+                  )}
+                />
+
+                {/* Confirm Password Field */}
+                <Controller
+                  name="confirmPassword"
+                  control={control}
+                  rules={{
+                    ...validationRules.confirmPassword,
+                    validate: (value) =>
+                      value === password || "Passwords do not match",
+                  }}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      label="Confirm Password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      margin="normal"
+                      error={!!errors.confirmPassword}
+                      helperText={errors.confirmPassword?.message}
+                      InputProps={{
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <Lock color="action" />
+                          </InputAdornment>
+                        ),
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={toggleConfirmPasswordVisibility}
+                              edge="end"
+                              disabled={loading}
+                            >
+                              {showConfirmPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                      disabled={loading}
+                    />
+                  )}
+                />
+
+                {/* Accept Terms Checkbox */}
+                <Controller
+                  name="acceptTerms"
+                  control={control}
+                  rules={validationRules.acceptTerms}
+                  render={({ field }) => (
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          {...field}
+                          checked={field.value}
+                          disabled={loading}
+                          color="primary"
+                        />
+                      }
+                      label={
+                        <Typography variant="body2" color="text.secondary">
+                          I agree to the{" "}
+                          <Link href="/terms" style={{ color: "inherit" }}>
+                            Terms of Service
+                          </Link>{" "}
+                          and{" "}
+                          <Link href="/privacy" style={{ color: "inherit" }}>
+                            Privacy Policy
+                          </Link>
+                        </Typography>
+                      }
+                      sx={{ mt: 2, alignItems: "flex-start" }}
+                    />
+                  )}
+                />
+                {errors.acceptTerms && (
+                  <Typography variant="caption" color="error" sx={{ ml: 4 }}>
+                    {errors.acceptTerms.message}
                   </Typography>
-                </Link>
-              </Typography>
-            </Box>
-          </CardContent>
-        </Card>
-      </Box>
-    </Container>
+                )}
+
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  size="large"
+                  disabled={!isValid || loading}
+                  sx={{
+                    mt: 3,
+                    mb: 2,
+                    height: 48,
+                  }}
+                >
+                  {loading ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    "Create Account"
+                  )}
+                </Button>
+              </Box>
+
+              {/* Divider */}
+              <Divider sx={{ my: 3 }}>
+                <Typography variant="body2" color="text.secondary">
+                  OR
+                </Typography>
+              </Divider>
+
+              {/* Sign In Link */}
+              <Box sx={{ textAlign: "center" }}>
+                <Typography variant="body2" color="text.secondary">
+                  Already have an account?{" "}
+                  <Link href="/auth/login" style={{ textDecoration: "none" }}>
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      color="primary"
+                      sx={{
+                        fontWeight: "medium",
+                        "&:hover": {
+                          textDecoration: "underline",
+                        },
+                      }}
+                    >
+                      Sign in here
+                    </Typography>
+                  </Link>
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
+      </Container>
+      <Footer />
+    </>
   );
 };
 
