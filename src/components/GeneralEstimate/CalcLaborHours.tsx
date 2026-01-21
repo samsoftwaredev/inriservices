@@ -53,7 +53,7 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
   const totalHours = workers.reduce((sum, worker) => sum + worker.hours, 0);
   const totalCost = workers.reduce(
     (sum, worker) => sum + worker.hours * worker.hourlyRate,
-    0
+    0,
   );
 
   // Notify parent of changes
@@ -80,12 +80,12 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
   const updateWorker = (
     workerId: string,
     field: keyof Worker,
-    value: string | number
+    value: string | number,
   ) => {
     setWorkers(
       workers.map((worker) =>
-        worker.id === workerId ? { ...worker, [field]: value } : worker
-      )
+        worker.id === workerId ? { ...worker, [field]: value } : worker,
+      ),
     );
   };
 
@@ -102,12 +102,23 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
       <Box
         sx={{
           display: "flex",
-          alignItems: "center",
+          flexDirection: { xs: "column", sm: "row" },
+          alignItems: { xs: "stretch", sm: "center" },
           justifyContent: "space-between",
+          gap: { xs: 2, sm: 0 },
           mb: 3,
         }}
       >
-        <Typography variant="h6" sx={{ display: "flex", alignItems: "center" }}>
+        <Typography
+          variant="h6"
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            fontSize: { xs: "1.1rem", sm: "1.25rem" },
+            textAlign: { xs: "center", sm: "left" },
+            justifyContent: { xs: "center", sm: "flex-start" },
+          }}
+        >
           <PersonIcon sx={{ mr: 1 }} />
           Labor Hours Calculator
         </Typography>
@@ -116,17 +127,26 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
           startIcon={<AddIcon />}
           onClick={addWorker}
           size="small"
+          sx={{
+            minWidth: { sm: "auto" },
+            maxWidth: { xs: "300px", sm: "none" },
+            mx: { xs: "auto", sm: 0 },
+          }}
         >
           Add Worker
         </Button>
       </Box>
 
-      <Stack spacing={2}>
+      <Stack spacing={{ xs: 2, sm: 2, md: 3 }}>
         {workers.map((worker, index) => (
           <Card key={worker.id} variant="outlined">
-            <CardContent>
-              <Grid container spacing={2} alignItems="center">
-                <Grid size={{ xs: 12, sm: 4 }}>
+            <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+              <Grid
+                container
+                spacing={{ xs: 2, sm: 2, md: 3 }}
+                alignItems="center"
+              >
+                <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                   <TextField
                     fullWidth
                     label="Worker Name"
@@ -145,7 +165,7 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
                   />
                 </Grid>
 
-                <Grid size={{ xs: 12, sm: 3 }}>
+                <Grid size={{ xs: 6, sm: 3, md: 3 }}>
                   <TextField
                     fullWidth
                     label="Hours"
@@ -155,7 +175,7 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
                       updateWorker(
                         worker.id,
                         "hours",
-                        parseFloat(e.target.value) || 0
+                        parseFloat(e.target.value) || 0,
                       )
                     }
                     size="small"
@@ -173,7 +193,7 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
                   />
                 </Grid>
 
-                <Grid size={{ xs: 12, sm: 3 }}>
+                <Grid size={{ xs: 6, sm: 3, md: 3 }}>
                   <TextField
                     fullWidth
                     label="Hourly Rate"
@@ -183,7 +203,7 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
                       updateWorker(
                         worker.id,
                         "hourlyRate",
-                        parseFloat(e.target.value) || 0
+                        parseFloat(e.target.value) || 0,
                       )
                     }
                     size="small"
@@ -201,20 +221,43 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
                   />
                 </Grid>
 
-                <Grid size={{ xs: 12, sm: 2 }}>
-                  <Box sx={{ textAlign: "center" }}>
-                    <Typography variant="body2" color="text.secondary">
-                      Worker Total
-                    </Typography>
-                    <Typography variant="h6" color="primary.main">
-                      {formatCurrency(worker.hours * worker.hourlyRate)}
-                    </Typography>
+                <Grid size={{ xs: 12, sm: 12, md: 2 }}>
+                  <Box
+                    sx={{
+                      textAlign: { xs: "left", md: "center" },
+                      display: "flex",
+                      flexDirection: { xs: "row", md: "column" },
+                      alignItems: { xs: "center", md: "center" },
+                      justifyContent: { xs: "space-between", md: "center" },
+                      gap: { xs: 0, md: 1 },
+                      mt: { xs: 1, md: 0 },
+                    }}
+                  >
+                    <Box sx={{ flex: { xs: 1, md: "none" } }}>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mb: { xs: 0, md: 0.5 } }}
+                      >
+                        Worker Total
+                      </Typography>
+                      <Typography
+                        variant="h6"
+                        color="primary.main"
+                        sx={{ fontSize: { xs: "1rem", sm: "1.25rem" } }}
+                      >
+                        {formatCurrency(worker.hours * worker.hourlyRate)}
+                      </Typography>
+                    </Box>
                     {workers.length > 1 && (
                       <IconButton
                         onClick={() => removeWorker(worker.id)}
                         size="small"
                         color="error"
-                        sx={{ mt: 1 }}
+                        sx={{
+                          mt: { xs: 0, md: 1 },
+                          ml: { xs: 1, md: 0 },
+                        }}
                       >
                         <DeleteIcon />
                       </IconButton>
@@ -227,12 +270,20 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
         ))}
       </Stack>
       {/* Workers Summary */}
-      <Box sx={{ mt: 2 }}>
-        <Typography variant="body2" color="text.secondary" textAlign="center">
+      <Box sx={{ mt: { xs: 2, sm: 3 } }}>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          textAlign="center"
+          sx={{
+            fontSize: { xs: "0.8rem", sm: "0.875rem" },
+            px: { xs: 1, sm: 0 },
+          }}
+        >
           {workers.length} worker{workers.length !== 1 ? "s" : ""} • Average
           hourly rate:{" "}
           {formatCurrency(
-            workers.reduce((sum, w) => sum + w.hourlyRate, 0) / workers.length
+            workers.reduce((sum, w) => sum + w.hourlyRate, 0) / workers.length,
           )}
         </Typography>
       </Box>

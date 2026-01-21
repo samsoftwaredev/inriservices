@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import {
   Box,
   Paper,
@@ -8,14 +9,7 @@ import {
   TextField,
   Divider,
   InputAdornment,
-  IconButton,
-  Tooltip,
 } from "@mui/material";
-import {
-  Edit as EditIcon,
-  Save as SaveIcon,
-  Cancel as CancelIcon,
-} from "@mui/icons-material";
 import { ProjectCost, PropertyRoomTransformed } from "@/types";
 import { PROFIT_MARGIN_PERCNT, TAX_RATE_PERCNT } from "@/constants";
 import {
@@ -33,125 +27,95 @@ interface Props {
   initialCosts: ProjectCost;
 }
 
+interface CostFormData {
+  laborCost: number;
+  materialCost: number;
+  companyFee: number;
+}
+
 const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [laborHours, setLaborHours] = useState(0);
   const [costs, setCosts] = useState<ProjectCost>({
     laborCost: initialCosts.laborCost,
     materialCost: initialCosts.materialCost,
     companyFee: initialCosts.companyFee,
     companyProfit: initialCosts.companyProfit,
-    taxes: initialCosts.taxes, // 8% tax
-    total: initialCosts.total, // Including 8% tax
+    taxes: initialCosts.taxes,
+    total: initialCosts.total,
   });
-  const [tempCosts, setTempCosts] = useState(costs);
 
-  const handleEdit = () => {
-    setTempCosts(costs);
-    setIsEditing(true);
+  const { control, watch, setValue } = useForm<CostFormData>({
+    defaultValues: {
+      laborCost: initialCosts.laborCost,
+      materialCost: initialCosts.materialCost,
+      companyFee: initialCosts.companyFee,
+    },
+  });
+
+  const handleLaborChange = (summary: {
+    totalHours: number;
+    totalCost: number;
+  }) => {
+    setLaborHours(summary.totalHours);
+    setValue("laborCost", summary.totalCost);
   };
 
-  const handleSave = () => {
+  // Watch form values
+  const formValues = watch();
+
+  // Auto-calculate costs when form values change
+  useEffect(() => {
+    const { laborCost, materialCost, companyFee } = formValues;
+
     // Calculate company profit as 20% of labor + material costs
-    const companyProfit = calculateProfits(
-      tempCosts.laborCost,
-      tempCosts.materialCost
-    );
+    const companyProfit = calculateProfits(laborCost, materialCost);
 
     // Calculate subtotal
     const subtotal = calculateSubtotal(
-      tempCosts.laborCost,
-      tempCosts.materialCost,
-      tempCosts.companyFee,
-      companyProfit
+      laborCost,
+      materialCost,
+      companyFee,
+      companyProfit,
     );
 
     // Calculate taxes as 8% of subtotal
     const taxes = calculateTaxes(subtotal);
 
     // Calculate final total including taxes
-    const newTotal = calculateTotal(
-      tempCosts.laborCost,
-      tempCosts.materialCost,
-      tempCosts.companyFee,
+    const total = calculateTotal(
+      laborCost,
+      materialCost,
+      companyFee,
       companyProfit,
-      taxes
+      taxes,
     );
 
     const updatedCosts = {
-      ...tempCosts,
+      laborCost,
+      materialCost,
+      companyFee,
       companyProfit,
       taxes,
-      total: newTotal,
+      total,
     };
 
     setCosts(updatedCosts);
     onCostsChange(updatedCosts);
-    setTempCosts(updatedCosts);
-    setIsEditing(false);
-  };
-
-  const handleCancel = () => {
-    setTempCosts(costs);
-    setIsEditing(false);
-  };
-
-  const handleCostChange = (field: keyof ProjectCost, value: string) => {
-    setTempCosts((prev) => ({
-      ...prev,
-      [field]: parseFloat(value) ? parseFloat(value) : 0,
-    }));
-  };
+  }, [formValues, onCostsChange]);
 
   return (
     <Box>
       {/* Estimate Summary */}
       <Paper sx={{ p: 3, mb: 3 }}>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            mb: 2,
-          }}
-        >
+        <Box sx={{ mb: 2 }}>
           <Typography variant="h6">Estimate Summary</Typography>
-          {!isEditing ? (
-            <Tooltip title="Edit costs">
-              <IconButton onClick={handleEdit} size="small">
-                <EditIcon />
-              </IconButton>
-            </Tooltip>
-          ) : (
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <Tooltip title="Save changes">
-                <IconButton onClick={handleSave} size="small" color="primary">
-                  <SaveIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Cancel">
-                <IconButton
-                  onClick={handleCancel}
-                  size="small"
-                  color="secondary"
-                >
-                  <CancelIcon />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          )}
         </Box>
 
         <Typography variant="body2" color="text.secondary" gutterBottom>
           Total Rooms: {rooms.length}
         </Typography>
 
-        <CalcLaborHours
-          onLaborChange={(summary) => {
-            setLaborHours(summary.totalHours);
-            handleCostChange("laborCost", summary.totalCost.toString());
-          }}
-        />
+        <CalcLaborHours onLaborChange={handleLaborChange} />
 
         <Box
           sx={{
@@ -166,24 +130,16 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
             <Typography variant="body2" color="text.secondary" gutterBottom>
               Labor Cost
             </Typography>
-            {isEditing ? (
-              <TextField
-                fullWidth
-                size="small"
-                type="text"
-                value={tempCosts.laborCost}
-                onChange={(e) => handleCostChange("laborCost", e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">$</InputAdornment>
-                  ),
-                }}
-              />
-            ) : (
-              <Typography variant="body1" fontWeight="medium">
-                {formatCurrency(costs.laborCost)}
-              </Typography>
-            )}
+            <Typography
+              variant="body1"
+              fontWeight="medium"
+              color="primary.main"
+            >
+              {formatCurrency(costs.laborCost)}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Based on {laborHours} hrs
+            </Typography>
           </Box>
 
           {/* Material Cost */}
@@ -191,26 +147,30 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
             <Typography variant="body2" color="text.secondary" gutterBottom>
               Material Cost
             </Typography>
-            {isEditing ? (
-              <TextField
-                fullWidth
-                size="small"
-                type="text"
-                value={tempCosts.materialCost}
-                onChange={(e) =>
-                  handleCostChange("materialCost", e.target.value)
-                }
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">$</InputAdornment>
-                  ),
-                }}
-              />
-            ) : (
-              <Typography variant="body1" fontWeight="medium">
-                {formatCurrency(costs.materialCost)}
-              </Typography>
-            )}
+            <Controller
+              name="materialCost"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  size="small"
+                  type="number"
+                  onChange={(e) =>
+                    field.onChange(parseFloat(e.target.value) || 0)
+                  }
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  }}
+                  inputProps={{
+                    min: 0,
+                    step: 0.01,
+                  }}
+                />
+              )}
+            />
           </Box>
 
           {/* Company Fee */}
@@ -218,24 +178,30 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
             <Typography variant="body2" color="text.secondary" gutterBottom>
               Company Fee
             </Typography>
-            {isEditing ? (
-              <TextField
-                fullWidth
-                size="small"
-                type="text"
-                value={tempCosts.companyFee}
-                onChange={(e) => handleCostChange("companyFee", e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">$</InputAdornment>
-                  ),
-                }}
-              />
-            ) : (
-              <Typography variant="body1" fontWeight="medium">
-                {formatCurrency(costs.companyFee)}
-              </Typography>
-            )}
+            <Controller
+              name="companyFee"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  fullWidth
+                  size="small"
+                  type="number"
+                  onChange={(e) =>
+                    field.onChange(parseFloat(e.target.value) || 0)
+                  }
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">$</InputAdornment>
+                    ),
+                  }}
+                  inputProps={{
+                    min: 0,
+                    step: 0.01,
+                  }}
+                />
+              )}
+            />
           </Box>
         </Box>
 
@@ -270,9 +236,7 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
               fontWeight="medium"
               color="success.main"
             >
-              {formatCurrency(
-                isEditing ? tempCosts.companyProfit : costs.companyProfit
-              )}
+              {formatCurrency(costs.companyProfit)}
             </Typography>
             <Typography variant="caption" color="text.secondary">
               Auto-calculated
@@ -289,7 +253,7 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
               fontWeight="medium"
               color="warning.main"
             >
-              {formatCurrency(isEditing ? tempCosts.taxes : costs.taxes)}
+              {formatCurrency(costs.taxes)}
             </Typography>
             <Typography variant="caption" color="text.secondary">
               Auto-calculated
@@ -309,7 +273,7 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
         >
           <Typography variant="h6">Estimated Total:</Typography>
           <Typography variant="h6" color="primary" fontWeight="bold">
-            {formatCurrency(isEditing ? tempCosts.total : costs.total)}
+            {formatCurrency(costs.total)}
           </Typography>
         </Box>
 

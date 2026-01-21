@@ -54,7 +54,7 @@ const validationRules = {
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { login, checkUserIsLoggedIn } = useAuth();
   const router = useRouter();
@@ -74,7 +74,7 @@ const LoginPage = () => {
   const onSubmit = async (data: LoginFormData) => {
     try {
       setError("");
-      setLoading(true);
+      setIsLoading(true);
 
       await login(data.email, data.password);
 
@@ -97,7 +97,7 @@ const LoginPage = () => {
 
       setError(errorMessage);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -178,7 +178,7 @@ const LoginPage = () => {
                           </InputAdornment>
                         ),
                       }}
-                      disabled={loading}
+                      disabled={isLoading}
                     />
                   )}
                 />
@@ -208,7 +208,7 @@ const LoginPage = () => {
                             <IconButton
                               onClick={togglePasswordVisibility}
                               edge="end"
-                              disabled={loading}
+                              disabled={isLoading}
                             >
                               {showPassword ? (
                                 <VisibilityOff />
@@ -219,7 +219,7 @@ const LoginPage = () => {
                           </InputAdornment>
                         ),
                       }}
-                      disabled={loading}
+                      disabled={isLoading}
                     />
                   )}
                 />
@@ -250,14 +250,14 @@ const LoginPage = () => {
                   fullWidth
                   variant="contained"
                   size="large"
-                  disabled={!isValid || loading}
+                  disabled={!isValid || isLoading}
                   sx={{
                     mt: 2,
                     mb: 2,
                     height: 48,
                   }}
                 >
-                  {loading ? (
+                  {isLoading ? (
                     <CircularProgress size={24} color="inherit" />
                   ) : (
                     "Sign In"
