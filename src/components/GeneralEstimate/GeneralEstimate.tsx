@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { calculateProfits, debounce, uuidv4 } from "@/tools";
+import { calculateProfits, debounce } from "@/tools";
 import {
   Button,
   Box,
   Typography,
   Paper,
   Grid,
-  Stack,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -16,15 +15,10 @@ import {
   DialogActions,
 } from "@mui/material";
 import { InvoiceData, InvoiceGenerator } from "../InvoiceGenerator";
-import {
-  Add as AddIcon,
-  Delete,
-  PersonAddAlt as PersonAddIcon,
-} from "@mui/icons-material";
+import { Add as AddIcon, Delete } from "@mui/icons-material";
 import CustomerSelectionMenu from "../ProInteriorEstimate/CustomerSelectionMenu";
 import RoomGeneralInfo from "./RoomGeneralInfo";
 import { useClient } from "@/context/ClientContext";
-import { Person as PersonIcon } from "@mui/icons-material";
 import NewClientDialog from "../NewClientDialog";
 import SearchClientDialog from "../SearchClientDialog";
 import { ClientFormData } from "../SearchClient/SearchClient.model";
@@ -73,7 +67,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
   const [isLoading, setIsLoading] = useState(paramsProjectId ? true : false);
   const [projectCost, setProjectCost] = useState<ProjectCost>(initialCosts);
   const [projectData, setProjectData] = useState<ProjectTransformed | null>(
-    null
+    null,
   );
   const [isOpenSearchClientDialog, setIsOpenSearchClientDialog] =
     useState(false);
@@ -153,10 +147,10 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
 
   const createRoom = async (
     roomDetails: PropertyRoomTransformed,
-    pId: string
-  ) => {
+    pId: string,
+  ): Promise<string> => {
     try {
-      await propertyRoomApi.createRoom({
+      const roomRes = await propertyRoomApi.createRoom({
         name: roomDetails.name,
         property_id: currentClient!.properties[0].id,
         project_id: pId,
@@ -178,15 +172,17 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
         wall_area_sqft: roomDetails.wallAreaSqft,
         wall_perimeter_ft: roomDetails.wallPerimeterFt,
       });
+      return roomRes.id;
     } catch (error) {
       console.error("Error creating room:", error);
       toast.error("Failed to create room", { toastId: "create-room-error" });
+      return "";
     }
   };
 
   const updateRoom = async (
     roomId: string,
-    updatedData: Partial<PropertyRoomTransformed>
+    updatedData: Partial<PropertyRoomTransformed>,
   ) => {
     try {
       await propertyRoomApi.updateRoom(roomId, updatedData);
@@ -238,7 +234,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
     try {
       await projectApi.updateProject(
         projectId,
-        reversedProjectTransformer(data)
+        reversedProjectTransformer(data),
       );
     } catch (error) {
       console.error("Error updating project:", error);
@@ -259,7 +255,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
   };
 
   const addNewRoom = async () => {
-    const newRoom: PropertyRoomTransformed = {
+    const newRoom = {
       name: `Room ${rooms.length + 1}`,
       description: "",
       level: 1,
@@ -282,31 +278,36 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
       ceilingHeightFt: null,
       wallPerimeterFt: null,
       openingsAreaSqft: null,
-      id: uuidv4(),
+      id: "", // Temporary ID, will be replaced after creation
     };
 
-    if (rooms.length >= 1) {
+    if (rooms.length > 0) {
+      const roomId = await createRoom(newRoom, projectId);
+      newRoom.id = roomId;
       setRooms((prevRooms) => [...prevRooms, newRoom]);
+      updateLocalStorageEstimate({ rooms });
     } else {
-      const projectId = await createProject();
-      setProjectId(projectId);
+      const projectIdLocal = await createProject();
+      setProjectId(projectIdLocal);
+      updateLocalStorageEstimate({ projectId: projectIdLocal });
+      const roomId = await createRoom(newRoom, projectIdLocal);
+      newRoom.id = roomId;
       setRooms([newRoom]);
-      updateLocalStorageEstimate({ projectId });
+      updateLocalStorageEstimate({ rooms });
+      debugger;
+      router.push(`/estimates/general/${projectId}`);
     }
-
-    await createRoom(newRoom, projectId);
-    updateLocalStorageEstimate({ rooms });
   };
 
   const onChangeRoomData = (
     roomId: string,
     title: string,
-    description: string
+    description: string,
   ) => {
     setRooms((prevRooms) =>
       prevRooms.map((room) =>
-        room.id === roomId ? { ...room, name: title, description } : room
-      )
+        room.id === roomId ? { ...room, name: title, description } : room,
+      ),
     );
     updateLocalStorageEstimate({ rooms });
     updateRoom(roomId, { name: title, description });
@@ -337,7 +338,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
       invoiceNumber: projectId.slice(-7), // Using last 7 characters of projectId as invoice number
       date: new Date().toLocaleDateString(),
       dueDate: new Date(
-        new Date().setDate(new Date().getDate() + 30)
+        new Date().setDate(new Date().getDate() + 30),
       ).toLocaleDateString(),
       subtotal:
         projectCost.materialCost +
@@ -347,7 +348,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
       tax: projectCost.taxes,
       total: projectCost.total,
     }),
-    [rooms, currentClient, projectCost]
+    [rooms, currentClient, projectCost],
   );
 
   const onProjectDataChange = async (data: ProjectFormData) => {
@@ -403,12 +404,12 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
       setProjectCost({
         laborCost: convertCentsToDollar(transformedProject.laborCostCents),
         materialCost: convertCentsToDollar(
-          transformedProject.materialCostCents
+          transformedProject.materialCostCents,
         ),
         companyFee: 200, // Placeholder as company fee is not stored
         companyProfit: calculateProfits(
           convertCentsToDollar(transformedProject.laborCostCents),
-          convertCentsToDollar(transformedProject.materialCostCents)
+          convertCentsToDollar(transformedProject.materialCostCents),
         ),
         taxes: convertCentsToDollar(transformedProject.taxAmountCents),
         total: convertCentsToDollar(transformedProject.invoiceTotalCents),
