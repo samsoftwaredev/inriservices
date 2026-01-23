@@ -36,7 +36,7 @@ interface Props {
   anchorEl: HTMLElement | null;
   handleMenuClick: (
     event: React.MouseEvent<HTMLElement>,
-    clientId: string
+    clientId: string,
   ) => void;
 }
 
@@ -55,7 +55,6 @@ const ClientCard = ({
   const onClientSelect = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) {
       onClick(client);
-      e.stopPropagation();
     }
   };
 
@@ -83,7 +82,7 @@ const ClientCard = ({
 
   return (
     <>
-      <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={client.id}>
+      <Grid size={{ xs: 12, sm: 6, lg: 4 }} mb={2} key={client.id}>
         {isSelected && (
           <Box
             sx={{
@@ -248,7 +247,7 @@ const ClientCard = ({
                 <Typography variant="caption" color="text.secondary">
                   Last Project:{" "}
                   {new Date(
-                    client.properties[0].projects[0].createdAt
+                    client.properties[0].projects[0].createdAt,
                   ).toLocaleDateString()}
                 </Typography>
               </Box>

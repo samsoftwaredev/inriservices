@@ -8,11 +8,13 @@ import {
   DialogContent,
   DialogActions,
   IconButton,
+  useMediaQuery,
 } from "@mui/material";
 import ClientForm from "../ProInteriorEstimate/ClientForm";
 import { ClientFormData } from "../SearchClient/SearchClient.model";
 import { Close as CloseIcon } from "@mui/icons-material";
 import { ClientFullData } from "@/types";
+import { theme } from "@/app/theme";
 
 interface Props {
   isOpen: boolean;
@@ -31,6 +33,7 @@ const NewClientDialog = ({
   isEditMode = false,
   isLoading = false,
 }: Props) => {
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const defaultValues: ClientFormData = {
     id: client?.id || "",
     fullName: client?.displayName || "",
@@ -53,7 +56,13 @@ const NewClientDialog = ({
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      fullScreen={isMobile}
+    >
       <DialogTitle
         sx={{
           m: 0,

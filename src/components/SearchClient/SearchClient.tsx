@@ -43,7 +43,7 @@ const SearchClient = ({ onClientSelected }: Props) => {
 
   const handleMenuClick = (
     event: React.MouseEvent<HTMLElement>,
-    clientId: string
+    clientId: string,
   ) => {
     setAnchorEl(event.currentTarget);
     setSelectedClientId(clientId);
@@ -68,11 +68,10 @@ const SearchClient = ({ onClientSelected }: Props) => {
         .includes(searchTerm.toLowerCase()) ||
       client.properties[0].state
         .toLowerCase()
-        .includes(searchTerm.toLowerCase())
+        .includes(searchTerm.toLowerCase()),
   );
 
   const onClientClick = (client: ClientFullData) => {
-    onClientSelected(client.id);
     handleSelectClient(client.id);
   };
 
@@ -92,20 +91,14 @@ const SearchClient = ({ onClientSelected }: Props) => {
   const handleOpenEditForm = () => {
     const client = clients.find((c) => c.id === selectedClientId);
     if (client) {
-      setIsEditingClient(() => {
-        onClientClick(client);
-        return true;
-      });
+      setIsEditingClient(true);
     }
   };
 
   const handleViewDetails = () => {
     const client = clients.find((c) => c.id === selectedClientId);
     if (client) {
-      setViewDetailsOpen(() => {
-        onClientClick(client);
-        return true;
-      });
+      onClientClick(client);
     }
     handleMenuClose();
   };
