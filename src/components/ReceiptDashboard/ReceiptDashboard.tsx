@@ -1,38 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  Box,
-  Paper,
-  Typography,
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Chip,
-  IconButton,
-  Tooltip,
-  Grid,
-  TextField,
-  MenuItem,
-  CircularProgress,
-  Alert,
-  Pagination,
-  FormControl,
-  InputLabel,
-  Select,
-  InputAdornment,
-} from "@mui/material";
+import { Box, Typography, Button, Alert, Pagination } from "@mui/material";
 import {
   Add as AddIcon,
   Receipt as ReceiptIcon,
-  Edit as EditIcon,
-  Visibility as ViewIcon,
-  Search as SearchIcon,
-  FilterList as FilterIcon,
   AttachMoney as MoneyIcon,
   TrendingUp as TrendingUpIcon,
   Assessment as AssessmentIcon,
@@ -45,6 +17,8 @@ import { receiptApi } from "@/services/receiptApi";
 import MetricCards from "@/components/Dashboard/MetricCards";
 import CreateReceiptDialog from "./CreateReceiptDialog";
 import CustomerSelectionMenu from "../ProInteriorEstimate/CustomerSelectionMenu";
+import ReceiptsTable from "./ReceiptsTable";
+import ReceiptsFilters from "./ReceiptsFilters";
 import { useRouter } from "next/navigation";
 
 interface ReceiptFilters {
@@ -122,7 +96,7 @@ const ReceiptDashboard = () => {
     const totalAmount = receiptList.reduce(
       (sum, receipt) =>
         receipt.status === "posted" ? sum + receipt.amount_cents : sum,
-      0
+      0,
     );
 
     const currentMonth = new Date().getMonth();
@@ -162,46 +136,6 @@ const ReceiptDashboard = () => {
       style: "currency",
       currency: currency.toUpperCase(),
     }).format(cents / 100);
-  };
-
-  // Format date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
-  // Get status color
-  const getStatusColor = (status: ReceiptStatus) => {
-    switch (status) {
-      case "posted":
-        return "success";
-      case "refunded":
-        return "warning";
-      case "voided":
-        return "error";
-      default:
-        return "default";
-    }
-  };
-
-  // Get payment method display
-  const getPaymentMethodDisplay = (method: PaymentMethod) => {
-    const methodMap: Record<PaymentMethod, string> = {
-      cash: "Cash",
-      check: "Check",
-      zelle: "Zelle",
-      cash_app: "Cash App",
-      venmo: "Venmo",
-      credit_card: "Credit Card",
-      debit_card: "Debit Card",
-      ach: "ACH Transfer",
-      wire: "Wire Transfer",
-      other: "Other",
-    };
-    return methodMap[method] || method;
   };
 
   // Handle filter changes
@@ -271,107 +205,12 @@ const ReceiptDashboard = () => {
       <MetricCards summaryCards={summaryCards} />
 
       {/* Filters and Search */}
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography
-          variant="h6"
-          gutterBottom
-          sx={{ display: "flex", alignItems: "center" }}
-        >
-          <FilterIcon sx={{ mr: 1 }} />
-          Filters & Search
-        </Typography>
-
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: 4 }}>
-            <TextField
-              fullWidth
-              placeholder="Search receipts..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-              size="small"
-            />
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Status</InputLabel>
-              <Select
-                value={filters.status || ""}
-                label="Status"
-                onChange={(e) =>
-                  handleFilterChange({
-                    status: (e.target.value as ReceiptStatus) || undefined,
-                  })
-                }
-              >
-                <MenuItem value="">All</MenuItem>
-                <MenuItem value="posted">Posted</MenuItem>
-                <MenuItem value="refunded">Refunded</MenuItem>
-                <MenuItem value="voided">Voided</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Payment Method</InputLabel>
-              <Select
-                value={filters.paymentMethod || ""}
-                label="Payment Method"
-                onChange={(e) =>
-                  handleFilterChange({
-                    paymentMethod:
-                      (e.target.value as PaymentMethod) || undefined,
-                  })
-                }
-              >
-                <MenuItem value="">All</MenuItem>
-                <MenuItem value="cash">Cash</MenuItem>
-                <MenuItem value="credit_card">Credit Card</MenuItem>
-                <MenuItem value="check">Check</MenuItem>
-                <MenuItem value="zelle">Zelle</MenuItem>
-                <MenuItem value="venmo">Venmo</MenuItem>
-                <MenuItem value="other">Other</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-            <DatePicker
-              label="Start Date"
-              value={filters.startDate}
-              onChange={(date) => handleFilterChange({ startDate: date })}
-              slotProps={{
-                textField: {
-                  size: "small",
-                  fullWidth: true,
-                },
-              }}
-            />
-          </Grid>
-
-          <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-            <DatePicker
-              label="End Date"
-              value={filters.endDate}
-              onChange={(date) => handleFilterChange({ endDate: date })}
-              slotProps={{
-                textField: {
-                  size: "small",
-                  fullWidth: true,
-                },
-              }}
-            />
-          </Grid>
-        </Grid>
-      </Paper>
+      <ReceiptsFilters
+        filters={filters}
+        searchQuery={searchQuery}
+        onFilterChange={handleFilterChange}
+        onSearchChange={setSearchQuery}
+      />
 
       {/* Actions Bar */}
       <Box
@@ -400,100 +239,12 @@ const ReceiptDashboard = () => {
       )}
 
       {/* Receipts Table */}
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow sx={{ bgcolor: "grey.50" }}>
-              <TableCell>Receipt ID</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>Payment Method</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Paid Date</TableCell>
-              <TableCell>Client ID</TableCell>
-              <TableCell>Reference</TableCell>
-              <TableCell align="center">Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={8} align="center">
-                  <CircularProgress size={24} sx={{ mr: 2 }} />
-                  Loading receipts...
-                </TableCell>
-              </TableRow>
-            ) : receipts.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={8} align="center">
-                  <Typography color="text.secondary">
-                    No receipts found
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            ) : (
-              receipts.map((receipt) => (
-                <TableRow key={receipt.id} hover>
-                  <TableCell>
-                    <Typography variant="body2" fontFamily="monospace">
-                      #{receipt.id.slice(-8).toUpperCase()}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2" fontWeight="medium">
-                      {formatCurrency(receipt.amount_cents, receipt.currency)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2">
-                      {getPaymentMethodDisplay(receipt.payment_method)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={receipt.status.toUpperCase()}
-                      color={getStatusColor(receipt.status) as any}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2">
-                      {formatDate(receipt.paid_at)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2" fontFamily="monospace">
-                      {receipt.client_id.slice(-8)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2">
-                      {receipt.reference_number || "-"}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="center">
-                    <Tooltip title="View Receipt">
-                      <IconButton
-                        size="small"
-                        onClick={() => onViewReceipt(receipt.id)}
-                      >
-                        <ViewIcon />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Edit Receipt">
-                      <IconButton
-                        size="small"
-                        onClick={() => onEditReceipt(receipt.id)}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <ReceiptsTable
+        receipts={receipts}
+        loading={loading}
+        onViewReceipt={onViewReceipt}
+        onEditReceipt={onEditReceipt}
+      />
 
       {/* Pagination */}
       {totalCount > itemsPerPage && (
