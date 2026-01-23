@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Paper,
@@ -30,6 +30,14 @@ interface Worker {
   hourlyRate: number;
 }
 
+interface WorkerErrors {
+  [workerId: string]: {
+    name?: string;
+    hours?: string;
+    hourlyRate?: string;
+  };
+}
+
 interface LaborSummary {
   totalHours: number;
   totalCost: number;
@@ -48,18 +56,54 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
       hourlyRate: 25,
     },
   ]);
+  const [errors, setErrors] = useState<WorkerErrors>({});
 
-  // Calculate totals
-  const totalHours = workers.reduce((sum, worker) => sum + worker.hours, 0);
-  const totalCost = workers.reduce(
-    (sum, worker) => sum + worker.hours * worker.hourlyRate,
-    0,
-  );
+  // Calculate totals directly
+  const calculateTotals = (workersList: Worker[]) => {
+    const totalHours = workersList.reduce(
+      (sum, worker) => sum + worker.hours,
+      0,
+    );
+    const totalCost = workersList.reduce(
+      (sum, worker) => sum + worker.hours * worker.hourlyRate,
+      0,
+    );
+    return { totalHours, totalCost };
+  };
 
-  // Notify parent of changes
-  useEffect(() => {
-    onLaborChange({ totalHours, totalCost });
-  }, [totalHours, totalCost, onLaborChange]);
+  // Notify parent immediately
+  const notifyParent = (workersList: Worker[]) => {
+    const totals = calculateTotals(workersList);
+    onLaborChange(totals);
+  };
+
+  // Validation functions
+  const validateName = (name: string): string | undefined => {
+    if (!name.trim()) {
+      return "Worker name is required";
+    }
+    return undefined;
+  };
+
+  const validateHours = (hours: number): string | undefined => {
+    if (isNaN(hours)) {
+      return "Must be a valid number";
+    }
+    if (hours < 0) {
+      return "Hours must be at least 0";
+    }
+    return undefined;
+  };
+
+  const validateHourlyRate = (rate: number): string | undefined => {
+    if (isNaN(rate)) {
+      return "Must be a valid number";
+    }
+    if (rate < 0) {
+      return "Hourly rate must be at least 0";
+    }
+    return undefined;
+  };
 
   const addWorker = () => {
     const newWorker: Worker = {
@@ -68,25 +112,73 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
       hours: 0,
       hourlyRate: 25,
     };
-    setWorkers([...workers, newWorker]);
+    const updatedWorkers = [...workers, newWorker];
+    setWorkers(updatedWorkers);
+    notifyParent(updatedWorkers);
   };
 
   const removeWorker = (workerId: string) => {
     if (workers.length > 1) {
-      setWorkers(workers.filter((worker) => worker.id !== workerId));
+      const updatedWorkers = workers.filter((worker) => worker.id !== workerId);
+      setWorkers(updatedWorkers);
+      // Remove errors for this worker
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[workerId];
+        return newErrors;
+      });
+      notifyParent(updatedWorkers);
     }
   };
 
-  const updateWorker = (
-    workerId: string,
-    field: keyof Worker,
-    value: string | number,
-  ) => {
-    setWorkers(
-      workers.map((worker) =>
-        worker.id === workerId ? { ...worker, [field]: value } : worker,
-      ),
+  const handleNameChange = (workerId: string, value: string) => {
+    const error = validateName(value);
+    setErrors((prev) => ({
+      ...prev,
+      [workerId]: { ...prev[workerId], name: error },
+    }));
+
+    const updatedWorkers = workers.map((worker) =>
+      worker.id === workerId ? { ...worker, name: value } : worker,
     );
+    setWorkers(updatedWorkers);
+    if (!error) {
+      notifyParent(updatedWorkers);
+    }
+  };
+
+  const handleHoursChange = (workerId: string, value: string) => {
+    const numValue = parseFloat(value) || 0;
+    const error = validateHours(numValue);
+    setErrors((prev) => ({
+      ...prev,
+      [workerId]: { ...prev[workerId], hours: error },
+    }));
+
+    const updatedWorkers = workers.map((worker) =>
+      worker.id === workerId ? { ...worker, hours: numValue } : worker,
+    );
+    setWorkers(updatedWorkers);
+    if (!error) {
+      notifyParent(updatedWorkers);
+    }
+  };
+
+  const handleHourlyRateChange = (workerId: string, value: string) => {
+    const numValue = parseFloat(value) || 0;
+    const error = validateHourlyRate(numValue);
+    setErrors((prev) => ({
+      ...prev,
+      [workerId]: { ...prev[workerId], hourlyRate: error },
+    }));
+
+    const updatedWorkers = workers.map((worker) =>
+      worker.id === workerId ? { ...worker, hourlyRate: numValue } : worker,
+    );
+    setWorkers(updatedWorkers);
+    if (!error) {
+      notifyParent(updatedWorkers);
+    }
   };
 
   const formatCurrency = (amount: number) => {
@@ -152,8 +244,10 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
                     label="Worker Name"
                     value={worker.name}
                     onChange={(e) =>
-                      updateWorker(worker.id, "name", e.target.value)
+                      handleNameChange(worker.id, e.target.value)
                     }
+                    error={!!errors[worker.id]?.name}
+                    helperText={errors[worker.id]?.name}
                     size="small"
                     InputProps={{
                       startAdornment: (
@@ -172,12 +266,10 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
                     type="number"
                     value={worker.hours}
                     onChange={(e) =>
-                      updateWorker(
-                        worker.id,
-                        "hours",
-                        parseFloat(e.target.value) || 0,
-                      )
+                      handleHoursChange(worker.id, e.target.value)
                     }
+                    error={!!errors[worker.id]?.hours}
+                    helperText={errors[worker.id]?.hours}
                     size="small"
                     inputProps={{
                       min: 0,
@@ -200,12 +292,10 @@ const CalcLaborHours = ({ onLaborChange }: Props) => {
                     type="number"
                     value={worker.hourlyRate}
                     onChange={(e) =>
-                      updateWorker(
-                        worker.id,
-                        "hourlyRate",
-                        parseFloat(e.target.value) || 0,
-                      )
+                      handleHourlyRateChange(worker.id, e.target.value)
                     }
+                    error={!!errors[worker.id]?.hourlyRate}
+                    helperText={errors[worker.id]?.hourlyRate}
                     size="small"
                     inputProps={{
                       min: 0,

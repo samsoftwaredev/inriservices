@@ -6,21 +6,10 @@ import {
   Paper,
   Typography,
   Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Chip,
-  IconButton,
-  Tooltip,
   Grid,
   TextField,
   MenuItem,
-  CircularProgress,
   Alert,
-  Pagination,
   FormControl,
   InputLabel,
   Select,
@@ -29,8 +18,6 @@ import {
 import {
   Add as AddIcon,
   Receipt as InvoiceIcon,
-  Edit as EditIcon,
-  Visibility as ViewIcon,
   Search as SearchIcon,
   FilterList as FilterIcon,
   AttachMoney as MoneyIcon,
@@ -44,6 +31,7 @@ import { Invoice, InvoiceStatus, MetricCard } from "@/types";
 import { invoiceApi } from "@/services/invoiceApi";
 import MetricCards from "@/components/Dashboard/MetricCards";
 import { useRouter } from "next/navigation";
+import InvoicesTable from "./InvoicesTable";
 
 interface InvoiceFilters {
   status?: InvoiceStatus;
@@ -107,13 +95,13 @@ const Invoices = () => {
   const calculateStats = (invoiceList: Invoice[]) => {
     const totalAmount = invoiceList.reduce(
       (sum, invoice) => sum + (invoice.total_cents || 0),
-      0
+      0,
     );
 
     const paidAmount = invoiceList.reduce(
       (sum, invoice) =>
         invoice.status === "paid" ? sum + (invoice.total_cents || 0) : sum,
-      0
+      0,
     );
 
     const pendingAmount = invoiceList.reduce(
@@ -121,7 +109,7 @@ const Invoices = () => {
         invoice.status === "sent" || invoice.status === "overdue"
           ? sum + ((invoice.total_cents || 0) - (invoice.paid_cents || 0))
           : sum,
-      0
+      0,
     );
 
     setStats({
@@ -137,41 +125,12 @@ const Invoices = () => {
     loadInvoices();
   }, [loadInvoices]);
 
-  // Format currency
-  const formatCurrency = (cents: number, currency = "USD") => {
+  // Format currency for stats
+  const formatCurrency = (cents: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: currency.toUpperCase(),
+      currency: "USD",
     }).format(cents / 100);
-  };
-
-  // Format date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
-  // Get status color
-  const getStatusColor = (status: InvoiceStatus) => {
-    switch (status) {
-      case "paid":
-        return "success";
-      case "sent":
-        return "info";
-      case "draft":
-        return "default";
-      case "overdue":
-        return "error";
-      case "partially_paid":
-        return "warning";
-      case "void":
-        return "error";
-      default:
-        return "default";
-    }
   };
   // Handle filter changes
   const handleFilterChange = (newFilters: Partial<InvoiceFilters>) => {
@@ -368,123 +327,16 @@ const Invoices = () => {
         )}
 
         {/* Invoices Table */}
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ bgcolor: "grey.50" }}>
-                <TableCell>Invoice #</TableCell>
-                <TableCell>Client</TableCell>
-                <TableCell>Amount</TableCell>
-                <TableCell>Paid</TableCell>
-                <TableCell>Balance</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Issue Date</TableCell>
-                <TableCell>Due Date</TableCell>
-                <TableCell align="center">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={9} align="center">
-                    <CircularProgress size={24} sx={{ mr: 2 }} />
-                    Loading invoices...
-                  </TableCell>
-                </TableRow>
-              ) : invoices.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={9} align="center">
-                    <Typography color="text.secondary">
-                      No invoices found
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                invoices.map((invoice) => (
-                  <TableRow key={invoice.id} hover>
-                    <TableCell>
-                      <Typography variant="body2" fontWeight="medium">
-                        {invoice.invoice_number}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2">
-                        {invoice.client_id?.slice(0, 8)}...
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" fontWeight="medium">
-                        {formatCurrency(invoice.total_cents || 0)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2">
-                        {formatCurrency(invoice.paid_cents || 0)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2">
-                        {formatCurrency(invoice.balance_cents || 0)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={invoice.status.replace("_", " ").toUpperCase()}
-                        color={getStatusColor(invoice.status)}
-                        size="small"
-                        variant="outlined"
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2">
-                        {invoice.issued_date
-                          ? formatDate(invoice.issued_date)
-                          : "N/A"}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2">
-                        {invoice.due_date
-                          ? formatDate(invoice.due_date)
-                          : "N/A"}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="center">
-                      <Tooltip title="View Invoice">
-                        <IconButton
-                          size="small"
-                          onClick={() => onViewInvoice(invoice.id)}
-                        >
-                          <ViewIcon />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Edit Invoice">
-                        <IconButton
-                          size="small"
-                          onClick={() => onEditInvoice(invoice.id)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-
-        {/* Pagination */}
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
-          <Pagination
-            count={Math.ceil(totalCount / itemsPerPage)}
-            page={page}
-            onChange={(_, newPage) => setPage(newPage)}
-            color="primary"
-            showFirstButton
-            showLastButton
-          />
-        </Box>
+        <InvoicesTable
+          invoices={invoices}
+          loading={loading}
+          page={page}
+          totalCount={totalCount}
+          itemsPerPage={itemsPerPage}
+          onViewInvoice={onViewInvoice}
+          onEditInvoice={onEditInvoice}
+          onPageChange={setPage}
+        />
       </Box>
     </LocalizationProvider>
   );

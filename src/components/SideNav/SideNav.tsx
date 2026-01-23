@@ -184,7 +184,8 @@ const SideNav = ({
             Interior Estimate
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {currentClient.displayName} • {currentClient.phone}
+            {currentClient.displayName} •
+            {formatPhoneNumber(currentClient.phone)}
           </Typography>
         </Box>
       )}
@@ -214,7 +215,7 @@ const SideNav = ({
               <ListItemText
                 primary={client.displayName}
                 secondary={`${client.clientType} • ${formatPhoneNumber(
-                  client.phone
+                  client.phone,
                 )}`}
               />
             </Link>

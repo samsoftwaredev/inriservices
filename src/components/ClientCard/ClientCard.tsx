@@ -26,6 +26,7 @@ import {
 import { ClientFormData } from "../SearchClient/SearchClient.model";
 import { useClient } from "@/context/ClientContext";
 import { ClientFullData, ClientStatus } from "@/types";
+import { formatPhoneNumber } from "@/tools";
 
 interface Props {
   client: ClientFullData;
@@ -171,7 +172,7 @@ const ClientCard = ({
                   sx={{ fontSize: 16, color: "text.secondary", mr: 1 }}
                 />
                 <Typography variant="body2" color="text.secondary">
-                  {client.phone}
+                  {formatPhoneNumber(client.phone)}
                 </Typography>
               </Box>
             </Box>
