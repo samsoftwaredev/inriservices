@@ -43,18 +43,30 @@ const InvoiceFiltersComponent: React.FC<InvoiceFiltersProps> = ({
   onCreateNew,
 }) => {
   return (
-    <Paper sx={{ p: 3, mb: 3 }}>
+    <Paper
+      sx={{
+        p: { xs: 2, sm: 2.5, md: 3 },
+        mb: { xs: 2, md: 3 },
+        borderRadius: { xs: 1, sm: 2 },
+      }}
+    >
       <Typography
         variant="h6"
         gutterBottom
-        sx={{ display: "flex", alignItems: "center" }}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          fontSize: { xs: "1rem", sm: "1.125rem", md: "1.25rem" },
+          mb: { xs: 1.5, md: 2 },
+        }}
       >
-        <FilterIcon sx={{ mr: 1 }} />
+        <FilterIcon sx={{ mr: 1, fontSize: { xs: 20, md: 24 } }} />
         Filters & Search
       </Typography>
 
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 4 }}>
+      <Grid container spacing={{ xs: 1.5, sm: 2 }}>
+        {/* Search Input - Full width on mobile, larger on desktop */}
+        <Grid size={{ xs: 12, md: 4, lg: 5 }}>
           <TextField
             fullWidth
             placeholder="Search invoices by number..."
@@ -63,17 +75,25 @@ const InvoiceFiltersComponent: React.FC<InvoiceFiltersProps> = ({
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon />
+                  <SearchIcon fontSize="small" />
                 </InputAdornment>
               ),
             }}
             size="small"
+            sx={{
+              "& .MuiInputBase-root": {
+                fontSize: { xs: "0.875rem", md: "1rem" },
+              },
+            }}
           />
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+        {/* Status Filter - Half width on mobile, smaller on desktop */}
+        <Grid size={{ xs: 6, sm: 4, md: 2.5, lg: 2 }}>
           <FormControl fullWidth size="small">
-            <InputLabel>Status</InputLabel>
+            <InputLabel sx={{ fontSize: { xs: "0.875rem", md: "1rem" } }}>
+              Status
+            </InputLabel>
             <Select
               value={filters.status || ""}
               label="Status"
@@ -82,6 +102,11 @@ const InvoiceFiltersComponent: React.FC<InvoiceFiltersProps> = ({
                   status: (e.target.value as InvoiceStatus) || undefined,
                 })
               }
+              sx={{
+                "& .MuiSelect-select": {
+                  fontSize: { xs: "0.875rem", md: "1rem" },
+                },
+              }}
             >
               <MenuItem value="">All Statuses</MenuItem>
               <MenuItem value="draft">Draft</MenuItem>
@@ -94,9 +119,12 @@ const InvoiceFiltersComponent: React.FC<InvoiceFiltersProps> = ({
           </FormControl>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+        {/* Year Filter - Half width on mobile, smaller on desktop */}
+        <Grid size={{ xs: 6, sm: 4, md: 2.5, lg: 2 }}>
           <FormControl fullWidth size="small">
-            <InputLabel>Year</InputLabel>
+            <InputLabel sx={{ fontSize: { xs: "0.875rem", md: "1rem" } }}>
+              Year
+            </InputLabel>
             <Select
               value={filters.issuedYear || ""}
               label="Year"
@@ -105,6 +133,11 @@ const InvoiceFiltersComponent: React.FC<InvoiceFiltersProps> = ({
                   issuedYear: Number(e.target.value) || undefined,
                 })
               }
+              sx={{
+                "& .MuiSelect-select": {
+                  fontSize: { xs: "0.875rem", md: "1rem" },
+                },
+              }}
             >
               <MenuItem value="">All Years</MenuItem>
               {Array.from({ length: 5 }, (_, i) => {
@@ -119,12 +152,18 @@ const InvoiceFiltersComponent: React.FC<InvoiceFiltersProps> = ({
           </FormControl>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 2 }}>
+        {/* New Invoice Button - Full width on mobile, auto on larger screens */}
+        <Grid size={{ xs: 12, sm: 4, md: 3, lg: 3 }}>
           <Button
             variant="contained"
-            startIcon={<AddIcon />}
+            startIcon={<AddIcon sx={{ fontSize: { xs: 18, md: 20 } }} />}
             onClick={onCreateNew}
             fullWidth
+            sx={{
+              fontSize: { xs: "0.875rem", md: "1rem" },
+              py: { xs: 0.75, md: 1 },
+              whiteSpace: "nowrap",
+            }}
           >
             New Invoice
           </Button>
