@@ -1,44 +1,21 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { Box, Typography, Button, Alert } from "@mui/material";
 import {
-  Box,
-  Paper,
-  Typography,
-  Button,
-  Grid,
-  TextField,
-  MenuItem,
-  Alert,
-  FormControl,
-  InputLabel,
-  Select,
-  InputAdornment,
-} from "@mui/material";
-import {
-  Add as AddIcon,
   Receipt as InvoiceIcon,
-  Search as SearchIcon,
-  FilterList as FilterIcon,
   AttachMoney as MoneyIcon,
   TrendingUp as TrendingUpIcon,
   Assessment as AssessmentIcon,
 } from "@mui/icons-material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { Invoice, InvoiceStatus, MetricCard } from "@/types";
+import { Invoice, MetricCard } from "@/types";
 import { invoiceApi } from "@/services/invoiceApi";
 import MetricCards from "@/components/Dashboard/MetricCards";
 import { useRouter } from "next/navigation";
 import InvoicesTable from "./InvoicesTable";
-
-interface InvoiceFilters {
-  status?: InvoiceStatus;
-  issuedYear?: number;
-  clientId?: string;
-  projectId?: string;
-}
+import InvoiceFiltersComponent, { InvoiceFilters } from "./InvoiceFilters";
 
 interface DashboardStats {
   totalInvoices: number;
@@ -208,94 +185,13 @@ const Invoices = () => {
         <MetricCards summaryCards={summaryCards} />
 
         {/* Filters and Search */}
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            <FilterIcon sx={{ mr: 1 }} />
-            Filters & Search
-          </Typography>
-
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <TextField
-                fullWidth
-                placeholder="Search invoices by number..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                size="small"
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Status</InputLabel>
-                <Select
-                  value={filters.status || ""}
-                  label="Status"
-                  onChange={(e) =>
-                    handleFilterChange({
-                      status: (e.target.value as InvoiceStatus) || undefined,
-                    })
-                  }
-                >
-                  <MenuItem value="">All Statuses</MenuItem>
-                  <MenuItem value="draft">Draft</MenuItem>
-                  <MenuItem value="sent">Sent</MenuItem>
-                  <MenuItem value="partially_paid">Partially Paid</MenuItem>
-                  <MenuItem value="paid">Paid</MenuItem>
-                  <MenuItem value="overdue">Overdue</MenuItem>
-                  <MenuItem value="void">Void</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-              <FormControl fullWidth size="small">
-                <InputLabel>Year</InputLabel>
-                <Select
-                  value={filters.issuedYear || ""}
-                  label="Year"
-                  onChange={(e) =>
-                    handleFilterChange({
-                      issuedYear: Number(e.target.value) || undefined,
-                    })
-                  }
-                >
-                  <MenuItem value="">All Years</MenuItem>
-                  {Array.from({ length: 5 }, (_, i) => {
-                    const year = new Date().getFullYear() - i;
-                    return (
-                      <MenuItem key={year} value={year}>
-                        {year}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6, md: 2 }}>
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={() => router.push("/invoices/new")}
-                fullWidth
-              >
-                New Invoice
-              </Button>
-            </Grid>
-          </Grid>
-        </Paper>
+        <InvoiceFiltersComponent
+          filters={filters}
+          searchQuery={searchQuery}
+          onFiltersChange={handleFilterChange}
+          onSearchChange={setSearchQuery}
+          onCreateNew={() => router.push("/invoices/new")}
+        />
 
         {/* Actions Bar */}
         <Box
