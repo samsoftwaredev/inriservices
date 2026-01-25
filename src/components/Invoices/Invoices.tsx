@@ -165,7 +165,7 @@ const Invoices = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Box sx={{ p: { xs: 2, sm: 3 } }}>
+      <Box>
         {/* Header */}
         <Box sx={{ mb: 4 }}>
           <Typography

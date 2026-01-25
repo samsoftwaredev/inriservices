@@ -118,31 +118,35 @@ const ReceiptsFilters: React.FC<ReceiptsFiltersProps> = ({
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <DatePicker
-            label="Start Date"
-            value={filters.startDate}
-            onChange={(date) => onFilterChange({ startDate: date })}
-            slotProps={{
-              textField: {
-                size: "small",
-                fullWidth: true,
-              },
-            }}
-          />
+          <Paper elevation={0} sx={{ backgroundColor: "white" }}>
+            <DatePicker
+              label="Start Date"
+              value={filters.startDate}
+              onChange={(date) => onFilterChange({ startDate: date })}
+              slotProps={{
+                textField: {
+                  size: "small",
+                  fullWidth: true,
+                },
+              }}
+            />
+          </Paper>
         </Grid>
 
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <DatePicker
-            label="End Date"
-            value={filters.endDate}
-            onChange={(date) => onFilterChange({ endDate: date })}
-            slotProps={{
-              textField: {
-                size: "small",
-                fullWidth: true,
-              },
-            }}
-          />
+          <Paper elevation={0} sx={{ backgroundColor: "white" }}>
+            <DatePicker
+              label="End Date"
+              value={filters.endDate}
+              onChange={(date) => onFilterChange({ endDate: date })}
+              slotProps={{
+                textField: {
+                  size: "small",
+                  fullWidth: true,
+                },
+              }}
+            />
+          </Paper>
         </Grid>
       </Grid>
     </Paper>

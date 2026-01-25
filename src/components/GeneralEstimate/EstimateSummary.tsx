@@ -10,7 +10,7 @@ import {
   InputAdornment,
 } from "@mui/material";
 import { ProjectCost, PropertyRoomTransformed } from "@/types";
-import { PROFIT_MARGIN_PERCNT, TAX_RATE_PERCNT } from "@/constants";
+import { PROFIT_MARGIN_PERCNT } from "@/constants";
 import {
   calculateProfits,
   calculateSubtotal,
