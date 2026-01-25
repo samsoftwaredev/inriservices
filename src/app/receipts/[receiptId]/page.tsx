@@ -98,8 +98,6 @@ const ReceiptPage = ({ params }: Props) => {
           receiptId={rId}
           receipt={receipt}
           onEdit={onEdit}
-          onVoid={() => {}}
-          onRefund={() => {}}
           client={currentClient}
         />
       </AppLayout>

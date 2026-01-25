@@ -39,13 +39,14 @@ import {
   companyName,
   companyPhoneFormatted,
 } from "@/constants";
+import { formatPhoneNumber } from "@/tools";
 
 interface Props {
   receiptId: string;
   receipt: ReceiptTransformed;
   onEdit: (receipt: ReceiptTransformed) => void;
-  onVoid: (receiptId: string) => void;
-  onRefund: (receiptId: string) => void;
+  onVoid?: (receiptId: string) => void;
+  onRefund?: (receiptId: string) => void;
   client: ClientFullData;
 }
 
@@ -124,7 +125,7 @@ const Receipt = ({
     setLoading(true);
     try {
       await receiptApi.voidReceipt(receipt.id);
-      onVoid(receipt.id);
+      if (typeof onVoid === "function") onVoid(receipt.id);
     } finally {
       setLoading(false);
     }
@@ -135,7 +136,7 @@ const Receipt = ({
     setLoading(true);
     try {
       await receiptApi.refundReceipt(receipt.id);
-      onRefund(receipt.id);
+      if (typeof onRefund === "function") onRefund(receipt.id);
     } finally {
       setLoading(false);
     }
@@ -356,6 +357,10 @@ const Receipt = ({
         </Typography>
 
         <Typography variant="body2" color="text.secondary">
+          {formatPhoneNumber(client?.phone) ?? ""}
+        </Typography>
+
+        <Typography variant="body2" color="text.secondary">
           {client?.properties[0].addressLine1 ?? ""}
           {client?.properties[0].addressLine2
             ? `, ${client.properties[0].addressLine2}`
@@ -380,22 +385,26 @@ const Receipt = ({
             spacing={1.5}
             justifyContent="center"
           >
-            <Button
-              variant="outlined"
-              color="error"
-              startIcon={<CancelIcon />}
-              onClick={handleVoid}
-            >
-              Void Receipt
-            </Button>
-            <Button
-              variant="outlined"
-              color="warning"
-              startIcon={<RefundIcon />}
-              onClick={handleRefund}
-            >
-              Refund Receipt
-            </Button>
+            {onVoid && (
+              <Button
+                variant="outlined"
+                color="error"
+                startIcon={<CancelIcon />}
+                onClick={handleVoid}
+              >
+                Void Receipt
+              </Button>
+            )}
+            {onRefund && (
+              <Button
+                variant="outlined"
+                color="warning"
+                startIcon={<RefundIcon />}
+                onClick={handleRefund}
+              >
+                Refund Receipt
+              </Button>
+            )}
           </Stack>
         </Box>
       ) : null}
