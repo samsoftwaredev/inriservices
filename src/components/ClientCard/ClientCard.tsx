@@ -23,7 +23,6 @@ import {
   Visibility as VisibilityIcon,
   Edit as EditIcon,
 } from "@mui/icons-material";
-import { ClientFormData } from "../SearchClient/SearchClient.model";
 import { useClient } from "@/context/ClientContext";
 import { ClientFullData, ClientStatus } from "@/types";
 import { formatPhoneNumber } from "@/tools";

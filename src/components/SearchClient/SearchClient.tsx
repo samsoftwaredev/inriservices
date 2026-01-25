@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -23,6 +23,7 @@ import { toast } from "react-toastify";
 import { SubmitHandler } from "react-hook-form";
 import { ClientFormData } from "./SearchClient.model";
 import { ClientFullData } from "@/types";
+import { useRouter } from "next/navigation";
 
 interface Props {
   onClientSelected: (clientId: string) => void;
@@ -34,6 +35,7 @@ const SearchClient = ({ onClientSelected }: Props) => {
     handleSelectClient,
     allClients: clients,
   } = useClient();
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -99,6 +101,7 @@ const SearchClient = ({ onClientSelected }: Props) => {
     const client = clients.find((c) => c.id === selectedClientId);
     if (client) {
       onClientClick(client);
+      router.push(`/clients/${client.id}`);
     }
     handleMenuClose();
   };
