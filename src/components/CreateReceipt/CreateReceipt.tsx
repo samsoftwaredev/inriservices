@@ -15,14 +15,16 @@ import {
   InputAdornment,
   CircularProgress,
   Alert,
+  FormHelperText,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useForm, Controller } from "react-hook-form";
-import { PaymentMethod, ReceiptStatus } from "@/types";
+import { PaymentMethod, ReceiptStatus, Client } from "@/types";
 import { receiptApi } from "@/services/receiptApi";
 import { useClient } from "@/context/ClientContext";
+import ClientSearchSelector from "@/components/ClientSearchSelector";
 
 interface CreateReceiptForm {
   clientId: string;
@@ -45,11 +47,15 @@ const CreateReceipt = ({ onSuccess, onCancel }: Props) => {
   const { currentClient } = useClient();
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [selectedClientData, setSelectedClientData] = useState<Client | null>(
+    null,
+  );
 
   const {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<CreateReceiptForm>({
     defaultValues: {
@@ -63,8 +69,17 @@ const CreateReceipt = ({ onSuccess, onCancel }: Props) => {
   const handleCreateReceipt = async (data: CreateReceiptForm) => {
     setSubmitError(null);
     try {
+      // Use selectedClientData's company_id if available, otherwise fallback to currentClient
+      const companyId =
+        selectedClientData?.company_id || currentClient?.companyId;
+
+      if (!companyId) {
+        setSubmitError("Company ID is required. Please select a client.");
+        return;
+      }
+
       const receiptInput = {
-        company_id: currentClient?.companyId!,
+        company_id: companyId,
         client_id: data.clientId,
         project_id: data.projectId || null,
         invoice_id: data.invoiceId || null,
@@ -80,6 +95,7 @@ const CreateReceipt = ({ onSuccess, onCancel }: Props) => {
       await receiptApi.createReceipt(receiptInput);
       setSubmitSuccess(true);
       reset();
+      setSelectedClientData(null);
       if (onSuccess) {
         onSuccess();
       }
@@ -93,6 +109,12 @@ const CreateReceipt = ({ onSuccess, onCancel }: Props) => {
     reset();
     setSubmitError(null);
     setSubmitSuccess(false);
+    setSelectedClientData(null);
+  };
+
+  const handleClientChange = (clientId: string, client: Client) => {
+    setValue("clientId", clientId, { shouldValidate: true });
+    setSelectedClientData(client);
   };
 
   return (
@@ -126,18 +148,19 @@ const CreateReceipt = ({ onSuccess, onCancel }: Props) => {
 
       <form onSubmit={handleSubmit(handleCreateReceipt)}>
         <Grid container spacing={2} sx={{ mt: 1 }}>
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 12 }}>
             <Controller
               name="clientId"
               control={control}
-              rules={{ required: "Client ID is required" }}
+              rules={{ required: "Client is required" }}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Client ID"
+                <ClientSearchSelector
+                  value={field.value}
+                  onChange={handleClientChange}
+                  label="Select Client *"
                   error={!!errors.clientId}
                   helperText={errors.clientId?.message}
+                  disabled={isSubmitting}
                 />
               )}
             />

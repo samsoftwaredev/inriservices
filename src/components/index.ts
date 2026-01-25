@@ -25,6 +25,7 @@ export { default as AppLayout } from "./AppLayout";
 export { default as GeneralEstimate } from "./GeneralEstimate";
 export { default as SearchClient } from "./SearchClient";
 export { default as SearchClientDialog } from "./SearchClientDialog";
+export { default as ClientSearchSelector } from "./ClientSearchSelector";
 export { default as NewClientDialog } from "./NewClientDialog";
 export { default as Spinner } from "./Spinner";
 export { default as CustomerSelectionMenu } from "./ProInteriorEstimate/CustomerSelectionMenu";
