@@ -144,23 +144,6 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
             mt: 2,
           }}
         >
-          {/* Labor Cost */}
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Labor Cost
-            </Typography>
-            <Typography
-              variant="body1"
-              fontWeight="medium"
-              color="primary.main"
-            >
-              {formatCurrency(laborCost)}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              Based on {laborHours} hrs
-            </Typography>
-          </Box>
-
           {/* Material Cost */}
           <Box sx={{ flex: 1 }}>
             <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -220,16 +203,20 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
             mt: 2,
           }}
         >
-          {/* Labor Hours Section */}
+          {/* Labor Cost */}
           <Box sx={{ flex: 1 }}>
             <Typography variant="body2" color="text.secondary" gutterBottom>
-              Labor Hours
+              Labor Cost
             </Typography>
-            <Typography variant="body1" fontWeight="medium">
-              {laborHours} hrs
+            <Typography
+              variant="body1"
+              fontWeight="medium"
+              color="primary.main"
+            >
+              {formatCurrency(laborCost)}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              Auto-calculated
+              Based on {laborHours} hrs
             </Typography>
           </Box>
 
@@ -249,26 +236,35 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
               Auto-calculated
             </Typography>
           </Box>
-
-          {/* Taxes Section */}
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Taxes ({TAX_RATE_PERCNT * 100}%)
-            </Typography>
-            <Typography
-              variant="body1"
-              fontWeight="medium"
-              color="warning.main"
-            >
-              {formatCurrency(taxes)}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              Auto-calculated
-            </Typography>
-          </Box>
         </Box>
 
         <Divider sx={{ my: 2 }} />
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Typography variant="h6">Sub-total:</Typography>
+          <Typography
+            variant="h6"
+            color="primary"
+            fontWeight="bold"
+            textAlign="right"
+          >
+            {formatCurrency(total - taxes)}
+          </Typography>
+        </Box>
+
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          sx={{ mb: 1, display: "block", textAlign: "right" }}
+        >
+          (Before taxes {formatCurrency(taxes)})
+        </Typography>
 
         {/* Total */}
         <Box
@@ -278,8 +274,8 @@ const EstimateSummary = ({ rooms, onCostsChange, initialCosts }: Props) => {
             alignItems: "center",
           }}
         >
-          <Typography variant="h6">Estimated Total:</Typography>
-          <Typography variant="h6" color="primary" fontWeight="bold">
+          <Typography variant="h5">Estimated Total:</Typography>
+          <Typography variant="h5" color="primary" fontWeight="bold">
             {formatCurrency(total)}
           </Typography>
         </Box>

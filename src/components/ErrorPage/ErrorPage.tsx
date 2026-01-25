@@ -2,7 +2,23 @@ import React from "react";
 import { Button, Container, Paper, Typography, Box } from "@mui/material";
 import Link from "next/link";
 
-const ErrorPage = () => {
+interface ErrorPageProps {
+  title?: string;
+  message?: string;
+  description?: string;
+  showButton?: boolean;
+  buttonText?: string;
+  buttonHref?: string;
+}
+
+const ErrorPage: React.FC<ErrorPageProps> = ({
+  title = "Oops! 🎨",
+  message = "Looks like this page is down.",
+  description = "Maybe try checking the URL or going back to the homepage?",
+  showButton = true,
+  buttonText = "🏠 Back to Painting Your Home",
+  buttonHref = "/",
+}) => {
   return (
     <Container
       maxWidth="sm"
@@ -37,7 +53,7 @@ const ErrorPage = () => {
             textAlign: "center",
           }}
         >
-          Oops! 🎨
+          {title}
         </Typography>
         <Typography
           variant="body1"
@@ -48,7 +64,7 @@ const ErrorPage = () => {
             fontSize: { xs: "1rem", sm: "1.125rem" },
           }}
         >
-          Looks like this page is down.
+          {message}
         </Typography>
         <Typography
           variant="body2"
@@ -59,27 +75,31 @@ const ErrorPage = () => {
             fontSize: { xs: "0.95rem", sm: "1rem" },
           }}
         >
-          Maybe try checking the URL or going back to the homepage?
+          {description}
         </Typography>
-        <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
-          <Link href="/" passHref legacyBehavior>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              sx={{
-                px: 4,
-                py: 1.5,
-                borderRadius: 2,
-                fontWeight: "bold",
-                fontSize: { xs: "1rem", sm: "1.1rem" },
-                textTransform: "none",
-              }}
-            >
-              🏠 Back to Painting Your Home
-            </Button>
-          </Link>
-        </Box>
+        {showButton && (
+          <Box
+            sx={{ width: "100%", display: "flex", justifyContent: "center" }}
+          >
+            <Link href={buttonHref} passHref legacyBehavior>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 2,
+                  fontWeight: "bold",
+                  fontSize: { xs: "1rem", sm: "1.1rem" },
+                  textTransform: "none",
+                }}
+              >
+                {buttonText}
+              </Button>
+            </Link>
+          </Box>
+        )}
         <Typography
           variant="caption"
           color="text.disabled"
