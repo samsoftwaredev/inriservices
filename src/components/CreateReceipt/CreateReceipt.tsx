@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import {
   Box,
-  Paper,
   Typography,
   Button,
   TextField,
@@ -15,7 +14,6 @@ import {
   InputAdornment,
   CircularProgress,
   Alert,
-  FormHelperText,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -57,9 +55,6 @@ const CreateReceipt = ({ onSuccess, onCancel }: Props) => {
   const [selectedClientData, setSelectedClientData] = useState<Client | null>(
     null,
   );
-  const [selectedProjectData, setSelectedProjectData] = useState<
-    Project | ProjectWithRelationsAndRooms | null
-  >(null);
 
   const {
     control,
@@ -106,7 +101,6 @@ const CreateReceipt = ({ onSuccess, onCancel }: Props) => {
       setSubmitSuccess(true);
       reset();
       setSelectedClientData(null);
-      setSelectedProjectData(null);
       if (onSuccess) {
         onSuccess();
       }
@@ -121,23 +115,20 @@ const CreateReceipt = ({ onSuccess, onCancel }: Props) => {
     setSubmitError(null);
     setSubmitSuccess(false);
     setSelectedClientData(null);
-    setSelectedProjectData(null);
   };
 
   const handleClientChange = (clientId: string, client: Client) => {
     setValue("clientId", clientId, { shouldValidate: true });
     setSelectedClientData(client);
     // Clear project selection when client changes
-    setSelectedProjectData(null);
     setValue("projectId", "");
   };
 
   const handleProjectChange = (
     projectId: string,
-    project: Project | ProjectWithRelationsAndRooms,
+    _project: Project | ProjectWithRelationsAndRooms,
   ) => {
     setValue("projectId", projectId);
-    setSelectedProjectData(project);
   };
 
   return (

@@ -7,6 +7,7 @@ import {
   NewClientDialog,
   ProtectedRoute,
   SearchClientDialog,
+  Spinner,
 } from "@/components";
 import Receipt from "@/components/Receipt";
 import { useRouter } from "next/navigation";
@@ -34,7 +35,8 @@ interface Props {
 const ReceiptPage = ({ params }: Props) => {
   const router = useRouter();
   const { userData } = useAuth();
-  const { currentClient, handleCreateNewClient } = useClient();
+  const { currentClient, handleCreateNewClient, handleSelectClient } =
+    useClient();
   const [rId, setRId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [receipt, setReceipt] = useState<null | ReceiptTransformed>(null);
@@ -54,7 +56,10 @@ const ReceiptPage = ({ params }: Props) => {
       setIsLoading(true);
       try {
         const receiptData = await receiptApi.getReceipt(id);
-        setReceipt(transformSingleReceipt(receiptData));
+        setReceipt(() => {
+          handleSelectClient(receiptData.client_id);
+          return transformSingleReceipt(receiptData);
+        });
       } catch (error) {
         console.error("Error fetching receipt data:", error);
         router.push("/receipts");
@@ -62,19 +67,11 @@ const ReceiptPage = ({ params }: Props) => {
         setIsLoading(false);
       }
     },
-    [router]
+    [router],
   );
 
   const onSubmitNewClient = async (data: ClientFormData) => {
     handleCreateNewClient(data, userData!.companyId);
-  };
-
-  const onOpenSearchClientDialog = () => {
-    setIsOpenSearchClientDialog(true);
-  };
-
-  const onOpenNewClientDialog = () => {
-    setIsOpenNewClientDialog(true);
   };
 
   const onCloseSearchClientDialog = () => {
@@ -91,38 +88,31 @@ const ReceiptPage = ({ params }: Props) => {
     }
   }, [rId, onInit]);
 
-  if (isLoading || !receipt || !rId)
-    return (
-      <div>
-        <h1>Loading Receipt...</h1>
-      </div>
-    );
+  if (isLoading || !receipt || !rId) return <Spinner />;
+
+  if (!currentClient) {
+    router.push("/receipts");
+    return null;
+  }
 
   return (
     <ProtectedRoute>
       <AppLayout>
-        {!currentClient ? (
-          <RequireClient
-            onOpenSearchClientDialog={onOpenSearchClientDialog}
-            onOpenNewClientDialog={onOpenNewClientDialog}
-          />
-        ) : (
-          <Receipt
-            receiptId={rId}
-            receipt={receipt}
-            onEdit={() => {}}
-            onVoid={() => {}}
-            onRefund={() => {}}
-            company={{
-              name: companyName,
-              addressLine: companyStreetAddress,
-              cityStateZip: companyAddressLocality,
-              phone: companyPhoneFormatted,
-              email: companyEmail,
-            }}
-            client={currentClient}
-          />
-        )}
+        <Receipt
+          receiptId={rId}
+          receipt={receipt}
+          onEdit={() => {}}
+          onVoid={() => {}}
+          onRefund={() => {}}
+          company={{
+            name: companyName,
+            addressLine: companyStreetAddress,
+            cityStateZip: companyAddressLocality,
+            phone: companyPhoneFormatted,
+            email: companyEmail,
+          }}
+          client={currentClient}
+        />
       </AppLayout>
 
       <NewClientDialog
