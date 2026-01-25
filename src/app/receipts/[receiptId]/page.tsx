@@ -15,14 +15,6 @@ import { receiptApi } from "@/services/receiptApi";
 import { transformSingleReceipt } from "@/tools/transformers";
 import { ReceiptTransformed } from "@/types";
 import { useClient } from "@/context/ClientContext";
-import {
-  companyEmail,
-  companyName,
-  companyStreetAddress,
-  companyAddressLocality,
-  companyPhoneFormatted,
-} from "@/constants/company";
-import RequireClient from "@/components/RequireClient";
 import { ClientFormData } from "@/components/SearchClient/SearchClient.model";
 import { useAuth } from "@/context";
 
@@ -82,6 +74,10 @@ const ReceiptPage = ({ params }: Props) => {
     setIsOpenNewClientDialog(false);
   };
 
+  const onEdit = () => {
+    router.push(`/receipts/${rId}/edit`);
+  };
+
   useEffect(() => {
     if (rId) {
       onInit(rId);
@@ -101,7 +97,7 @@ const ReceiptPage = ({ params }: Props) => {
         <Receipt
           receiptId={rId}
           receipt={receipt}
-          onEdit={() => {}}
+          onEdit={onEdit}
           onVoid={() => {}}
           onRefund={() => {}}
           client={currentClient}

@@ -19,9 +19,18 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useForm, Controller } from "react-hook-form";
-import { PaymentMethod, ReceiptStatus, Receipt } from "@/types";
+import {
+  PaymentMethod,
+  ReceiptStatus,
+  Receipt,
+  ProjectWithRelationsAndRooms,
+  Project,
+  Client,
+} from "@/types";
 import { receiptApi } from "@/services/receiptApi";
 import { toast } from "react-toastify";
+import ClientSearchSelector from "../ClientSearchSelector";
+import ProjectSearchSelector from "../ProjectSearchSelector";
 
 interface EditReceiptForm {
   clientId: string;
@@ -47,6 +56,9 @@ const EditReceipt = ({ receiptId, onSuccess, onCancel }: Props) => {
   const [loading, setLoading] = useState(true);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [selectedClientData, setSelectedClientData] = useState<Client | null>(
+    null,
+  );
 
   const {
     control,
@@ -131,7 +143,21 @@ const EditReceipt = ({ receiptId, onSuccess, onCancel }: Props) => {
       setValue("status", receipt.status);
     }
     setSubmitError(null);
+    setSelectedClientData(null);
     setSubmitSuccess(false);
+  };
+
+  const handleClientChange = (clientId: string, client: Client) => {
+    setValue("clientId", clientId, { shouldValidate: true });
+    setSelectedClientData(client);
+    // Clear project selection when client changes
+    setValue("projectId", "");
+  };
+  const handleProjectChange = (
+    projectId: string,
+    _project: Project | ProjectWithRelationsAndRooms,
+  ) => {
+    setValue("projectId", projectId);
   };
 
   if (loading) {
@@ -177,35 +203,42 @@ const EditReceipt = ({ receiptId, onSuccess, onCancel }: Props) => {
 
       <form onSubmit={handleSubmit(handleUpdateReceipt)}>
         <Grid container spacing={2} sx={{ mt: 1 }}>
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={12}>
             <Controller
               name="clientId"
               control={control}
               rules={{ required: "Client ID is required" }}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Client ID"
+                <ClientSearchSelector
+                  value={field.value}
+                  onChange={handleClientChange}
+                  label="Select Client *"
                   error={!!errors.clientId}
-                  helperText={errors.clientId?.message || "Cannot be changed"}
-                  disabled // Client cannot be changed
+                  helperText={errors.clientId?.message}
+                  disabled={isSubmitting}
                 />
               )}
             />
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={12}>
             <Controller
               name="projectId"
               control={control}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Project ID (Optional)"
-                  disabled // Project cannot be changed for accounting safety
-                  helperText="Cannot be changed"
+                <ProjectSearchSelector
+                  value={field.value}
+                  onChange={handleProjectChange}
+                  clientId={selectedClientData?.id}
+                  label="Select Project (Optional)"
+                  error={!!errors.projectId}
+                  helperText={
+                    errors.projectId?.message ||
+                    (selectedClientData
+                      ? "Filtered by selected client"
+                      : "Select a client first to filter projects")
+                  }
+                  disabled={isSubmitting}
                 />
               )}
             />
