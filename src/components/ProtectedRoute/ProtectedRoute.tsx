@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import { Box, CircularProgress, Typography } from "@mui/material";
-import { Session } from "@supabase/supabase-js";
-import { supabase } from "@/app/supabaseConfig";
 import { useAuth } from "@/context";
+import Spinner from "../Spinner";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -16,12 +15,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const router = useRouter();
 
   if (loading) {
-    return (
-      <div>
-        <h1>Authentication</h1>
-        <p>Loading...</p>
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (authError) {
