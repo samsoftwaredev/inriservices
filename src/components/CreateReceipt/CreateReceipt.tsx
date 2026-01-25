@@ -21,10 +21,17 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useForm, Controller } from "react-hook-form";
-import { PaymentMethod, ReceiptStatus, Client } from "@/types";
+import {
+  PaymentMethod,
+  ReceiptStatus,
+  Client,
+  Project,
+  ProjectWithRelationsAndRooms,
+} from "@/types";
 import { receiptApi } from "@/services/receiptApi";
 import { useClient } from "@/context/ClientContext";
 import ClientSearchSelector from "@/components/ClientSearchSelector";
+import ProjectSearchSelector from "@/components/ProjectSearchSelector";
 
 interface CreateReceiptForm {
   clientId: string;
@@ -50,6 +57,9 @@ const CreateReceipt = ({ onSuccess, onCancel }: Props) => {
   const [selectedClientData, setSelectedClientData] = useState<Client | null>(
     null,
   );
+  const [selectedProjectData, setSelectedProjectData] = useState<
+    Project | ProjectWithRelationsAndRooms | null
+  >(null);
 
   const {
     control,
@@ -96,6 +106,7 @@ const CreateReceipt = ({ onSuccess, onCancel }: Props) => {
       setSubmitSuccess(true);
       reset();
       setSelectedClientData(null);
+      setSelectedProjectData(null);
       if (onSuccess) {
         onSuccess();
       }
@@ -110,11 +121,23 @@ const CreateReceipt = ({ onSuccess, onCancel }: Props) => {
     setSubmitError(null);
     setSubmitSuccess(false);
     setSelectedClientData(null);
+    setSelectedProjectData(null);
   };
 
   const handleClientChange = (clientId: string, client: Client) => {
     setValue("clientId", clientId, { shouldValidate: true });
     setSelectedClientData(client);
+    // Clear project selection when client changes
+    setSelectedProjectData(null);
+    setValue("projectId", "");
+  };
+
+  const handleProjectChange = (
+    projectId: string,
+    project: Project | ProjectWithRelationsAndRooms,
+  ) => {
+    setValue("projectId", projectId);
+    setSelectedProjectData(project);
   };
 
   return (
@@ -166,12 +189,25 @@ const CreateReceipt = ({ onSuccess, onCancel }: Props) => {
             />
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 12 }}>
             <Controller
               name="projectId"
               control={control}
               render={({ field }) => (
-                <TextField {...field} fullWidth label="Project ID (Optional)" />
+                <ProjectSearchSelector
+                  value={field.value}
+                  onChange={handleProjectChange}
+                  clientId={selectedClientData?.id}
+                  label="Select Project (Optional)"
+                  error={!!errors.projectId}
+                  helperText={
+                    errors.projectId?.message ||
+                    (selectedClientData
+                      ? "Filtered by selected client"
+                      : "Select a client first to filter projects")
+                  }
+                  disabled={isSubmitting}
+                />
               )}
             />
           </Grid>
