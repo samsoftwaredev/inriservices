@@ -10,7 +10,7 @@ export const companyStreetAddress = "5900 Balcones Drive, STE 100";
 export const companyAddressLocality = "Austin";
 export const companyAddressRegion = "TX";
 export const companyPostalCode = "78731";
-export const companyAddressCountry = "US";
+export const companyAddressCountry = "USA";
 export const companyFullAddress = `${companyStreetAddress}, ${companyAddressLocality}, ${companyAddressRegion} ${companyPostalCode}, ${companyAddressCountry}`;
 
 export const TAX_RATE_PERCNT = 0.0825;

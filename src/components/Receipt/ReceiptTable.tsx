@@ -14,6 +14,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { ReceiptTransformed, PaymentMethod } from "@/types";
+import { calculateTaxes } from "@/tools";
 
 interface Props {
   receipt: ReceiptTransformed;
@@ -150,7 +151,10 @@ const ReceiptTable = ({ receipt }: Props) => {
                 Tax
               </Typography>
               <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                {formatCurrency(0, receipt.currency)}
+                {formatCurrency(
+                  calculateTaxes(receipt.amountCents),
+                  receipt.currency,
+                )}
               </Typography>
             </Stack>
 

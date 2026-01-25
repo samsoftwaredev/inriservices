@@ -104,13 +104,6 @@ const ReceiptPage = ({ params }: Props) => {
           onEdit={() => {}}
           onVoid={() => {}}
           onRefund={() => {}}
-          company={{
-            name: companyName,
-            addressLine: companyStreetAddress,
-            cityStateZip: companyAddressLocality,
-            phone: companyPhoneFormatted,
-            email: companyEmail,
-          }}
           client={currentClient}
         />
       </AppLayout>

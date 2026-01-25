@@ -32,6 +32,13 @@ import {
 } from "@/types";
 import { receiptApi } from "@/services/receiptApi";
 import ReceiptTable from "./ReceiptTable";
+import {
+  companyAddressLocality,
+  companyEmail,
+  companyFullAddress,
+  companyName,
+  companyPhoneFormatted,
+} from "@/constants";
 
 interface Props {
   receiptId: string;
@@ -39,15 +46,6 @@ interface Props {
   onEdit: (receipt: ReceiptTransformed) => void;
   onVoid: (receiptId: string) => void;
   onRefund: (receiptId: string) => void;
-
-  company: {
-    name: string;
-    addressLine?: string;
-    cityStateZip?: string;
-    phone?: string;
-    email?: string;
-    logoUrl?: string;
-  };
   client: ClientFullData;
 }
 
@@ -57,7 +55,6 @@ const Receipt = ({
   onEdit,
   onVoid,
   onRefund,
-  company,
   client,
 }: Props) => {
   const theme = useTheme();
@@ -197,7 +194,7 @@ const Receipt = ({
         <Grid size={{ xs: 12, md: 7 }}>
           <Stack direction="row" spacing={2} alignItems="flex-start">
             <Avatar
-              src={company?.logoUrl}
+              src="/inriLogo.png"
               variant="circular"
               sx={{
                 width: 48,
@@ -208,7 +205,7 @@ const Receipt = ({
               }}
             >
               {/* fallback */}
-              {company?.name?.[0] ?? "R"}
+              {companyName}
             </Avatar>
 
             <Box sx={{ minWidth: 0 }}>
@@ -216,14 +213,11 @@ const Receipt = ({
                 variant="h6"
                 sx={{ fontWeight: 900, lineHeight: 1.1 }}
               >
-                {company?.name ?? "Company Name"}
+                {companyName}
               </Typography>
 
               <Typography variant="body2" color="text.secondary">
-                {company?.addressLine ?? "Company address line"}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {company?.cityStateZip ?? "City, State ZIP"}
+                {companyFullAddress}
               </Typography>
 
               <Typography
@@ -231,9 +225,7 @@ const Receipt = ({
                 color="text.secondary"
                 sx={{ mt: 0.5 }}
               >
-                {(company?.phone ?? "(555) 555-5555") +
-                  " • " +
-                  (company?.email ?? "hello@company.com")}
+                {companyPhoneFormatted + " • " + companyEmail}
               </Typography>
             </Box>
           </Stack>
@@ -368,10 +360,11 @@ const Receipt = ({
           {client?.properties[0].addressLine2
             ? `, ${client.properties[0].addressLine2}`
             : ""}
-        </Typography>
-
-        <Typography variant="body2" color="text.secondary">
-          {client?.properties[0].zip ?? ""}
+          {client?.properties[0].city ? `, ${client.properties[0].city}` : ""}
+          {client?.properties[0].state
+            ? `, ${client.properties[0].state}`
+            : ""}{" "}
+          {client?.properties[0].zip ?? ""}, USA
         </Typography>
       </Box>
 
