@@ -329,15 +329,6 @@ const Receipt = ({
                 <DownloadIcon fontSize="small" />
               </IconButton>
             </Tooltip>
-
-            <Tooltip title="Share">
-              <IconButton
-                size="small"
-                sx={{ border: "1px solid", borderColor: "divider" }}
-              >
-                <ShareIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
           </Stack>
         </Grid>
       </Grid>

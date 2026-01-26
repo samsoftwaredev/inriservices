@@ -2,20 +2,10 @@
 
 import React, { use } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Stack,
-} from "@mui/material";
-import {
-  ArrowBack as ArrowBackIcon,
-  Receipt as ReceiptIcon,
-} from "@mui/icons-material";
+import { Box, Card, CardContent } from "@mui/material";
+import { Receipt as ReceiptIcon } from "@mui/icons-material";
 import AppLayout from "@/components/AppLayout";
-import { ProtectedRoute } from "@/components";
+import { ProtectedRoute, PageHeader } from "@/components";
 import EditReceipt from "@/components/EditReceipt";
 
 interface EditReceiptPageProps {
@@ -39,33 +29,17 @@ const EditReceiptPage = ({ params }: EditReceiptPageProps) => {
   return (
     <ProtectedRoute>
       <AppLayout>
-        <Box sx={{ p: 3, maxWidth: 1000, mx: "auto" }}>
+        <Box sx={{ p: { xs: 2, sm: 3 }, maxWidth: 1000, mx: "auto" }}>
           {/* Header */}
-          <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
-            <Button
-              startIcon={<ArrowBackIcon />}
-              onClick={() => router.back()}
-              variant="outlined"
-            >
-              Back
-            </Button>
-            <Box>
-              <Typography
-                variant="h4"
-                gutterBottom
-                sx={{ display: "flex", alignItems: "center" }}
-              >
-                <ReceiptIcon sx={{ mr: 2, fontSize: 40 }} />
-                Edit Receipt
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Update receipt information and payment details
-              </Typography>
-            </Box>
-          </Stack>
+          <PageHeader
+            title="Edit Receipt"
+            subtitle="Update receipt information and payment details"
+            icon={<ReceiptIcon />}
+            onBack={() => router.back()}
+          />
 
           <Card>
-            <CardContent sx={{ p: 4 }}>
+            <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
               <EditReceipt
                 receiptId={receiptId}
                 onSuccess={handleSuccess}

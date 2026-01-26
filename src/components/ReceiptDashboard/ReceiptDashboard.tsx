@@ -189,7 +189,7 @@ const ReceiptDashboard = () => {
   };
 
   const onEditReceipt = (receiptId: string) => {
-    router.push(`/receipts/${receiptId}`);
+    router.push(`/receipts/${receiptId}/edit`);
   };
 
   return (

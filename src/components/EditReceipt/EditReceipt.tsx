@@ -174,13 +174,6 @@ const EditReceipt = ({ receiptId, onSuccess, onCancel }: Props) => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Typography variant="h5" gutterBottom>
-        Edit Receipt
-      </Typography>
-      <Typography variant="body2" color="text.secondary" paragraph>
-        Update the receipt details below.
-      </Typography>
-
       {submitSuccess && (
         <Alert
           severity="success"
