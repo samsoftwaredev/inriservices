@@ -58,21 +58,21 @@ const navigationItems = [
     icon: <AssessmentIcon />,
     path: "/estimates",
   },
-  {
-    text: "Time Logs",
-    icon: <PunchClock />,
-    path: "/timelogs",
-  },
-  {
-    text: "Generate Contracts",
-    icon: <DocumentScannerOutlined />,
-    path: "/contracts",
-  },
-  {
-    text: "Money Tracker",
-    icon: <AttachMoneyIcon />,
-    path: "/money-tracker",
-  },
+  // {
+  //   text: "Time Logs",
+  //   icon: <PunchClock />,
+  //   path: "/timelogs",
+  // },
+  // {
+  //   text: "Generate Contracts",
+  //   icon: <DocumentScannerOutlined />,
+  //   path: "/contracts",
+  // },
+  // {
+  //   text: "Money Tracker",
+  //   icon: <AttachMoneyIcon />,
+  //   path: "/money-tracker",
+  // },
   {
     text: "Invoices",
     icon: <Money />,

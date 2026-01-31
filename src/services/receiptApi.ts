@@ -2,6 +2,15 @@ import { supabase } from "@/app/supabaseConfig";
 import { assertOk } from "@/tools";
 import { ListResult, ReceiptStatus, Receipt } from "@/types";
 
+export type ReceiptWithClient = Receipt & {
+  client: {
+    id: string;
+    display_name: string | null;
+    primary_email: string | null;
+    primary_phone: string | null;
+  };
+};
+
 export const receiptApi = {
   async listReceipts(params?: {
     client_id?: string;
@@ -11,11 +20,22 @@ export const receiptApi = {
     paid_year?: number; // paid_at year
     limit?: number;
     offset?: number;
-  }): Promise<ListResult<Receipt>> {
+  }): Promise<ListResult<ReceiptWithClient>> {
     const limit = params?.limit ?? 50;
     const offset = params?.offset ?? 0;
 
-    let query = supabase.from("receipts").select("*", { count: "exact" });
+    let query = supabase.from("receipts").select(
+      `
+      *,
+      client:clients(
+        id,
+        display_name,
+        primary_email,
+        primary_phone
+      )
+    `,
+      { count: "exact" },
+    );
 
     if (params?.client_id) query = query.eq("client_id", params.client_id);
     if (params?.project_id) query = query.eq("project_id", params.project_id);
@@ -35,20 +55,34 @@ export const receiptApi = {
 
     if (error) throw error;
 
-    return { items: (data ?? []) as Receipt[], total: count ?? undefined };
+    return {
+      items: (data ?? []) as ReceiptWithClient[],
+      total: count ?? undefined,
+    };
   },
 
-  async getReceipt(id: string): Promise<Receipt> {
+  async getReceipt(id: string): Promise<ReceiptWithClient> {
     const res = await supabase
       .from("receipts")
-      .select("*")
+      .select(
+        `
+      *,
+      client:clients(
+        id,
+        display_name,
+        primary_email,
+        primary_phone
+      )
+    `,
+      )
       .eq("id", id)
       .single();
-    return assertOk(res, `Receipt not found: ${id}`) as Receipt;
+
+    return assertOk(res, `Receipt not found: ${id}`) as ReceiptWithClient;
   },
 
   async createReceipt(
-    input: Omit<Receipt, "id" | "created_at" | "created_by">
+    input: Omit<Receipt, "id" | "created_at" | "created_by">,
   ): Promise<Receipt> {
     // triggers enforce company consistency; invoice paid rollups happen automatically
     const res = await supabase
@@ -72,7 +106,7 @@ export const receiptApi = {
         | "created_at"
         | "created_by"
       >
-    >
+    >,
   ): Promise<Receipt> {
     // Keep updates limited. For accounting safety, you typically only update status/notes/reference.
     const res = await supabase

@@ -8,15 +8,8 @@ import {
   Avatar,
   Stack,
   Rating,
+  Button,
 } from "@mui/material";
-interface Props {
-  testimonials: {
-    name: string;
-    image: string;
-    text: string;
-    rating: number;
-  }[];
-}
 
 const testimonials = [
   {
@@ -38,6 +31,20 @@ const testimonials = [
     image:
       "https://lh3.googleusercontent.com/a/ACg8ocJln76IKg852YHTl4GnRiS1Gfk-92z6n17VnnS4Bp8Nkqlc7A=w40-h40-p-rp-mo-br100",
     text: "Excellent and very detailed work! I was very impressed with the work they did on my garage. It had many imperfections on the ceiling and walls, but now it looks like a completely different space. They repaired the drywall, applied the perfect texture, and painted everything with great care. ✨🎨 You could tell they knew what they were doing and that they care about delivering quality. They were also very punctual, respectful, and left everything clean. I highly recommend them. Now I can throw parties in my garage!! 🎉 Thank you INRI Paint & Wall! 🌟",
+    rating: 5,
+  },
+  {
+    name: "David Kennedy",
+    image:
+      "https://www.google.com/maps/contrib/110261405635251499784/reviews?hl=en",
+    text: "Prompt and efficient. Did a good job for a reasonable fee. Will use them again.",
+    rating: 5,
+  },
+  {
+    name: "Torie Sevier",
+    image:
+      "https://www.google.com/maps/contrib/116709687657058775735/reviews?hl=en",
+    text: "We had our interior house painted. They did a fantastic job. I would highly recommend them to my friends and families. I can’t say enough about the great work they did. They were very detailed, punctual, professional, hardworking, and dedicated to the tasks. They fixed the damages I had in my kitchen and dining room. Just a SUPERB job!! Looking forward to more work being done by this team. Thank you! Connie",
     rating: 5,
   },
 ];

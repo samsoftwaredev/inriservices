@@ -19,7 +19,6 @@ import {
 } from "@mui/material";
 import {
   Download as DownloadIcon,
-  Share as ShareIcon,
   Edit as EditIcon,
   Cancel as CancelIcon,
   Undo as RefundIcon,
@@ -33,13 +32,13 @@ import {
 import { receiptApi } from "@/services/receiptApi";
 import ReceiptTable from "./ReceiptTable";
 import {
-  companyAddressLocality,
   companyEmail,
   companyFullAddress,
   companyName,
   companyPhoneFormatted,
 } from "@/constants";
 import { formatPhoneNumber } from "@/tools";
+import PageHeader from "../PageHeader";
 
 interface Props {
   receiptId: string;
@@ -178,228 +177,235 @@ const Receipt = ({
   const bar = theme.palette.primary.main;
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        maxWidth: 900,
-        mx: "auto",
-        p: { xs: 2, sm: 3 },
-        borderRadius: 2,
-        border: "1px solid",
-        borderColor: "divider",
-        bgcolor: "background.paper",
-      }}
-    >
-      {/* Top row: company info (left) + receipt meta box (right) */}
-      <Grid container spacing={3} alignItems="flex-start">
-        <Grid size={{ xs: 12, md: 7 }}>
-          <Stack direction="row" spacing={2} alignItems="flex-start">
-            <Avatar
-              src="/inriLogo.png"
-              variant="circular"
+    <>
+      <PageHeader title={`Receipt ${receiptNumber}`} subtitle="" />
+      <Paper
+        elevation={0}
+        sx={{
+          maxWidth: 900,
+          mx: "auto",
+          p: { xs: 2, sm: 3 },
+          borderRadius: 2,
+          border: "1px solid",
+          borderColor: "divider",
+          bgcolor: "background.paper",
+        }}
+      >
+        {/* Top row: company info (left) + receipt meta box (right) */}
+        <Grid container spacing={3} alignItems="flex-start">
+          <Grid size={{ xs: 12, md: 7 }}>
+            <Stack direction="row" spacing={2} alignItems="flex-start">
+              <Avatar
+                src="/inriLogo.png"
+                variant="circular"
+                sx={{
+                  width: 48,
+                  height: 48,
+                  border: "2px solid",
+                  borderColor: "divider",
+                  bgcolor: "background.default",
+                }}
+              >
+                {/* fallback */}
+                {companyName}
+              </Avatar>
+
+              <Box sx={{ minWidth: 0 }}>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: 900, lineHeight: 1.1 }}
+                >
+                  {companyName}
+                </Typography>
+
+                <Typography variant="body2" color="text.secondary">
+                  {companyFullAddress}
+                </Typography>
+
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mt: 0.5 }}
+                >
+                  {companyPhoneFormatted + " • " + companyEmail}
+                </Typography>
+              </Box>
+            </Stack>
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 5 }}>
+            <Box
               sx={{
-                width: 48,
-                height: 48,
-                border: "2px solid",
+                borderRadius: 1.5,
+                overflow: "hidden",
+                border: "1px solid",
                 borderColor: "divider",
-                bgcolor: "background.default",
               }}
             >
-              {/* fallback */}
-              {companyName}
-            </Avatar>
-
-            <Box sx={{ minWidth: 0 }}>
-              <Typography
-                variant="h6"
-                sx={{ fontWeight: 900, lineHeight: 1.1 }}
-              >
-                {companyName}
-              </Typography>
-
-              <Typography variant="body2" color="text.secondary">
-                {companyFullAddress}
-              </Typography>
-
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ mt: 0.5 }}
-              >
-                {companyPhoneFormatted + " • " + companyEmail}
-              </Typography>
-            </Box>
-          </Stack>
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 5 }}>
-          <Box
-            sx={{
-              borderRadius: 1.5,
-              overflow: "hidden",
-              border: "1px solid",
-              borderColor: "divider",
-            }}
-          >
-            <Box sx={{ bgcolor: bar, px: 2, py: 1 }}>
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Typography sx={{ color: "common.white", fontWeight: 900 }}>
-                  Receipt {receiptNumber}
-                </Typography>
-                {getStatusChip(receipt.status)}
-              </Stack>
-            </Box>
-
-            <Box sx={{ px: 2, py: 1.5 }}>
-              <Stack spacing={0.75}>
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography variant="body2" color="text.secondary">
-                    Paid
+              <Box sx={{ bgcolor: bar, px: 2, py: 1 }}>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Typography sx={{ color: "common.white", fontWeight: 900 }}>
+                    Receipt {receiptNumber}
                   </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                    {formatDate(receipt.paidAt)}
-                  </Typography>
+                  {getStatusChip(receipt.status)}
                 </Stack>
+              </Box>
 
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography variant="body2" color="text.secondary">
-                    Method
-                  </Typography>
-                  <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                    {getPaymentMethodDisplay(receipt.paymentMethod)}
-                  </Typography>
-                </Stack>
-
-                {receipt.referenceNumber ? (
+              <Box sx={{ px: 2, py: 1.5 }}>
+                <Stack spacing={0.75}>
                   <Stack direction="row" justifyContent="space-between">
                     <Typography variant="body2" color="text.secondary">
-                      Reference
+                      Paid
                     </Typography>
                     <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                      {receipt.referenceNumber}
+                      {formatDate(receipt.paidAt)}
                     </Typography>
                   </Stack>
-                ) : null}
 
-                <Divider sx={{ my: 0.5 }} />
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography variant="body2" color="text.secondary">
+                      Method
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                      {getPaymentMethodDisplay(receipt.paymentMethod)}
+                    </Typography>
+                  </Stack>
 
-                <Stack direction="row" justifyContent="space-between">
-                  <Typography variant="body2" color="text.secondary">
-                    Total
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    sx={{ fontWeight: 900, color: bar }}
-                  >
-                    {formatCurrency(receipt.amountCents, receipt.currency)}
-                  </Typography>
+                  {receipt.referenceNumber ? (
+                    <Stack direction="row" justifyContent="space-between">
+                      <Typography variant="body2" color="text.secondary">
+                        Reference
+                      </Typography>
+                      <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                        {receipt.referenceNumber}
+                      </Typography>
+                    </Stack>
+                  ) : null}
+
+                  <Divider sx={{ my: 0.5 }} />
+
+                  <Stack direction="row" justifyContent="space-between">
+                    <Typography variant="body2" color="text.secondary">
+                      Total
+                    </Typography>
+                    <Typography
+                      variant="body1"
+                      sx={{ fontWeight: 900, color: bar }}
+                    >
+                      {formatCurrency(receipt.amountCents, receipt.currency)}
+                    </Typography>
+                  </Stack>
                 </Stack>
-              </Stack>
+              </Box>
             </Box>
-          </Box>
 
-          {/* Top-right actions (like toolbar icons) */}
-          <Stack
-            direction="row"
-            spacing={1}
-            justifyContent={{ xs: "flex-start", md: "flex-end" }}
-            sx={{ mt: 1 }}
-          >
-            {onEdit ? (
-              <Tooltip title="Edit">
+            {/* Top-right actions (like toolbar icons) */}
+            <Stack
+              direction="row"
+              spacing={1}
+              justifyContent={{ xs: "flex-start", md: "flex-end" }}
+              sx={{ mt: 1 }}
+            >
+              {onEdit ? (
+                <Tooltip title="Edit">
+                  <IconButton
+                    size="small"
+                    onClick={() => onEdit(receipt)}
+                    sx={{ border: "1px solid", borderColor: "divider" }}
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              ) : null}
+
+              <Tooltip title="Download">
                 <IconButton
                   size="small"
-                  onClick={() => onEdit(receipt)}
                   sx={{ border: "1px solid", borderColor: "divider" }}
                 >
-                  <EditIcon fontSize="small" />
+                  <DownloadIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
-            ) : null}
-
-            <Tooltip title="Download">
-              <IconButton
-                size="small"
-                sx={{ border: "1px solid", borderColor: "divider" }}
-              >
-                <DownloadIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Stack>
+            </Stack>
+          </Grid>
         </Grid>
-      </Grid>
 
-      {/* Recipient block (matches mock) */}
-      <Box sx={{ mt: 3 }}>
-        <Typography
-          variant="caption"
-          sx={{ fontWeight: 900, color: "text.secondary", letterSpacing: 0.6 }}
-        >
-          RECIPIENT:
-        </Typography>
-
-        <Typography sx={{ fontWeight: 900, mt: 0.25 }}>
-          {client?.displayName ??
-            `Client ${receipt.clientId.slice(-6).toUpperCase()}`}
-        </Typography>
-
-        <Typography variant="body2" color="text.secondary">
-          {formatPhoneNumber(client?.phone) ?? ""}
-        </Typography>
-
-        <Typography variant="body2" color="text.secondary">
-          {client?.properties[0].addressLine1 ?? ""}
-          {client?.properties[0].addressLine2
-            ? `, ${client.properties[0].addressLine2}`
-            : ""}
-          {client?.properties[0].city ? `, ${client.properties[0].city}` : ""}
-          {client?.properties[0].state
-            ? `, ${client.properties[0].state}`
-            : ""}{" "}
-          {client?.properties[0].zip ?? ""}, USA
-        </Typography>
-      </Box>
-
-      {/* Services/summary table (receipt-style) */}
-      <ReceiptTable receipt={receipt} />
-
-      {/* Actions (bottom, only for posted) */}
-      {receipt.status === "posted" ? (
+        {/* Recipient block (matches mock) */}
         <Box sx={{ mt: 3 }}>
-          <Divider sx={{ mb: 2 }} />
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={1.5}
-            justifyContent="center"
+          <Typography
+            variant="caption"
+            sx={{
+              fontWeight: 900,
+              color: "text.secondary",
+              letterSpacing: 0.6,
+            }}
           >
-            {onVoid && (
-              <Button
-                variant="outlined"
-                color="error"
-                startIcon={<CancelIcon />}
-                onClick={handleVoid}
-              >
-                Void Receipt
-              </Button>
-            )}
-            {onRefund && (
-              <Button
-                variant="outlined"
-                color="warning"
-                startIcon={<RefundIcon />}
-                onClick={handleRefund}
-              >
-                Refund Receipt
-              </Button>
-            )}
-          </Stack>
+            RECIPIENT:
+          </Typography>
+
+          <Typography sx={{ fontWeight: 900, mt: 0.25 }}>
+            {client?.displayName ??
+              `Client ${receipt.clientId.slice(-6).toUpperCase()}`}
+          </Typography>
+
+          <Typography variant="body2" color="text.secondary">
+            {formatPhoneNumber(client?.phone) ?? ""}
+          </Typography>
+
+          <Typography variant="body2" color="text.secondary">
+            {client?.properties[0].addressLine1 ?? ""}
+            {client?.properties[0].addressLine2
+              ? `, ${client.properties[0].addressLine2}`
+              : ""}
+            {client?.properties[0].city ? `, ${client.properties[0].city}` : ""}
+            {client?.properties[0].state
+              ? `, ${client.properties[0].state}`
+              : ""}{" "}
+            {client?.properties[0].zip ?? ""}, USA
+          </Typography>
         </Box>
-      ) : null}
-    </Paper>
+
+        {/* Services/summary table (receipt-style) */}
+        <ReceiptTable receipt={receipt} />
+
+        {/* Actions (bottom, only for posted) */}
+        {receipt.status === "posted" ? (
+          <Box sx={{ mt: 3 }}>
+            <Divider sx={{ mb: 2 }} />
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={1.5}
+              justifyContent="center"
+            >
+              {onVoid && (
+                <Button
+                  variant="outlined"
+                  color="error"
+                  startIcon={<CancelIcon />}
+                  onClick={handleVoid}
+                >
+                  Void Receipt
+                </Button>
+              )}
+              {onRefund && (
+                <Button
+                  variant="outlined"
+                  color="warning"
+                  startIcon={<RefundIcon />}
+                  onClick={handleRefund}
+                >
+                  Refund Receipt
+                </Button>
+              )}
+            </Stack>
+          </Box>
+        ) : null}
+      </Paper>
+    </>
   );
 };
 

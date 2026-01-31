@@ -23,21 +23,22 @@ import {
   Visibility as ViewIcon,
   Edit as EditIcon,
 } from "@mui/icons-material";
-import { Receipt, ReceiptStatus, PaymentMethod } from "@/types";
+import { ReceiptStatus, PaymentMethod } from "@/types";
+import { ReceiptWithClient } from "@/services/receiptApi";
 
 interface ReceiptsTableProps {
-  receipts: Receipt[];
+  receipts: ReceiptWithClient[];
   loading: boolean;
   onViewReceipt: (receiptId: string) => void;
   onEditReceipt: (receiptId: string) => void;
 }
 
-const ReceiptsTable: React.FC<ReceiptsTableProps> = ({
+const ReceiptsTable = ({
   receipts,
   loading,
   onViewReceipt,
   onEditReceipt,
-}) => {
+}: ReceiptsTableProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedReceiptId, setSelectedReceiptId] = useState<string | null>(
     null,
@@ -129,7 +130,7 @@ const ReceiptsTable: React.FC<ReceiptsTableProps> = ({
               <TableCell>Payment Method</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Paid Date</TableCell>
-              <TableCell>Client ID</TableCell>
+              <TableCell>Client</TableCell>
               <TableCell>Reference</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
@@ -181,8 +182,15 @@ const ReceiptsTable: React.FC<ReceiptsTableProps> = ({
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2" fontFamily="monospace">
-                      {receipt.client_id.slice(-8)}
+                    <Typography
+                      component="a"
+                      href={`clients/${receipt.client_id}`}
+                      variant="body2"
+                      fontFamily="monospace"
+                    >
+                      {receipt.client.display_name} <br />
+                      {receipt.client.primary_email} <br />
+                      {receipt.client.primary_phone}
                     </Typography>
                   </TableCell>
                   <TableCell>

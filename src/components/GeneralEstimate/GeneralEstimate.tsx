@@ -15,7 +15,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import { InvoiceData, InvoiceGenerator } from "../InvoiceGenerator";
-import { Add as AddIcon, Delete } from "@mui/icons-material";
+import { Add, Add as AddIcon, Delete } from "@mui/icons-material";
 import CustomerSelectionMenu from "../ProInteriorEstimate/CustomerSelectionMenu";
 import RoomGeneralInfo from "./RoomGeneralInfo";
 import { useClient } from "@/context/ClientContext";
@@ -423,6 +423,8 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
     }
   };
 
+  const handleInvoiceGeneration = () => {};
+
   // useEffect(() => {
   //   const storedEstimate = localStorage.getItem("generalEstimateRooms");
   //   const { projectId = "", rooms = [] } = JSON.parse(storedEstimate || "{}");
@@ -574,6 +576,18 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
               disabled={!projectId}
             >
               Delete Estimate
+            </Button>
+            <Button
+              variant="text"
+              color="error"
+              sx={{
+                width: { md: 200, xs: "100%" },
+              }}
+              startIcon={<Add />}
+              onClick={handleInvoiceGeneration}
+              disabled={!projectId}
+            >
+              Generate Invoice
             </Button>
           </Box>
         </Box>

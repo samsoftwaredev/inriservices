@@ -13,7 +13,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Receipt, ReceiptStatus, PaymentMethod, MetricCard } from "@/types";
-import { receiptApi } from "@/services/receiptApi";
+import { receiptApi, ReceiptWithClient } from "@/services/receiptApi";
 import MetricCards from "@/components/Dashboard/MetricCards";
 import CreateReceiptDialog from "./CreateReceiptDialog";
 import CustomerSelectionMenu from "../ProInteriorEstimate/CustomerSelectionMenu";
@@ -39,7 +39,7 @@ interface DashboardStats {
 
 const ReceiptDashboard = () => {
   const router = useRouter();
-  const [receipts, setReceipts] = useState<Receipt[]>([]);
+  const [receipts, setReceipts] = useState<ReceiptWithClient[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);

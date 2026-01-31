@@ -10,18 +10,16 @@ interface PageHeaderProps {
   subtitle?: string;
   icon?: React.ReactNode;
   onBack?: () => void;
-  showBackButton?: boolean;
   actions?: React.ReactNode;
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({
+const PageHeader = ({
   title,
   subtitle,
   icon,
   onBack,
-  showBackButton = true,
   actions,
-}) => {
+}: PageHeaderProps) => {
   const router = useRouter();
 
   const handleBack = () => {
@@ -33,7 +31,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   };
 
   return (
-    <Stack>
+    <Stack mb={1}>
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Typography
           variant="h4"

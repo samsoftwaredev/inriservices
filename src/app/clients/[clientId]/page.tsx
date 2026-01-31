@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { clientApi } from "@/services";
 import { ClientFullData } from "@/types";
 import { clientFullDataTransformer } from "@/tools/transformers";
+import { Box, CircularProgress } from "@mui/material";
 
 interface Props {
   params: Promise<{
@@ -42,7 +43,7 @@ const ClientIdPage = ({ params }: Props) => {
         setIsLoading(false);
       }
     },
-    [router]
+    [router],
   );
 
   useEffect(() => {
@@ -59,9 +60,9 @@ const ClientIdPage = ({ params }: Props) => {
     <ProtectedRoute>
       <AppLayout>
         {isLoading || !client || !clientId ? (
-          <div>
-            <h1>Loading Client...</h1>
-          </div>
+          <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+            <CircularProgress />
+          </Box>
         ) : (
           <ClientProfile client={client} onNewProject={onNewProject} />
         )}
