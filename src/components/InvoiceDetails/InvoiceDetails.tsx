@@ -44,6 +44,7 @@ import { invoiceApi } from "@/services";
 import { InvoiceWithRelations, InvoiceStatus } from "@/types";
 import { InvoiceGenerator, InvoiceData } from "@/components/InvoiceGenerator";
 import { toast } from "react-toastify";
+import PageHeader from "../PageHeader";
 
 interface InvoiceDetailsProps {
   invoiceId: string;
@@ -190,18 +191,10 @@ const InvoiceDetails = ({ invoiceId }: InvoiceDetailsProps) => {
   return (
     <Box sx={{ p: 3, maxWidth: 1400, mx: "auto" }}>
       {/* Header */}
-      <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
-        <Button
-          startIcon={<ArrowBackIcon />}
-          onClick={() => router.back()}
-          variant="outlined"
-        >
-          Back
-        </Button>
+      <PageHeader title={`Invoice ${invoice.invoice_number}`} subtitle="" />
+
+      <Stack direction="row" alignItems="center" spacing={2}>
         <Box sx={{ flex: 1 }}>
-          <Typography variant="h4" gutterBottom>
-            Invoice {invoice.invoice_number}
-          </Typography>
           <Stack direction="row" alignItems="center" spacing={2}>
             <Chip
               label={invoice.status.replace("_", " ").toUpperCase()}
@@ -213,40 +206,40 @@ const InvoiceDetails = ({ invoiceId }: InvoiceDetailsProps) => {
             </Typography>
           </Stack>
         </Box>
+      </Stack>
 
-        {/* Action Buttons */}
-        <Stack direction="row" spacing={1}>
-          <Tooltip title="Edit Invoice">
-            <IconButton
-              onClick={() => router.push(`/invoices/${invoice.id}/edit`)}
-              disabled={actionLoading || invoice.status === "paid"}
-            >
-              <EditIcon />
-            </IconButton>
-          </Tooltip>
+      {/* Action Buttons */}
+      <Stack direction="row" spacing={1} sx={{ mb: 4 }}>
+        <Tooltip title="Edit Invoice">
+          <IconButton
+            onClick={() => router.push(`/invoices/${invoice.id}/edit`)}
+            disabled={actionLoading || invoice.status === "paid"}
+          >
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
 
-          <Tooltip title="Send Invoice">
-            <IconButton
-              onClick={() => handleStatusUpdate("sent")}
-              disabled={
-                actionLoading ||
-                invoice.status === "paid" ||
-                invoice.status === "void"
-              }
-            >
-              <SendIcon />
-            </IconButton>
-          </Tooltip>
+        <Tooltip title="Send Invoice">
+          <IconButton
+            onClick={() => handleStatusUpdate("sent")}
+            disabled={
+              actionLoading ||
+              invoice.status === "paid" ||
+              invoice.status === "void"
+            }
+          >
+            <SendIcon />
+          </IconButton>
+        </Tooltip>
 
-          {invoiceData && (
-            <InvoiceGenerator
-              invoiceData={invoiceData}
-              buttonText="Download PDF"
-              variant="outlined"
-              size="small"
-            />
-          )}
-        </Stack>
+        {invoiceData && (
+          <InvoiceGenerator
+            invoiceData={invoiceData}
+            buttonText="Download PDF"
+            variant="outlined"
+            size="small"
+          />
+        )}
       </Stack>
 
       <Grid container spacing={3}>
@@ -658,7 +651,7 @@ const InvoiceDetails = ({ invoiceId }: InvoiceDetailsProps) => {
                       >
                         {formatCurrency(
                           invoice.balance_cents ||
-                            invoice.total_cents - invoice.paid_cents
+                            invoice.total_cents - invoice.paid_cents,
                         )}
                       </Typography>
                     </Box>

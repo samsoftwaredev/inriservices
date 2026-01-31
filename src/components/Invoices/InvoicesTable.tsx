@@ -26,10 +26,11 @@ import {
   Visibility as ViewIcon,
   MoreVert as MoreVertIcon,
 } from "@mui/icons-material";
-import { Invoice, InvoiceStatus } from "@/types";
+import { InvoiceStatus } from "@/types";
+import { InvoiceWithClient } from "@/services/invoiceApi";
 
 interface Props {
-  invoices: Invoice[];
+  invoices: InvoiceWithClient[];
   loading: boolean;
   page: number;
   totalCount: number;
@@ -171,8 +172,14 @@ const InvoicesTable = ({
                     </Typography>
                   </TableCell>
                   <TableCell onClick={() => onViewInvoice(invoice.id)}>
-                    <Typography variant="body2">
-                      {invoice.client_id?.slice(0, 8)}...
+                    <Typography
+                      component="a"
+                      href={`clients/${invoice.client.id}`}
+                      variant="body2"
+                    >
+                      {invoice.client.display_name}{" "}
+                      {invoice.client.primary_email}{" "}
+                      {invoice.client.primary_phone}
                     </Typography>
                   </TableCell>
                   <TableCell onClick={() => onViewInvoice(invoice.id)}>

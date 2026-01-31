@@ -9,6 +9,15 @@ import {
   ListResult,
 } from "@/types";
 
+export type InvoiceWithClient = Invoice & {
+  client: {
+    id: string;
+    display_name: string | null;
+    primary_email: string | null;
+    primary_phone: string | null;
+  };
+};
+
 export const invoiceApi = {
   async listInvoices(params?: {
     status?: InvoiceStatus;
@@ -18,11 +27,22 @@ export const invoiceApi = {
     issued_year?: number; // filter by issued_date year
     limit?: number;
     offset?: number;
-  }): Promise<ListResult<Invoice>> {
+  }): Promise<ListResult<InvoiceWithClient>> {
     const limit = params?.limit ?? 50;
     const offset = params?.offset ?? 0;
 
-    let query = supabase.from("invoices").select("*", { count: "exact" });
+    let query = supabase.from("invoices").select(
+      `
+      *,
+      client:clients(
+        id,
+        display_name,
+        primary_email,
+        primary_phone
+      )
+    `,
+      { count: "exact" },
+    );
 
     if (params?.status) query = query.eq("status", params.status);
     if (params?.client_id) query = query.eq("client_id", params.client_id);
@@ -46,16 +66,29 @@ export const invoiceApi = {
 
     if (error) throw error;
 
-    return { items: (data ?? []) as Invoice[], total: count ?? undefined };
+    return {
+      items: (data ?? []) as InvoiceWithClient[],
+      total: count ?? undefined,
+    };
   },
 
-  async getInvoice(id: string): Promise<Invoice> {
+  async getInvoice(id: string): Promise<InvoiceWithClient> {
     const res = await supabase
       .from("invoices")
-      .select("*")
+      .select(
+        `
+      *,
+      client:clients(
+        id,
+        display_name,
+        primary_email,
+        primary_phone
+      )
+    `,
+      )
       .eq("id", id)
       .single();
-    return assertOk(res, `Invoice not found: ${id}`) as Invoice;
+    return assertOk(res, `Invoice not found: ${id}`) as InvoiceWithClient;
   },
 
   async getInvoiceWithItems(id: string): Promise<InvoiceWithItems> {
@@ -65,14 +98,14 @@ export const invoiceApi = {
         `
         *,
         items:invoice_items(*)
-      `
+      `,
       )
       .eq("id", id)
       .single();
 
     return assertOk(
       res,
-      `Invoice not found: ${id}`
+      `Invoice not found: ${id}`,
     ) as unknown as InvoiceWithItems;
   },
 
@@ -86,14 +119,14 @@ export const invoiceApi = {
         property:properties(*),
         project:projects(*),
         items:invoice_items(*)
-      `
+      `,
       )
       .eq("id", id)
       .single();
 
     return assertOk(
       res,
-      `Invoice not found: ${id}`
+      `Invoice not found: ${id}`,
     ) as unknown as InvoiceWithRelations;
   },
 
@@ -101,7 +134,7 @@ export const invoiceApi = {
     input: Omit<
       Invoice,
       "id" | "created_at" | "updated_at" | "paid_cents" | "balance_cents"
-    >
+    >,
   ): Promise<Invoice> {
     // totals will be enforced by triggers; paid/balance will be rolled up from receipts
     const res = await supabase
@@ -124,7 +157,7 @@ export const invoiceApi = {
         | "balance_cents"
         | "paid_cents"
       >
-    >
+    >,
   ): Promise<Invoice> {
     const res = await supabase
       .from("invoices")
@@ -171,7 +204,7 @@ export const invoiceItemApi = {
       | "line_subtotal_cents"
       | "line_tax_cents"
       | "line_total_cents"
-    >
+    >,
   ) {
     // line totals are computed by trigger; invoice totals roll up automatically
     const res = await supabase
@@ -196,7 +229,7 @@ export const invoiceItemApi = {
         | "line_tax_cents"
         | "line_total_cents"
       >
-    >
+    >,
   ): Promise<InvoiceItem> {
     const res = await supabase
       .from("invoice_items")
@@ -217,7 +250,7 @@ export const invoiceItemApi = {
 
   async reorderInvoiceItems(
     invoiceId: string,
-    orderedItemIds: string[]
+    orderedItemIds: string[],
   ): Promise<void> {
     // simple reorder: update each item's sort_order
     // NOTE: sequential to avoid race conditions

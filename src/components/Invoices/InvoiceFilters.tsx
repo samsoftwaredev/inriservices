@@ -32,7 +32,7 @@ interface InvoiceFiltersProps {
   searchQuery: string;
   onFiltersChange: (newFilters: Partial<InvoiceFilters>) => void;
   onSearchChange: (query: string) => void;
-  onCreateNew: () => void;
+  onClearFilters: () => void;
 }
 
 const InvoiceFiltersComponent: React.FC<InvoiceFiltersProps> = ({
@@ -40,7 +40,7 @@ const InvoiceFiltersComponent: React.FC<InvoiceFiltersProps> = ({
   searchQuery,
   onFiltersChange,
   onSearchChange,
-  onCreateNew,
+  onClearFilters,
 }) => {
   return (
     <Paper
@@ -156,8 +156,7 @@ const InvoiceFiltersComponent: React.FC<InvoiceFiltersProps> = ({
         <Grid size={{ xs: 12, sm: 4, md: 3, lg: 3 }}>
           <Button
             variant="contained"
-            startIcon={<AddIcon sx={{ fontSize: { xs: 18, md: 20 } }} />}
-            onClick={onCreateNew}
+            onClick={onClearFilters}
             fullWidth
             sx={{
               fontSize: { xs: "0.875rem", md: "1rem" },
@@ -165,7 +164,7 @@ const InvoiceFiltersComponent: React.FC<InvoiceFiltersProps> = ({
               whiteSpace: "nowrap",
             }}
           >
-            New Invoice
+            Clear Filters
           </Button>
         </Grid>
       </Grid>

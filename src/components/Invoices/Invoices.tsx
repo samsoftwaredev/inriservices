@@ -6,12 +6,13 @@ import {
   Receipt as InvoiceIcon,
   AttachMoney as MoneyIcon,
   TrendingUp as TrendingUpIcon,
+  Add as AddIcon,
   Assessment as AssessmentIcon,
 } from "@mui/icons-material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Invoice, MetricCard } from "@/types";
-import { invoiceApi } from "@/services/invoiceApi";
+import { invoiceApi, InvoiceWithClient } from "@/services/invoiceApi";
 import MetricCards from "@/components/Dashboard/MetricCards";
 import { useRouter } from "next/navigation";
 import InvoicesTable from "./InvoicesTable";
@@ -26,7 +27,7 @@ interface DashboardStats {
 
 const Invoices = () => {
   const router = useRouter();
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [invoices, setInvoices] = useState<InvoiceWithClient[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -163,6 +164,12 @@ const Invoices = () => {
     router.push(`/invoices/${invoiceId}/edit`);
   };
 
+  const onClearFilters = () => {
+    setFilters({});
+    setSearchQuery("");
+    setPage(1);
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Box>
@@ -190,7 +197,7 @@ const Invoices = () => {
           searchQuery={searchQuery}
           onFiltersChange={handleFilterChange}
           onSearchChange={setSearchQuery}
-          onCreateNew={() => router.push("/invoices/new")}
+          onClearFilters={onClearFilters}
         />
 
         {/* Actions Bar */}
@@ -205,13 +212,10 @@ const Invoices = () => {
           <Typography variant="h6">Invoices ({totalCount})</Typography>
           <Button
             variant="outlined"
-            onClick={() => {
-              setFilters({});
-              setSearchQuery("");
-              setPage(1);
-            }}
+            onClick={() => router.push("/invoices/new")}
+            startIcon={<AddIcon sx={{ fontSize: { xs: 18, md: 20 } }} />}
           >
-            Clear Filters
+            New Invoice
           </Button>
         </Box>
 
