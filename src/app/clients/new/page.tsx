@@ -16,7 +16,7 @@ import {
   Person as PersonIcon,
 } from "@mui/icons-material";
 import AppLayout from "@/components/AppLayout";
-import { ProtectedRoute } from "@/components";
+import { PageHeader, ProtectedRoute } from "@/components";
 import ClientForm from "@/components/ProInteriorEstimate/ClientForm";
 import { SubmitHandler } from "react-hook-form";
 import { ClientFormData } from "@/components/SearchClient/SearchClient.model";
@@ -70,7 +70,7 @@ const NewClientPage = () => {
     } catch (err) {
       console.error("Error creating client:", err);
       setError(
-        "Failed to create client. Please check your data and try again."
+        "Failed to create client. Please check your data and try again.",
       );
       toast.error("Failed to create client");
     } finally {
@@ -102,76 +102,51 @@ const NewClientPage = () => {
   return (
     <ProtectedRoute>
       <AppLayout>
-        <Box sx={{ p: 3, maxWidth: 1000, mx: "auto" }}>
-          {/* Header */}
-          <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
-            <Button
-              startIcon={<ArrowBackIcon />}
-              onClick={() => router.back()}
-              variant="outlined"
+        <PageHeader
+          title="Create New Client"
+          subtitle="Fill in the client details to create a new client profile"
+        />
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
+            {error}
+          </Alert>
+        )}
+
+        <Card>
+          <CardContent sx={{ p: 4 }}>
+            <ClientForm
+              isLoading={isLoading}
+              onSubmit={onSubmit}
+              defaultValues={defaultValues}
+            />
+
+            <Box
+              sx={{
+                mt: 4,
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 2,
+              }}
             >
-              Back
-            </Button>
-            <Box>
-              <Typography
-                variant="h4"
-                gutterBottom
-                sx={{ display: "flex", alignItems: "center" }}
+              <Button
+                onClick={() => router.back()}
+                disabled={isLoading}
+                variant="outlined"
               >
-                <PersonIcon sx={{ mr: 2, fontSize: 40 }} />
-                Create New Client
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Fill in the client details to create a new client profile
-              </Typography>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                form="client-form"
+                variant="contained"
+                disabled={isLoading}
+              >
+                {isLoading ? "Creating..." : "Create Client"}
+              </Button>
             </Box>
-          </Stack>
-
-          {error && (
-            <Alert
-              severity="error"
-              sx={{ mb: 3 }}
-              onClose={() => setError(null)}
-            >
-              {error}
-            </Alert>
-          )}
-
-          <Card>
-            <CardContent sx={{ p: 4 }}>
-              <ClientForm
-                isLoading={isLoading}
-                onSubmit={onSubmit}
-                defaultValues={defaultValues}
-              />
-
-              <Box
-                sx={{
-                  mt: 4,
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  gap: 2,
-                }}
-              >
-                <Button
-                  onClick={() => router.back()}
-                  disabled={isLoading}
-                  variant="outlined"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  form="client-form"
-                  variant="contained"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Creating..." : "Create Client"}
-                </Button>
-              </Box>
-            </CardContent>
-          </Card>
-        </Box>
+          </CardContent>
+        </Card>
       </AppLayout>
     </ProtectedRoute>
   );

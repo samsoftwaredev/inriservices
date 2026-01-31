@@ -44,6 +44,7 @@ import { PROFIT_MARGIN_PERCNT, TAX_RATE_PERCNT } from "@/constants";
 import { compareAsc } from "date-fns/compareAsc";
 import { format } from "date-fns";
 import RequireClient from "../RequireClient";
+import Spinner from "../Spinner";
 
 const initialCosts: ProjectCost = {
   laborCost: 300,
@@ -444,11 +445,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
   }, [paramsProjectId]);
 
   if (isLoading) {
-    return (
-      <Box>
-        <Typography variant="h6">Loading Estimate...</Typography>
-      </Box>
-    );
+    return <Spinner />;
   }
 
   return (
