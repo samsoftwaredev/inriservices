@@ -46,6 +46,7 @@ import { Client, Project, Property, InvoiceStatus, Invoice } from "@/types";
 import { useAuth } from "@/context";
 import { generateInvoiceNumber } from "@/tools/invoiceUtils";
 import { toast } from "react-toastify";
+import PageHeader from "../PageHeader";
 
 interface InvoiceItem {
   id: string;
@@ -137,7 +138,7 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
         setValue("issued_date", new Date(invoiceData.issued_date));
         setValue(
           "due_date",
-          invoiceData.due_date ? new Date(invoiceData.due_date) : undefined
+          invoiceData.due_date ? new Date(invoiceData.due_date) : undefined,
         );
         setValue("status", invoiceData.status);
         setValue("notes", invoiceData.notes || "");
@@ -221,7 +222,7 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
         const selectedClient = clients.find((c) => c.id === watchedClientId);
         if (selectedClient) {
           const clientWithProperties = await clientApi.getClient(
-            selectedClient.id
+            selectedClient.id,
           );
           setProperties(clientWithProperties.properties || []);
         }
@@ -240,7 +241,7 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
   const calculateTotals = () => {
     const subtotal = watchedItems.reduce(
       (sum, item) => sum + item.quantity * item.unit_price_cents,
-      0
+      0,
     );
 
     const tax = Math.round((subtotal * watchedTaxRate) / 10000);
@@ -319,7 +320,7 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
           .filter((item) => !item.id.startsWith("temp_"))
           .map((item) => item.id);
         const itemsToDelete = existingItems.filter(
-          (item) => !formItemIds.includes(item.id)
+          (item) => !formItemIds.includes(item.id),
         );
 
         for (const item of itemsToDelete) {
@@ -392,7 +393,7 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
             unit_price_cents: item.unit_price_cents,
             tax_rate_bps: item.tax_rate_bps || data.tax_rate_bps,
             sort_order: data.items.indexOf(item),
-          })
+          }),
         );
 
         await Promise.all(itemPromises);
@@ -401,13 +402,13 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
       toast.success(
         isEditing
           ? "Invoice updated successfully!"
-          : "Invoice created successfully!"
+          : "Invoice created successfully!",
       );
       router.push(`/invoices/${invoice.id}`);
     } catch (err) {
       console.error("Error creating invoice:", err);
       setError(
-        "Failed to create invoice. Please check your data and try again."
+        "Failed to create invoice. Please check your data and try again.",
       );
       toast.error("Failed to create invoice");
     } finally {
@@ -417,7 +418,7 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Box sx={{ p: 3, maxWidth: 1200, mx: "auto" }}>
+      <Box sx={{ maxWidth: 1200, mx: "auto" }}>
         {/* Show loading state while loading initial data in edit mode */}
         {isEditing && !initialDataLoaded ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
@@ -426,35 +427,14 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
         ) : (
           <>
             {/* Header */}
-            <Stack
-              direction="row"
-              alignItems="center"
-              spacing={2}
-              sx={{ mb: 4 }}
-            >
-              <Button
-                startIcon={<ArrowBackIcon />}
-                onClick={() => router.back()}
-                variant="outlined"
-              >
-                Back
-              </Button>
-              <Box>
-                <Typography
-                  variant="h4"
-                  gutterBottom
-                  sx={{ display: "flex", alignItems: "center" }}
-                >
-                  <InvoiceIcon sx={{ mr: 2, fontSize: 40 }} />
-                  {isEditing ? "Edit Invoice" : "Create New Invoice"}
-                </Typography>
-                <Typography variant="body1" color="text.secondary">
-                  {isEditing
-                    ? "Update invoice details"
-                    : "Fill in the details to create a new invoice"}
-                </Typography>
-              </Box>
-            </Stack>
+            <PageHeader
+              title={isEditing ? "Edit Invoice" : "Create New Invoice"}
+              subtitle={
+                isEditing
+                  ? "Update invoice details"
+                  : "Fill in the details to create a new invoice"
+              }
+            />
 
             {error && (
               <Alert
@@ -762,12 +742,19 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
                         justifyContent="space-between"
                         alignItems="center"
                         mb={2}
+                        flexDirection={{ xs: "column", sm: "row" }}
+                        gap={{ xs: 2, sm: 0 }}
                       >
                         <Typography variant="h6">Invoice Items</Typography>
                         <Button
                           startIcon={<AddIcon />}
                           onClick={addItem}
                           variant="outlined"
+                          size="small"
+                          sx={{
+                            width: { xs: "100%", sm: "auto" },
+                            fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                          }}
                         >
                           Add Item
                         </Button>
@@ -853,7 +840,7 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
                                         value={field.value / 100} // Convert cents to dollars
                                         onChange={(e) =>
                                           field.onChange(
-                                            Number(e.target.value) * 100
+                                            Number(e.target.value) * 100,
                                           )
                                         } // Convert dollars to cents
                                         placeholder="0.00"
@@ -870,7 +857,7 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
                                     {formatCurrency(
                                       watchedItems[index]?.quantity *
                                         watchedItems[index]?.unit_price_cents ||
-                                        0
+                                        0,
                                     )}
                                   </Typography>
                                 </TableCell>
@@ -897,12 +884,21 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
 
                 {/* Submit Buttons */}
                 <Grid size={{ xs: 12 }}>
-                  <Stack direction="row" spacing={2} justifyContent="flex-end">
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={2}
+                    justifyContent="flex-end"
+                    sx={{ width: "100%" }}
+                  >
                     <Button
                       type="button"
                       variant="outlined"
                       onClick={() => router.back()}
                       disabled={loading}
+                      sx={{
+                        width: { xs: "100%", sm: "auto" },
+                        order: { xs: 3, sm: 0 },
+                      }}
                     >
                       Cancel
                     </Button>
@@ -912,6 +908,10 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
                       variant="outlined"
                       onClick={() => setValue("status", "draft")}
                       disabled={loading}
+                      sx={{
+                        width: { xs: "100%", sm: "auto" },
+                        order: { xs: 2, sm: 0 },
+                      }}
                     >
                       <SaveIcon sx={{ mr: 1 }} />
                       Save as Draft
@@ -922,6 +922,10 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
                       variant="contained"
                       disabled={loading}
                       onClick={() => setValue("status", "sent")}
+                      sx={{
+                        width: { xs: "100%", sm: "auto" },
+                        order: { xs: 1, sm: 0 },
+                      }}
                     >
                       <SendIcon sx={{ mr: 1 }} />
                       {loading
@@ -929,8 +933,8 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
                           ? "Updating..."
                           : "Creating..."
                         : isEditing
-                        ? "Update & Send Invoice"
-                        : "Create & Send Invoice"}
+                          ? "Update & Send Invoice"
+                          : "Create & Send Invoice"}
                     </Button>
                   </Stack>
                 </Grid>
