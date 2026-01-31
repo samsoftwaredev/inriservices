@@ -119,7 +119,7 @@ const InvoiceItemsTable: React.FC<InvoiceItemsTableProps> = ({
                         variant="outlined"
                         placeholder="Description"
                         multiline
-                        maxRows={2}
+                        maxRows={4}
                         fullWidth
                       />
                     )}
