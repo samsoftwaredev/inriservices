@@ -24,6 +24,7 @@ export const Spinner = () => {
         src="/inriLogo.png"
         alt="INRI Paint & Wall Logo"
         sx={{
+          borderRadius: "50%",
           width: 250,
           height: 250,
           animation: `${spin} 6s linear infinite`,

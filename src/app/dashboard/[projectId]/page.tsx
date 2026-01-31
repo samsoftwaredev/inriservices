@@ -44,7 +44,7 @@ import {
 } from "@mui/icons-material";
 
 import AppLayout from "@/components/AppLayout";
-import { ProtectedRoute } from "@/components";
+import { ProtectedRoute, Spinner } from "@/components";
 import { useRouter } from "next/navigation";
 import { projectApi } from "@/services/projectApi";
 import {
@@ -59,6 +59,7 @@ import {
   projectTransformer,
   propertyTransformer,
 } from "@/tools/transformers";
+import MetricCards from "@/components/Dashboard/MetricCards";
 
 interface Props {
   params: Promise<{
@@ -105,7 +106,7 @@ const ProjectPage = ({ params }: Props) => {
         setIsLoading(false);
       }
     },
-    [router]
+    [router],
   );
 
   useEffect(() => {
@@ -168,12 +169,7 @@ const ProjectPage = ({ params }: Props) => {
     <ProtectedRoute>
       <AppLayout>
         {isLoading ? (
-          <Box sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Loading project details...
-            </Typography>
-            <LinearProgress />
-          </Box>
+          <Spinner />
         ) : !project ? (
           <Container maxWidth="md" sx={{ textAlign: "center", py: 8 }}>
             <Typography variant="h4" color="error" gutterBottom>
@@ -206,7 +202,7 @@ const ProjectPage = ({ params }: Props) => {
                   <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
                     <BusinessIcon sx={{ fontSize: 40, mr: 2 }} />
                     <Box>
-                      <Typography variant="h4" fontWeight="bold" gutterBottom>
+                      <Typography variant="h6" fontWeight="bold" gutterBottom>
                         {project.name}
                       </Typography>
                       <Typography variant="subtitle1" sx={{ opacity: 0.9 }}>
@@ -226,7 +222,7 @@ const ProjectPage = ({ params }: Props) => {
                       <Chip
                         icon={<CalendarIcon />}
                         label={`Started: ${new Date(
-                          project.startDate
+                          project.startDate,
                         ).toLocaleDateString()}`}
                         variant="outlined"
                         sx={{
@@ -297,85 +293,47 @@ const ProjectPage = ({ params }: Props) => {
 
             {/* Key Metrics Cards */}
             <Grid container spacing={3} sx={{ mb: 3 }}>
-              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                <Card elevation={2}>
-                  <CardContent>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <Avatar sx={{ bgcolor: "primary.main" }}>
-                        <MoneyIcon />
-                      </Avatar>
-                      <Box>
-                        <Typography color="text.secondary" variant="body2">
-                          Total Cost
-                        </Typography>
-                        <Typography variant="h6" fontWeight="bold">
-                          {formatCurrency(calculateTotalCost())}
-                        </Typography>
-                      </Box>
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                <Card elevation={2}>
-                  <CardContent>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <Avatar sx={{ bgcolor: "success.main" }}>
-                        <RoomIcon />
-                      </Avatar>
-                      <Box>
-                        <Typography color="text.secondary" variant="body2">
-                          Total Rooms
-                        </Typography>
-                        <Typography variant="h6" fontWeight="bold">
-                          {project.property.rooms.length}
-                        </Typography>
-                      </Box>
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                <Card elevation={2}>
-                  <CardContent>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <Avatar sx={{ bgcolor: "warning.main" }}>
-                        <CropIcon />
-                      </Avatar>
-                      <Box>
-                        <Typography color="text.secondary" variant="body2">
-                          Total Area
-                        </Typography>
-                        <Typography variant="h6" fontWeight="bold">
-                          {calculateTotalArea().toLocaleString()} sq ft
-                        </Typography>
-                      </Box>
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-                <Card elevation={2}>
-                  <CardContent>
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <Avatar sx={{ bgcolor: "info.main" }}>
-                        <ScheduleIcon />
-                      </Avatar>
-                      <Box>
-                        <Typography color="text.secondary" variant="body2">
-                          Est. Hours
-                        </Typography>
-                        <Typography variant="h6" fontWeight="bold">
-                          {project.laborHoursEstimated || "TBD"}
-                        </Typography>
-                      </Box>
-                    </Stack>
-                  </CardContent>
-                </Card>
-              </Grid>
+              <MetricCards
+                summaryCards={[
+                  {
+                    title: "Total Cost",
+                    value: calculateTotalCost(),
+                    iconWrapperColor: "primary.main",
+                    bgColor: "rgba(169, 184, 249, 0.97)",
+                    format: (value: number) => `$${value.toLocaleString()}`,
+                    icon: <MoneyIcon />,
+                    color: "primary.light",
+                  },
+                  {
+                    title: "Total Rooms",
+                    value: project.property.rooms.length,
+                    icon: <RoomIcon />,
+                    color: "success.light",
+                    iconWrapperColor: "success.main",
+                    bgColor: "rgb(197, 255, 195)",
+                    format: (value: number) => value.toLocaleString(),
+                  },
+                  {
+                    title: "Total Area",
+                    value: calculateTotalArea(),
+                    iconWrapperColor: "warning.main",
+                    bgColor: "rgb(255, 252, 198)",
+                    format: (value: number) =>
+                      `${value.toLocaleString()} sq ft`,
+                    icon: <CropIcon />,
+                    color: "warning.light",
+                  },
+                  {
+                    title: "Est. Hours",
+                    value: project.laborHoursEstimated,
+                    iconWrapperColor: "info.main",
+                    bgColor: "rgb(187, 247, 255)",
+                    format: (value: number) => `${value.toLocaleString()} hrs`,
+                    icon: <ScheduleIcon />,
+                    color: "info.light",
+                  },
+                ]}
+              />
             </Grid>
 
             {/* Tabbed Content */}
@@ -624,7 +582,7 @@ const ProjectPage = ({ params }: Props) => {
                                   </Typography>
                                   <Typography variant="body1">
                                     {new Date(
-                                      project.client.createdAt
+                                      project.client.createdAt,
                                     ).toLocaleDateString()}
                                   </Typography>
                                 </Box>
@@ -1054,7 +1012,7 @@ const ProjectPage = ({ params }: Props) => {
                                   ((project.materialCostCents +
                                     project.laborCostCents) *
                                     project.markupBps) /
-                                    10000
+                                    10000,
                                 )}
                               </Typography>
                             </Box>
@@ -1076,7 +1034,7 @@ const ProjectPage = ({ params }: Props) => {
                                     ((project.materialCostCents +
                                       project.laborCostCents) *
                                       project.markupBps) /
-                                      10000
+                                      10000,
                                 )}
                               </Typography>
                             </Box>
@@ -1262,7 +1220,7 @@ const ProjectPage = ({ params }: Props) => {
                                   </Typography>
                                   <Typography>
                                     {new Date(
-                                      project.createdAt
+                                      project.createdAt,
                                     ).toLocaleDateString()}
                                   </Typography>
                                 </Box>
@@ -1279,7 +1237,7 @@ const ProjectPage = ({ params }: Props) => {
                                     </Typography>
                                     <Typography>
                                       {new Date(
-                                        project.startDate
+                                        project.startDate,
                                       ).toLocaleDateString()}
                                     </Typography>
                                   </Box>
@@ -1297,7 +1255,7 @@ const ProjectPage = ({ params }: Props) => {
                                     </Typography>
                                     <Typography>
                                       {new Date(
-                                        project.endDate
+                                        project.endDate,
                                       ).toLocaleDateString()}
                                     </Typography>
                                   </Box>
@@ -1314,7 +1272,7 @@ const ProjectPage = ({ params }: Props) => {
                                   </Typography>
                                   <Typography>
                                     {new Date(
-                                      project.updatedAt
+                                      project.updatedAt,
                                     ).toLocaleDateString()}
                                   </Typography>
                                 </Box>
@@ -1379,7 +1337,7 @@ const ProjectPage = ({ params }: Props) => {
                                   {Math.ceil(
                                     (new Date(project.endDate).getTime() -
                                       new Date(project.startDate).getTime()) /
-                                      (1000 * 60 * 60 * 24)
+                                      (1000 * 60 * 60 * 24),
                                   )}{" "}
                                   days
                                 </Typography>
@@ -1407,8 +1365,8 @@ const ProjectPage = ({ params }: Props) => {
                                       Math.ceil(
                                         (new Date(project.endDate).getTime() -
                                           Date.now()) /
-                                          (1000 * 60 * 60 * 24)
-                                      )
+                                          (1000 * 60 * 60 * 24),
+                                      ),
                                     )}
                                   </Typography>
                                 </Box>
