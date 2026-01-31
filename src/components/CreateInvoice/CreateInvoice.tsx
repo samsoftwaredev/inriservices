@@ -15,28 +15,11 @@ import {
   Select,
   MenuItem,
   Alert,
-  Autocomplete,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
   Divider,
   Stack,
-  Chip,
   CircularProgress,
 } from "@mui/material";
-import {
-  Add as AddIcon,
-  Delete as DeleteIcon,
-  Save as SaveIcon,
-  Send as SendIcon,
-  Receipt as InvoiceIcon,
-  ArrowBack as ArrowBackIcon,
-} from "@mui/icons-material";
+import { Save as SaveIcon, Send as SendIcon } from "@mui/icons-material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -47,6 +30,7 @@ import { useAuth } from "@/context";
 import { generateInvoiceNumber } from "@/tools/invoiceUtils";
 import { toast } from "react-toastify";
 import PageHeader from "../PageHeader";
+import InvoiceItemsTable from "./InvoiceItemsTable";
 
 interface InvoiceItem {
   id: string;
@@ -418,7 +402,7 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Box sx={{ maxWidth: 1200, mx: "auto" }}>
+      <Box>
         {/* Show loading state while loading initial data in edit mode */}
         {isEditing && !initialDataLoaded ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
@@ -737,147 +721,15 @@ const CreateInvoice = ({ invoiceId }: CreateInvoiceProps) => {
                 <Grid size={{ xs: 12 }}>
                   <Card>
                     <CardContent>
-                      <Box
-                        display="flex"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        mb={2}
-                        flexDirection={{ xs: "column", sm: "row" }}
-                        gap={{ xs: 2, sm: 0 }}
-                      >
-                        <Typography variant="h6">Invoice Items</Typography>
-                        <Button
-                          startIcon={<AddIcon />}
-                          onClick={addItem}
-                          variant="outlined"
-                          size="small"
-                          sx={{
-                            width: { xs: "100%", sm: "auto" },
-                            fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                          }}
-                        >
-                          Add Item
-                        </Button>
-                      </Box>
-
-                      <TableContainer component={Paper} variant="outlined">
-                        <Table>
-                          <TableHead>
-                            <TableRow>
-                              <TableCell>Item Name</TableCell>
-                              <TableCell>Description</TableCell>
-                              <TableCell width="100px">Qty</TableCell>
-                              <TableCell width="130px">Unit Price</TableCell>
-                              <TableCell width="130px">Total</TableCell>
-                              <TableCell width="60px">Actions</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {fields.map((field, index) => (
-                              <TableRow key={field.id}>
-                                <TableCell>
-                                  <Controller
-                                    name={`items.${index}.name`}
-                                    control={control}
-                                    rules={{ required: true }}
-                                    render={({ field }) => (
-                                      <TextField
-                                        {...field}
-                                        size="small"
-                                        variant="outlined"
-                                        placeholder="Item name"
-                                        error={!!errors.items?.[index]?.name}
-                                      />
-                                    )}
-                                  />
-                                </TableCell>
-
-                                <TableCell>
-                                  <Controller
-                                    name={`items.${index}.description`}
-                                    control={control}
-                                    render={({ field }) => (
-                                      <TextField
-                                        {...field}
-                                        size="small"
-                                        variant="outlined"
-                                        placeholder="Description"
-                                        multiline
-                                        maxRows={2}
-                                      />
-                                    )}
-                                  />
-                                </TableCell>
-
-                                <TableCell>
-                                  <Controller
-                                    name={`items.${index}.quantity`}
-                                    control={control}
-                                    render={({ field }) => (
-                                      <TextField
-                                        {...field}
-                                        size="small"
-                                        type="number"
-                                        inputProps={{ min: 1 }}
-                                        onChange={(e) =>
-                                          field.onChange(Number(e.target.value))
-                                        }
-                                      />
-                                    )}
-                                  />
-                                </TableCell>
-
-                                <TableCell>
-                                  <Controller
-                                    name={`items.${index}.unit_price_cents`}
-                                    control={control}
-                                    render={({ field }) => (
-                                      <TextField
-                                        {...field}
-                                        size="small"
-                                        type="number"
-                                        inputProps={{ min: 0, step: 0.01 }}
-                                        value={field.value / 100} // Convert cents to dollars
-                                        onChange={(e) =>
-                                          field.onChange(
-                                            Number(e.target.value) * 100,
-                                          )
-                                        } // Convert dollars to cents
-                                        placeholder="0.00"
-                                      />
-                                    )}
-                                  />
-                                </TableCell>
-
-                                <TableCell>
-                                  <Typography
-                                    variant="body2"
-                                    fontWeight="medium"
-                                  >
-                                    {formatCurrency(
-                                      watchedItems[index]?.quantity *
-                                        watchedItems[index]?.unit_price_cents ||
-                                        0,
-                                    )}
-                                  </Typography>
-                                </TableCell>
-
-                                <TableCell>
-                                  {fields.length > 1 && (
-                                    <IconButton
-                                      size="small"
-                                      color="error"
-                                      onClick={() => remove(index)}
-                                    >
-                                      <DeleteIcon />
-                                    </IconButton>
-                                  )}
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
+                      <InvoiceItemsTable
+                        fields={fields}
+                        control={control}
+                        errors={errors}
+                        watchedItems={watchedItems}
+                        onAddItem={addItem}
+                        onRemoveItem={remove}
+                        formatCurrency={formatCurrency}
+                      />
                     </CardContent>
                   </Card>
                 </Grid>

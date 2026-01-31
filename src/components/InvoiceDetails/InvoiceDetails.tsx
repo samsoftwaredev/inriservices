@@ -189,7 +189,7 @@ const InvoiceDetails = ({ invoiceId }: InvoiceDetailsProps) => {
   const invoiceData = generateInvoiceData();
 
   return (
-    <Box sx={{ p: 3, maxWidth: 1400, mx: "auto" }}>
+    <Box>
       {/* Header */}
       <PageHeader title={`Invoice ${invoice.invoice_number}`} subtitle="" />
 
