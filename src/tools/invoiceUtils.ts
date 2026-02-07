@@ -1,8 +1,4 @@
-import {
-  InvoiceData,
-  InvoiceItem,
-  Customer,
-} from "@/components/InvoiceGenerator";
+import { Customer } from "@/components/InvoiceGenerator";
 
 export interface EstimateRoom {
   id: string;

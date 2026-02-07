@@ -1,23 +1,26 @@
 "use client";
 
 import React from "react";
-import { Box, TextField, Grid, Alert } from "@mui/material";
+import { Box, TextField, Grid, Alert, Typography } from "@mui/material";
 import { useForm, Controller } from "react-hook-form";
 import ImageUpload from "@/components/ImageUpload";
 import { ImageFile } from "@/components/ImageUpload/ImageUpload.model";
-import { PropertyRoomTransformed } from "@/types";
 
-interface RoomFeatureFormData {
+interface SectionEstimationData {
   featureName: string;
   featureDescription: string;
 }
 
 interface Props {
-  room: PropertyRoomTransformed;
-  onSubmit?: (data: RoomFeatureFormData) => void;
+  section: {
+    id: string;
+    name: string;
+    description: string;
+  };
+  onSubmit?: (data: SectionEstimationData) => void;
   disabled?: boolean;
-  onChangeRoomData: (
-    roomId: string,
+  onChangeSectionData: (
+    sectionId: string,
     title: string,
     description: string,
   ) => void;
@@ -35,10 +38,10 @@ const validationRules = {
   featureDescription: {},
 };
 
-const RoomFeatureForm = ({
-  room,
+const SectionEstimation = ({
+  section,
   onSubmit,
-  onChangeRoomData,
+  onChangeSectionData,
   disabled = false,
   onImagesChange,
 }: Props) => {
@@ -48,15 +51,15 @@ const RoomFeatureForm = ({
     formState: { errors },
     watch,
     reset,
-  } = useForm<RoomFeatureFormData>({
+  } = useForm<SectionEstimationData>({
     mode: "onChange",
     defaultValues: {
-      featureName: room?.name || "",
-      featureDescription: room?.description || "",
+      featureName: section?.name || "",
+      featureDescription: section?.description || "",
     },
   });
 
-  const handleFormSubmit = (data: RoomFeatureFormData) => {
+  const handleFormSubmit = (data: SectionEstimationData) => {
     onSubmit?.(data);
     reset(); // Reset form after successful submission
   };
@@ -64,8 +67,8 @@ const RoomFeatureForm = ({
   const formData = watch();
 
   const onSaveForm = () =>
-    onChangeRoomData(
-      room.id,
+    onChangeSectionData(
+      section.id,
       formData.featureName,
       formData.featureDescription,
     );
@@ -76,6 +79,9 @@ const RoomFeatureForm = ({
       onSubmit={handleSubmit(handleFormSubmit)}
       sx={{ mb: 3, bgcolor: "grey.50", borderRadius: 1, p: 2 }}
     >
+      <Typography variant="h6" gutterBottom>
+        {section.name}
+      </Typography>
       <Box sx={{ mb: 2 }}>
         <ImageUpload onImagesChange={onImagesChange} />
       </Box>
@@ -142,4 +148,4 @@ const RoomFeatureForm = ({
   );
 };
 
-export default RoomFeatureForm;
+export default SectionEstimation;

@@ -11,6 +11,7 @@ interface PageHeaderProps {
   icon?: React.ReactNode;
   onBack?: () => void;
   actions?: React.ReactNode;
+  hideBackButton?: boolean;
 }
 
 const PageHeader = ({
@@ -19,6 +20,7 @@ const PageHeader = ({
   icon,
   onBack,
   actions,
+  hideBackButton,
 }: PageHeaderProps) => {
   const router = useRouter();
 
@@ -44,9 +46,11 @@ const PageHeader = ({
             wordBreak: "break-word",
           }}
         >
-          <IconButton onClick={handleBack}>
-            <ArrowBackIcon />
-          </IconButton>
+          {!hideBackButton && (
+            <IconButton onClick={handleBack}>
+              <ArrowBackIcon />
+            </IconButton>
+          )}
           {icon && (
             <Box
               sx={{
