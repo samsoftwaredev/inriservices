@@ -5,8 +5,8 @@ import PageHeader from "../PageHeader";
 import GeneralData from "../GeneralEstimate/GeneralData";
 import { useState } from "react";
 import SelectionSKUBlock from "../SelectionSKUBlock";
-import { COMMON_DRYWALL_SKU_PRESETS } from "./drywallSKUs.constants";
-import { COMMON_PAINTING_SKU_PRESETS } from "./paintingSKUs.constants";
+import { COMMON_DRYWALL_SKU_PRESETS } from "../../constants/presetDrywallSKU";
+import { COMMON_PAINTING_SKU_PRESETS } from "../../constants/persetPaintingSKU";
 import { Box } from "@mui/material";
 
 const drywallSKUs = COMMON_DRYWALL_SKU_PRESETS;

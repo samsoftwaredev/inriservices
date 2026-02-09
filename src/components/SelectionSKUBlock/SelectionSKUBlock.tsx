@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Typography, Badge, Tooltip, TextField } from "@mui/material";
+import { getSKULabels } from "@/tools/searchSKU";
 
 interface LegoBlock {
   id: string;
@@ -10,9 +11,14 @@ interface LegoBlock {
 interface Props {
   legoBlocks: LegoBlock[];
   label: string;
+  legoType?: "drywall" | "painting"; // Optional prop to differentiate types if needed
 }
 
-const SelectionSKUBlock = ({ legoBlocks, label }: Props) => {
+const SelectionSKUBlock = ({
+  legoBlocks,
+  label,
+  legoType = "painting",
+}: Props) => {
   const [selectedBlocks, setSelectedBlocks] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState<string>("");
 
@@ -103,11 +109,10 @@ const SelectionSKUBlock = ({ legoBlocks, label }: Props) => {
         {filteredBlocks.map((block) => {
           const isSelected = selectedBlocks.has(block.id);
           return (
-            <Tooltip key={block.id} title={`SKU: ${block.sku}`} arrow>
+            <Tooltip key={block.id} title={block.sku} arrow>
               <Box
                 onClick={() => handleBlockClick(block.id)}
                 sx={{
-                  height: 100,
                   minWidth: 250,
                   border: isSelected ? "3px solid #1976d2" : "2px solid #ccc",
                   borderRadius: 2,
@@ -142,6 +147,15 @@ const SelectionSKUBlock = ({ legoBlocks, label }: Props) => {
                   }}
                 >
                   {block.name}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    marginTop: 1,
+                    color: "#666",
+                  }}
+                >
+                  {getSKULabels(block.sku, legoType)}
                 </Typography>
               </Box>
             </Tooltip>
