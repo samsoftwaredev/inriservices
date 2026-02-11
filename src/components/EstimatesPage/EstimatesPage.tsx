@@ -21,7 +21,7 @@ import {
 import { useRouter } from "next/navigation";
 import CustomerHeader from "../CustomerHeader";
 
-type EstimationType = "interior" | "exterior" | "general" | null;
+type EstimationType = "interior" | "exterior" | "general" | "blocks" | null;
 
 const EstimatesPage = () => {
   const router = useRouter();
@@ -33,6 +33,8 @@ const EstimatesPage = () => {
       router.push("/estimates/exterior");
     } else if (id === "general") {
       router.push("/estimates/general");
+    } else if (id === "blocks") {
+      router.push("/estimates/blocks");
     }
   };
 
@@ -87,6 +89,22 @@ const EstimatesPage = () => {
       ],
       color: "success.main",
       bgColor: "success.50",
+    },
+    {
+      id: "blocks" as const,
+      title: "Lego Blocks Estimate",
+      description:
+        "Paint estimation based on selecting from preset 'Lego Blocks' of common repair and paint packages",
+      icon: <DeckIcon sx={{ fontSize: 48, color: "info.main" }} />,
+      features: [
+        "Predefined repair and paint packages",
+        "Easy selection of common scenarios",
+        "Material and labor breakdowns",
+        "Ideal for contractors and DIYers",
+        "Quick estimates based on typical jobs",
+      ],
+      color: "info.main",
+      bgColor: "info.50",
     },
   ];
 
