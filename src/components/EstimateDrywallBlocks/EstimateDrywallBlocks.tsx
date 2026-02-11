@@ -50,38 +50,6 @@ const currency = (n: number) =>
     maximumFractionDigits: 0,
   }).format(n);
 
-function Section({
-  title,
-  children,
-  mobile,
-  defaultExpanded = true,
-}: {
-  title: string;
-  children: React.ReactNode;
-  mobile: boolean;
-  defaultExpanded?: boolean;
-}) {
-  if (!mobile) {
-    return (
-      <Stack spacing={1.5}>
-        <Typography variant="subtitle1" fontWeight={800}>
-          {title}
-        </Typography>
-        {children}
-      </Stack>
-    );
-  }
-
-  return (
-    <Accordion defaultExpanded={defaultExpanded} disableGutters>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography fontWeight={800}>{title}</Typography>
-      </AccordionSummary>
-      <AccordionDetails>{children}</AccordionDetails>
-    </Accordion>
-  );
-}
-
 const EstimateDrywallBlocks = () => {
   const mobile = useMediaQuery("(max-width:900px)");
 
@@ -134,21 +102,11 @@ const EstimateDrywallBlocks = () => {
             justifyContent="space-between"
           >
             <Box>
-              <Typography variant="h5" fontWeight={900}>
-                New Drywall Estimate
-              </Typography>
               <Typography variant="body2" color="text.secondary">
                 Build an estimate using Repair Type + Size + Finish + Scope +
                 Modifiers.
               </Typography>
             </Box>
-
-            <Stack direction="row" spacing={1}>
-              <Button variant="outlined">Save Draft</Button>
-              <Button variant="contained" disabled={requiredMissing}>
-                Generate PDF
-              </Button>
-            </Stack>
           </Stack>
 
           <Grid container spacing={2}>
@@ -157,252 +115,231 @@ const EstimateDrywallBlocks = () => {
               <Card variant="outlined" sx={{ borderRadius: 2 }}>
                 <CardContent sx={{ p: { xs: 1.5, md: 2.5 } }}>
                   <Stack spacing={mobile ? 1 : 2.5}>
-                    <Section
-                      title="Core selections"
-                      mobile={mobile}
-                      defaultExpanded
-                    >
-                      <Grid container spacing={2}>
-                        <Grid size={{ xs: 12, sm: 6 }}>
-                          <FormControl fullWidth size="small">
-                            <InputLabel>Repair Type</InputLabel>
-                            <Select
-                              label="Repair Type"
-                              value={selection.repairType ?? ""}
-                              onChange={(e) =>
-                                setField("repairType", e.target.value as any)
-                              }
-                            >
-                              {repairTypes.map((t) => (
-                                <MenuItem key={t.id} value={t.id}>
-                                  {t.id} — {t.label}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        </Grid>
-
-                        <Grid size={{ xs: 12, sm: 6 }}>
-                          <FormControl fullWidth size="small">
-                            <InputLabel>Size Band</InputLabel>
-                            <Select
-                              label="Size Band"
-                              value={selection.size ?? ""}
-                              onChange={(e) =>
-                                setField("size", e.target.value as any)
-                              }
-                            >
-                              {sizeBands.map((s) => (
-                                <MenuItem key={s.id} value={s.id}>
-                                  {s.id} — {s.label}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        </Grid>
-
-                        <Grid size={{ xs: 12, sm: 4 }}>
-                          <FormControl fullWidth size="small">
-                            <InputLabel>Orientation</InputLabel>
-                            <Select
-                              label="Orientation"
-                              value={selection.orientation ?? ""}
-                              onChange={(e) =>
-                                setField("orientation", e.target.value as any)
-                              }
-                            >
-                              {orientations.map((o) => (
-                                <MenuItem key={o.id} value={o.id}>
-                                  {o.id} — {o.label}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        </Grid>
-
-                        <Grid size={{ xs: 12, sm: 4 }}>
-                          <FormControl fullWidth size="small">
-                            <InputLabel>Height / Access</InputLabel>
-                            <Select
-                              label="Height / Access"
-                              value={selection.access ?? ""}
-                              onChange={(e) =>
-                                setField("access", e.target.value as any)
-                              }
-                            >
-                              {accessOptions.map((a) => (
-                                <MenuItem key={a.id} value={a.id}>
-                                  {a.id} — {a.label}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        </Grid>
-
-                        <Grid size={{ xs: 12, sm: 4 }}>
-                          <TextField
-                            fullWidth
-                            size="small"
-                            label="Quantity"
-                            type="number"
-                            value={selection.quantity}
-                            inputProps={{ min: 1 }}
+                    <Grid container spacing={2}>
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Repair Type</InputLabel>
+                          <Select
+                            label="Repair Type"
+                            value={selection.repairType ?? ""}
                             onChange={(e) =>
-                              setField(
-                                "quantity",
-                                Math.max(1, Number(e.target.value || 1)),
-                              )
+                              setField("repairType", e.target.value as any)
                             }
-                          />
-                        </Grid>
-
-                        <Grid size={{ xs: 12, sm: 6 }}>
-                          <FormControl fullWidth size="small">
-                            <InputLabel>Finish</InputLabel>
-                            <Select
-                              label="Finish"
-                              value={selection.finish ?? ""}
-                              onChange={(e) =>
-                                setField("finish", e.target.value as any)
-                              }
-                            >
-                              {finishTypes.map((f) => (
-                                <MenuItem key={f.id} value={f.id}>
-                                  {f.id} — {f.label}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        </Grid>
-
-                        <Grid size={{ xs: 12, sm: 6 }}>
-                          <FormControl fullWidth size="small">
-                            <InputLabel>Paint Scope</InputLabel>
-                            <Select
-                              label="Paint Scope"
-                              value={selection.paintScope ?? ""}
-                              onChange={(e) =>
-                                setField("paintScope", e.target.value as any)
-                              }
-                            >
-                              {paintScopes.map((p) => (
-                                <MenuItem key={p.id} value={p.id}>
-                                  {p.id} — {p.label}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        </Grid>
-
-                        <Grid size={{ xs: 12, sm: 6 }}>
-                          <FormControl fullWidth size="small">
-                            <InputLabel>Protection / Occupancy</InputLabel>
-                            <Select
-                              label="Protection / Occupancy"
-                              value={selection.protection ?? ""}
-                              onChange={(e) =>
-                                setField("protection", e.target.value as any)
-                              }
-                            >
-                              {protectionOptions.map((h) => (
-                                <MenuItem key={h.id} value={h.id}>
-                                  {h.id} — {h.label}
-                                </MenuItem>
-                              ))}
-                            </Select>
-                          </FormControl>
-                        </Grid>
-
-                        <Grid size={{ xs: 12, sm: 6 }}>
-                          <TextField
-                            fullWidth
-                            size="small"
-                            label="Notes (optional)"
-                            value={selection.notes ?? ""}
-                            onChange={(e) => setField("notes", e.target.value)}
-                          />
-                        </Grid>
+                          >
+                            {repairTypes.map((t) => (
+                              <MenuItem key={t.id} value={t.id}>
+                                {t.id} — {t.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
                       </Grid>
-                    </Section>
 
-                    <Divider />
-
-                    <Section
-                      title="Condition modifiers (adders)"
-                      mobile={mobile}
-                      defaultExpanded={!mobile}
-                    >
-                      <Grid container spacing={1}>
-                        {modifiers.map((m) => (
-                          <Grid key={m.id} size={{ xs: 12, sm: 6 }}>
-                            <Paper
-                              variant="outlined"
-                              sx={{ p: 1, borderRadius: 2 }}
-                            >
-                              <FormControlLabel
-                                control={
-                                  <Checkbox
-                                    checked={selection.modifiers.includes(
-                                      m.id as any,
-                                    )}
-                                    onChange={() => toggleModifier(m.id as any)}
-                                  />
-                                }
-                                label={
-                                  <Stack
-                                    direction="row"
-                                    spacing={1}
-                                    alignItems="center"
-                                  >
-                                    <Typography
-                                      variant="body2"
-                                      fontWeight={700}
-                                    >
-                                      {m.id}
-                                    </Typography>
-                                    <Typography variant="body2">
-                                      {m.label}
-                                    </Typography>
-                                    <Box sx={{ flex: 1 }} />
-                                    <Chip
-                                      size="small"
-                                      label={
-                                        m.amount > 0
-                                          ? `+${currency(m.amount)}`
-                                          : "info"
-                                      }
-                                      variant="outlined"
-                                    />
-                                  </Stack>
-                                }
-                              />
-                            </Paper>
-                          </Grid>
-                        ))}
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Size Band</InputLabel>
+                          <Select
+                            label="Size Band"
+                            value={selection.size ?? ""}
+                            onChange={(e) =>
+                              setField("size", e.target.value as any)
+                            }
+                          >
+                            {sizeBands.map((s) => (
+                              <MenuItem key={s.id} value={s.id}>
+                                {s.id} — {s.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
                       </Grid>
-                    </Section>
 
-                    <Divider />
+                      <Grid size={{ xs: 12, sm: 4 }}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Orientation</InputLabel>
+                          <Select
+                            label="Orientation"
+                            value={selection.orientation ?? ""}
+                            onChange={(e) =>
+                              setField("orientation", e.target.value as any)
+                            }
+                          >
+                            {orientations.map((o) => (
+                              <MenuItem key={o.id} value={o.id}>
+                                {o.id} — {o.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
 
-                    <Section
-                      title="Auto-itemized step bundle"
-                      mobile={mobile}
-                      defaultExpanded={false}
-                    >
-                      <Stack spacing={1}>
-                        <Chip
-                          label={`${bundle.id} — ${bundle.title}`}
-                          sx={{ alignSelf: "flex-start" }}
+                      <Grid size={{ xs: 12, sm: 4 }}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Height / Access</InputLabel>
+                          <Select
+                            label="Height / Access"
+                            value={selection.access ?? ""}
+                            onChange={(e) =>
+                              setField("access", e.target.value as any)
+                            }
+                          >
+                            {accessOptions.map((a) => (
+                              <MenuItem key={a.id} value={a.id}>
+                                {a.id} — {a.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+
+                      <Grid size={{ xs: 12, sm: 4 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          label="Quantity"
+                          type="number"
+                          value={selection.quantity}
+                          inputProps={{ min: 1 }}
+                          onChange={(e) =>
+                            setField(
+                              "quantity",
+                              Math.max(1, Number(e.target.value || 1)),
+                            )
+                          }
                         />
-                        <List dense>
-                          {bundle.steps.map((s) => (
-                            <ListItem key={s} sx={{ py: 0.25 }}>
-                              <ListItemText primary={s} />
-                            </ListItem>
-                          ))}
-                        </List>
-                      </Stack>
-                    </Section>
+                      </Grid>
+
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Finish</InputLabel>
+                          <Select
+                            label="Finish"
+                            value={selection.finish ?? ""}
+                            onChange={(e) =>
+                              setField("finish", e.target.value as any)
+                            }
+                          >
+                            {finishTypes.map((f) => (
+                              <MenuItem key={f.id} value={f.id}>
+                                {f.id} — {f.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Paint Scope</InputLabel>
+                          <Select
+                            label="Paint Scope"
+                            value={selection.paintScope ?? ""}
+                            onChange={(e) =>
+                              setField("paintScope", e.target.value as any)
+                            }
+                          >
+                            {paintScopes.map((p) => (
+                              <MenuItem key={p.id} value={p.id}>
+                                {p.id} — {p.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <FormControl fullWidth size="small">
+                          <InputLabel>Protection / Occupancy</InputLabel>
+                          <Select
+                            label="Protection / Occupancy"
+                            value={selection.protection ?? ""}
+                            onChange={(e) =>
+                              setField("protection", e.target.value as any)
+                            }
+                          >
+                            {protectionOptions.map((h) => (
+                              <MenuItem key={h.id} value={h.id}>
+                                {h.id} — {h.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                      </Grid>
+
+                      <Grid size={{ xs: 12, sm: 6 }}>
+                        <TextField
+                          fullWidth
+                          size="small"
+                          label="Notes (optional)"
+                          value={selection.notes ?? ""}
+                          onChange={(e) => setField("notes", e.target.value)}
+                        />
+                      </Grid>
+                    </Grid>
+
+                    <Divider />
+
+                    <Grid container spacing={1}>
+                      {modifiers.map((m) => (
+                        <Grid key={m.id} size={{ xs: 12, sm: 6 }}>
+                          <Paper
+                            variant="outlined"
+                            sx={{ p: 1, borderRadius: 2 }}
+                          >
+                            <FormControlLabel
+                              control={
+                                <Checkbox
+                                  checked={selection.modifiers.includes(
+                                    m.id as any,
+                                  )}
+                                  onChange={() => toggleModifier(m.id as any)}
+                                />
+                              }
+                              label={
+                                <Stack
+                                  direction="row"
+                                  spacing={1}
+                                  alignItems="center"
+                                >
+                                  <Typography variant="body2" fontWeight={700}>
+                                    {m.id}
+                                  </Typography>
+                                  <Typography variant="body2">
+                                    {m.label}
+                                  </Typography>
+                                  <Box sx={{ flex: 1 }} />
+                                  <Chip
+                                    size="small"
+                                    label={
+                                      m.amount > 0
+                                        ? `+${currency(m.amount)}`
+                                        : "info"
+                                    }
+                                    variant="outlined"
+                                  />
+                                </Stack>
+                              }
+                            />
+                          </Paper>
+                        </Grid>
+                      ))}
+                    </Grid>
+
+                    <Divider />
+
+                    <Stack spacing={1}>
+                      <Chip
+                        label={`${bundle.id} — ${bundle.title}`}
+                        sx={{ alignSelf: "flex-start" }}
+                      />
+                      <List dense>
+                        {bundle.steps.map((s) => (
+                          <ListItem key={s} sx={{ py: 0.25 }}>
+                            <ListItemText primary={s} />
+                          </ListItem>
+                        ))}
+                      </List>
+                    </Stack>
                   </Stack>
                 </CardContent>
               </Card>
