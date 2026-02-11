@@ -7,7 +7,7 @@ import { useState } from "react";
 import SelectionSKUBlock from "../SelectionSKUBlock";
 import { COMMON_DRYWALL_SKU_PRESETS } from "../../constants/presetDrywallSKU";
 import { COMMON_PAINTING_SKU_PRESETS } from "../../constants/persetPaintingSKU";
-import { Box } from "@mui/material";
+import { Box, Paper } from "@mui/material";
 
 const drywallSKUs = COMMON_DRYWALL_SKU_PRESETS;
 const paintingSKUs = COMMON_PAINTING_SKU_PRESETS;
@@ -31,7 +31,7 @@ const LegoBlockEstimationPage = () => {
       <PageHeader hideBackButton title="Lego Block Estimation" />
       <GeneralData initialData={null} onFormChange={() => {}} />
       {sections.map((section) => (
-        <Box key={section.id} sx={{ marginBottom: 4 }}>
+        <Paper key={section.id} sx={{ marginBottom: 4, p: 3 }}>
           <SectionOverview
             key={section.id}
             section={section}
@@ -45,7 +45,7 @@ const LegoBlockEstimationPage = () => {
             legoBlocks={paintingSKUs}
           />
           {/* <EstimatePaintBlocks /> */}
-        </Box>
+        </Paper>
       ))}
     </>
   );

@@ -74,11 +74,7 @@ const SectionEstimation = ({
     );
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit(handleFormSubmit)}
-      sx={{ mb: 3, bgcolor: "grey.50", borderRadius: 1, p: 2 }}
-    >
+    <Box component="form" onSubmit={handleSubmit(handleFormSubmit)}>
       <Typography variant="h6" gutterBottom>
         {section.name}
       </Typography>

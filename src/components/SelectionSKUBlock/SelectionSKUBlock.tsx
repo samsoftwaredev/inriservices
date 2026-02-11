@@ -64,7 +64,7 @@ const SelectionSKUBlock = ({
 
   return (
     <Box sx={{ position: "relative" }}>
-      <Typography variant="h6" sx={{ marginBottom: 2 }}>
+      <Typography variant="h6" sx={{ mt: 3 }}>
         {label}
       </Typography>
       {/* Search Box */}
@@ -74,7 +74,6 @@ const SelectionSKUBlock = ({
         placeholder="Search by name or SKU..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        sx={{ marginBottom: 2 }}
       />
 
       {/* Counter Badge in top right corner */}
