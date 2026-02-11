@@ -22,7 +22,6 @@ import { companyPhone, companyPhoneFormatted } from "@/constants";
 
 const navLinks = [
   { text: "Painting Services", href: "/" },
-  { text: "Cleaning Services", href: "/cleaning-services" },
   { text: "About", href: "/about" },
   { text: "Contact Us", href: "/contact" },
   { text: "FAQs", href: "/frequently-asked-questions" },
