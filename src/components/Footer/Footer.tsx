@@ -19,7 +19,6 @@ import {
 const Footer = () => {
   const pages = [
     { text: "Painting Services", href: "/" },
-    { text: "Cleaning Services", href: "/cleaning-services" },
     { text: "Garland Painter", href: "/painting-room-in-garland-painter" },
     { text: "About", href: "/about" },
     { text: "Contact Us", href: "/contact" },
@@ -33,7 +32,7 @@ const Footer = () => {
   const backlinkData = [
     {
       name: "Google Maps",
-      url: "https://www.google.com/maps/place/INRI+Paint+%26+Wall/@32.9596525,-96.672329,10z/data=!3m1!4b1!4m6!3m5!1s0x42b7eb5354124873:0xfddef2cad263c247!8m2!3d32.9596524!4d-96.672329!16s%2Fg%2F11ydfvf264?hl=en&entry=ttu&g_ep=EgoyMDI1MDUyOC4wIKXMDSoASAFQAw%3D%3D",
+      url: "https://maps.app.goo.gl/f5QAd9NT7ZUtNxt76",
       emoji: <Google color="error" />,
     },
     {

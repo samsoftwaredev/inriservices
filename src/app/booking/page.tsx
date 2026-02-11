@@ -28,11 +28,11 @@ const metaProps: MetaProps = {
     { name: "robots", content: "index, follow" },
     {
       name: "description",
-      content: `Book your painting, drywall repair, or home cleaning service with ${companyName} in ${location}, TX. Fast response, free quotes, and guaranteed satisfaction from local, insured experts.`,
+      content: `Book your interior/exterior painting or drywall repair service with ${companyName} in ${location}, TX. Fast response, free quotes, and guaranteed satisfaction from local, insured experts.`,
     },
     {
       name: "keywords",
-      content: `book painting service ${location}, drywall repair booking ${location}, schedule home cleaning ${location}, ${companyName} booking, paint contractor ${location}, free quote painting, local painter booking, professional drywall repair, trusted painting company TX`,
+      content: `book painting service ${location}, drywall repair booking ${location}, paint contractor ${location}, free quote painting, local painter booking, professional drywall repair, trusted painting company TX`,
     },
     { name: "author", content: companyName },
     { property: "og:type", content: "website" },
@@ -43,7 +43,7 @@ const metaProps: MetaProps = {
     },
     {
       property: "og:description",
-      content: `Easily book painting, drywall repair, or cleaning services with ${companyName} in ${location}, TX. Get a free quote and fast, reliable service from trusted local professionals.`,
+      content: `Easily book interior/exterior painting or drywall repair services with ${companyName} in ${location}, TX. Get a free quote and fast, reliable service from trusted local professionals.`,
     },
     {
       property: "og:image",
@@ -77,7 +77,7 @@ const BookingPage = () => {
       <Container maxWidth="sm">
         <TrustBadges
           title="Booking"
-          description="INRI Paint & Wall – Your Trusted Experts in Painting, Drywall Repair & Home Cleaning Services"
+          description="INRI Paint & Wall – Your Local Interior/Exterior Expert in Painting & Drywall Repair Services"
         />
         <Box sx={{ my: 4 }}>
           <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 }, borderRadius: 3 }}>

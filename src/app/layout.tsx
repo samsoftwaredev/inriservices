@@ -9,7 +9,7 @@ import { ToastContainer } from "react-toastify";
 export const metadata: Metadata = {
   title: companyName,
   description:
-    "Expert Painting, Drywall Repair & Cleaning Services in Garland, TX",
+    "Interior & Exterior Painting for Local Homes • Drywall Repair • Cabinet Painting in Garland, TX",
   keywords: [
     "painting",
     "drywall repair",
@@ -62,7 +62,8 @@ export const metadata: Metadata = {
   creator: companyName,
   openGraph: {
     title: companyName,
-    description: "Expert Painting & Drywall Repair Services",
+    description:
+      "Interior & Exterior Painting for Local Homes • Drywall Repair • Cabinet Painting in Garland, TX",
     url: companyWebsiteURL,
     siteName: companyName,
     images: [
@@ -70,7 +71,9 @@ export const metadata: Metadata = {
         url: "https://inripaintwall.com/images/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: companyName + " - Expert Painting & Drywall Repair Services",
+        alt:
+          companyName +
+          " - Interior & Exterior Painting for Local Homes • Drywall Repair • Cabinet Painting",
       },
     ],
     locale: "en_US",

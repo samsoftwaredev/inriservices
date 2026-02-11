@@ -1,5 +1,4 @@
 export { default as Meta } from "./Meta";
-export { default as MetaCleaning } from "./MetaCleaning";
 export { default as TrustBadges } from "./TrustBadges";
 export { default as PromoBadge } from "./PromoBadge";
 export { default as Hero } from "./Hero";

@@ -28,11 +28,11 @@ const metaProps: MetaProps = {
     { name: "robots", content: "index, follow" },
     {
       name: "description",
-      content: `Contact ${companyName} in ${location}, TX for expert painting, drywall repair, and home cleaning services. Request your free quote today. Fast response, local professionals, and satisfaction guaranteed.`,
+      content: `Contact ${companyName} in ${location}, TX for expert painting and drywall repair services. Request your free quote today. Fast response, local professionals, and satisfaction guaranteed.`,
     },
     {
       name: "keywords",
-      content: `contact ${companyName}, painting contractor ${location}, drywall repair ${location}, free quote painting ${location}, home cleaning services ${location}, local painter ${location}, best painting company TX, insured drywall repair, request estimate painting`,
+      content: `contact ${companyName}, painting contractor ${location}, drywall repair ${location}, free quote painting ${location}, local painter ${location}, best painting company TX, insured drywall repair, request estimate painting`,
     },
     { name: "author", content: companyName },
     { property: "og:type", content: "website" },
@@ -43,7 +43,7 @@ const metaProps: MetaProps = {
     },
     {
       property: "og:description",
-      content: `Reach out to ${companyName} for painting, drywall repair, or cleaning services in ${location}, TX. Get a free quote and fast, reliable service from trusted local professionals.`,
+      content: `Reach out to ${companyName} for painting or drywall repair services in ${location}, TX. Get a free quote and fast, reliable service from trusted local professionals.`,
     },
     {
       property: "og:image",
@@ -56,7 +56,7 @@ const metaProps: MetaProps = {
     },
     {
       name: "twitter:description",
-      content: `Contact ${companyName} for a free quote on painting, drywall repair, or cleaning in ${location}, TX. Fast response and trusted local service.`,
+      content: `Contact ${companyName} for a free quote on painting or drywall repair in ${location}, TX. Fast response and trusted local service.`,
     },
     {
       name: "twitter:image",
@@ -77,7 +77,7 @@ const ContactPage = () => {
       <Container maxWidth="sm">
         <TrustBadges
           title="Contact Us"
-          description="INRI Paint & Wall – Your Trusted Experts in Painting, Drywall Repair & Home Cleaning Services"
+          description="INRI Paint & Wall – Your Local Interior & Exterior Painting Expert & Drywall Repair"
         />
         <Box sx={{ my: 4 }}>
           <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 }, borderRadius: 3 }}>
