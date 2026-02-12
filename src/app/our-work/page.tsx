@@ -1,8 +1,23 @@
+"use client";
 import { Footer, Meta, SampleWork, TopNavbar } from "@/components";
-import { companyName } from "@/constants";
+import {
+  companyEmail,
+  companyName,
+  companyPhone,
+  companyPhoneFormatted,
+} from "@/constants";
 import { MetaProps } from "@/interfaces";
-import { Box, Button, Container, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  Typography,
+  Tabs,
+  Tab,
+} from "@mui/material";
 import { theme } from "../theme";
+import { useState } from "react";
 
 const services = [
   {
@@ -72,7 +87,6 @@ const location =
 const pageName = "Our Work - Painting & Drywall Projects";
 
 const metaProps: MetaProps = {
-  // ...same as before
   title: `${pageName} | ${companyName} | Project Gallery & Success Stories in ${location}, TX`,
   metaTags: [
     { httpEquiv: "content-language", content: "en" },
@@ -125,12 +139,21 @@ const metaProps: MetaProps = {
 };
 
 export default function OurPreviousWorkPage() {
+  const [selectedTrade, setSelectedTrade] = useState(0);
+
+  const handleTradeChange = (
+    _event: React.SyntheticEvent,
+    newValue: number,
+  ) => {
+    setSelectedTrade(newValue);
+  };
+
   return (
     <>
       <Meta {...metaProps} />
       <TopNavbar />
       <Container maxWidth="lg" sx={{ my: 10 }}>
-        {/* Hero Section */}
+        {/* Partner Hero Section */}
         <Box
           component="section"
           sx={{
@@ -144,7 +167,7 @@ export default function OurPreviousWorkPage() {
             background: theme.palette.info.main,
             borderRadius: 6,
             boxShadow: 8,
-            mb: 10,
+            mb: 6,
             position: "relative",
             overflow: "hidden",
             minHeight: { md: 420 },
@@ -183,96 +206,140 @@ export default function OurPreviousWorkPage() {
           <Box sx={{ zIndex: 1, flex: 1, minWidth: 0 }}>
             <Typography
               variant="h1"
-              component="h3"
-              fontSize={{ xs: "2.4rem", md: "3.4rem" }}
+              component="h1"
+              fontSize={{ xs: "2.8rem", md: "3.8rem" }}
               fontWeight={900}
               gutterBottom
               sx={{
                 color: theme.palette.primary.main,
                 letterSpacing: -1,
-                mb: 1,
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
+                mb: 2,
                 lineHeight: 1.1,
               }}
             >
-              🖼️ Our Previous Painting & Drywall Projects
+              We Make You Look Good.
             </Typography>
             <Typography
               variant="h2"
-              fontSize={{ xs: "1.2rem", md: "1.6rem" }}
+              fontSize={{ xs: "1.3rem", md: "1.7rem" }}
               color={theme.palette.primary.main}
               gutterBottom
               sx={{
                 fontWeight: 700,
                 letterSpacing: 0.5,
-                mb: 2,
+                mb: 3,
               }}
             >
-              ✨ Real Results — Residential & Commercial Transformations
+              Partner with INRI Paint & Wall — Reliable Painting & Drywall for
+              Your Clients
             </Typography>
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              paragraph
-              sx={{
-                fontSize: { xs: "1.05rem", md: "1.18rem" },
-                mb: 2,
-                maxWidth: 600,
-                lineHeight: 1.7,
-              }}
-            >
-              Explore our gallery of completed painting and drywall repair
-              projects across <b>Dallas, Garland, Plano</b>, and surrounding
-              areas.
-              <br />
-              <span role="img" aria-label="camera">
-                📸
-              </span>{" "}
-              See before-and-after photos,{" "}
-              <span role="img" aria-label="star">
-                ⭐
-              </span>{" "}
-              read customer testimonials, and{" "}
-              <span role="img" aria-label="sparkles">
-                ✨
-              </span>{" "}
-              discover how <b>INRI Paint & Wall</b> delivers flawless finishes,
-              reliable service, and lasting results for every client.
-            </Typography>
-            <Button
-              variant="contained"
-              size="large"
-              sx={{
-                mt: 2,
-                px: 5,
-                py: 1.5,
-                fontWeight: 800,
-                fontSize: "1.15rem",
-                borderRadius: 3,
-                boxShadow: "0 4px 24px 0 rgba(73,181,254,0.18)",
-                background: theme.palette.primary.main,
-                color: "#fff",
-                textTransform: "none",
-                letterSpacing: 0.5,
-                transition: "all 0.2s cubic-bezier(.4,0,.2,1)",
-                "&:hover": {
-                  background: theme.palette.warning.main,
+
+            {/* Partner Promises */}
+            <Box sx={{ mb: 3 }}>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}
+              >
+                <Typography fontSize="1.5rem">⚡</Typography>
+                <Typography
+                  variant="body1"
+                  fontWeight={600}
+                  color="text.primary"
+                >
+                  Estimate in 24 hours
+                </Typography>
+              </Box>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}
+              >
+                <Typography fontSize="1.5rem">📋</Typography>
+                <Typography
+                  variant="body1"
+                  fontWeight={600}
+                  color="text.primary"
+                >
+                  On-time + detailed written estimates
+                </Typography>
+              </Box>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}
+              >
+                <Typography fontSize="1.5rem">🛡️</Typography>
+                <Typography
+                  variant="body1"
+                  fontWeight={600}
+                  color="text.primary"
+                >
+                  COI available immediately
+                </Typography>
+              </Box>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 1, mb: 1.5 }}
+              >
+                <Typography fontSize="1.5rem">💰</Typography>
+                <Typography
+                  variant="body1"
+                  fontWeight={600}
+                  color="text.primary"
+                >
+                  $100 per closed referral
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+              <Button
+                variant="contained"
+                size="large"
+                sx={{
+                  px: 5,
+                  py: 1.5,
+                  fontWeight: 800,
+                  fontSize: "1.15rem",
+                  borderRadius: 3,
+                  boxShadow: "0 4px 24px 0 rgba(73,181,254,0.18)",
+                  background: theme.palette.primary.main,
                   color: "#fff",
-                  transform: "translateY(-2px) scale(1.04)",
-                  boxShadow: "0 8px 32px 0 rgba(247,189,89,0.18)",
-                },
-              }}
-              href="#featured-projects"
-              endIcon={
-                <span role="img" aria-label="gallery">
-                  🖼️
-                </span>
-              }
-            >
-              View Project Gallery
-            </Button>
+                  textTransform: "none",
+                  letterSpacing: 0.5,
+                  transition: "all 0.2s cubic-bezier(.4,0,.2,1)",
+                  "&:hover": {
+                    background: theme.palette.warning.main,
+                    color: "#fff",
+                    transform: "translateY(-2px) scale(1.04)",
+                    boxShadow: "0 8px 32px 0 rgba(247,189,89,0.18)",
+                  },
+                }}
+                href="#partner-form"
+              >
+                Become a Referral Partner
+              </Button>
+              <Button
+                variant="outlined"
+                size="large"
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  fontWeight: 700,
+                  fontSize: "1.05rem",
+                  borderRadius: 3,
+                  border: `2px solid ${theme.palette.primary.main}`,
+                  color: theme.palette.primary.main,
+                  textTransform: "none",
+                  letterSpacing: 0.5,
+                  transition: "all 0.2s cubic-bezier(.4,0,.2,1)",
+                  "&:hover": {
+                    background: theme.palette.primary.main,
+                    color: "#fff",
+                    border: `2px solid ${theme.palette.primary.main}`,
+                    transform: "translateY(-2px)",
+                  },
+                }}
+                href="/documents/COI.pdf"
+                target="_blank"
+              >
+                Download COI (PDF)
+              </Button>
+            </Box>
           </Box>
 
           <Box
@@ -297,10 +364,1023 @@ export default function OurPreviousWorkPage() {
           />
         </Box>
 
-        <Box id="featured-projects">
+        {/* Partner Proof Bar */}
+        <Box
+          component="section"
+          sx={{
+            py: 3,
+            px: { xs: 2, md: 4 },
+            background: "linear-gradient(135deg, #fff 0%, #f8f9fa 100%)",
+            borderRadius: 4,
+            boxShadow: 2,
+            mb: 8,
+            border: `1px solid ${theme.palette.primary.main}20`,
+          }}
+        >
+          <Grid
+            container
+            spacing={2}
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+              <Box sx={{ textAlign: "center" }}>
+                <Typography fontSize="1.8rem" mb={0.5}>
+                  ⭐
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  color="text.primary"
+                >
+                  4.9/5.0
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  <a
+                    href="https://g.page/r/YOUR_GOOGLE_ID"
+                    target="_blank"
+                    rel="noopener"
+                    style={{ color: theme.palette.primary.main }}
+                  >
+                    Google Reviews
+                  </a>
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+              <Box sx={{ textAlign: "center" }}>
+                <Typography fontSize="1.8rem" mb={0.5}>
+                  ✅
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  color="text.primary"
+                >
+                  Insured
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  COI Available
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+              <Box sx={{ textAlign: "center" }}>
+                <Typography fontSize="1.8rem" mb={0.5}>
+                  ⏱️
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  color="text.primary"
+                >
+                  24-Hour
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Estimate
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+              <Box sx={{ textAlign: "center" }}>
+                <Typography fontSize="1.8rem" mb={0.5}>
+                  🧾
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  color="text.primary"
+                >
+                  Detailed
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Estimates
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+              <Box sx={{ textAlign: "center" }}>
+                <Typography fontSize="1.8rem" mb={0.5}>
+                  🧹
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  color="text.primary"
+                >
+                  Clean
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Worksite
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+              <Box sx={{ textAlign: "center" }}>
+                <Typography fontSize="1.8rem" mb={0.5}>
+                  🤝
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  color="text.primary"
+                >
+                  Trade-Ready
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Professional
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+
+        {/* How Referrals Work */}
+        <Box
+          component="section"
+          sx={{
+            py: { xs: 6, md: 8 },
+            mb: 8,
+          }}
+        >
+          <Typography
+            variant="h2"
+            fontSize={{ xs: "1.8rem", md: "2.3rem" }}
+            fontWeight={800}
+            gutterBottom
+            textAlign="center"
+            sx={{
+              color: theme.palette.primary.main,
+              mb: 5,
+            }}
+          >
+            🤝 How Referrals Work
+          </Typography>
+          <Grid container spacing={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Box
+                sx={{
+                  background: theme.palette.info.main,
+                  borderRadius: 4,
+                  boxShadow: 3,
+                  p: 4,
+                  height: "100%",
+                  textAlign: "center",
+                  border: `3px solid ${theme.palette.primary.main}`,
+                  transition: "transform 0.2s",
+                  "&:hover": {
+                    transform: "translateY(-6px)",
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: "50%",
+                    background: theme.palette.primary.main,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 auto 20px",
+                    fontSize: "2.5rem",
+                  }}
+                >
+                  1️⃣
+                </Box>
+                <Typography
+                  variant="h3"
+                  fontSize="1.4rem"
+                  fontWeight={700}
+                  gutterBottom
+                  color={theme.palette.primary.main}
+                >
+                  Send the Lead
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  Text or email us: <b>name, phone, address</b> (or just intro
+                  us to your client). That&apos;s it.
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Box
+                sx={{
+                  background: theme.palette.info.main,
+                  borderRadius: 4,
+                  boxShadow: 3,
+                  p: 4,
+                  height: "100%",
+                  textAlign: "center",
+                  border: `3px solid ${theme.palette.warning.main}`,
+                  transition: "transform 0.2s",
+                  "&:hover": {
+                    transform: "translateY(-6px)",
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: "50%",
+                    background: theme.palette.warning.main,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 auto 20px",
+                    fontSize: "2.5rem",
+                  }}
+                >
+                  2️⃣
+                </Box>
+                <Typography
+                  variant="h3"
+                  fontSize="1.4rem"
+                  fontWeight={700}
+                  gutterBottom
+                  color={theme.palette.warning.main}
+                >
+                  We Handle It
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  We estimate within <b>24 hours</b>, keep you updated, and
+                  deliver quality work on time.
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Box
+                sx={{
+                  background: theme.palette.info.main,
+                  borderRadius: 4,
+                  boxShadow: 3,
+                  p: 4,
+                  height: "100%",
+                  textAlign: "center",
+                  border: `3px solid #4caf50`,
+                  transition: "transform 0.2s",
+                  "&:hover": {
+                    transform: "translateY(-6px)",
+                  },
+                }}
+              >
+                <Box
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: "50%",
+                    background: "#4caf50",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 auto 20px",
+                    fontSize: "2.5rem",
+                  }}
+                >
+                  3️⃣
+                </Box>
+                <Typography
+                  variant="h3"
+                  fontSize="1.4rem"
+                  fontWeight={700}
+                  gutterBottom
+                  color="#4caf50"
+                >
+                  You Get Paid
+                </Typography>
+                <Typography variant="body1" color="text.secondary">
+                  Client signs & pays? You receive <b>$100 within 7 days</b>.
+                  Simple as that.
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+          <Box sx={{ mt: 4, textAlign: "center" }}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ fontSize: "0.95rem" }}
+            >
+              💡 <b>Non-exclusive.</b> No spam. We never pitch your clients
+              unrelated services.
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* Trade-Specific Blocks */}
+        <Box
+          component="section"
+          sx={{
+            py: { xs: 6, md: 8 },
+            mb: 8,
+            background: theme.palette.info.main,
+            borderRadius: 5,
+            px: { xs: 2, md: 4 },
+          }}
+        >
+          <Typography
+            variant="h2"
+            fontSize={{ xs: "1.8rem", md: "2.3rem" }}
+            fontWeight={800}
+            gutterBottom
+            textAlign="center"
+            sx={{
+              color: theme.palette.primary.main,
+              mb: 4,
+            }}
+          >
+            🛠️ Built for Your Trade
+          </Typography>
+          <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
+            <Tabs
+              value={selectedTrade}
+              onChange={handleTradeChange}
+              centered
+              textColor="primary"
+              indicatorColor="primary"
+              sx={{
+                "& .MuiTab-root": {
+                  fontWeight: 700,
+                  fontSize: "1rem",
+                  textTransform: "none",
+                },
+              }}
+            >
+              <Tab label="🏠 Realtors" />
+              <Tab label="🔧 Plumbers" />
+              <Tab label="⚡ Electricians" />
+            </Tabs>
+          </Box>
+
+          {/* Realtor Tab */}
+          {selectedTrade === 0 && (
+            <Box sx={{ p: { xs: 2, md: 4 } }}>
+              <Typography
+                variant="h3"
+                fontSize="1.6rem"
+                fontWeight={700}
+                gutterBottom
+                color={theme.palette.primary.main}
+              >
+                For Real Estate Professionals
+              </Typography>
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                paragraph
+                sx={{ fontSize: "1.1rem", mb: 3 }}
+              >
+                Get listings sale-ready fast with our reliable painting and
+                drywall services.
+              </Typography>
+              <Grid container spacing={3}>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <Typography fontSize="1.5rem">✨</Typography>
+                    <Box>
+                      <Typography fontWeight={700} color="text.primary">
+                        Listing Refresh
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Quick paint touch-ups to maximize sale price
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <Typography fontSize="1.5rem">📋</Typography>
+                    <Box>
+                      <Typography fontWeight={700} color="text.primary">
+                        Punch Lists
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Pre-closing repairs done right, on time
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <Typography fontSize="1.5rem">⏰</Typography>
+                    <Box>
+                      <Typography fontWeight={700} color="text.primary">
+                        Quick Turnaround
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        We work around showings and deadlines
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <Typography fontSize="1.5rem">🧹</Typography>
+                    <Box>
+                      <Typography fontWeight={700} color="text.primary">
+                        Clean Close
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Spotless worksite, protected floors, ready to show
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+              </Grid>
+            </Box>
+          )}
+
+          {/* Plumber Tab */}
+          {selectedTrade === 1 && (
+            <Box sx={{ p: { xs: 2, md: 4 } }}>
+              <Typography
+                variant="h3"
+                fontSize="1.6rem"
+                fontWeight={700}
+                gutterBottom
+                color={theme.palette.primary.main}
+              >
+                For Plumbing Contractors
+              </Typography>
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                paragraph
+                sx={{ fontSize: "1.1rem", mb: 3 }}
+              >
+                Seamless drywall patches and paint after your plumbing work is
+                complete.
+              </Typography>
+              <Grid container spacing={3}>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <Typography fontSize="1.5rem">🔧</Typography>
+                    <Box>
+                      <Typography fontWeight={700} color="text.primary">
+                        Drywall Patches
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Flawless repairs after leak fixes or repipes
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <Typography fontSize="1.5rem">🎨</Typography>
+                    <Box>
+                      <Typography fontWeight={700} color="text.primary">
+                        Texture Matching
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Blends perfectly with existing walls/ceilings
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <Typography fontSize="1.5rem">🖌️</Typography>
+                    <Box>
+                      <Typography fontWeight={700} color="text.primary">
+                        Repaint After Repairs
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Touch-ups or full room paint as needed
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <Typography fontSize="1.5rem">🤝</Typography>
+                    <Box>
+                      <Typography fontWeight={700} color="text.primary">
+                        Coordination
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        We schedule around your timeline
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+              </Grid>
+            </Box>
+          )}
+
+          {/* Electrician Tab */}
+          {selectedTrade === 2 && (
+            <Box sx={{ p: { xs: 2, md: 4 } }}>
+              <Typography
+                variant="h3"
+                fontSize="1.6rem"
+                fontWeight={700}
+                gutterBottom
+                color={theme.palette.primary.main}
+              >
+                For Electrical Contractors
+              </Typography>
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                paragraph
+                sx={{ fontSize: "1.1rem", mb: 3 }}
+              >
+                Professional drywall and paint finishing after electrical
+                upgrades and installations.
+              </Typography>
+              <Grid container spacing={3}>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <Typography fontSize="1.5rem">⚡</Typography>
+                    <Box>
+                      <Typography fontWeight={700} color="text.primary">
+                        After Rewires
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Patch & paint after conduit/wire runs
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <Typography fontSize="1.5rem">💡</Typography>
+                    <Box>
+                      <Typography fontWeight={700} color="text.primary">
+                        Can Light Installs
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Clean finish around new recessed lighting
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <Typography fontSize="1.5rem">🔌</Typography>
+                    <Box>
+                      <Typography fontWeight={700} color="text.primary">
+                        Panel Upgrades
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Drywall repair & paint around new panels
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6 }}>
+                  <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
+                    <Typography fontSize="1.5rem">✅</Typography>
+                    <Box>
+                      <Typography fontWeight={700} color="text.primary">
+                        Ready for Inspection
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Clean, professional finish every time
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+              </Grid>
+            </Box>
+          )}
+        </Box>
+
+        {/* Featured Projects Gallery */}
+        <Box id="featured-projects" sx={{ mb: 8 }}>
           <SampleWork services={services} />
         </Box>
 
+        {/* Reviews Section */}
+        <Box
+          component="section"
+          sx={{
+            py: { xs: 6, md: 8 },
+            mb: 8,
+          }}
+        >
+          <Typography
+            variant="h2"
+            fontSize={{ xs: "1.8rem", md: "2.3rem" }}
+            fontWeight={800}
+            gutterBottom
+            textAlign="center"
+            sx={{
+              color: theme.palette.primary.main,
+              mb: 5,
+            }}
+          >
+            ⭐ What Partners & Clients Say
+          </Typography>
+          <Grid container spacing={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Box
+                sx={{
+                  background: "#fff",
+                  borderRadius: 4,
+                  boxShadow: 3,
+                  p: 3,
+                  height: "100%",
+                  border: `2px solid ${theme.palette.info.main}`,
+                }}
+              >
+                <Box sx={{ mb: 2 }}>
+                  <Typography
+                    fontSize="1.3rem"
+                    color={theme.palette.warning.main}
+                  >
+                    ★★★★★
+                  </Typography>
+                </Box>
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  paragraph
+                  sx={{ fontStyle: "italic", mb: 2 }}
+                >
+                  &quot;INRI came through with a 24-hour estimate and finished
+                  the drywall repair ahead of schedule. My client was thrilled.
+                  I&apos;ll use them again.&quot;
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  color="text.primary"
+                >
+                  — Sarah M., Realtor
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Box
+                sx={{
+                  background: "#fff",
+                  borderRadius: 4,
+                  boxShadow: 3,
+                  p: 3,
+                  height: "100%",
+                  border: `2px solid ${theme.palette.info.main}`,
+                }}
+              >
+                <Box sx={{ mb: 2 }}>
+                  <Typography
+                    fontSize="1.3rem"
+                    color={theme.palette.warning.main}
+                  >
+                    ★★★★★
+                  </Typography>
+                </Box>
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  paragraph
+                  sx={{ fontStyle: "italic", mb: 2 }}
+                >
+                  &quot;Super clean, professional crew. They patched the ceiling
+                  after we installed new lighting and it looks brand new. Easy
+                  to work with.&quot;
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  color="text.primary"
+                >
+                  — Mike R., Electrician
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 12, md: 4 }}>
+              <Box
+                sx={{
+                  background: "#fff",
+                  borderRadius: 4,
+                  boxShadow: 3,
+                  p: 3,
+                  height: "100%",
+                  border: `2px solid ${theme.palette.info.main}`,
+                }}
+              >
+                <Box sx={{ mb: 2 }}>
+                  <Typography
+                    fontSize="1.3rem"
+                    color={theme.palette.warning.main}
+                  >
+                    ★★★★★
+                  </Typography>
+                </Box>
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  paragraph
+                  sx={{ fontStyle: "italic", mb: 2 }}
+                >
+                  &quot;Fast, reliable, and they communicate every step of the
+                  way. The homeowner was impressed, and so was I. Highly
+                  recommend for any trade partner.&quot;
+                </Typography>
+                <Typography
+                  variant="body2"
+                  fontWeight={700}
+                  color="text.primary"
+                >
+                  — Jason T., Plumber
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+          <Box sx={{ mt: 4, textAlign: "center" }}>
+            <Button
+              variant="outlined"
+              size="large"
+              sx={{
+                px: 4,
+                py: 1.5,
+                fontWeight: 700,
+                borderRadius: 3,
+                border: `2px solid ${theme.palette.primary.main}`,
+                color: theme.palette.primary.main,
+                textTransform: "none",
+                "&:hover": {
+                  background: theme.palette.primary.main,
+                  color: "#fff",
+                },
+              }}
+              href="https://g.page/r/YOUR_GOOGLE_ID"
+              target="_blank"
+            >
+              Read All Reviews on Google
+            </Button>
+          </Box>
+        </Box>
+
+        {/* Partner Packet Download */}
+        <Box
+          component="section"
+          sx={{
+            py: { xs: 6, md: 8 },
+            px: { xs: 2, md: 6 },
+            background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark || "#0066cc"} 100%)`,
+            borderRadius: 5,
+            boxShadow: 4,
+            mb: 8,
+            color: "#fff",
+            textAlign: "center",
+          }}
+        >
+          <Typography
+            variant="h2"
+            fontSize={{ xs: "1.8rem", md: "2.3rem" }}
+            fontWeight={800}
+            gutterBottom
+            sx={{ mb: 2 }}
+          >
+            📄 Download Partner Packet
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{ mb: 4, maxWidth: 600, mx: "auto", fontSize: "1.1rem" }}
+          >
+            Get our complete partner packet with services overview, before/after
+            photos, COI info, and contact details—all in one PDF.
+          </Typography>
+          <Button
+            variant="contained"
+            size="large"
+            sx={{
+              px: 6,
+              py: 2,
+              fontWeight: 800,
+              fontSize: "1.2rem",
+              borderRadius: 3,
+              background: theme.palette.warning.main,
+              color: "#fff",
+              textTransform: "none",
+              boxShadow: "0 4px 24px 0 rgba(0,0,0,0.2)",
+              "&:hover": {
+                background: "#fff",
+                color: theme.palette.primary.main,
+              },
+            }}
+            href="/documents/Partner-Packet.pdf"
+            target="_blank"
+          >
+            Download Partner Packet (PDF)
+          </Button>
+        </Box>
+
+        {/* Communication & On-time Guarantee */}
+        <Box
+          component="section"
+          sx={{
+            py: { xs: 6, md: 8 },
+            px: { xs: 2, md: 4 },
+            mb: 8,
+            background: theme.palette.info.main,
+            borderRadius: 5,
+          }}
+        >
+          <Typography
+            variant="h2"
+            fontSize={{ xs: "1.8rem", md: "2.3rem" }}
+            fontWeight={800}
+            gutterBottom
+            textAlign="center"
+            sx={{
+              color: theme.palette.primary.main,
+              mb: 5,
+            }}
+          >
+            ✅ Our Service Standards
+          </Typography>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Box
+                sx={{
+                  background: "#fff",
+                  borderRadius: 3,
+                  p: 3,
+                  textAlign: "center",
+                  boxShadow: 2,
+                  height: "100%",
+                  border: `2px solid ${theme.palette.primary.main}`,
+                }}
+              >
+                <Typography fontSize="2.5rem" mb={1}>
+                  ⚡
+                </Typography>
+                <Typography
+                  variant="h6"
+                  fontWeight={700}
+                  color={theme.palette.primary.main}
+                  gutterBottom
+                >
+                  24-Hour Estimates
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Every inquiry gets a detailed estimate within one business day
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Box
+                sx={{
+                  background: "#fff",
+                  borderRadius: 3,
+                  p: 3,
+                  textAlign: "center",
+                  boxShadow: 2,
+                  height: "100%",
+                  border: `2px solid ${theme.palette.warning.main}`,
+                }}
+              >
+                <Typography fontSize="2.5rem" mb={1}>
+                  💬
+                </Typography>
+                <Typography
+                  variant="h6"
+                  fontWeight={700}
+                  color={theme.palette.warning.main}
+                  gutterBottom
+                >
+                  Daily Updates
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Progress photos and status updates throughout active projects
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Box
+                sx={{
+                  background: "#fff",
+                  borderRadius: 3,
+                  p: 3,
+                  textAlign: "center",
+                  boxShadow: 2,
+                  height: "100%",
+                  border: `2px solid #4caf50`,
+                }}
+              >
+                <Typography fontSize="2.5rem" mb={1}>
+                  🕐
+                </Typography>
+                <Typography
+                  variant="h6"
+                  fontWeight={700}
+                  color="#4caf50"
+                  gutterBottom
+                >
+                  Arrival Windows
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Clear time windows so you and your clients know when
+                  we&apos;ll arrive
+                </Typography>
+              </Box>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+              <Box
+                sx={{
+                  background: "#fff",
+                  borderRadius: 3,
+                  p: 3,
+                  textAlign: "center",
+                  boxShadow: 2,
+                  height: "100%",
+                  border: `2px solid #9c27b0`,
+                }}
+              >
+                <Typography fontSize="2.5rem" mb={1}>
+                  📋
+                </Typography>
+                <Typography
+                  variant="h6"
+                  fontWeight={700}
+                  color="#9c27b0"
+                  gutterBottom
+                >
+                  Written Scope
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Detailed written estimates and change orders—no surprises
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+
+        {/* Partner Form Section */}
+        <Box
+          id="partner-form"
+          component="section"
+          sx={{
+            py: { xs: 6, md: 8 },
+            px: { xs: 2, md: 6 },
+            background: theme.palette.info.main,
+            borderRadius: 5,
+            boxShadow: 4,
+            mb: 8,
+          }}
+        >
+          <Typography
+            variant="h2"
+            fontSize={{ xs: "1.8rem", md: "2.3rem" }}
+            fontWeight={800}
+            gutterBottom
+            textAlign="center"
+            sx={{
+              color: theme.palette.primary.main,
+              mb: 3,
+            }}
+          >
+            🤝 Become a Referral Partner
+          </Typography>
+          <Typography
+            variant="body1"
+            textAlign="center"
+            color="text.secondary"
+            sx={{ mb: 4, maxWidth: 600, mx: "auto", fontSize: "1.1rem" }}
+          >
+            Fill out the form below and we&apos;ll set you up as a referral
+            partner. Start earning $100 per closed referral today!
+          </Typography>
+          <Box
+            sx={{
+              maxWidth: 600,
+              mx: "auto",
+              background: "#fff",
+              p: 4,
+              borderRadius: 4,
+              boxShadow: 3,
+            }}
+          >
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              textAlign="center"
+            >
+              📧 Email us at:{" "}
+              <a
+                href={`mailto:${companyEmail}`}
+                style={{ color: theme.palette.primary.main, fontWeight: 700 }}
+              >
+                {companyEmail}
+              </a>
+              <br />
+              📱 Or text/call:{" "}
+              <a
+                href={`tel:${companyPhone}`}
+                style={{ color: theme.palette.primary.main, fontWeight: 700 }}
+              >
+                {companyPhoneFormatted}
+              </a>
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* Featured Projects - Already exists in original */}
         <Box
           component="section"
           sx={{
@@ -311,7 +1391,6 @@ export default function OurPreviousWorkPage() {
             overflow: "hidden",
           }}
         >
-          {/* Abstract geometric pattern */}
           <Box
             sx={{
               position: "absolute",
@@ -461,7 +1540,6 @@ export default function OurPreviousWorkPage() {
             overflow: "hidden",
           }}
         >
-          {/* Subtle geometric accent */}
           <Box
             sx={{
               position: "absolute",
