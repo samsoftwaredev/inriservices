@@ -320,7 +320,6 @@ export default function OurPreviousWorkPage() {
                   px: 4,
                   py: 1.5,
                   fontWeight: 700,
-                  fontSize: "1.05rem",
                   borderRadius: 3,
                   border: `2px solid ${theme.palette.primary.main}`,
                   color: theme.palette.primary.main,
@@ -334,10 +333,35 @@ export default function OurPreviousWorkPage() {
                     transform: "translateY(-2px)",
                   },
                 }}
-                href="/documents/COI.pdf"
+                href="/INRI_Paint_Wall_Texas_Marketing_Partnership_Agreement.pdf"
                 target="_blank"
               >
-                Download COI (PDF)
+                Download Partnership Agreement (Realtors)
+              </Button>
+              <Button
+                variant="outlined"
+                size="large"
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  fontWeight: 700,
+                  borderRadius: 3,
+                  border: `2px solid ${theme.palette.primary.main}`,
+                  color: theme.palette.primary.main,
+                  textTransform: "none",
+                  letterSpacing: 0.5,
+                  transition: "all 0.2s cubic-bezier(.4,0,.2,1)",
+                  "&:hover": {
+                    background: theme.palette.primary.main,
+                    color: "#fff",
+                    border: `2px solid ${theme.palette.primary.main}`,
+                    transform: "translateY(-2px)",
+                  },
+                }}
+                href="/INRI_Paint_Wall_Referral_Agreement_Texas.pdf"
+                target="_blank"
+              >
+                Download Partnership Agreement (Plumbers & Electricians)
               </Button>
             </Box>
           </Box>
@@ -393,11 +417,11 @@ export default function OurPreviousWorkPage() {
                   fontWeight={700}
                   color="text.primary"
                 >
-                  4.9/5.0
+                  5.0
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
                   <a
-                    href="https://g.page/r/YOUR_GOOGLE_ID"
+                    href="https://maps.app.goo.gl/f5QAd9NT7ZUtNxt76"
                     target="_blank"
                     rel="noopener"
                     style={{ color: theme.palette.primary.main }}
@@ -1107,7 +1131,7 @@ export default function OurPreviousWorkPage() {
                   color: "#fff",
                 },
               }}
-              href="https://g.page/r/YOUR_GOOGLE_ID"
+              href="https://maps.app.goo.gl/f5QAd9NT7ZUtNxt76"
               target="_blank"
             >
               Read All Reviews on Google
@@ -1136,38 +1160,69 @@ export default function OurPreviousWorkPage() {
             gutterBottom
             sx={{ mb: 2 }}
           >
-            📄 Download Partner Packet
+            📄 Download Partner Agreement
           </Typography>
           <Typography
             variant="body1"
             sx={{ mb: 4, maxWidth: 600, mx: "auto", fontSize: "1.1rem" }}
           >
-            Get our complete partner packet with services overview, before/after
-            photos, COI info, and contact details—all in one PDF.
+            {selectedTrade === 0
+              ? "Get the Marketing Partnership Agreement for real estate professionals—includes services overview, commission structure, and complete terms."
+              : "Get the Referral Agreement for trade partners—includes services overview, referral fee structure, and complete terms."}
           </Typography>
-          <Button
-            variant="contained"
-            size="large"
-            sx={{
-              px: 6,
-              py: 2,
-              fontWeight: 800,
-              fontSize: "1.2rem",
-              borderRadius: 3,
-              background: theme.palette.warning.main,
-              color: "#fff",
-              textTransform: "none",
-              boxShadow: "0 4px 24px 0 rgba(0,0,0,0.2)",
-              "&:hover": {
-                background: "#fff",
-                color: theme.palette.primary.main,
-              },
-            }}
-            href="/documents/Partner-Packet.pdf"
-            target="_blank"
-          >
-            Download Partner Packet (PDF)
-          </Button>
+          <Box gap={2} display="flex" justifyContent="center" flexWrap="wrap">
+            <Button
+              variant="contained"
+              size="large"
+              sx={{
+                px: 6,
+                py: 2,
+                fontWeight: 800,
+                fontSize: "1.2rem",
+                borderRadius: 3,
+                background: theme.palette.warning.main,
+                color: "#fff",
+                textTransform: "none",
+                boxShadow: "0 4px 24px 0 rgba(0,0,0,0.2)",
+                "&:hover": {
+                  background: "#fff",
+                  color: theme.palette.primary.main,
+                },
+              }}
+              href={
+                selectedTrade === 0
+                  ? "/INRI_Paint_Wall_Texas_Marketing_Partnership_Agreement.pdf"
+                  : "/INRI_Paint_Wall_Referral_Agreement_Texas.pdf"
+              }
+              target="_blank"
+            >
+              {selectedTrade === 0
+                ? "Download Marketing Agreement (PDF)"
+                : "Download Referral Agreement (PDF)"}
+            </Button>
+            <Button
+              variant="outlined"
+              size="large"
+              sx={{
+                px: 4,
+                py: 2,
+                fontWeight: 700,
+                fontSize: "1.05rem",
+                borderRadius: 3,
+                border: "2px solid #fff",
+                color: "#fff",
+                textTransform: "none",
+                "&:hover": {
+                  background: "rgba(255,255,255,0.1)",
+                  border: "2px solid #fff",
+                },
+              }}
+              href="https://portal.nextinsurance.com/public/certificates/live-certificate/b3bc54272d844f07920c0c6dbf3807f2?channel=coi&source=qr"
+              target="_blank"
+            >
+              Download COI (PDF)
+            </Button>
+          </Box>
         </Box>
 
         {/* Communication & On-time Guarantee */}
@@ -1440,13 +1495,6 @@ export default function OurPreviousWorkPage() {
                     boxShadow: 6,
                     transform: "translateY(-4px) scale(1.02)",
                   },
-                  "&:before": {
-                    content: '"🛋️"',
-                    position: "absolute",
-                    top: 16,
-                    left: -38,
-                    fontSize: "2.5rem",
-                  },
                 }}
               >
                 <Typography
@@ -1455,7 +1503,7 @@ export default function OurPreviousWorkPage() {
                   fontWeight={700}
                   gutterBottom
                   sx={{
-                    color: theme.palette.warning.main,
+                    color: theme.palette.primary.main,
                   }}
                 >
                   Interior Painting & Drywall Repair – Plano, TX
@@ -1489,13 +1537,6 @@ export default function OurPreviousWorkPage() {
                   "&:hover": {
                     boxShadow: 6,
                     transform: "translateY(-4px) scale(1.02)",
-                  },
-                  "&:before": {
-                    content: '"🏡"',
-                    position: "absolute",
-                    top: 16,
-                    left: -38,
-                    fontSize: "2.5rem",
                   },
                 }}
               >
