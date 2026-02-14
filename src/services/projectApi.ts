@@ -1,14 +1,11 @@
 import { supabase } from "@/app/supabaseConfig";
 import { assertOk } from "@/tools";
 import {
-  Client,
   ListResult,
   Project,
   ProjectStatus,
   ProjectType,
   ProjectWithRelationsAndRooms,
-  Property,
-  PropertyRoom,
 } from "@/types";
 
 type ProjectInsert = Omit<Project, "id" | "created_at" | "updated_at">;
@@ -46,7 +43,7 @@ export const projectApi = {
           rooms:property_rooms(*)
         )
         `,
-      { count: "exact" }
+      { count: "exact" },
     );
 
     if (params?.status) query = query.eq("status", params.status);
@@ -72,7 +69,7 @@ export const projectApi = {
   },
 
   async getProjectWithClientPropertyAndRooms(
-    projectId: string
+    projectId: string,
   ): Promise<ProjectWithRelationsAndRooms> {
     const res = await supabase
       .from("projects")
@@ -84,14 +81,14 @@ export const projectApi = {
           *,
           rooms:property_rooms(*)
         )
-        `
+        `,
       )
       .eq("id", projectId)
       .single();
 
     return assertOk(
       res,
-      `Project not found: ${projectId}`
+      `Project not found: ${projectId}`,
     ) as unknown as ProjectWithRelationsAndRooms;
   },
 
@@ -148,7 +145,7 @@ export const projectApi = {
             *,
             rooms:property_rooms(*)
             )
-        `
+        `,
       )
       .eq("id", projectId)
       .single();
@@ -172,7 +169,7 @@ export const projectApi = {
 
   /** Create + return embedded relations (client/property/rooms) */
   async createProjectWithRelations(
-    input: ProjectInsert
+    input: ProjectInsert,
   ): Promise<ProjectWithRelationsAndRooms> {
     // Insert first
     const created = await this.createProject(input);
@@ -186,7 +183,7 @@ export const projectApi = {
    * --------------------------------------- */
   async updateProject(
     projectId: string,
-    patch: ProjectUpdate
+    patch: ProjectUpdate,
   ): Promise<Project> {
     const res = await supabase
       .from("projects")
@@ -200,7 +197,7 @@ export const projectApi = {
   /** Update + return embedded relations */
   async updateProjectWithRelations(
     projectId: string,
-    patch: ProjectUpdate
+    patch: ProjectUpdate,
   ): Promise<ProjectWithRelationsAndRooms> {
     await this.updateProject(projectId, patch);
     return this.getProjectWithClientPropertyAndRooms(projectId);
@@ -227,17 +224,33 @@ export const projectApi = {
 
   async setDates(
     projectId: string,
-    patch: { start_date?: string | null; end_date?: string | null }
+    patch: { start_date?: string | null; end_date?: string | null },
   ): Promise<Project> {
     return this.updateProject(projectId, patch);
   },
 
   async setInvoiceTotal(
     projectId: string,
-    invoice_total_cents: number | null
+    invoice_total_cents: number | null,
   ): Promise<Project> {
     return this.updateProject(projectId, {
       invoice_total_cents,
     } as unknown as ProjectUpdate);
+  },
+};
+
+export const projectApiGppExtras = {
+  async setMaterialCost(
+    projectId: string,
+    materialCostCents: number,
+  ): Promise<{ id: string; material_cost_cents: number }> {
+    const res = await supabase
+      .from("projects")
+      .update({ material_cost_cents: Math.max(0, materialCostCents) })
+      .eq("id", projectId)
+      .select("id,material_cost_cents")
+      .single();
+
+    return assertOk(res, "Failed to update project material cost") as any;
   },
 };

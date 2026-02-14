@@ -24,6 +24,16 @@ export type Invoice = Database["public"]["Tables"]["invoices"]["Row"];
 export type InvoiceItem = Database["public"]["Tables"]["invoice_items"]["Row"];
 export type PropertyRoom =
   Database["public"]["Tables"]["property_rooms"]["Row"];
+export type CompanyFinancialProfile =
+  Database["public"]["Tables"]["company_financial_profiles"]["Row"];
+export type ProjectEstimate =
+  Database["public"]["Tables"]["project_estimates"]["Row"];
+export type ProjectEstimateLine =
+  Database["public"]["Tables"]["project_estimate_lines"]["Row"];
+export type ProductionRateTemplate =
+  Database["public"]["Tables"]["production_rate_templates"]["Row"];
+export type CompanyProductionRate =
+  Database["public"]["Tables"]["company_production_rates"]["Row"];
 
 export type ClientWithProperties = Client & {
   properties: Property[];
@@ -300,3 +310,22 @@ export interface ReceiptDisplayData {
   notes?: string;
   status: string;
 }
+
+export type ServiceType =
+  | "interior_paint"
+  | "exterior_paint"
+  | "drywall_patch"
+  | "drywall_finish"
+  | "trim_paint"
+  | "door_paint"
+  | "cabinet_paint";
+
+export type UnitType =
+  | "sqft_wall"
+  | "sqft_ceiling"
+  | "sqft_floor"
+  | "linear_ft_trim"
+  | "each_door"
+  | "each_patch";
+
+export type EstimateStatus = "draft" | "final";
