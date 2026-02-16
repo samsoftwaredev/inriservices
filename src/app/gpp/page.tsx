@@ -653,6 +653,24 @@ const GPPAdmin = () => {
                           <Typography variant="h4" fontWeight={700}>
                             {profile?.sellable_man_hours?.toFixed(0) ?? "—"}
                           </Typography>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            display="block"
+                            sx={{ mt: 1 }}
+                          >
+                            {profileForm.field_employee_count} employees ×{" "}
+                            {profileForm.weeks_per_year} weeks ×{" "}
+                            {profileForm.hours_per_week} hrs/week
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ mt: 1 }}
+                          >
+                            Total billable hours available per year across your
+                            field team
+                          </Typography>
                         </CardContent>
                       </Card>
 
@@ -663,6 +681,25 @@ const GPPAdmin = () => {
                           </Typography>
                           <Typography variant="h4" fontWeight={700}>
                             {formatCurrency(profile?.overhead_per_hour_cents)}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            display="block"
+                            sx={{ mt: 1 }}
+                          >
+                            {formatCurrency(profileForm.annual_overhead_cents)}{" "}
+                            annual overhead ÷{" "}
+                            {profile?.sellable_man_hours?.toFixed(0) ?? "0"}{" "}
+                            hours
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ mt: 1 }}
+                          >
+                            Fixed costs (rent, insurance, admin) allocated per
+                            billable hour
                           </Typography>
                         </CardContent>
                       </Card>
@@ -677,6 +714,24 @@ const GPPAdmin = () => {
                               profile?.direct_labor_cost_per_hour_cents,
                             )}
                           </Typography>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            display="block"
+                            sx={{ mt: 1 }}
+                          >
+                            {formatCurrency(profileForm.avg_wage_cents)} wage ×
+                            (1 + {formatPercent(profileForm.labor_burden_bps)}{" "}
+                            burden)
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ mt: 1 }}
+                          >
+                            Base wage plus payroll taxes, insurance, and
+                            benefits
+                          </Typography>
                         </CardContent>
                       </Card>
 
@@ -687,6 +742,27 @@ const GPPAdmin = () => {
                           </Typography>
                           <Typography variant="h4" fontWeight={700}>
                             {formatCurrency(profile?.true_cost_per_hour_cents)}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            display="block"
+                            sx={{ mt: 1 }}
+                          >
+                            {formatCurrency(
+                              profile?.direct_labor_cost_per_hour_cents,
+                            )}{" "}
+                            labor +{" "}
+                            {formatCurrency(profile?.overhead_per_hour_cents)}{" "}
+                            overhead
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ mt: 1 }}
+                          >
+                            Total cost to keep one person working for one hour
+                            (break-even rate)
                           </Typography>
                         </CardContent>
                       </Card>
@@ -700,6 +776,27 @@ const GPPAdmin = () => {
                             {formatCurrency(
                               profile?.billable_rate_per_hour_cents,
                             )}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            display="block"
+                            sx={{ mt: 1 }}
+                          >
+                            {formatCurrency(profile?.true_cost_per_hour_cents)}{" "}
+                            true cost × (1 +{" "}
+                            {formatPercent(
+                              profileForm.target_profit_margin_bps,
+                            )}{" "}
+                            profit)
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ mt: 1 }}
+                          >
+                            Minimum rate to charge customers to hit your target
+                            profit margin
                           </Typography>
                         </CardContent>
                       </Card>
