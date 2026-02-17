@@ -14,6 +14,127 @@ export type Database = {
   }
   public: {
     Tables: {
+      accounts: {
+        Row: {
+          code: string | null
+          company_id: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          parent_account_id: string | null
+          type: Database["public"]["Enums"]["account_type"]
+          updated_at: string
+        }
+        Insert: {
+          code?: string | null
+          company_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          parent_account_id?: string | null
+          type: Database["public"]["Enums"]["account_type"]
+          updated_at?: string
+        }
+        Update: {
+          code?: string | null
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          parent_account_id?: string | null
+          type?: Database["public"]["Enums"]["account_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "accounts_parent_account_id_fkey"
+            columns: ["parent_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      assets: {
+        Row: {
+          category: string | null
+          company_id: string
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          purchase_date: string
+          purchase_price_cents: number
+          status: Database["public"]["Enums"]["asset_status"]
+          transaction_id: string | null
+          updated_at: string
+          vendor_id: string | null
+        }
+        Insert: {
+          category?: string | null
+          company_id: string
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          purchase_date: string
+          purchase_price_cents: number
+          status?: Database["public"]["Enums"]["asset_status"]
+          transaction_id?: string | null
+          updated_at?: string
+          vendor_id?: string | null
+        }
+        Update: {
+          category?: string | null
+          company_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          purchase_date?: string
+          purchase_price_cents?: number
+          status?: Database["public"]["Enums"]["asset_status"]
+          transaction_id?: string | null
+          updated_at?: string
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assets_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "financial_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           client_type: Database["public"]["Enums"]["client_type"]
@@ -193,6 +314,205 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_documents: {
+        Row: {
+          bucket: string
+          company_id: string
+          created_at: string
+          description: string | null
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_name: string
+          file_path: string
+          id: string
+          mime_type: string | null
+          project_id: string | null
+          size_bytes: number | null
+          transaction_id: string | null
+          uploaded_at: string
+          uploaded_by: string | null
+          vendor_id: string | null
+        }
+        Insert: {
+          bucket?: string
+          company_id: string
+          created_at?: string
+          description?: string | null
+          document_type?: Database["public"]["Enums"]["document_type"]
+          file_name: string
+          file_path: string
+          id?: string
+          mime_type?: string | null
+          project_id?: string | null
+          size_bytes?: number | null
+          transaction_id?: string | null
+          uploaded_at?: string
+          uploaded_by?: string | null
+          vendor_id?: string | null
+        }
+        Update: {
+          bucket?: string
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          document_type?: Database["public"]["Enums"]["document_type"]
+          file_name?: string
+          file_path?: string
+          id?: string
+          mime_type?: string | null
+          project_id?: string | null
+          size_bytes?: number | null
+          transaction_id?: string | null
+          uploaded_at?: string
+          uploaded_by?: string | null
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_documents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_documents_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_documents_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "financial_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_documents_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_transactions: {
+        Row: {
+          account_id: string
+          amount_cents: number
+          client_id: string | null
+          company_id: string
+          created_at: string
+          currency: string
+          description: string
+          external_id: string | null
+          id: string
+          invoice_id: string | null
+          memo: string | null
+          posted_at: string
+          project_id: string | null
+          receipt_id: string | null
+          reference_number: string | null
+          source: Database["public"]["Enums"]["transaction_source"]
+          transaction_date: string
+          updated_at: string
+          vendor_id: string | null
+        }
+        Insert: {
+          account_id: string
+          amount_cents: number
+          client_id?: string | null
+          company_id: string
+          created_at?: string
+          currency?: string
+          description: string
+          external_id?: string | null
+          id?: string
+          invoice_id?: string | null
+          memo?: string | null
+          posted_at?: string
+          project_id?: string | null
+          receipt_id?: string | null
+          reference_number?: string | null
+          source?: Database["public"]["Enums"]["transaction_source"]
+          transaction_date: string
+          updated_at?: string
+          vendor_id?: string | null
+        }
+        Update: {
+          account_id?: string
+          amount_cents?: number
+          client_id?: string | null
+          company_id?: string
+          created_at?: string
+          currency?: string
+          description?: string
+          external_id?: string | null
+          id?: string
+          invoice_id?: string | null
+          memo?: string | null
+          posted_at?: string
+          project_id?: string | null
+          receipt_id?: string | null
+          reference_number?: string | null
+          source?: Database["public"]["Enums"]["transaction_source"]
+          transaction_date?: string
+          updated_at?: string
+          vendor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "financial_transactions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_transactions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_transactions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_transactions_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_transactions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_transactions_receipt_id_fkey"
+            columns: ["receipt_id"]
+            isOneToOne: false
+            referencedRelation: "receipts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "financial_transactions_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
             referencedColumns: ["id"]
           },
         ]
@@ -956,6 +1276,53 @@ export type Database = {
           },
         ]
       }
+      vendors: {
+        Row: {
+          company_id: string
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          tax_id_last4: string | null
+          type: Database["public"]["Enums"]["vendor_type"]
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          tax_id_last4?: string | null
+          type?: Database["public"]["Enums"]["vendor_type"]
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          tax_id_last4?: string | null
+          type?: Database["public"]["Enums"]["vendor_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendors_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       my_profile: {
@@ -1047,8 +1414,25 @@ export type Database = {
       recalc_project_estimate: { Args: { p_project_id: string }; Returns: Json }
     }
     Enums: {
+      account_type:
+        | "revenue"
+        | "cogs"
+        | "expense"
+        | "asset"
+        | "liability"
+        | "equity"
+      asset_status: "active" | "sold" | "disposed"
       client_status: "lead" | "active" | "inactive"
       client_type: "person" | "business"
+      document_type:
+        | "expense_receipt"
+        | "supplier_invoice"
+        | "client_payment_proof"
+        | "bank_statement"
+        | "tax_document"
+        | "asset_purchase"
+        | "warranty"
+        | "other"
       estimate_status: "draft" | "final"
       invoice_status:
         | "draft"
@@ -1095,6 +1479,14 @@ export type Database = {
         | "trim_paint"
         | "door_paint"
         | "cabinet_paint"
+      transaction_source:
+        | "manual"
+        | "receipt_posted"
+        | "receipt_refunded"
+        | "receipt_voided"
+        | "invoice_created"
+        | "invoice_updated"
+        | "import"
       unit_type:
         | "sqft_wall"
         | "sqft_ceiling"
@@ -1102,6 +1494,7 @@ export type Database = {
         | "linear_ft_trim"
         | "each_door"
         | "each_patch"
+      vendor_type: "supplier" | "subcontractor" | "service" | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1229,8 +1622,27 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      account_type: [
+        "revenue",
+        "cogs",
+        "expense",
+        "asset",
+        "liability",
+        "equity",
+      ],
+      asset_status: ["active", "sold", "disposed"],
       client_status: ["lead", "active", "inactive"],
       client_type: ["person", "business"],
+      document_type: [
+        "expense_receipt",
+        "supplier_invoice",
+        "client_payment_proof",
+        "bank_statement",
+        "tax_document",
+        "asset_purchase",
+        "warranty",
+        "other",
+      ],
       estimate_status: ["draft", "final"],
       invoice_status: [
         "draft",
@@ -1282,6 +1694,15 @@ export const Constants = {
         "door_paint",
         "cabinet_paint",
       ],
+      transaction_source: [
+        "manual",
+        "receipt_posted",
+        "receipt_refunded",
+        "receipt_voided",
+        "invoice_created",
+        "invoice_updated",
+        "import",
+      ],
       unit_type: [
         "sqft_wall",
         "sqft_ceiling",
@@ -1290,6 +1711,7 @@ export const Constants = {
         "each_door",
         "each_patch",
       ],
+      vendor_type: ["supplier", "subcontractor", "service", "other"],
     },
   },
 } as const

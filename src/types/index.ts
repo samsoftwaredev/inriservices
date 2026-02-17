@@ -34,6 +34,24 @@ export type ProductionRateTemplate =
   Database["public"]["Tables"]["production_rate_templates"]["Row"];
 export type CompanyProductionRate =
   Database["public"]["Tables"]["company_production_rates"]["Row"];
+export type Vendor = Database["public"]["Tables"]["vendors"]["Row"];
+export type FinancialTransaction =
+  Database["public"]["Tables"]["financial_transactions"]["Row"];
+export type FinancialDocument =
+  Database["public"]["Tables"]["financial_documents"]["Row"];
+export type Asset = Database["public"]["Tables"]["assets"]["Row"];
+export type Accounts = Database["public"]["Tables"]["accounts"]["Row"];
+
+export type DocumentType = Database["public"]["Enums"]["document_type"];
+
+export type AccountType = Database["public"]["Enums"]["account_type"];
+
+export type AssetStatus = Database["public"]["Enums"]["asset_status"];
+
+export type VendorType = Database["public"]["Enums"]["vendor_type"];
+
+export type TransactionSource =
+  Database["public"]["Enums"]["transaction_source"];
 
 export type ClientWithProperties = Client & {
   properties: Property[];
