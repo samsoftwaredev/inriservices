@@ -1,6 +1,6 @@
 import { supabase } from "@/app/supabaseConfig";
 import { assertOk } from "@/tools";
-import { FinancialDocument, ListResult } from "@/types";
+import { FinancialDocument, ListResult, DocumentType } from "@/types";
 
 /** ----------------------------
  * FINANCIAL DOCUMENTS (Receipt photos, PDFs)

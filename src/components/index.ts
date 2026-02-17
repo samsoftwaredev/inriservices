@@ -36,3 +36,12 @@ export type { InvoiceData, InvoiceItem, Customer } from "./InvoiceGenerator";
 export { InvoiceDemo } from "./InvoiceDemo";
 export { default as CreateInvoice } from "./CreateInvoice";
 export { default as InvoiceDetails } from "./InvoiceDetails";
+
+// Finance Module
+export { default as FinanceDashboard } from "./FinanceDashboard";
+export { default as LedgerTable } from "./LedgerTable";
+export { default as AccountsManager } from "./AccountsManager";
+export { default as VendorsManager } from "./VendorsManager";
+export { default as AssetsManager } from "./AssetsManager";
+export { default as TransactionDrawer } from "./TransactionDrawer";
+export { default as ReceiptUploader } from "./ReceiptUploader";

@@ -20,7 +20,7 @@ import {
   Settings as SettingsIcon,
   Logout as LogoutIcon,
   Receipt as ReceiptIcon,
-  Money,
+  Money as MoneyIcon,
 } from "@mui/icons-material";
 import { Person as PersonIcon } from "@mui/icons-material";
 import Link from "next/link";
@@ -73,13 +73,18 @@ const navigationItems = [
   // },
   {
     text: "Invoices",
-    icon: <Money />,
+    icon: <MoneyIcon />,
     path: "/invoices",
   },
   {
     text: "Receipts",
     icon: <ReceiptIcon />,
     path: "/receipts",
+  },
+  {
+    text: "Finance",
+    icon: <MoneyIcon />, // or any MUI icon
+    path: "/finance",
   },
   {
     text: "GPP Admin",
