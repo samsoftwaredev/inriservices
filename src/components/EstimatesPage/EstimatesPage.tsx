@@ -21,20 +21,16 @@ import {
 import { useRouter } from "next/navigation";
 import CustomerHeader from "../CustomerHeader";
 
-type EstimationType = "interior" | "exterior" | "general" | "blocks" | null;
+type EstimationType = "general" | "production-rate" | null;
 
 const EstimatesPage = () => {
   const router = useRouter();
 
   const handleContinue = (id: EstimationType) => {
-    if (id === "interior") {
-      router.push("/estimates/interior");
-    } else if (id === "exterior") {
-      router.push("/estimates/exterior");
-    } else if (id === "general") {
+    if (id === "general") {
       router.push("/estimates/general");
-    } else if (id === "blocks") {
-      router.push("/estimates/blocks");
+    } else if (id === "production-rate") {
+      router.push("/estimates/production-rate");
     }
   };
 
@@ -57,44 +53,10 @@ const EstimatesPage = () => {
       bgColor: "warning.50",
     },
     {
-      id: "interior" as const,
-      title: "Interior Estimate",
+      id: "production-rate" as const,
+      title: "Production Rate Estimate",
       description:
-        "Paint estimation for indoor spaces including rooms, walls, ceilings, and trim work",
-      icon: <HomeIcon sx={{ fontSize: 48, color: "primary.main" }} />,
-      features: [
-        "Room-by-room calculations",
-        "Wall, ceiling, and trim areas",
-        "Material cost breakdown",
-        "Labor time estimation",
-        "Primer and paint coverage",
-        "Surface preparation work",
-      ],
-      color: "primary.main",
-      bgColor: "primary.50",
-    },
-    {
-      id: "exterior" as const,
-      title: "Exterior Estimate",
-      description:
-        "Paint estimation for outdoor surfaces including siding, trim, doors, and windows",
-      icon: <DeckIcon sx={{ fontSize: 48, color: "success.main" }} />,
-      features: [
-        "Siding area calculations",
-        "Window and door measurements",
-        "Weather-resistant materials",
-        "Surface preparation needs",
-        "Multiple coat requirements",
-        "Seasonal considerations",
-      ],
-      color: "success.main",
-      bgColor: "success.50",
-    },
-    {
-      id: "blocks" as const,
-      title: "Lego Blocks Estimate",
-      description:
-        "Paint estimation based on selecting from preset 'Lego Blocks' of common repair and paint packages",
+        "Paint estimation based on production rates for different tasks and materials",
       icon: <DeckIcon sx={{ fontSize: 48, color: "info.main" }} />,
       features: [
         "Predefined repair and paint packages",
