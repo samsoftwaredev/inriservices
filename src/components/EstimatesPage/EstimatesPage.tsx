@@ -13,7 +13,6 @@ import {
   ListItemText,
 } from "@mui/material";
 import {
-  Home as HomeIcon,
   Deck as DeckIcon,
   Brush as BrushIcon,
   Check as CheckIcon,

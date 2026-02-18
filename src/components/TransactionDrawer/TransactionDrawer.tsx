@@ -70,13 +70,6 @@ const emptyForm: TransactionFormData = {
   source: "manual",
 };
 
-const formatCurrency = (cents: number): string => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(cents / 100);
-};
-
 export default function TransactionDrawer({
   open,
   onClose,

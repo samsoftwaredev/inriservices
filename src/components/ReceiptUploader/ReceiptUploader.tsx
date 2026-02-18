@@ -30,7 +30,8 @@ import {
   Close as CloseIcon,
 } from "@mui/icons-material";
 import { financialDocumentsApi } from "@/services/financialDocumentsApi";
-import type { FinancialDocument, DocumentType } from "@/types";
+import type { FinancialDocument } from "@/types";
+import { useAuth } from "@/context";
 
 interface ReceiptUploaderProps {
   transactionId: string | null; // null when creating a new transaction
@@ -47,6 +48,7 @@ export default function ReceiptUploader({
   projectId = null,
   vendorId = null,
 }: ReceiptUploaderProps) {
+  const { userData } = useAuth();
   const [documents, setDocuments] =
     useState<FinancialDocument[]>(existingDocuments);
   const [uploading, setUploading] = useState(false);
@@ -73,7 +75,7 @@ export default function ReceiptUploader({
     try {
       const uploadPromises = Array.from(files).map(async (file) => {
         // Build storage path
-        const companyId = "company"; // In production, fetch from context/session
+        const companyId = userData?.companyId; // In production, fetch from context/session
         const year = new Date().getFullYear();
         const timestamp = Date.now();
         const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
