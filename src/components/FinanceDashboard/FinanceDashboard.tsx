@@ -42,12 +42,14 @@ const MetricCard = ({
   icon,
   color = "primary.main",
   isPositive = true,
+  description,
 }: {
   title: string;
   value: number;
   icon: React.ReactNode;
   color?: string;
   isPositive?: boolean;
+  description?: string;
 }) => {
   const displayValue = formatCurrency(value);
   const isNegative = value < 0;
@@ -78,10 +80,16 @@ const MetricCard = ({
           sx={{
             color: isNegative && isPositive ? "error.main" : "text.primary",
             fontWeight: "bold",
+            mb: description ? 1 : 0,
           }}
         >
           {displayValue}
         </Typography>
+        {description && (
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+            {description}
+          </Typography>
+        )}
       </CardContent>
     </Card>
   );
@@ -162,7 +170,7 @@ export default function FinanceDashboard() {
       const account = accounts.get(tx.account_id);
       if (!account) return;
 
-      const amount = tx.amount_cents;
+      const amount = tx.amount_cents / 100; // Convert to dollars
 
       switch (account.type) {
         case "revenue":
@@ -247,6 +255,7 @@ export default function FinanceDashboard() {
                   value={metrics.grossRevenue}
                   icon={<TrendingUpIcon />}
                   color="success.main"
+                  description="Total income from all revenue sources before any deductions."
                 />
               </Grid>
 
@@ -257,6 +266,7 @@ export default function FinanceDashboard() {
                   icon={<ShoppingCartIcon />}
                   color="warning.main"
                   isPositive={false}
+                  description="Cost of Goods Sold: Direct costs of materials and labor for services delivered."
                 />
               </Grid>
 
@@ -267,6 +277,7 @@ export default function FinanceDashboard() {
                   icon={<ReceiptIcon />}
                   color="error.main"
                   isPositive={false}
+                  description="Business expenses not directly tied to services (rent, utilities, insurance, etc.)."
                 />
               </Grid>
 
@@ -276,6 +287,7 @@ export default function FinanceDashboard() {
                   value={metrics.netProfit}
                   icon={<MoneyIcon />}
                   color={metrics.netProfit >= 0 ? "success.main" : "error.main"}
+                  description="Calculated as: Gross Revenue + COGS + Operating Expenses (expenses are negative)."
                 />
               </Grid>
 
@@ -286,6 +298,7 @@ export default function FinanceDashboard() {
                   icon={<TrendingDownIcon />}
                   color="info.main"
                   isPositive={false}
+                  description="Money withdrawn by the owner from the business (equity transactions with negative amounts)."
                 />
               </Grid>
 
@@ -295,6 +308,7 @@ export default function FinanceDashboard() {
                   value={metrics.ownerContributions}
                   icon={<AccountBalanceIcon />}
                   color="primary.main"
+                  description="Money invested by the owner into the business (equity transactions with positive amounts)."
                 />
               </Grid>
             </Grid>
