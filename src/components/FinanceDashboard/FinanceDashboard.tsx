@@ -26,6 +26,17 @@ import { accountsApi } from "@/services/accountsApi";
 import { financialTransactionsApi } from "@/services/financialTransactionsApi";
 import type { Accounts, FinancialTransaction } from "@/types";
 import { formatCurrency } from "@/tools/costTools";
+import { FinancialReportButton } from "@/components/FinancialReportPDF";
+import type {
+  CompanyInfo,
+  ReportPeriod,
+} from "@/components/FinancialReportPDF";
+import {
+  companyEmail,
+  companyFullAddress,
+  companyName,
+  companyPhoneFormatted,
+} from "@/constants";
 
 interface SummaryMetrics {
   grossRevenue: number;
@@ -201,6 +212,21 @@ export default function FinanceDashboard() {
     return initial;
   }, [transactions, accounts]);
 
+  // Prepare company info and period for PDF report
+  const companyInfo: CompanyInfo = {
+    name: companyName,
+    address: companyFullAddress,
+    phone: companyPhoneFormatted,
+    email: companyEmail,
+  };
+
+  const reportPeriod: ReportPeriod = {
+    startDate: `${selectedYear}-01-01`,
+    endDate: `${selectedYear}-12-31`,
+    year: selectedYear,
+    accountingMethod: "Cash",
+  };
+
   return (
     <Box>
       <Box
@@ -209,25 +235,39 @@ export default function FinanceDashboard() {
           justifyContent: "space-between",
           alignItems: "center",
           mb: 3,
+          gap: 2,
         }}
       >
         <Typography variant="h5" component="h2">
           Financial Dashboard
         </Typography>
-        <FormControl sx={{ minWidth: 150 }}>
-          <InputLabel>Year</InputLabel>
-          <Select
-            value={selectedYear}
-            label="Year"
-            onChange={(e) => setSelectedYear(Number(e.target.value))}
-          >
-            {yearOptions.map((year) => (
-              <MenuItem key={year} value={year}>
-                {year}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+          {!loading && transactions.length > 0 && (
+            <FinancialReportButton
+              transactions={transactions}
+              accounts={accounts}
+              company={companyInfo}
+              period={reportPeriod}
+              prepared={{
+                preparedBy: companyInfo.name,
+              }}
+            />
+          )}
+          <FormControl sx={{ minWidth: 150 }}>
+            <InputLabel>Year</InputLabel>
+            <Select
+              value={selectedYear}
+              label="Year"
+              onChange={(e) => setSelectedYear(Number(e.target.value))}
+            >
+              {yearOptions.map((year) => (
+                <MenuItem key={year} value={year}>
+                  {year}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
       </Box>
 
       {error && (

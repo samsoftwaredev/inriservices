@@ -45,3 +45,14 @@ export { default as VendorsManager } from "./VendorsManager";
 export { default as AssetsManager } from "./AssetsManager";
 export { default as TransactionDrawer } from "./TransactionDrawer";
 export { default as ReceiptUploader } from "./ReceiptUploader";
+export {
+  FinancialReportPDF,
+  FinancialReportButton,
+} from "./FinancialReportPDF";
+export type {
+  FinancialReportData,
+  ReportTransaction,
+  CompanyInfo,
+  ReportPeriod,
+  PreparedInfo,
+} from "./FinancialReportPDF";
