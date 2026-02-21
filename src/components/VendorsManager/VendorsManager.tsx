@@ -14,7 +14,6 @@ import {
   Drawer,
   FormControl,
   IconButton,
-  InputAdornment,
   InputLabel,
   MenuItem,
   Paper,
@@ -38,7 +37,6 @@ import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-  Search as SearchIcon,
   Close as CloseIcon,
   Receipt as ReceiptIcon,
 } from "@mui/icons-material";
@@ -46,6 +44,8 @@ import { vendorsApi } from "@/services/vendersApi";
 import { financialTransactionsApi } from "@/services/financialTransactionsApi";
 import type { Vendor, VendorType, FinancialTransaction } from "@/types";
 import { Constants } from "../../../database.types";
+import PageHeader from "../PageHeader";
+import VendorsFilters from "./VendorsFilters";
 
 interface VendorFormData {
   name: string;
@@ -249,59 +249,29 @@ export default function VendorsManager() {
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Typography variant="h5" component="h2">
-          Vendors
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => handleOpenDialog()}
-        >
-          Add Vendor
-        </Button>
-      </Box>
+      <PageHeader
+        title="Vendors"
+        subtitle="Manage your suppliers, subcontractors, and service providers"
+        actions={
+          <Button
+            variant="contained"
+            sx={{ my: 1 }}
+            startIcon={<AddIcon />}
+            onClick={() => handleOpenDialog()}
+          >
+            Add Vendor
+          </Button>
+        }
+      />
 
       {/* Filters */}
-      <Paper sx={{ p: 2, mb: 3 }}>
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <TextField
-            placeholder="Search by name, email, phone..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            sx={{ flexGrow: 1 }}
-          />
-          <FormControl sx={{ minWidth: 200 }}>
-            <InputLabel>Vendor Type</InputLabel>
-            <Select
-              value={typeFilter}
-              label="Vendor Type"
-              onChange={(e) => setTypeFilter(e.target.value as VendorType | "")}
-            >
-              <MenuItem value="">All Types</MenuItem>
-              {vendorTypes.map((type) => (
-                <MenuItem key={type} value={type}>
-                  {type}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
-      </Paper>
+      <VendorsFilters
+        searchQuery={searchQuery}
+        typeFilter={typeFilter}
+        vendorTypes={vendorTypes}
+        onSearchChange={setSearchQuery}
+        onTypeChange={setTypeFilter}
+      />
 
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>

@@ -24,7 +24,7 @@ import {
 } from "@mui/icons-material";
 import { accountsApi } from "@/services/accountsApi";
 import { financialTransactionsApi } from "@/services/financialTransactionsApi";
-import type { Accounts, FinancialTransaction } from "@/types";
+import type { Accounts, FinancialTransaction, MetricCard } from "@/types";
 import { formatCurrency } from "@/tools/costTools";
 import { FinancialReportButton } from "@/components/FinancialReportPDF";
 import type {
@@ -37,6 +37,8 @@ import {
   companyName,
   companyPhoneFormatted,
 } from "@/constants";
+import PageHeader from "../PageHeader";
+import MetricCards from "../Dashboard/MetricCards";
 
 interface SummaryMetrics {
   grossRevenue: number;
@@ -46,65 +48,6 @@ interface SummaryMetrics {
   ownerDraws: number;
   ownerContributions: number;
 }
-
-const MetricCard = ({
-  title,
-  value,
-  icon,
-  color = "primary.main",
-  isPositive = true,
-  description,
-}: {
-  title: string;
-  value: number;
-  icon: React.ReactNode;
-  color?: string;
-  isPositive?: boolean;
-  description?: string;
-}) => {
-  const displayValue = formatCurrency(value);
-  const isNegative = value < 0;
-
-  return (
-    <Card sx={{ height: "100%" }}>
-      <CardContent>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-          <Box
-            sx={{
-              backgroundColor: color,
-              color: "white",
-              borderRadius: 2,
-              p: 1,
-              mr: 2,
-              display: "flex",
-            }}
-          >
-            {icon}
-          </Box>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            {title}
-          </Typography>
-        </Box>
-        <Typography
-          variant="h4"
-          component="div"
-          sx={{
-            color: isNegative && isPositive ? "error.main" : "text.primary",
-            fontWeight: "bold",
-            mb: description ? 1 : 0,
-          }}
-        >
-          {displayValue}
-        </Typography>
-        {description && (
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-            {description}
-          </Typography>
-        )}
-      </CardContent>
-    </Card>
-  );
-};
 
 export default function FinanceDashboard() {
   const currentYear = new Date().getFullYear();
@@ -227,48 +170,107 @@ export default function FinanceDashboard() {
     accountingMethod: "Cash",
   };
 
+  const summaryCardsData: MetricCard[] = [
+    {
+      iconWrapperColor: "success.main",
+      bgColor: "success.light",
+      format: formatCurrency,
+      title: "Gross Revenue",
+      value: metrics.grossRevenue,
+      icon: <TrendingUpIcon />,
+      color: "success.main",
+      description:
+        "Total income from services before any deductions. Calculated as the sum of all transactions linked to revenue accounts.",
+    },
+    {
+      iconWrapperColor: "warning.main",
+      bgColor: "warning.light",
+      format: formatCurrency,
+      title: "COGS",
+      value: metrics.cogs,
+      icon: <ShoppingCartIcon />,
+      color: "warning.main",
+      description:
+        "Cost of Goods Sold: Direct costs of materials and labor for services delivered.",
+    },
+    {
+      iconWrapperColor: "error.main",
+      bgColor: "error.light",
+      format: formatCurrency,
+      title: "Operating Expenses",
+      value: metrics.operatingExpenses,
+      icon: <ReceiptIcon />,
+      color: "error.main",
+      description:
+        "Business expenses not directly tied to services (rent, utilities, insurance, etc.).",
+    },
+    {
+      iconWrapperColor: "info.main",
+      bgColor: "info.light",
+      format: formatCurrency,
+      title: "Net Profit",
+      value: metrics.netProfit,
+      icon: <MoneyIcon />,
+      color: metrics.netProfit >= 0 ? "success.main" : "error.main",
+      description:
+        "Calculated as: Gross Revenue + COGS + Operating Expenses (expenses are negative).",
+    },
+    {
+      title: "Owner Draws",
+      value: metrics.ownerDraws,
+      icon: <TrendingDownIcon />,
+      iconWrapperColor: "info.main",
+      bgColor: "info.light",
+      format: formatCurrency,
+      color: "info.main",
+      description:
+        "Money withdrawn by the owner from the business (equity transactions with negative amounts).",
+    },
+    {
+      iconWrapperColor: "primary.main",
+      bgColor: "primary.light",
+      format: formatCurrency,
+      title: "Owner Contributions",
+      value: metrics.ownerContributions,
+      icon: <AccountBalanceIcon />,
+      color: "primary.main",
+      description:
+        "Money invested by the owner into the business (equity transactions with positive amounts).",
+    },
+  ];
+
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-          gap: 2,
-        }}
-      >
-        <Typography variant="h5" component="h2">
-          Financial Dashboard
-        </Typography>
-        <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-          {!loading && transactions.length > 0 && (
-            <FinancialReportButton
-              transactions={transactions}
-              accounts={accounts}
-              company={companyInfo}
-              period={reportPeriod}
-              prepared={{
-                preparedBy: companyInfo.name,
-              }}
-            />
-          )}
-          <FormControl sx={{ minWidth: 150 }}>
-            <InputLabel>Year</InputLabel>
-            <Select
-              value={selectedYear}
-              label="Year"
-              onChange={(e) => setSelectedYear(Number(e.target.value))}
-            >
-              {yearOptions.map((year) => (
-                <MenuItem key={year} value={year}>
-                  {year}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Box>
-      </Box>
+      <PageHeader
+        title="Financial Dashboard"
+        subtitle="Get a quick overview of your financial performance for the year."
+        actions={
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              alignItems: "center",
+              flexDirection: { xs: "column", sm: "row" },
+              justifyContent: "flex-end",
+            }}
+          >
+            <FormControl sx={{ minWidth: 150, width: "100%" }} size="small">
+              <InputLabel>Year</InputLabel>
+              <Select
+                value={selectedYear}
+                label="Year"
+                onChange={(e) => setSelectedYear(Number(e.target.value))}
+              >
+                {yearOptions.map((year) => (
+                  <MenuItem key={year} value={year}>
+                    {year}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+        }
+      />
 
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
@@ -289,71 +291,21 @@ export default function FinanceDashboard() {
             </Alert>
           ) : (
             <Grid container spacing={3}>
-              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                <MetricCard
-                  title="Gross Revenue"
-                  value={metrics.grossRevenue}
-                  icon={<TrendingUpIcon />}
-                  color="success.main"
-                  description="Total income from all revenue sources before any deductions."
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                <MetricCard
-                  title="COGS"
-                  value={metrics.cogs}
-                  icon={<ShoppingCartIcon />}
-                  color="warning.main"
-                  isPositive={false}
-                  description="Cost of Goods Sold: Direct costs of materials and labor for services delivered."
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                <MetricCard
-                  title="Operating Expenses"
-                  value={metrics.operatingExpenses}
-                  icon={<ReceiptIcon />}
-                  color="error.main"
-                  isPositive={false}
-                  description="Business expenses not directly tied to services (rent, utilities, insurance, etc.)."
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                <MetricCard
-                  title="Net Profit"
-                  value={metrics.netProfit}
-                  icon={<MoneyIcon />}
-                  color={metrics.netProfit >= 0 ? "success.main" : "error.main"}
-                  description="Calculated as: Gross Revenue + COGS + Operating Expenses (expenses are negative)."
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                <MetricCard
-                  title="Owner Draws"
-                  value={metrics.ownerDraws}
-                  icon={<TrendingDownIcon />}
-                  color="info.main"
-                  isPositive={false}
-                  description="Money withdrawn by the owner from the business (equity transactions with negative amounts)."
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                <MetricCard
-                  title="Owner Contributions"
-                  value={metrics.ownerContributions}
-                  icon={<AccountBalanceIcon />}
-                  color="primary.main"
-                  description="Money invested by the owner into the business (equity transactions with positive amounts)."
-                />
-              </Grid>
+              <MetricCards summaryCards={summaryCardsData} />
             </Grid>
           )}
         </>
+      )}
+      {!loading && transactions.length > 0 && (
+        <FinancialReportButton
+          transactions={transactions}
+          accounts={accounts}
+          company={companyInfo}
+          period={reportPeriod}
+          prepared={{
+            preparedBy: companyInfo.name,
+          }}
+        />
       )}
     </Box>
   );

@@ -43,6 +43,7 @@ import { financialTransactionsApi } from "@/services/financialTransactionsApi";
 import type { Asset, AssetStatus, Vendor, Accounts } from "@/types";
 import { Constants } from "../../../database.types";
 import { formatCurrency } from "@/tools/costTools";
+import PageHeader from "../PageHeader";
 
 interface AssetFormData {
   name: string;
@@ -314,25 +315,20 @@ export default function AssetsManager() {
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Typography variant="h5" component="h2">
-          Assets
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => handleOpenDialog()}
-        >
-          Add Asset
-        </Button>
-      </Box>
+      <PageHeader
+        title="Assets Manager"
+        subtitle="Track and manage your business assets"
+        actions={
+          <Button
+            variant="contained"
+            sx={{ my: 1 }}
+            startIcon={<AddIcon />}
+            onClick={() => handleOpenDialog()}
+          >
+            Add Asset
+          </Button>
+        }
+      />
 
       {/* Filters */}
       <Paper sx={{ p: 2, mb: 3 }}>

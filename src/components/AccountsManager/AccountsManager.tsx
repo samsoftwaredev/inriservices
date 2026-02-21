@@ -38,6 +38,7 @@ import {
 import { accountsApi } from "@/services/accountsApi";
 import type { Accounts, AccountType } from "@/types";
 import { Constants } from "../../../database.types";
+import PageHeader from "../PageHeader";
 
 interface AccountFormData {
   name: string;
@@ -230,25 +231,20 @@ export default function AccountsManager() {
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Typography variant="h5" component="h2">
-          Chart of Accounts
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => handleOpenDialog()}
-        >
-          Add Account
-        </Button>
-      </Box>
+      <PageHeader
+        title="Chart of Accounts"
+        subtitle="Manage your financial accounts. Create, edit, or deactivate accounts as needed."
+        actions={
+          <Button
+            variant="contained"
+            sx={{ my: 1 }}
+            startIcon={<AddIcon />}
+            onClick={() => handleOpenDialog()}
+          >
+            Add Account
+          </Button>
+        }
+      />
 
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>

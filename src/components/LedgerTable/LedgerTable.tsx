@@ -17,6 +17,7 @@ import LedgerFilters from "./LedgerFilters";
 import LedgerMetrics from "./LedgerMetrics";
 import TransactionsTable from "./TransactionsTable";
 import type { Accounts, Vendor, FinancialTransaction } from "@/types";
+import PageHeader from "../PageHeader";
 
 const formatCurrency = (cents: number): string => {
   return new Intl.NumberFormat("en-US", {
@@ -167,26 +168,21 @@ export default function LedgerTable() {
   }, [transactions]);
 
   return (
-    <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Typography variant="h5" component="h2">
-          General Ledger
-        </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleAddTransaction}
-        >
-          Add Transaction
-        </Button>
-      </Box>
+    <>
+      <PageHeader
+        title="General Ledger"
+        subtitle="View and manage all your financial transactions in one place."
+        actions={
+          <Button
+            variant="contained"
+            sx={{ my: 1 }}
+            startIcon={<AddIcon />}
+            onClick={handleAddTransaction}
+          >
+            Add Transaction
+          </Button>
+        }
+      />
 
       {/* Filters */}
       <LedgerFilters
@@ -244,6 +240,6 @@ export default function LedgerTable() {
         transactionId={selectedTransactionId}
         onSaved={handleTransactionSaved}
       />
-    </Box>
+    </>
   );
 }

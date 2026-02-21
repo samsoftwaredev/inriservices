@@ -49,10 +49,6 @@ export default function FinancePage() {
   return (
     <ProtectedRoute>
       <AppLayout>
-        <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 3 }}>
-          Finance Module
-        </Typography>
-
         <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
           <Tabs
             value={activeTab}

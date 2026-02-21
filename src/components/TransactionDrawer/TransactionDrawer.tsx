@@ -276,7 +276,7 @@ export default function TransactionDrawer({
       onClose={onClose}
       PaperProps={{ sx: { width: { xs: "100%", sm: 600 } } }}
     >
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: 3, mt: 5 }}>
         <Box
           sx={{
             display: "flex",

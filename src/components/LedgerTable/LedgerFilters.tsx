@@ -11,6 +11,7 @@ import {
   Paper,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import { Search as SearchIcon } from "@mui/icons-material";
 import type { Accounts, Vendor } from "@/types";
@@ -44,8 +45,16 @@ export default function LedgerFilters({
 }: LedgerFiltersProps) {
   return (
     <Paper sx={{ p: 2, mb: 3 }}>
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 12, sm: 6, md: 3, lg: 2 }}>
+      <Typography variant="h6" component="div">
+        Table Filters
+      </Typography>
+      <Grid
+        container
+        spacing={2}
+        display={"flex"}
+        flexDirection={{ xs: "column", md: "row" }}
+      >
+        <Grid size={{ xs: 12, md: 3, lg: 2 }}>
           <FormControl fullWidth>
             <InputLabel>Year</InputLabel>
             <Select
@@ -62,7 +71,7 @@ export default function LedgerFilters({
           </FormControl>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+        <Grid size={{ xs: 12, md: 4, lg: 3 }}>
           <FormControl fullWidth>
             <InputLabel>Account</InputLabel>
             <Select
@@ -81,7 +90,7 @@ export default function LedgerFilters({
           </FormControl>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
+        <Grid size={{ xs: 12, md: 5, lg: 3 }}>
           <FormControl fullWidth>
             <InputLabel>Vendor</InputLabel>
             <Select
@@ -99,7 +108,7 @@ export default function LedgerFilters({
           </FormControl>
         </Grid>
 
-        <Grid size={{ xs: 12, sm: 6, md: 12, lg: 4 }}>
+        <Grid size={{ xs: 12, md: 12, lg: 4 }}>
           <TextField
             fullWidth
             placeholder="Search description, memo, reference..."
