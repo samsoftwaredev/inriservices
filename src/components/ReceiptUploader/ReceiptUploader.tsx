@@ -39,9 +39,11 @@ interface ReceiptUploaderProps {
   onDocumentsChange?: (documents: FinancialDocument[]) => void;
   projectId?: string | null;
   vendorId?: string | null;
+  yearSelected?: string | null;
 }
 
 export default function ReceiptUploader({
+  yearSelected,
   transactionId,
   existingDocuments = [],
   onDocumentsChange,
@@ -76,7 +78,7 @@ export default function ReceiptUploader({
       const uploadPromises = Array.from(files).map(async (file) => {
         // Build storage path
         const companyId = userData?.companyId; // In production, fetch from context/session
-        const year = new Date().getFullYear();
+        const year = yearSelected || new Date().getFullYear().toString();
         const timestamp = Date.now();
         const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
         const filePath = transactionId
@@ -84,6 +86,7 @@ export default function ReceiptUploader({
           : `${companyId}/${year}/temp/${timestamp}-${safeName}`;
 
         const doc = await financialDocumentsApi.uploadAndCreate({
+          company_id: companyId!,
           file: file,
           file_name: file.name,
           file_path: filePath,
@@ -134,7 +137,7 @@ export default function ReceiptUploader({
 
   const handlePreview = async (doc: FinancialDocument) => {
     try {
-      const url = await financialDocumentsApi.getSignedUrl(doc.id, 300); // 5 min expiry
+      const url = await financialDocumentsApi.getSignedUrl(doc.id, 1000); // 5 min expiry
       setPreviewUrl(url);
       setPreviewOpen(true);
     } catch (err) {
@@ -232,6 +235,7 @@ export default function ReceiptUploader({
         onClose={() => setPreviewOpen(false)}
         maxWidth="md"
         fullWidth
+        fullScreen={true}
       >
         <DialogTitle>
           <Box

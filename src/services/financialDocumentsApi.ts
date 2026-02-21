@@ -5,9 +5,8 @@ import { FinancialDocument, ListResult, DocumentType } from "@/types";
 /** ----------------------------
  * FINANCIAL DOCUMENTS (Receipt photos, PDFs)
  * ---------------------------- */
+const bucket = "financial-documents";
 export const financialDocumentsApi = {
-  bucket: "financial-documents",
-
   async list(params?: {
     transaction_id?: string;
     project_id?: string;
@@ -102,10 +101,11 @@ export const financialDocumentsApi = {
     project_id?: string | null;
     vendor_id?: string | null;
     description?: string | null;
+    company_id: string; // optional, can be inferred from session in create()
   }): Promise<FinancialDocument> {
     // Upload to Storage
     const { error: uploadErr } = await supabase.storage
-      .from(this.bucket)
+      .from(bucket)
       .upload(params.file_path, params.file, {
         upsert: false,
         contentType: (params.file as any).type ?? undefined,
@@ -117,7 +117,8 @@ export const financialDocumentsApi = {
     const size = (params.file as any).size ?? null;
 
     return await this.create({
-      bucket: this.bucket,
+      company_id: params.company_id,
+      bucket: bucket,
       file_path: params.file_path,
       file_name: params.file_name,
       mime_type: mime,
@@ -128,7 +129,7 @@ export const financialDocumentsApi = {
       vendor_id: params.vendor_id ?? null,
       description: params.description ?? null,
       uploaded_by: null, // optional: set to profile id if you store it
-    } as any);
+    });
   },
 
   /**

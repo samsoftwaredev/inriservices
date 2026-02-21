@@ -428,6 +428,7 @@ export default function TransactionDrawer({
               </Typography>
 
               <ReceiptUploader
+                yearSelected={formData.transaction_date.split("-")[0]}
                 transactionId={transactionId}
                 existingDocuments={documents}
                 onDocumentsChange={setDocuments}
