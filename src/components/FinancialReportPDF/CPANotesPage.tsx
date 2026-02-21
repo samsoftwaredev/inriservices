@@ -12,12 +12,12 @@ interface CPANotesPageProps {
   totalPages: number;
 }
 
-export const CPANotesPage: React.FC<CPANotesPageProps> = ({
+export const CPANotesPage = ({
   period,
   company,
   pageNumber,
   totalPages,
-}) => {
+}: CPANotesPageProps) => {
   return (
     <Page size="LETTER" style={styles.page}>
       <PageHeader company={company} period={period} />

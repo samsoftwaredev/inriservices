@@ -6,10 +6,14 @@ import {
   AccountBalance as AccountBalanceIcon,
   TrendingUp as TrendingUpIcon,
   TrendingDown as TrendingDownIcon,
+  Receipt as ReceiptIcon,
+  LinkOff as LinkOffIcon,
 } from "@mui/icons-material";
 
 interface LedgerMetricsProps {
   totalAmountCents: number;
+  totalTransactions: number;
+  transactionsWithNoLinks: number;
   formatCurrency: (cents: number) => string;
 }
 
@@ -68,6 +72,8 @@ const MetricCard = ({
 
 export default function LedgerMetrics({
   totalAmountCents,
+  totalTransactions,
+  transactionsWithNoLinks,
   formatCurrency,
 }: LedgerMetricsProps) {
   const isPositive = totalAmountCents >= 0;
@@ -83,7 +89,22 @@ export default function LedgerMetrics({
             value={formatCurrency(totalAmountCents)}
             icon={icon}
             color={color}
-            description="Sum of all filtered transaction amounts. Positive values represent income, negative values represent expenses."
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <MetricCard
+            title="Total Transactions"
+            value={totalTransactions.toString()}
+            icon={<ReceiptIcon />}
+            color="primary.main"
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <MetricCard
+            title="No Attachments"
+            value={transactionsWithNoLinks.toString()}
+            icon={<LinkOffIcon />}
+            color="warning.main"
           />
         </Grid>
       </Grid>

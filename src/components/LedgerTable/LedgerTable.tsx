@@ -158,6 +158,14 @@ export default function LedgerTable() {
     return transactions.reduce((sum, tx) => sum + tx.amount_cents, 0);
   }, [transactions]);
 
+  // Calculate transactions with no links
+  const transactionsWithNoLinks = useMemo(() => {
+    return transactions.filter(
+      (tx) =>
+        !tx.invoice_id && !tx.receipt_id && !tx.project_id && !tx.client_id,
+    ).length;
+  }, [transactions]);
+
   return (
     <Box>
       <Box
@@ -215,6 +223,8 @@ export default function LedgerTable() {
         <>
           <LedgerMetrics
             totalAmountCents={totalAmountCents}
+            totalTransactions={transactions.length}
+            transactionsWithNoLinks={transactionsWithNoLinks}
             formatCurrency={formatCurrency}
           />
           <TransactionsTable

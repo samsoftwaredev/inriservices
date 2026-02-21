@@ -27,7 +27,7 @@ export const TransactionsTablePages = ({
   company,
   startPage,
   totalPages,
-}): TransactionsTablePageProps => {
+}: TransactionsTablePageProps) => {
   const pages: React.ReactElement[] = [];
   const totalTxPages = Math.ceil(transactions.length / TRANSACTIONS_PER_PAGE);
 
