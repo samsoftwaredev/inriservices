@@ -168,7 +168,7 @@ export const getTransactionsWithReceipts = (
   transactions: ReportTransaction[],
 ): ReportTransaction[] => {
   return transactions
-    .filter((tx) => tx.has_receipt)
+    .filter((tx) => tx.receiptUrls && tx.receiptUrls.length > 0)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 };
 

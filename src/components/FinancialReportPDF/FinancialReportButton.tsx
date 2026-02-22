@@ -16,14 +16,11 @@ import type {
   FinancialTransaction,
   Accounts,
   FinancialDocument,
+  TransactionWithDocs,
 } from "@/types";
 
 interface FinancialReportButtonProps {
-  transactions: {
-    tx: FinancialTransaction;
-    docs: FinancialDocument[];
-    id: string;
-  }[];
+  transactions: TransactionWithDocs[];
   accounts: Map<string, Accounts>;
   company: CompanyInfo;
   period: ReportPeriod;
@@ -31,35 +28,31 @@ interface FinancialReportButtonProps {
 }
 
 const transformTransactionData = (
-  transactions: {
-    tx: FinancialTransaction;
-    docs: FinancialDocument[];
-    id: string;
-  }[],
+  transactions: TransactionWithDocs[],
   accounts: Map<string, Accounts>,
 ): ReportTransaction[] => {
   return transactions.map((item) => {
-    const account = accounts.get(item.tx.account_id);
+    const account = accounts.get(item.tx.accountId);
 
     return {
       id: item.tx.id,
-      date: item.tx.transaction_date,
-      amount: item.tx.amount_cents,
+      date: item.tx.transactionDate,
+      amount: item.tx.amountCents,
       currency: "USD",
       description: item.tx.description || "",
       memo: item.tx.memo || undefined,
-      vendor: item.tx.vendor_id ? "Vendor Name" : undefined,
+      vendor: item.tx.vendorId ? "Vendor Name" : undefined,
       category: account?.name,
       type: account?.type || "expense",
       account: account?.code || undefined,
       payment_method: undefined,
-      external_id: item.tx.external_id || undefined,
-      reference_number: item.tx.reference_number || undefined,
+      externalId: item.tx.externalId || undefined,
+      reference_number: item.tx.referenceNumber || undefined,
       notes: undefined,
       tags: undefined,
-      has_receipt: !!item.tx.receipt_id,
-      receipt_url: undefined,
-      attachment_name: item.tx.receipt_id ? "Receipt" : undefined,
+      has_receipt: !!item.tx.receiptId,
+      receipt_url: item.tx.receiptUrls,
+      attachment_name: item.tx.receiptId ? "Receipt" : undefined,
     };
   });
 };

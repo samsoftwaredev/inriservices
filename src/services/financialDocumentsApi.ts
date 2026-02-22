@@ -1,4 +1,5 @@
 import { supabase } from "@/app/supabaseConfig";
+import { BucketFile } from "@/components/FinancialReportPDF";
 import { assertOk } from "@/tools";
 import { FinancialDocument, ListResult, DocumentType } from "@/types";
 
@@ -164,11 +165,11 @@ export const financialDocumentsApi = {
     return data.signedUrl;
   },
 
-  async getReceiptFiles(filePath: string): Promise<string[]> {
+  async getReceiptFiles(filePath: string): Promise<BucketFile[]> {
     const { data: files, error } = await supabase.storage
       .from(bucketName)
       .list(filePath, {
-        limit: 1000,
+        limit: 10000,
         offset: 0,
       });
     if (error) {
@@ -179,14 +180,16 @@ export const financialDocumentsApi = {
       console.log("No files found in the bucket.");
       return [];
     }
-    debugger;
+
     // 2. Generate a public URL for each file
-    const imageUrls: string[] = files.map((file: { name: string }) => {
-      const { data } = supabase.storage
-        .from(bucketName)
-        .getPublicUrl(file.name);
-      return data.publicUrl;
-    });
+    const imageUrls: { url: string; name: string }[] = files.map(
+      (file: { name: string }) => {
+        const { data } = supabase.storage
+          .from(bucketName)
+          .getPublicUrl(file.name);
+        return { url: data.publicUrl, name: file.name };
+      },
+    );
 
     return imageUrls;
   },

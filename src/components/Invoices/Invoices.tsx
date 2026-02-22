@@ -123,8 +123,6 @@ const Invoices = () => {
       value: stats.totalInvoices,
       icon: <InvoiceIcon />,
       color: "primary.light",
-      bgColor: "primary.50",
-      iconWrapperColor: "primary.main",
       format: (value: number) => value.toString(),
     },
     {
@@ -132,8 +130,6 @@ const Invoices = () => {
       value: stats.totalAmount,
       icon: <MoneyIcon />,
       color: "success.light",
-      bgColor: "success.50",
-      iconWrapperColor: "success.main",
       format: formatCurrency,
     },
     {
@@ -141,8 +137,6 @@ const Invoices = () => {
       value: stats.paidAmount,
       icon: <TrendingUpIcon />,
       color: "info.light",
-      bgColor: "info.50",
-      iconWrapperColor: "info.main",
       format: formatCurrency,
     },
     {
@@ -150,8 +144,6 @@ const Invoices = () => {
       value: stats.pendingAmount,
       icon: <AssessmentIcon />,
       color: "warning.light",
-      bgColor: "warning.50",
-      iconWrapperColor: "warning.main",
       format: formatCurrency,
     },
   ];

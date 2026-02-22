@@ -21,11 +21,14 @@ import {
 } from "@mui/icons-material";
 import { accountsApi } from "@/services/accountsApi";
 import { financialTransactionsApi } from "@/services/financialTransactionsApi";
-import type {
-  Accounts,
-  FinancialDocument,
-  FinancialTransaction,
-  MetricCard,
+import {
+  TransactionWithDocs,
+  type Accounts,
+  type FinancialDocument,
+  type FinancialDocumentTransformed,
+  type FinancialTransaction,
+  type FinancialTransactionTransformed,
+  type MetricCard,
 } from "@/types";
 import { formatCurrency, bucketPathForReceipt } from "@/tools";
 import { FinancialReportButton } from "@/components/FinancialReportPDF";
@@ -43,6 +46,10 @@ import PageHeader from "../PageHeader";
 import MetricCards from "../Dashboard/MetricCards";
 import { financialDocumentsApi } from "@/services/financialDocumentsApi";
 import { useAuth } from "@/context";
+import {
+  financialDocumentTransformer,
+  financialTransactionTransformer,
+} from "@/tools/transformers";
 
 interface SummaryMetrics {
   grossRevenue: number;
@@ -60,10 +67,7 @@ export default function FinanceDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [accounts, setAccounts] = useState<Map<string, Accounts>>(new Map());
-  const [receiptFiles, setReceiptFiles] = useState<string[]>([]);
-  const [transactions, setTransactions] = useState<
-    { tx: FinancialTransaction; docs: FinancialDocument[]; id: string }[]
-  >([]);
+  const [transactions, setTransactions] = useState<TransactionWithDocs[]>([]);
 
   // Generate year options (current year + past 5 years)
   const yearOptions = useMemo(() => {
@@ -105,14 +109,21 @@ export default function FinanceDashboard() {
           year: selectedYear,
           limit: 10000, // Get all for the year
         });
-        setTransactions(result.items);
         const files = await financialDocumentsApi.getReceiptFiles(
           bucketPathForReceipt({
             companyId: userData?.companyId!,
             year: selectedYear,
           }),
         );
-        setReceiptFiles(files);
+        setTransactions(
+          result.items.map(({ tx, docs }) => ({
+            tx: financialTransactionTransformer({
+              ...tx,
+              receipt_urls: files.filter((f) => f.name.startsWith(tx.id)),
+            }),
+            docs: docs.map((doc) => financialDocumentTransformer(doc)),
+          })),
+        );
       } catch (err) {
         console.error("Failed to load transactions:", err);
         setError("Failed to load transactions. Please try again.");
@@ -136,10 +147,10 @@ export default function FinanceDashboard() {
     };
 
     transactions.forEach((item) => {
-      const account = accounts.get(item.tx.account_id);
+      const account = accounts.get(item.tx.accountId);
       if (!account) return;
 
-      const amount = item.tx.amount_cents / 100; // Convert to dollars
+      const amount = item.tx.amountCents / 100; // Convert to dollars
 
       switch (account.type) {
         case "revenue":
@@ -299,12 +310,7 @@ export default function FinanceDashboard() {
           )}
         </>
       )}
-      {receiptFiles.length > 0 && (
-        <Alert severity="info" sx={{ mt: 3 }}>
-          {receiptFiles.length} receipt/document files uploaded for{" "}
-          {selectedYear}. View them in the Ledger tab under each transaction.
-        </Alert>
-      )}
+
       {!loading && transactions.length > 0 && (
         <FinancialReportButton
           transactions={transactions}

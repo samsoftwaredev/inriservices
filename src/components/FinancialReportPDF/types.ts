@@ -9,14 +9,14 @@ export interface ReportTransaction {
   category?: string;
   type: "revenue" | "expense" | "cogs" | "equity" | "asset" | "liability";
   account?: string;
-  payment_method?: string;
-  external_id?: string;
-  reference_number?: string;
+  paymentMethod?: string;
+  externalId?: string;
+  referenceNumber?: string;
   notes?: string;
   tags?: string[];
-  has_receipt?: boolean;
-  receipt_url?: string;
-  attachment_name?: string;
+  hasReceipt?: boolean;
+  receiptUrls?: BucketFile[] | null;
+  attachmentName?: string;
 }
 
 export interface CompanyInfo {
@@ -64,3 +64,5 @@ export interface FinancialSummary {
   transactionCount: number;
   uncategorizedTotal: number;
 }
+
+export type BucketFile = { url: string; name: string };

@@ -295,7 +295,7 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
       newRoom.id = roomId;
       setRooms([newRoom]);
       updateLocalStorageEstimate({ rooms });
-      debugger;
+
       router.push(`/estimates/general/${projectId}`);
     }
   };

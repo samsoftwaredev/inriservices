@@ -5,6 +5,7 @@ import { formatCurrency, formatDate, truncateText } from "./utils";
 import type { ReportTransaction, ReportPeriod, CompanyInfo } from "./types";
 import { PageHeader } from "./PageHeader";
 import { PageFooter } from "./PageFooter";
+import Image from "next/image";
 
 interface AttachmentsIndexPageProps {
   transactions: ReportTransaction[];
@@ -82,11 +83,28 @@ export const AttachmentsIndexPages = ({
                 style={index % 2 === 0 ? styles.tableRow : styles.tableRowAlt}
               >
                 <Text style={styles.tableCellSmall}>{formatDate(tx.date)}</Text>
+                {tx.receiptUrls &&
+                  tx.receiptUrls.length > 0 &&
+                  tx.receiptUrls.map(({ url }, index) => (
+                    <Image
+                      alt={`Attachment for ${tx.description || "transaction"}`}
+                      key={index}
+                      src={url}
+                      width={200}
+                      height={200}
+                      style={{
+                        borderRadius: "62px",
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ))}
                 <Text style={[styles.tableCell, { flex: 2 }]}>
                   {truncateText(tx.description || "—", 30)}
-                  {tx.attachment_name && (
+                  {tx.attachmentName && (
                     <Text style={{ fontSize: 7, color: "#666" }}>
-                      {"\n"}📎 {truncateText(tx.attachment_name, 30)}
+                      {"\n"}📎 {truncateText(tx.attachmentName, 30)}
                     </Text>
                   )}
                 </Text>
@@ -107,8 +125,8 @@ export const AttachmentsIndexPages = ({
                 </Text>
                 <Text style={styles.tableCellMedium}>
                   {truncateText(
-                    tx.reference_number ||
-                      tx.external_id ||
+                    tx.referenceNumber ||
+                      tx.externalId ||
                       tx.id.substring(0, 8),
                     12,
                   )}

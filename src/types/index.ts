@@ -12,6 +12,7 @@
  * - user -> profiles (id = auth.users.id), user belongs to exactly one company via profiles.company_id
  */
 
+import { BucketFile } from "@/components/FinancialReportPDF";
 import { Database } from "../../database.types";
 
 export type Company = Database["public"]["Tables"]["companies"]["Row"];
@@ -239,6 +240,49 @@ export type ReceiptTransformed = {
   status: ReceiptStatus;
 };
 
+export type FinancialTransactionTransformed = {
+  accountId: string;
+  amountCents: number;
+  clientId: string | null;
+  companyId: string;
+  createdAt: string;
+  currency: string;
+  description: string;
+  externalId: string | null;
+  id: string;
+  invoiceId: string | null;
+  memo: string | null;
+  postedAt: string;
+  projectId: string | null;
+  receiptId: string | null;
+  receiptUrls?:
+    | BucketFile[] /* This field is not from DB, but added in transformation for convenience */
+    | null;
+  referenceNumber: string | null;
+  source: TransactionSource;
+  transactionDate: string;
+  updatedAt: string;
+  vendorId: string | null;
+};
+
+export type FinancialDocumentTransformed = {
+  bucket: string;
+  companyId: string;
+  createdAt: string;
+  description: string | null;
+  documentType: DocumentType;
+  fileName: string;
+  filePath: string;
+  id: string;
+  mimeType: string | null;
+  projectId: string | null;
+  sizeBytes: number | null;
+  transactionId: string | null;
+  uploadedAt: string;
+  uploadedBy: string | null;
+  vendorId: string | null;
+};
+
 export type ProfileTransformed = {
   id: string;
   companyId: string;
@@ -254,6 +298,11 @@ export type CompanyTransformed = {
   phone: string;
   createdAt: string;
   billingEmail: string;
+};
+
+export type TransactionWithDocs = {
+  tx: FinancialTransactionTransformed;
+  docs: FinancialDocumentTransformed[];
 };
 
 export type ClientFullData = ClientTransformed & {

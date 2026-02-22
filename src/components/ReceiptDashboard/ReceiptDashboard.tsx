@@ -151,8 +151,6 @@ const ReceiptDashboard = () => {
       value: stats.totalReceipts,
       icon: <ReceiptIcon />,
       color: "primary.light",
-      bgColor: "primary.50",
-      iconWrapperColor: "primary.main",
       format: (value: number) => value.toString(),
     },
     {
@@ -160,8 +158,6 @@ const ReceiptDashboard = () => {
       value: stats.totalAmount,
       icon: <MoneyIcon />,
       color: "success.light",
-      bgColor: "success.50",
-      iconWrapperColor: "success.main",
       format: formatCurrency,
     },
     {
@@ -169,8 +165,6 @@ const ReceiptDashboard = () => {
       value: stats.thisMonthAmount,
       icon: <TrendingUpIcon />,
       color: "info.light",
-      bgColor: "info.50",
-      iconWrapperColor: "info.main",
       format: formatCurrency,
     },
     {
@@ -178,8 +172,6 @@ const ReceiptDashboard = () => {
       value: stats.avgReceiptAmount,
       icon: <AssessmentIcon />,
       color: "warning.light",
-      bgColor: "warning.50",
-      iconWrapperColor: "warning.main",
       format: formatCurrency,
     },
   ];

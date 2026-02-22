@@ -5,6 +5,10 @@ import {
   ClientTransformed,
   Company,
   CompanyTransformed,
+  FinancialDocument,
+  FinancialDocumentTransformed,
+  FinancialTransaction,
+  FinancialTransactionTransformed,
   PaymentMethod,
   Profile,
   ProfileTransformed,
@@ -84,7 +88,7 @@ export const clientTransformer = (res: Client): ClientTransformed => {
 };
 
 export const reversedProjectTransformer = (
-  project: ProjectTransformed
+  project: ProjectTransformed,
 ): Project => ({
   id: project.id,
   company_id: project.companyId,
@@ -164,13 +168,13 @@ const transformSingleRoom = (room: PropertyRoom): PropertyRoomTransformed => ({
 });
 
 export const roomPropertyTransformer = (
-  res: PropertyRoom
+  res: PropertyRoom,
 ): PropertyRoomTransformed => {
   return transformSingleRoom(res);
 };
 
 export const allRoomPropertyTransformer = (
-  res: PropertyRoom[]
+  res: PropertyRoom[],
 ): PropertyRoomTransformed[] => {
   return res.map(transformSingleRoom);
 };
@@ -216,13 +220,13 @@ export const propertyTransformer = (res: Property): PropertyTransformed => {
 };
 
 export const allPropertyTransformer = (
-  res: Property[]
+  res: Property[],
 ): PropertyTransformed[] => {
   return res.map(transformSingleProperty);
 };
 
 export const projectFullDataTransformer = (
-  project: ProjectWithRelationsAndRooms
+  project: ProjectWithRelationsAndRooms,
 ): ProjectFullData => {
   return {
     ...transformSingleProject(project),
@@ -235,7 +239,7 @@ export const projectFullDataTransformer = (
 };
 
 export const clientFullDataTransformer = (
-  clientData: ClientWithRelations
+  clientData: ClientWithRelations,
 ): ClientFullData => {
   const transformed = {
     ...clientTransformer(clientData),
@@ -245,7 +249,7 @@ export const clientFullDataTransformer = (
     return {
       ...property,
       projects: allProjectTransformer(
-        clientData.properties.find((p) => p.id === property.id)?.projects || []
+        clientData.properties.find((p) => p.id === property.id)?.projects || [],
       ),
     };
   });
@@ -253,7 +257,7 @@ export const clientFullDataTransformer = (
 };
 
 export const transformSingleReceipt = (
-  receipt: Receipt
+  receipt: Receipt,
 ): ReceiptTransformed => ({
   amountCents: receipt.amount_cents,
   clientId: receipt.client_id,
@@ -277,7 +281,7 @@ export const transformReceiptForPDF = (
   customerName?: string,
   customerEmail?: string,
   customerAddress?: string,
-  projectDescription?: string
+  projectDescription?: string,
 ): ReceiptDisplayData => {
   const paymentMethodMap: Record<PaymentMethod, string> = {
     cash: "Cash",
@@ -305,5 +309,59 @@ export const transformReceiptForPDF = (
     projectDescription,
     notes: receipt.notes || undefined,
     status: receipt.status.charAt(0).toUpperCase() + receipt.status.slice(1),
+  };
+};
+
+export const financialTransactionTransformer = (
+  res: FinancialTransaction & {
+    receipt_urls?: {
+      name: string;
+      url: string;
+    }[];
+  },
+): FinancialTransactionTransformed => {
+  return {
+    id: res.id,
+    companyId: res.company_id,
+    accountId: res.account_id,
+    amountCents: res.amount_cents,
+    transactionDate: res.transaction_date,
+    description: res.description || "",
+    memo: res.memo || null,
+    vendorId: res.vendor_id || null,
+    externalId: res.external_id || null,
+    referenceNumber: res.reference_number || null,
+    receiptId: res.receipt_id || null,
+    receiptUrls: res.receipt_urls || [],
+    createdAt: new Date(res.created_at).toISOString(),
+    updatedAt: new Date(res.updated_at).toISOString(),
+    currency: res.currency,
+    projectId: res.project_id || null,
+    source: res.source,
+    clientId: res.client_id || null,
+    invoiceId: res.invoice_id || null,
+    postedAt: res.posted_at,
+  };
+};
+
+export const financialDocumentTransformer = (
+  res: FinancialDocument,
+): FinancialDocumentTransformed => {
+  return {
+    id: res.id,
+    companyId: res.company_id,
+    transactionId: res.transaction_id,
+    bucket: res.bucket,
+    description: res.description || null,
+    createdAt: new Date(res.created_at).toISOString(),
+    documentType: res.document_type,
+    fileName: res.file_name,
+    filePath: res.file_path,
+    mimeType: res.mime_type || null,
+    projectId: res.project_id || null,
+    sizeBytes: res.size_bytes || null,
+    uploadedAt: new Date(res.uploaded_at).toISOString(),
+    uploadedBy: res.uploaded_by || null,
+    vendorId: res.vendor_id || null,
   };
 };
