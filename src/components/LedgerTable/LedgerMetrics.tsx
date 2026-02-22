@@ -27,7 +27,6 @@ export default function LedgerMetrics({
 }: LedgerMetricsProps) {
   const isPositive = totalAmountCents >= 0;
   const color = isPositive ? "success.main" : "error.main";
-  const icon = isPositive ? <TrendingUpIcon /> : <TrendingDownIcon />;
 
   const summaryCards: MetricCard[] = [
     {

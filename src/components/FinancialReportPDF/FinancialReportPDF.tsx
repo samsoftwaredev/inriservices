@@ -20,9 +20,7 @@ interface FinancialReportPDFProps {
   data: FinancialReportData;
 }
 
-export const FinancialReportPDF: React.FC<FinancialReportPDFProps> = ({
-  data,
-}) => {
+export const FinancialReportPDF = ({ data }: FinancialReportPDFProps) => {
   const { company, period, prepared, transactions } = data;
 
   const summary = calculateFinancialSummary(transactions);

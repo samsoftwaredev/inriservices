@@ -5,7 +5,7 @@ import { FinancialDocument, ListResult, DocumentType } from "@/types";
 /** ----------------------------
  * FINANCIAL DOCUMENTS (Receipt photos, PDFs)
  * ---------------------------- */
-const bucket = "financial-documents";
+const bucketName = "financial-documents";
 export const financialDocumentsApi = {
   async list(params?: {
     transaction_id?: string;
@@ -105,7 +105,7 @@ export const financialDocumentsApi = {
   }): Promise<FinancialDocument> {
     // Upload to Storage
     const { error: uploadErr } = await supabase.storage
-      .from(bucket)
+      .from(bucketName)
       .upload(params.file_path, params.file, {
         upsert: false,
         contentType: (params.file as any).type ?? undefined,
@@ -118,7 +118,7 @@ export const financialDocumentsApi = {
 
     return await this.create({
       company_id: params.company_id,
-      bucket: bucket,
+      bucket: bucketName,
       file_path: params.file_path,
       file_name: params.file_name,
       mime_type: mime,
@@ -162,5 +162,32 @@ export const financialDocumentsApi = {
       .createSignedUrl(doc.file_path, expiresInSeconds);
     if (error) throw error;
     return data.signedUrl;
+  },
+
+  async getReceiptFiles(filePath: string): Promise<string[]> {
+    const { data: files, error } = await supabase.storage
+      .from(bucketName)
+      .list(filePath, {
+        limit: 1000,
+        offset: 0,
+      });
+    if (error) {
+      throw error;
+    }
+
+    if (!files || files.length === 0) {
+      console.log("No files found in the bucket.");
+      return [];
+    }
+    debugger;
+    // 2. Generate a public URL for each file
+    const imageUrls: string[] = files.map((file: { name: string }) => {
+      const { data } = supabase.storage
+        .from(bucketName)
+        .getPublicUrl(file.name);
+      return data.publicUrl;
+    });
+
+    return imageUrls;
   },
 };

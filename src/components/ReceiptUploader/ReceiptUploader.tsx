@@ -32,6 +32,7 @@ import {
 import { financialDocumentsApi } from "@/services/financialDocumentsApi";
 import type { FinancialDocument } from "@/types";
 import { useAuth } from "@/context";
+import { bucketPathForReceipt } from "@/tools";
 
 interface ReceiptUploaderProps {
   transactionId: string | null; // null when creating a new transaction
@@ -79,11 +80,13 @@ export default function ReceiptUploader({
         // Build storage path
         const companyId = userData?.companyId; // In production, fetch from context/session
         const year = yearSelected || new Date().getFullYear().toString();
-        const timestamp = Date.now();
         const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-        const filePath = transactionId
-          ? `${companyId}/${year}/receipts/${transactionId}/${timestamp}-${safeName}`
-          : `${companyId}/${year}/temp/${timestamp}-${safeName}`;
+        const filePath = bucketPathForReceipt({
+          companyId: companyId!,
+          year: parseInt(year),
+          transactionId,
+          safeName,
+        });
 
         const doc = await financialDocumentsApi.uploadAndCreate({
           company_id: companyId!,

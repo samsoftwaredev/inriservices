@@ -4,14 +4,11 @@ import React, { useEffect, useState, useMemo } from "react";
 import {
   Alert,
   Box,
-  Card,
-  CardContent,
   FormControl,
   Grid,
   InputLabel,
   MenuItem,
   Select,
-  Typography,
   CircularProgress,
 } from "@mui/material";
 import {
@@ -30,7 +27,7 @@ import type {
   FinancialTransaction,
   MetricCard,
 } from "@/types";
-import { formatCurrency } from "@/tools/costTools";
+import { formatCurrency, bucketPathForReceipt } from "@/tools";
 import { FinancialReportButton } from "@/components/FinancialReportPDF";
 import type {
   CompanyInfo,
@@ -44,6 +41,8 @@ import {
 } from "@/constants";
 import PageHeader from "../PageHeader";
 import MetricCards from "../Dashboard/MetricCards";
+import { financialDocumentsApi } from "@/services/financialDocumentsApi";
+import { useAuth } from "@/context";
 
 interface SummaryMetrics {
   grossRevenue: number;
@@ -55,11 +54,13 @@ interface SummaryMetrics {
 }
 
 export default function FinanceDashboard() {
+  const { userData } = useAuth();
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [accounts, setAccounts] = useState<Map<string, Accounts>>(new Map());
+  const [receiptFiles, setReceiptFiles] = useState<string[]>([]);
   const [transactions, setTransactions] = useState<
     { tx: FinancialTransaction; docs: FinancialDocument[]; id: string }[]
   >([]);
@@ -105,6 +106,13 @@ export default function FinanceDashboard() {
           limit: 10000, // Get all for the year
         });
         setTransactions(result.items);
+        const files = await financialDocumentsApi.getReceiptFiles(
+          bucketPathForReceipt({
+            companyId: userData?.companyId!,
+            year: selectedYear,
+          }),
+        );
+        setReceiptFiles(files);
       } catch (err) {
         console.error("Failed to load transactions:", err);
         setError("Failed to load transactions. Please try again.");
@@ -290,6 +298,12 @@ export default function FinanceDashboard() {
             </Grid>
           )}
         </>
+      )}
+      {receiptFiles.length > 0 && (
+        <Alert severity="info" sx={{ mt: 3 }}>
+          {receiptFiles.length} receipt/document files uploaded for{" "}
+          {selectedYear}. View them in the Ledger tab under each transaction.
+        </Alert>
       )}
       {!loading && transactions.length > 0 && (
         <FinancialReportButton

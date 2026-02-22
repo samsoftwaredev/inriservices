@@ -64,13 +64,13 @@ const transformTransactionData = (
   });
 };
 
-export const FinancialReportButton: React.FC<FinancialReportButtonProps> = ({
+export const FinancialReportButton = ({
   transactions,
   accounts,
   company,
   period,
   prepared,
-}) => {
+}: FinancialReportButtonProps) => {
   const reportData: FinancialReportData = {
     company,
     period,
