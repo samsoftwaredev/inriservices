@@ -23,13 +23,19 @@ export const financialTransactionsApi = {
     q?: string; // description/memo/reference
     limit?: number;
     offset?: number;
-  }): Promise<ListResult<FinancialTransaction>> {
+  }): Promise<
+    ListResult<{ tx: FinancialTransaction; docs: FinancialDocument[] }>
+  > {
     const limit = params?.limit ?? 50;
     const offset = params?.offset ?? 0;
 
-    let query = supabase
-      .from("financial_transactions")
-      .select("*", { count: "exact" });
+    let query = supabase.from("financial_transactions").select(
+      `
+        *,
+        documents:financial_documents(*)
+        `,
+      { count: "exact" },
+    );
 
     if (params?.account_id) query = query.eq("account_id", params.account_id);
     if (params?.vendor_id) query = query.eq("vendor_id", params.vendor_id);
@@ -64,7 +70,14 @@ export const financialTransactionsApi = {
 
     if (error) throw error;
     return {
-      items: (data ?? []) as FinancialTransaction[],
+      items: (data ?? []).map((row) => {
+        const { documents, ...tx } = row;
+        return {
+          id: tx.id,
+          tx: tx as FinancialTransaction,
+          docs: (documents ?? []) as FinancialDocument[],
+        };
+      }),
       total: count ?? undefined,
     };
   },

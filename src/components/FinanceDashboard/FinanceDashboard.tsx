@@ -24,7 +24,12 @@ import {
 } from "@mui/icons-material";
 import { accountsApi } from "@/services/accountsApi";
 import { financialTransactionsApi } from "@/services/financialTransactionsApi";
-import type { Accounts, FinancialTransaction, MetricCard } from "@/types";
+import type {
+  Accounts,
+  FinancialDocument,
+  FinancialTransaction,
+  MetricCard,
+} from "@/types";
 import { formatCurrency } from "@/tools/costTools";
 import { FinancialReportButton } from "@/components/FinancialReportPDF";
 import type {
@@ -55,7 +60,9 @@ export default function FinanceDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [accounts, setAccounts] = useState<Map<string, Accounts>>(new Map());
-  const [transactions, setTransactions] = useState<FinancialTransaction[]>([]);
+  const [transactions, setTransactions] = useState<
+    { tx: FinancialTransaction; docs: FinancialDocument[]; id: string }[]
+  >([]);
 
   // Generate year options (current year + past 5 years)
   const yearOptions = useMemo(() => {
@@ -120,11 +127,11 @@ export default function FinanceDashboard() {
       ownerContributions: 0,
     };
 
-    transactions.forEach((tx) => {
-      const account = accounts.get(tx.account_id);
+    transactions.forEach((item) => {
+      const account = accounts.get(item.tx.account_id);
       if (!account) return;
 
-      const amount = tx.amount_cents / 100; // Convert to dollars
+      const amount = item.tx.amount_cents / 100; // Convert to dollars
 
       switch (account.type) {
         case "revenue":
@@ -172,8 +179,6 @@ export default function FinanceDashboard() {
 
   const summaryCardsData: MetricCard[] = [
     {
-      iconWrapperColor: "success.main",
-      bgColor: "success.light",
       format: formatCurrency,
       title: "Gross Revenue",
       value: metrics.grossRevenue,
@@ -183,8 +188,6 @@ export default function FinanceDashboard() {
         "Total income from services before any deductions. Calculated as the sum of all transactions linked to revenue accounts.",
     },
     {
-      iconWrapperColor: "warning.main",
-      bgColor: "warning.light",
       format: formatCurrency,
       title: "COGS",
       value: metrics.cogs,
@@ -194,8 +197,6 @@ export default function FinanceDashboard() {
         "Cost of Goods Sold: Direct costs of materials and labor for services delivered.",
     },
     {
-      iconWrapperColor: "error.main",
-      bgColor: "error.light",
       format: formatCurrency,
       title: "Operating Expenses",
       value: metrics.operatingExpenses,
@@ -205,8 +206,6 @@ export default function FinanceDashboard() {
         "Business expenses not directly tied to services (rent, utilities, insurance, etc.).",
     },
     {
-      iconWrapperColor: "info.main",
-      bgColor: "info.light",
       format: formatCurrency,
       title: "Net Profit",
       value: metrics.netProfit,
@@ -219,16 +218,12 @@ export default function FinanceDashboard() {
       title: "Owner Draws",
       value: metrics.ownerDraws,
       icon: <TrendingDownIcon />,
-      iconWrapperColor: "info.main",
-      bgColor: "info.light",
       format: formatCurrency,
       color: "info.main",
       description:
         "Money withdrawn by the owner from the business (equity transactions with negative amounts).",
     },
     {
-      iconWrapperColor: "primary.main",
-      bgColor: "primary.light",
       format: formatCurrency,
       title: "Owner Contributions",
       value: metrics.ownerContributions,

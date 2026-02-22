@@ -298,8 +298,6 @@ const ProjectPage = ({ params }: Props) => {
                   {
                     title: "Total Cost",
                     value: calculateTotalCost(),
-                    iconWrapperColor: "primary.main",
-                    bgColor: "rgba(169, 184, 249, 0.97)",
                     format: (value: number) => `$${value.toLocaleString()}`,
                     icon: <MoneyIcon />,
                     color: "primary.light",
@@ -309,15 +307,11 @@ const ProjectPage = ({ params }: Props) => {
                     value: project.property.rooms.length,
                     icon: <RoomIcon />,
                     color: "success.light",
-                    iconWrapperColor: "success.main",
-                    bgColor: "rgb(197, 255, 195)",
                     format: (value: number) => value.toLocaleString(),
                   },
                   {
                     title: "Total Area",
                     value: calculateTotalArea(),
-                    iconWrapperColor: "warning.main",
-                    bgColor: "rgb(255, 252, 198)",
                     format: (value: number) =>
                       `${value.toLocaleString()} sq ft`,
                     icon: <CropIcon />,
@@ -326,8 +320,6 @@ const ProjectPage = ({ params }: Props) => {
                   {
                     title: "Est. Hours",
                     value: project.laborHoursEstimated,
-                    iconWrapperColor: "info.main",
-                    bgColor: "rgb(187, 247, 255)",
                     format: (value: number) => `${value.toLocaleString()} hrs`,
                     icon: <ScheduleIcon />,
                     color: "info.light",

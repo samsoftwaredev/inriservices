@@ -140,12 +140,10 @@ export interface SummaryCard {
 
 export interface MetricCard {
   title: string;
-  description: string;
+  description?: string;
   value: number;
   icon: React.ReactNode;
   color: string;
-  iconWrapperColor: string;
-  bgColor: string;
   format: (value: number) => string;
 }
 

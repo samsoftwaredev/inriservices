@@ -12,10 +12,18 @@ import type {
   ReportPeriod,
   PreparedInfo,
 } from "./types";
-import type { FinancialTransaction, Accounts } from "@/types";
+import type {
+  FinancialTransaction,
+  Accounts,
+  FinancialDocument,
+} from "@/types";
 
 interface FinancialReportButtonProps {
-  transactions: FinancialTransaction[];
+  transactions: {
+    tx: FinancialTransaction;
+    docs: FinancialDocument[];
+    id: string;
+  }[];
   accounts: Map<string, Accounts>;
   company: CompanyInfo;
   period: ReportPeriod;
@@ -23,31 +31,35 @@ interface FinancialReportButtonProps {
 }
 
 const transformTransactionData = (
-  transactions: FinancialTransaction[],
+  transactions: {
+    tx: FinancialTransaction;
+    docs: FinancialDocument[];
+    id: string;
+  }[],
   accounts: Map<string, Accounts>,
 ): ReportTransaction[] => {
-  return transactions.map((tx) => {
-    const account = accounts.get(tx.account_id);
+  return transactions.map((item) => {
+    const account = accounts.get(item.tx.account_id);
 
     return {
-      id: tx.id,
-      date: tx.transaction_date,
-      amount: tx.amount_cents,
+      id: item.tx.id,
+      date: item.tx.transaction_date,
+      amount: item.tx.amount_cents,
       currency: "USD",
-      description: tx.description || "",
-      memo: tx.memo || undefined,
-      vendor: tx.vendor_id ? "Vendor Name" : undefined,
+      description: item.tx.description || "",
+      memo: item.tx.memo || undefined,
+      vendor: item.tx.vendor_id ? "Vendor Name" : undefined,
       category: account?.name,
       type: account?.type || "expense",
       account: account?.code || undefined,
       payment_method: undefined,
-      external_id: tx.external_id || undefined,
-      reference_number: tx.reference_number || undefined,
+      external_id: item.tx.external_id || undefined,
+      reference_number: item.tx.reference_number || undefined,
       notes: undefined,
       tags: undefined,
-      has_receipt: !!tx.receipt_id,
+      has_receipt: !!item.tx.receipt_id,
       receipt_url: undefined,
-      attachment_name: tx.receipt_id ? "Receipt" : undefined,
+      attachment_name: item.tx.receipt_id ? "Receipt" : undefined,
     };
   });
 };

@@ -1,13 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import {
-  Alert,
-  Box,
-  Button,
-  Typography,
-  CircularProgress,
-} from "@mui/material";
+import { Alert, Box, Button, CircularProgress } from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
 import { accountsApi } from "@/services/accountsApi";
 import { vendorsApi } from "@/services/vendersApi";
@@ -16,7 +10,12 @@ import TransactionDrawer from "@/components/TransactionDrawer";
 import LedgerFilters from "./LedgerFilters";
 import LedgerMetrics from "./LedgerMetrics";
 import TransactionsTable from "./TransactionsTable";
-import type { Accounts, Vendor, FinancialTransaction } from "@/types";
+import type {
+  Accounts,
+  Vendor,
+  FinancialTransaction,
+  FinancialDocument,
+} from "@/types";
 import PageHeader from "../PageHeader";
 
 const formatCurrency = (cents: number): string => {
@@ -40,7 +39,9 @@ export default function LedgerTable() {
   const [error, setError] = useState<string | null>(null);
 
   // Data
-  const [transactions, setTransactions] = useState<FinancialTransaction[]>([]);
+  const [transactions, setTransactions] = useState<
+    { tx: FinancialTransaction; docs: FinancialDocument[]; id: string }[]
+  >([]);
   const [accounts, setAccounts] = useState<Map<string, Accounts>>(new Map());
   const [vendors, setVendors] = useState<Map<string, Vendor>>(new Map());
 
@@ -156,14 +157,17 @@ export default function LedgerTable() {
 
   // Calculate total amount from current transactions
   const totalAmountCents = useMemo(() => {
-    return transactions.reduce((sum, tx) => sum + tx.amount_cents, 0);
+    return transactions.reduce((sum, item) => sum + item.tx.amount_cents, 0);
   }, [transactions]);
 
   // Calculate transactions with no links
   const transactionsWithNoLinks = useMemo(() => {
     return transactions.filter(
-      (tx) =>
-        !tx.invoice_id && !tx.receipt_id && !tx.project_id && !tx.client_id,
+      (item) =>
+        !item.tx.invoice_id &&
+        !item.tx.receipt_id &&
+        !item.tx.project_id &&
+        !item.tx.client_id,
     ).length;
   }, [transactions]);
 

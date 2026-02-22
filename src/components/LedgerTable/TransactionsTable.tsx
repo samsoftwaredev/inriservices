@@ -19,11 +19,21 @@ import {
   Business as BusinessIcon,
   Work as WorkIcon,
   Person as PersonIcon,
+  Image as ImageIcon,
 } from "@mui/icons-material";
-import type { Accounts, Vendor, FinancialTransaction } from "@/types";
+import type {
+  Accounts,
+  Vendor,
+  FinancialTransaction,
+  FinancialDocument,
+} from "@/types";
 
 interface TransactionsTableProps {
-  transactions: FinancialTransaction[];
+  transactions: {
+    tx: FinancialTransaction;
+    docs: FinancialDocument[];
+    id: string;
+  }[];
   accounts: Map<string, Accounts>;
   vendors: Map<string, Vendor>;
   formatCurrency: (cents: number) => string;
@@ -53,20 +63,22 @@ export default function TransactionsTable({
           </TableRow>
         </TableHead>
         <TableBody>
-          {transactions.map((tx) => {
-            const account = accounts.get(tx.account_id);
-            const vendor = tx.vendor_id ? vendors.get(tx.vendor_id) : null;
+          {transactions.map((item) => {
+            const account = accounts.get(item.tx.account_id);
+            const vendor = item.tx.vendor_id
+              ? vendors.get(item.tx.vendor_id)
+              : null;
 
             return (
               <TableRow
-                key={tx.id}
+                key={item.id}
                 hover
                 sx={{ cursor: "pointer" }}
-                onClick={() => onEditTransaction(tx.id)}
+                onClick={() => onEditTransaction(item.id)}
               >
                 <TableCell>
                   <Typography variant="body2">
-                    {formatDate(tx.transaction_date)}
+                    {formatDate(item.tx.transaction_date)}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -84,15 +96,15 @@ export default function TransactionsTable({
                   )}
                 </TableCell>
                 <TableCell>
-                  <Typography variant="body2">{tx.description}</Typography>
-                  {tx.memo && (
+                  <Typography variant="body2">{item.tx.description}</Typography>
+                  {item.tx.memo && (
                     <Typography variant="caption" color="text.secondary">
-                      {tx.memo}
+                      {item.tx.memo}
                     </Typography>
                   )}
-                  {tx.reference_number && (
+                  {item.tx.reference_number && (
                     <Chip
-                      label={`Ref: ${tx.reference_number}`}
+                      label={`Ref: ${item.tx.reference_number}`}
                       size="small"
                       sx={{ ml: 1, height: 20 }}
                     />
@@ -118,10 +130,12 @@ export default function TransactionsTable({
                     fontWeight="bold"
                     sx={{
                       color:
-                        tx.amount_cents < 0 ? "error.main" : "success.main",
+                        item.tx.amount_cents < 0
+                          ? "error.main"
+                          : "success.main",
                     }}
                   >
-                    {formatCurrency(tx.amount_cents)}
+                    {formatCurrency(item.tx.amount_cents)}
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
@@ -132,7 +146,18 @@ export default function TransactionsTable({
                       justifyContent: "center",
                     }}
                   >
-                    {tx.invoice_id && (
+                    {item.docs && item.docs.length > 0 && (
+                      <Tooltip title="Linked Invoice">
+                        <Chip
+                          icon={<ImageIcon />}
+                          label="INV"
+                          size="small"
+                          color="primary"
+                          sx={{ height: 24 }}
+                        />
+                      </Tooltip>
+                    )}
+                    {item.tx.invoice_id && (
                       <Tooltip title="Linked to Invoice">
                         <Chip
                           icon={<ReceiptIcon />}
@@ -143,7 +168,7 @@ export default function TransactionsTable({
                         />
                       </Tooltip>
                     )}
-                    {tx.receipt_id && (
+                    {item.tx.receipt_id && (
                       <Tooltip title="Linked to Receipt">
                         <Chip
                           icon={<ReceiptIcon />}
@@ -154,7 +179,7 @@ export default function TransactionsTable({
                         />
                       </Tooltip>
                     )}
-                    {tx.project_id && (
+                    {item.tx.project_id && (
                       <Tooltip title="Linked to Project">
                         <Chip
                           icon={<WorkIcon />}
@@ -165,7 +190,7 @@ export default function TransactionsTable({
                         />
                       </Tooltip>
                     )}
-                    {tx.client_id && (
+                    {item.tx.client_id && (
                       <Tooltip title="Linked to Client">
                         <Chip
                           icon={<PersonIcon />}

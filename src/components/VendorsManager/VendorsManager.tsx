@@ -42,7 +42,12 @@ import {
 } from "@mui/icons-material";
 import { vendorsApi } from "@/services/vendersApi";
 import { financialTransactionsApi } from "@/services/financialTransactionsApi";
-import type { Vendor, VendorType, FinancialTransaction } from "@/types";
+import type {
+  Vendor,
+  VendorType,
+  FinancialTransaction,
+  FinancialDocument,
+} from "@/types";
 import { Constants } from "../../../database.types";
 import PageHeader from "../PageHeader";
 import VendorsFilters from "./VendorsFilters";
@@ -101,7 +106,7 @@ export default function VendorsManager() {
   const [detailDrawerOpen, setDetailDrawerOpen] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
   const [vendorTransactions, setVendorTransactions] = useState<
-    FinancialTransaction[]
+    { tx: FinancialTransaction; docs: FinancialDocument[]; id: string }[]
   >([]);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
 
@@ -548,23 +553,25 @@ export default function VendorsManager() {
               </Alert>
             ) : (
               <List>
-                {vendorTransactions.map((tx) => (
-                  <ListItem key={tx.id} divider>
+                {vendorTransactions.map((item) => (
+                  <ListItem key={item.id} divider>
                     <ListItemText
-                      primary={tx.description}
+                      primary={item.tx.description}
                       secondary={new Date(
-                        tx.transaction_date,
+                        item.tx.transaction_date,
                       ).toLocaleDateString()}
                     />
                     <Typography
                       variant="body2"
                       sx={{
                         color:
-                          tx.amount_cents < 0 ? "error.main" : "success.main",
+                          item.tx.amount_cents < 0
+                            ? "error.main"
+                            : "success.main",
                         fontWeight: "bold",
                       }}
                     >
-                      {formatCurrency(tx.amount_cents)}
+                      {formatCurrency(item.tx.amount_cents)}
                     </Typography>
                   </ListItem>
                 ))}
