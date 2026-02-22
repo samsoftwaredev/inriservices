@@ -105,20 +105,20 @@ const DashboardPage = () => {
         return projectDate >= startDate && projectDate <= endDate;
       });
     },
-    [getDateRangeFromFilter]
+    [getDateRangeFromFilter],
   );
 
   const calculateStatsFromProjects = useCallback(
     (projects: WorkHistoryItem[]) => {
       const completedProjects = projects.filter(
-        (p) => p.status === "completed"
+        (p) => p.status === "completed",
       );
       const pendingProjects = projects.filter((p) => p.status !== "completed");
       const uniqueCustomers = new Set(projects.map((p) => p.customerName)).size;
 
       const totalEarned = completedProjects.reduce(
         (sum, p) => sum + p.totalCostCents / 100,
-        0
+        0,
       );
       const averageSpent =
         uniqueCustomers > 0 ? totalEarned / uniqueCustomers : 0;
@@ -134,7 +134,7 @@ const DashboardPage = () => {
         profitCents: Math.round(totalEarned * 0.52 * 100), // Estimate 52% profit after costs
       };
     },
-    []
+    [],
   );
 
   const handleNewEstimate = () => {
@@ -144,75 +144,67 @@ const DashboardPage = () => {
   const summaryCards: MetricCard[] = [
     {
       title: "Jobs Completed",
-      iconWrapperColor: "success.main",
       value: stats.jobsCompleted,
       icon: <WorkIcon sx={{ fontSize: 20, color: "white" }} />,
-      color: "success.light",
-      bgColor: "success.50",
+      color: "success.main",
       format: (value: number) => value.toString(),
+      description: `${stats.jobsCompleted} / ${goalProjectCompleted} goal for this period`,
     },
     {
       title: "Number of Customers",
-      iconWrapperColor: "info.main",
       value: stats.numberOfCustomers,
       icon: <PeopleIcon sx={{ fontSize: 20, color: "white" }} />,
-      color: "info.light",
-      bgColor: "info.50",
+      color: "info.main",
       format: (value: number) => value.toString(),
+      description: `Unique customers served in this period`,
     },
     {
       title: "Pending Work",
-      iconWrapperColor: "warning.main",
       value: stats.pendingWork,
       icon: <PendingIcon sx={{ fontSize: 20, color: "white" }} />,
-      color: "warning.light",
-      bgColor: "warning.50",
+      color: "warning.main",
       format: (value: number) => value.toString(),
+      description: `Work that is still pending`,
     },
     {
       title: "Amount Earned",
-      iconWrapperColor: "primary.main",
       value: stats.amountEarnedCents / 100,
       icon: <MoneyIcon sx={{ fontSize: 20, color: "white" }} />,
-      color: "primary.light",
-      bgColor: "primary.50",
+      color: "primary.main",
       format: (value: number) => `$${value.toLocaleString()}`,
+      description: `Total amount earned from completed projects`,
     },
     {
       title: "Labor Cost",
-      iconWrapperColor: "secondary.main",
       value: stats.laborCostCents / 100,
       icon: <MoneyIcon sx={{ fontSize: 20, color: "white" }} />,
-      color: "secondary.light",
-      bgColor: "secondary.50",
+      color: "secondary.main",
       format: (value: number) => `$${value.toLocaleString()}`,
+      description: `Estimated labor costs for completed projects`,
     },
     {
       title: "Taxes Collected",
-      iconWrapperColor: "error.main",
       value: stats.taxesCents / 100,
       icon: <MoneyIcon sx={{ fontSize: 20, color: "white" }} />,
-      color: "error.light",
-      bgColor: "error.50",
+      color: "error.main",
       format: (value: number) => `$${value.toLocaleString()}`,
+      description: `Estimated taxes collected from completed projects`,
     },
     {
       title: "Avg. Spent by Client",
-      iconWrapperColor: "info.main",
       value: stats.averageAmountSpentByClientCents / 100,
       icon: <MoneyIcon sx={{ fontSize: 20, color: "white" }} />,
-      color: "info.light",
-      bgColor: "info.50",
+      color: "info.main",
       format: (value: number) => `$${value.toLocaleString()}`,
+      description: `Average amount spent by each customer`,
     },
     {
       title: "Profit",
-      iconWrapperColor: "success.main",
       value: stats.profitCents / 100,
       icon: <TrendingUpIcon sx={{ fontSize: 20, color: "white" }} />,
-      color: "success.light",
-      bgColor: "success.50",
+      color: "success.main",
       format: (value: number) => `$${value.toLocaleString()}`,
+      description: `Estimated profit after costs and taxes`,
     },
   ];
 
