@@ -15,7 +15,6 @@ export interface ReportTransaction {
   notes?: string;
   tags?: string[];
   hasReceipt?: boolean;
-  receiptUrls?: BucketFile[] | null;
   attachmentName?: string;
 }
 

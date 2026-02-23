@@ -255,9 +255,6 @@ export type FinancialTransactionTransformed = {
   postedAt: string;
   projectId: string | null;
   receiptId: string | null;
-  receiptUrls?:
-    | BucketFile[] /* This field is not from DB, but added in transformation for convenience */
-    | null;
   referenceNumber: string | null;
   source: TransactionSource;
   transactionDate: string;

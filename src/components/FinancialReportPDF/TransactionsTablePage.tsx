@@ -95,7 +95,7 @@ export const TransactionsTablePages = ({
                   {displayAmount}
                 </Text>
                 <Text style={[styles.tableCellSmall, styles.textCenter]}>
-                  {tx.receiptUrls && tx.receiptUrls.length > 0 ? "Yes" : "No"}
+                  {tx.hasReceipt ? "Yes" : "No"}
                 </Text>
               </View>
             );

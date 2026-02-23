@@ -117,10 +117,7 @@ export default function FinanceDashboard() {
         );
         setTransactions(
           result.items.map(({ tx, docs }) => ({
-            tx: financialTransactionTransformer({
-              ...tx,
-              receipt_urls: files.filter((f) => f.name.startsWith(tx.id)),
-            }),
+            tx: financialTransactionTransformer(tx),
             docs: docs.map((doc) => financialDocumentTransformer(doc)),
           })),
         );

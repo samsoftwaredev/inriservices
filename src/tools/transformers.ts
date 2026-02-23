@@ -313,12 +313,7 @@ export const transformReceiptForPDF = (
 };
 
 export const financialTransactionTransformer = (
-  res: FinancialTransaction & {
-    receipt_urls?: {
-      name: string;
-      url: string;
-    }[];
-  },
+  res: FinancialTransaction,
 ): FinancialTransactionTransformed => {
   return {
     id: res.id,
@@ -332,7 +327,6 @@ export const financialTransactionTransformer = (
     externalId: res.external_id || null,
     referenceNumber: res.reference_number || null,
     receiptId: res.receipt_id || null,
-    receiptUrls: res.receipt_urls || [],
     createdAt: new Date(res.created_at).toISOString(),
     updatedAt: new Date(res.updated_at).toISOString(),
     currency: res.currency,

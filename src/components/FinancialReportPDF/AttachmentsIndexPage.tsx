@@ -5,7 +5,6 @@ import { formatCurrency, formatDate, truncateText } from "./utils";
 import type { ReportTransaction, ReportPeriod, CompanyInfo } from "./types";
 import { PageHeader } from "./PageHeader";
 import { PageFooter } from "./PageFooter";
-import Image from "next/image";
 
 interface AttachmentsIndexPageProps {
   transactions: ReportTransaction[];
@@ -83,23 +82,6 @@ export const AttachmentsIndexPages = ({
                 style={index % 2 === 0 ? styles.tableRow : styles.tableRowAlt}
               >
                 <Text style={styles.tableCellSmall}>{formatDate(tx.date)}</Text>
-                {tx.receiptUrls &&
-                  tx.receiptUrls.length > 0 &&
-                  tx.receiptUrls.map(({ url }, index) => (
-                    <Image
-                      alt={`Attachment for ${tx.description || "transaction"}`}
-                      key={index}
-                      src={url}
-                      width={200}
-                      height={200}
-                      style={{
-                        borderRadius: "62px",
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
-                    />
-                  ))}
                 <Text style={[styles.tableCell, { flex: 2 }]}>
                   {truncateText(tx.description || "—", 30)}
                   {tx.attachmentName && (

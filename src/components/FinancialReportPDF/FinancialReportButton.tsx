@@ -12,12 +12,7 @@ import type {
   ReportPeriod,
   PreparedInfo,
 } from "./types";
-import type {
-  FinancialTransaction,
-  Accounts,
-  FinancialDocument,
-  TransactionWithDocs,
-} from "@/types";
+import type { Accounts, TransactionWithDocs } from "@/types";
 
 interface FinancialReportButtonProps {
   transactions: TransactionWithDocs[];
@@ -45,14 +40,13 @@ const transformTransactionData = (
       category: account?.name,
       type: account?.type || "expense",
       account: account?.code || undefined,
-      payment_method: undefined,
+      paymentMethod: undefined,
       externalId: item.tx.externalId || undefined,
-      reference_number: item.tx.referenceNumber || undefined,
+      referenceNumber: item.tx.referenceNumber || undefined,
       notes: undefined,
       tags: undefined,
-      has_receipt: !!item.tx.receiptId,
-      receipt_url: item.tx.receiptUrls,
-      attachment_name: item.tx.receiptId ? "Receipt" : undefined,
+      hasReceipt: !!item.tx.receiptId,
+      attachmentName: item.tx.receiptId ? "Receipt" : undefined,
     };
   });
 };
