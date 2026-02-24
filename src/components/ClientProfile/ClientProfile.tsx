@@ -18,6 +18,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Select,
+  MenuItem,
+  FormControl,
 } from "@mui/material";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
@@ -27,7 +30,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import MapIcon from "@mui/icons-material/Map";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ClientFullData } from "@/types";
+import { ClientFullData, ClientStatus } from "@/types";
 import { formatPhoneNumber } from "@/tools";
 import { clientApi } from "@/services";
 import { toast } from "react-toastify";
@@ -126,6 +129,10 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
   const [copySuccess, setCopySuccess] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState<ClientStatus>(
+    client.status,
+  );
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const projectHistory = client.properties
     .flatMap((property) => property.projects || [])
     .sort((a, b) => {
@@ -202,6 +209,22 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
     }
   };
 
+  const handleStatusChange = async (newStatus: ClientStatus) => {
+    try {
+      setIsUpdatingStatus(true);
+      await clientApi.updateClient(client.id, {
+        status: newStatus,
+      });
+      setCurrentStatus(newStatus);
+      toast.success("Client status updated successfully");
+    } catch (error) {
+      console.error("Error updating client status:", error);
+      toast.error("Failed to update client status. Please try again.");
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  };
+
   return (
     <>
       <Card
@@ -239,20 +262,38 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
                 {client.displayName}
               </Typography>
 
-              {/* Optional status pill */}
-              {client.status ? (
-                <Chip
-                  size="small"
-                  label={client.status}
-                  variant="outlined"
+              {/* Status Dropdown */}
+              <FormControl size="small" sx={{ minWidth: 100 }}>
+                <Select
+                  value={currentStatus}
+                  onChange={(e) =>
+                    handleStatusChange(e.target.value as ClientStatus)
+                  }
+                  disabled={isUpdatingStatus}
                   sx={{
-                    height: 22,
+                    height: 28,
                     fontSize: 12,
                     textTransform: "capitalize",
                     bgcolor: "background.default",
+                    "& .MuiSelect-select": {
+                      py: 0.5,
+                    },
                   }}
-                />
-              ) : null}
+                >
+                  <MenuItem value="lead" sx={{ textTransform: "capitalize" }}>
+                    Lead
+                  </MenuItem>
+                  <MenuItem value="active" sx={{ textTransform: "capitalize" }}>
+                    Active
+                  </MenuItem>
+                  <MenuItem
+                    value="inactive"
+                    sx={{ textTransform: "capitalize" }}
+                  >
+                    Inactive
+                  </MenuItem>
+                </Select>
+              </FormControl>
             </Stack>
 
             <Stack spacing={1.1} sx={{ mt: 1 }}>

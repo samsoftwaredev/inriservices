@@ -36,7 +36,7 @@ const SearchClientDialog = ({ isOpen, onClose }: Props) => {
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        <SearchClient onClientSelected={onClose} />
+        <SearchClient />
       </DialogContent>
     </Dialog>
   );
