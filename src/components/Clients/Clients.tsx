@@ -5,12 +5,10 @@ import { Box, Button } from "@mui/material";
 import { AddCircleOutline } from "@mui/icons-material";
 import CustomerHeader from "../CustomerHeader";
 import { SubmitHandler } from "react-hook-form";
-import { useAuth } from "@/context";
 import { clientApi, propertyApi } from "@/services";
 import { toast } from "react-toastify";
 import NewClientDialog from "../NewClientDialog";
 import SearchClient from "../SearchClient";
-import ClientDetailDialog from "../ClientDetailDialog";
 import { useClient } from "@/context/ClientContext";
 import { useRouter } from "next/navigation";
 import { ClientStatus } from "@/types";
@@ -34,24 +32,12 @@ interface ClientFormData {
 
 const ClientsPage = () => {
   const router = useRouter();
-  const { userData } = useAuth();
-  const { currentClient, handleSelectClient, allClients } = useClient();
+  const { currentClient } = useClient();
   const [isEditingClient, setIsEditingClient] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
 
   const handleNewClient = () => {
     router.push("/clients/new");
-  };
-
-  const handleCloseDetails = () => {
-    setViewDetailsOpen(false);
-    handleCloseEditForm();
-  };
-
-  const handleOpenEditForm = () => {
-    setIsEditingClient(true);
-    handleSelectClient(currentClient?.id!);
   };
 
   const handleCloseEditForm = () => {
@@ -117,16 +103,6 @@ const ClientsPage = () => {
           isEditMode={true}
           isLoading={isUpdating}
           onSubmit={onSaveEdits}
-          client={currentClient}
-        />
-      )}
-
-      {/* View Client Data */}
-      {currentClient && (
-        <ClientDetailDialog
-          viewDetailsOpen={viewDetailsOpen}
-          handleCloseDetails={handleCloseDetails}
-          handleOpenEditForm={handleOpenEditForm}
           client={currentClient}
         />
       )}

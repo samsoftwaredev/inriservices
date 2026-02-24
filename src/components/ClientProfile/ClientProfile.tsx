@@ -1,11 +1,10 @@
 "use client";
 
-import * as React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
   Card,
-  CardContent,
   Chip,
   Divider,
   IconButton,
@@ -14,6 +13,11 @@ import {
   Typography,
   Snackbar,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
@@ -23,8 +27,12 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import MapIcon from "@mui/icons-material/Map";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { ClientFullData } from "@/types";
 import { formatPhoneNumber } from "@/tools";
+import { clientApi } from "@/services";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 type StatCardProps = {
   label: string;
@@ -115,7 +123,10 @@ interface ClientProfileProps {
 }
 
 const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
+  const router = useRouter();
   const [copySuccess, setCopySuccess] = React.useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const projectHistory = client.properties
     .flatMap((property) => property.projects || [])
     .sort((a, b) => {
@@ -137,9 +148,9 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
       acc +
       (property.projects?.reduce(
         (projAcc, project) => projAcc + (project.invoiceTotalCents ?? 0),
-        0
+        0,
       ) ?? 0),
-    0
+    0,
   );
 
   const property = client.properties[0];
@@ -164,299 +175,370 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
     const query = encodeURIComponent(addressLine);
     window.open(
       `https://www.google.com/maps/search/?api=1&query=${query}`,
-      "_blank"
+      "_blank",
     );
   };
 
+  const handleOpenDeleteDialog = () => {
+    setDeleteDialogOpen(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setDeleteDialogOpen(false);
+  };
+
+  const handleDeleteClient = async () => {
+    try {
+      setIsDeleting(true);
+      await clientApi.deleteClient(client.id);
+      toast.success("Client deleted successfully");
+      setDeleteDialogOpen(false);
+      // Redirect to clients page
+      router.push("/clients");
+    } catch (error) {
+      console.error("Error deleting client:", error);
+      toast.error("Failed to delete client. Please try again.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
-    <Card
-      elevation={0}
-      sx={{
-        borderRadius: 3,
-        border: "1px solid",
-        borderColor: "divider",
-        overflow: "hidden",
-        bgcolor: "background.paper",
-      }}
-    >
-      {/* Header */}
-      <Box
+    <>
+      <Card
+        elevation={0}
         sx={{
-          px: 3,
-          pt: 2.5,
-          pb: 1.5,
-          display: "flex",
-          alignItems: "flex-start",
-          gap: 2,
+          borderRadius: 3,
+          border: "1px solid",
+          borderColor: "divider",
+          overflow: "hidden",
+          bgcolor: "background.paper",
         }}
       >
-        <Box sx={{ flex: 1, minWidth: 0 }}>
-          <Stack
-            direction="row"
-            spacing={1}
-            alignItems="center"
-            sx={{ mb: 0.25 }}
-          >
-            <Typography variant="h6" sx={{ fontWeight: 800, lineHeight: 1.2 }}>
-              {client.displayName}
-            </Typography>
-
-            {/* Optional status pill */}
-            {client.status ? (
-              <Chip
-                size="small"
-                label={client.status}
-                variant="outlined"
-                sx={{
-                  height: 22,
-                  fontSize: 12,
-                  textTransform: "capitalize",
-                  bgcolor: "background.default",
-                }}
-              />
-            ) : null}
-          </Stack>
-
-          <Stack spacing={1.1} sx={{ mt: 1 }}>
-            <InfoRow
-              icon={<MailOutlineIcon fontSize="small" />}
-              onCopy={() => copyToClipboard(client.email, "Email")}
-            >
-              {client.email}
-            </InfoRow>
-            <InfoRow
-              icon={<PhoneOutlinedIcon fontSize="small" />}
-              onCopy={() => copyToClipboard(client.phone, "Phone")}
-            >
-              {formatPhoneNumber(client.phone)}
-            </InfoRow>
-            <InfoRow
-              icon={<LocationOnOutlinedIcon fontSize="small" />}
-              onCopy={() => copyToClipboard(addressLine, "Address")}
-            >
-              <Stack
-                direction="row"
-                alignItems="center"
-                spacing={1}
-                sx={{ width: "100%" }}
-              >
-                <Typography variant="body2" sx={{ flex: 1 }}>
-                  {addressLine}
-                </Typography>
-                <IconButton
-                  size="small"
-                  onClick={openInGoogleMaps}
-                  sx={{ opacity: 0.7, "&:hover": { opacity: 1 } }}
-                  title="Open in Google Maps"
-                >
-                  <MapIcon fontSize="small" />
-                </IconButton>
-              </Stack>
-            </InfoRow>
-          </Stack>
-        </Box>
-      </Box>
-
-      {/* Notes */}
-      {client.notes ? (
-        <Box sx={{ px: 3, pb: 2 }}>
-          <Paper
-            variant="outlined"
-            sx={{
-              borderRadius: 2,
-              p: 2,
-              bgcolor: "background.default",
-            }}
-          >
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-              Notes
-            </Typography>
-            <Typography variant="body2">{client.notes}</Typography>
-          </Paper>
-        </Box>
-      ) : (
-        <Box sx={{ px: 3, pb: 2 }} />
-      )}
-
-      {/* Stats */}
-      <Box sx={{ px: 3, pb: 2 }}>
+        {/* Header */}
         <Box
           sx={{
-            display: "grid",
-            gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" },
+            px: 3,
+            pt: 2.5,
+            pb: 1.5,
+            display: "flex",
+            alignItems: "flex-start",
             gap: 2,
           }}
         >
-          <StatCard tint="blue" label="Total Projects" value={revenue ?? 0} />
-          <StatCard tint="green" label="Completed" value={completedCount} />
-          <StatCard
-            tint="purple"
-            label="Revenue"
-            value={`$${Number(revenue).toLocaleString()}`}
-          />
-        </Box>
-      </Box>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              alignItems="center"
+              sx={{ mb: 0.25 }}
+            >
+              <Typography
+                variant="h6"
+                sx={{ fontWeight: 800, lineHeight: 1.2 }}
+              >
+                {client.displayName}
+              </Typography>
 
-      {/* Map Section */}
-      <Box sx={{ px: 3, pb: 2 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 1.5 }}>
-          Location
-        </Typography>
-        <Paper
-          variant="outlined"
-          sx={{
-            borderRadius: 2,
-            overflow: "hidden",
-            height: 300,
-            position: "relative",
-          }}
-        >
-          <iframe
-            src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dO0Yy4PvVkRTco&q=${encodeURIComponent(
-              addressLine
-            )}`}
-            style={{
-              width: "100%",
-              height: "100%",
-              border: 0,
-            }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title={`Map showing location of ${client.displayName}`}
-          />
+              {/* Optional status pill */}
+              {client.status ? (
+                <Chip
+                  size="small"
+                  label={client.status}
+                  variant="outlined"
+                  sx={{
+                    height: 22,
+                    fontSize: 12,
+                    textTransform: "capitalize",
+                    bgcolor: "background.default",
+                  }}
+                />
+              ) : null}
+            </Stack>
+
+            <Stack spacing={1.1} sx={{ mt: 1 }}>
+              <InfoRow
+                icon={<MailOutlineIcon fontSize="small" />}
+                onCopy={() => copyToClipboard(client.email, "Email")}
+              >
+                {client.email}
+              </InfoRow>
+              <InfoRow
+                icon={<PhoneOutlinedIcon fontSize="small" />}
+                onCopy={() => copyToClipboard(client.phone, "Phone")}
+              >
+                {formatPhoneNumber(client.phone)}
+              </InfoRow>
+              <InfoRow
+                icon={<LocationOnOutlinedIcon fontSize="small" />}
+                onCopy={() => copyToClipboard(addressLine, "Address")}
+              >
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={1}
+                  sx={{ width: "100%" }}
+                >
+                  <Typography variant="body2" sx={{ flex: 1 }}>
+                    {addressLine}
+                  </Typography>
+                  <IconButton
+                    size="small"
+                    onClick={openInGoogleMaps}
+                    sx={{ opacity: 0.7, "&:hover": { opacity: 1 } }}
+                    title="Open in Google Maps"
+                  >
+                    <MapIcon fontSize="small" />
+                  </IconButton>
+                </Stack>
+              </InfoRow>
+            </Stack>
+          </Box>
+        </Box>
+
+        {/* Notes */}
+        {client.notes ? (
+          <Box sx={{ px: 3, pb: 2 }}>
+            <Paper
+              variant="outlined"
+              sx={{
+                borderRadius: 2,
+                p: 2,
+                bgcolor: "background.default",
+              }}
+            >
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ mb: 0.5 }}
+              >
+                Notes
+              </Typography>
+              <Typography variant="body2">{client.notes}</Typography>
+            </Paper>
+          </Box>
+        ) : (
+          <Box sx={{ px: 3, pb: 2 }} />
+        )}
+
+        {/* Stats */}
+        <Box sx={{ px: 3, pb: 2 }}>
           <Box
             sx={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              zIndex: 1,
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" },
+              gap: 2,
             }}
           >
-            <IconButton
-              onClick={openInGoogleMaps}
-              size="small"
-              sx={{
-                bgcolor: "background.paper",
-                "&:hover": { bgcolor: "background.default" },
-                boxShadow: 1,
-              }}
-              title="Open in Google Maps"
-            >
-              <MapIcon fontSize="small" />
-            </IconButton>
+            <StatCard tint="blue" label="Total Projects" value={revenue ?? 0} />
+            <StatCard tint="green" label="Completed" value={completedCount} />
+            <StatCard
+              tint="purple"
+              label="Revenue"
+              value={`$${Number(revenue).toLocaleString()}`}
+            />
           </Box>
-        </Paper>
-      </Box>
+        </Box>
 
-      <Divider />
-
-      {/* Project History */}
-      <Box sx={{ px: 3, py: 2.25 }}>
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          sx={{ mb: 1.5 }}
-        >
-          <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
-            Project History
+        {/* Map Section */}
+        <Box sx={{ px: 3, pb: 2 }}>
+          <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 1.5 }}>
+            Location
           </Typography>
-
-          <Button
-            onClick={onNewProject}
-            variant="contained"
-            startIcon={<AddIcon />}
-            sx={{
-              borderRadius: 2,
-              textTransform: "none",
-              fontWeight: 700,
-              boxShadow: "none",
-            }}
-          >
-            New Project
-          </Button>
-        </Stack>
-
-        {/* Empty state (matches mock) */}
-        {!hasProjects ? (
           <Paper
             variant="outlined"
             sx={{
               borderRadius: 2,
-              p: 5,
-              textAlign: "center",
-              bgcolor: "background.default",
+              overflow: "hidden",
+              height: 300,
+              position: "relative",
             }}
           >
+            <iframe
+              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dO0Yy4PvVkRTco&q=${encodeURIComponent(
+                addressLine,
+              )}`}
+              style={{
+                width: "100%",
+                height: "100%",
+                border: 0,
+              }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title={`Map showing location of ${client.displayName}`}
+            />
             <Box
               sx={{
-                display: "flex",
-                justifyContent: "center",
-                mb: 1.25,
-                color: "text.secondary",
+                position: "absolute",
+                top: 8,
+                right: 8,
+                zIndex: 1,
               }}
             >
-              <DescriptionOutlinedIcon sx={{ fontSize: 40 }} />
+              <IconButton
+                onClick={openInGoogleMaps}
+                size="small"
+                sx={{
+                  bgcolor: "background.paper",
+                  "&:hover": { bgcolor: "background.default" },
+                  boxShadow: 1,
+                }}
+                title="Open in Google Maps"
+              >
+                <MapIcon fontSize="small" />
+              </IconButton>
             </Box>
-            <Typography variant="body2" color="text.secondary">
-              No projects yet
-            </Typography>
           </Paper>
-        ) : (
-          <Stack spacing={1.25}>
-            {projectHistory!.map((p) => (
-              <Paper
-                key={p.id}
-                variant="outlined"
+        </Box>
+
+        <Divider />
+
+        {/* Project History */}
+        <Box sx={{ px: 3, py: 2.25 }}>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ mb: 1.5 }}
+          >
+            <Typography variant="subtitle1" sx={{ fontWeight: 800 }}>
+              Project History
+            </Typography>
+
+            <Stack direction="row" spacing={1}>
+              <Button
+                onClick={handleOpenDeleteDialog}
+                color="error"
+                startIcon={<DeleteIcon />}
                 sx={{
                   borderRadius: 2,
-                  p: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 2,
+                  textTransform: "none",
+                  fontWeight: 700,
                 }}
               >
-                <Box sx={{ minWidth: 0 }}>
-                  <Typography sx={{ fontWeight: 800 }} noWrap>
-                    {p.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {p.status}
-                    {p.endDate
-                      ? ` • ${new Date(p.endDate).toLocaleDateString()}`
+                Delete Client
+              </Button>
+              <Button
+                onClick={onNewProject}
+                variant="contained"
+                startIcon={<AddIcon />}
+                sx={{
+                  borderRadius: 2,
+                  textTransform: "none",
+                  fontWeight: 700,
+                  boxShadow: "none",
+                }}
+              >
+                New Project
+              </Button>
+            </Stack>
+          </Stack>
+
+          {/* Empty state (matches mock) */}
+          {!hasProjects ? (
+            <Paper
+              variant="outlined"
+              sx={{
+                borderRadius: 2,
+                p: 5,
+                textAlign: "center",
+                bgcolor: "background.default",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  mb: 1.25,
+                  color: "text.secondary",
+                }}
+              >
+                <DescriptionOutlinedIcon sx={{ fontSize: 40 }} />
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                No projects yet
+              </Typography>
+            </Paper>
+          ) : (
+            <Stack spacing={1.25}>
+              {projectHistory!.map((p) => (
+                <Paper
+                  key={p.id}
+                  variant="outlined"
+                  sx={{
+                    borderRadius: 2,
+                    p: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 2,
+                  }}
+                >
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography sx={{ fontWeight: 800 }} noWrap>
+                      {p.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {p.status}
+                      {p.endDate
+                        ? ` • ${new Date(p.endDate).toLocaleDateString()}`
+                        : ""}
+                    </Typography>
+                  </Box>
+
+                  <Typography sx={{ fontWeight: 800 }}>
+                    {typeof p.invoiceTotalCents === "number"
+                      ? `$${(p.invoiceTotalCents / 100).toLocaleString()}`
                       : ""}
                   </Typography>
-                </Box>
+                </Paper>
+              ))}
+            </Stack>
+          )}
+        </Box>
 
-                <Typography sx={{ fontWeight: 800 }}>
-                  {typeof p.invoiceTotalCents === "number"
-                    ? `$${(p.invoiceTotalCents / 100).toLocaleString()}`
-                    : ""}
-                </Typography>
-              </Paper>
-            ))}
-          </Stack>
-        )}
-      </Box>
-
-      {/* Copy Success Snackbar */}
-      <Snackbar
-        open={!!copySuccess}
-        autoHideDuration={3000}
-        onClose={() => setCopySuccess(null)}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
+        {/* Copy Success Snackbar */}
+        <Snackbar
+          open={!!copySuccess}
+          autoHideDuration={3000}
           onClose={() => setCopySuccess(null)}
-          severity="success"
-          sx={{ width: "100%" }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
-          {copySuccess}
-        </Alert>
-      </Snackbar>
-    </Card>
+          <Alert
+            onClose={() => setCopySuccess(null)}
+            severity="success"
+            sx={{ width: "100%" }}
+          >
+            {copySuccess}
+          </Alert>
+        </Snackbar>
+      </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete {client.displayName}? This action
+            cannot be undone and will remove all associated data.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} disabled={isDeleting}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteClient}
+            color="error"
+            variant="contained"
+            disabled={isDeleting}
+          >
+            {isDeleting ? "Deleting..." : "Delete"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 
