@@ -73,10 +73,6 @@ const ClientsPage = () => {
     }
   };
 
-  const handleViewClientProfile = (clientId: string) => {
-    router.push(`/clients/${clientId}`);
-  };
-
   return (
     <Box sx={{ py: 3 }}>
       <CustomerHeader
@@ -93,7 +89,7 @@ const ClientsPage = () => {
         </Button>
       </CustomerHeader>
 
-      <SearchClient onClientSelected={handleViewClientProfile} />
+      <SearchClient />
 
       {/* Edit Client Dialog */}
       {currentClient && (

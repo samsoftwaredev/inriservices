@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -19,7 +19,6 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
@@ -124,7 +123,7 @@ interface ClientProfileProps {
 
 const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
   const router = useRouter();
-  const [copySuccess, setCopySuccess] = React.useState<string | null>(null);
+  const [copySuccess, setCopySuccess] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const projectHistory = client.properties
@@ -137,7 +136,7 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
 
   const hasProjects = (projectHistory?.length ?? 0) > 0;
 
-  const completedCount = React.useMemo(() => {
+  const completedCount = useMemo(() => {
     // If you don't have history passed in, just show 0 like the mock
     if (!projectHistory) return 0;
     return projectHistory.filter((p) => p.status === "completed").length;
@@ -194,7 +193,7 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
       toast.success("Client deleted successfully");
       setDeleteDialogOpen(false);
       // Redirect to clients page
-      router.push("/clients");
+      location.href = "/clients";
     } catch (error) {
       console.error("Error deleting client:", error);
       toast.error("Failed to delete client. Please try again.");

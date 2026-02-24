@@ -43,11 +43,12 @@ export const clientApi = {
           `display_name.ilike.%${q}%`,
           `primary_email.ilike.%${q}%`,
           `primary_phone.ilike.%${q}%`,
-        ].join(",")
+        ].join(","),
       );
     }
 
     const { data, error, count } = await query
+      .is("deleted_at", null)
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -69,7 +70,7 @@ export const clientApi = {
         *,
         projects (*)
       )
-    `
+    `,
       )
       .eq("id", id)
       .single();
@@ -81,7 +82,7 @@ export const clientApi = {
     input: Omit<
       Client,
       "id" | "created_at" | "normalized_email" | "normalized_phone"
-    >
+    >,
   ): Promise<Client> {
     const res = await supabase
       .from("clients")
@@ -102,7 +103,7 @@ export const clientApi = {
         | "normalized_email"
         | "normalized_phone"
       >
-    >
+    >,
   ): Promise<Client> {
     const res = await supabase
       .from("clients")
@@ -113,8 +114,24 @@ export const clientApi = {
     return assertOk(res, "Failed to update client");
   },
 
+  // Soft delete by setting deleted_at; allows for potential restore and prevents racing conditions
+  async restoreClient(id: string): Promise<void> {
+    const { error } = await supabase
+      .from("clients")
+      .update({ deleted_at: null })
+      .eq("id", id);
+
+    if (error) throw error;
+  },
+
+  // Soft delete by setting deleted_at; allows for potential restore and prevents racing conditions
   async deleteClient(id: string): Promise<void> {
-    const { error } = await supabase.from("clients").delete().eq("id", id);
+    const { error } = await supabase
+      .from("clients")
+      .update({ deleted_at: new Date().toISOString() })
+      .eq("id", id)
+      .is("deleted_at", null); // prevents re-deleting or racing updates
+
     if (error) throw error;
   },
 
@@ -144,7 +161,7 @@ export const clientApi = {
 
     if (normEmail && normPhone) {
       query = query.or(
-        `normalized_email.eq.${normEmail},normalized_phone.eq.${normPhone}`
+        `normalized_email.eq.${normEmail},normalized_phone.eq.${normPhone}`,
       );
     } else if (normEmail) {
       query = query.eq("normalized_email", normEmail);
@@ -174,7 +191,7 @@ export const clientApi = {
         projects:projects(*)
       )
     `,
-      { count: "exact" }
+      { count: "exact" },
     );
 
     if (params?.status) query = query.eq("status", params.status);
@@ -196,11 +213,12 @@ export const clientApi = {
           `properties.city.ilike.%${q}%`,
           `properties.state.ilike.%${q}%`,
           `properties.zip.ilike.%${q}%`,
-        ].join(",")
+        ].join(","),
       );
     }
 
     const { data, error, count } = await query
+      .is("deleted_at", null)
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -213,7 +231,7 @@ export const clientApi = {
   },
 
   async getClientWithAddresses(
-    clientId: string
+    clientId: string,
   ): Promise<ClientWithProperties> {
     const res = await supabase
       .from("clients")
@@ -221,14 +239,14 @@ export const clientApi = {
         `
         *,
         properties:properties(*)
-      `
+      `,
       )
       .eq("id", clientId)
       .single();
 
     return assertOk(
       res,
-      `Client not found: ${clientId}`
+      `Client not found: ${clientId}`,
     ) as unknown as ClientWithProperties;
   },
 };

@@ -25,11 +25,7 @@ import { ClientFormData } from "./SearchClient.model";
 import { ClientFullData } from "@/types";
 import { useRouter } from "next/navigation";
 
-interface Props {
-  onClientSelected: (clientId: string) => void;
-}
-
-const SearchClient = ({ onClientSelected }: Props) => {
+const SearchClient = () => {
   const {
     currentClient,
     handleSelectClient,
