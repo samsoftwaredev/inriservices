@@ -98,6 +98,7 @@ const NewClientDialog = ({
           form="client-form"
           variant="contained"
           color="primary"
+          loading={isLoading}
           disabled={isLoading}
         >
           {isEditMode ? "Save Changes" : "Create"}

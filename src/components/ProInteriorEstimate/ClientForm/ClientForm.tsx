@@ -39,21 +39,18 @@ const validationRules = {
     },
   },
   email: {
-    required: "Email is required",
     pattern: {
       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
       message: "Please enter a valid email address",
     },
   },
   phone: {
-    required: "Phone number is required",
     pattern: {
       value: /^[\+]?[(]?[0-9\s\-\(\)]{10,}$/,
       message: "Please enter a valid phone number (at least 10 digits)",
     },
   },
   contact: {
-    required: "Contact information is required",
     minLength: {
       value: 2,
       message: "Contact must be at least 2 characters",
@@ -91,21 +88,28 @@ const validationRules = {
       message: "Please enter a valid ZIP code (12345 or 12345-6789)",
     },
   },
-  measurementUnit: {
-    required: "Measurement unit is required",
-  },
   floorPlan: {
     required: "Number of floors is required",
   },
 };
 
+const preferredContactOptions = [
+  { label: "Text Message", value: "text message" },
+  { label: "Phone Call", value: "phone call" },
+  { label: "Email", value: "email" },
+];
+
 const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
+  const texasStates = usa_states.findIndex((state) => state.value === "TX");
+  const defaultContact = preferredContactOptions.findIndex(
+    (option) => option.value === "text message",
+  );
+
   // Initialize react-hook-form with default values
   const {
     control,
     handleSubmit,
-    watch,
-    formState: { errors, isValid, isDirty },
+    formState: { errors },
     reset,
   } = useForm<ClientFormData>({
     mode: "onChange", // Validate on every change
@@ -113,13 +117,13 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
       fullName: defaultValues?.fullName || "",
       email: defaultValues?.email || "",
       phone: defaultValues?.phone || "",
-      contact: defaultValues?.contact || "",
+      contact:
+        defaultValues?.contact || preferredContactOptions[defaultContact].value,
       address: defaultValues?.address || "",
       address2: defaultValues?.address2 || "",
       city: defaultValues?.city || "",
-      state: defaultValues?.state || "",
+      state: defaultValues?.state || usa_states[texasStates].value,
       zipCode: defaultValues?.zipCode || "",
-      measurementUnit: defaultValues?.measurementUnit || "ft",
       floorPlan: defaultValues?.floorPlan || 1,
     },
   });
@@ -130,13 +134,13 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
       fullName: defaultValues?.fullName || "",
       email: defaultValues?.email || "",
       phone: defaultValues?.phone || "",
-      contact: defaultValues?.contact || "",
+      contact:
+        defaultValues?.contact || preferredContactOptions[defaultContact].value,
       address: defaultValues?.address || "",
       address2: defaultValues?.address2 || "",
       city: defaultValues?.city || "",
-      state: defaultValues?.state || "",
+      state: defaultValues?.state || usa_states[texasStates].value,
       zipCode: defaultValues?.zipCode || "",
-      measurementUnit: defaultValues?.measurementUnit || "ft",
       floorPlan: defaultValues?.floorPlan || 1,
     });
   }, [defaultValues, defaultValues, reset]);
@@ -159,8 +163,6 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
   const getFloorLabel = (floorCount: number): string => {
     return floorCount === 1 ? "1 Floor" : `${floorCount} Floors`;
   };
-
-  const measurementUnitList: MeasurementUnit[] = ["ft", "m", "in"];
 
   return (
     <form id="client-form" onSubmit={handleSubmit(onSubmit)}>
@@ -205,7 +207,7 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
                 <TextField
                   {...field}
                   fullWidth
-                  label="Email Address"
+                  label="Email Address (Optional)"
                   size="small"
                   type="email"
                   error={!!errors.email}
@@ -225,7 +227,7 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
                 <TextField
                   {...field}
                   fullWidth
-                  label="Phone Number"
+                  label="Phone Number (Optional)"
                   size="small"
                   type="tel"
                   error={!!errors.phone}
@@ -242,15 +244,27 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
               control={control}
               rules={validationRules.contact}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label="Contact Method"
-                  size="small"
-                  error={!!errors.contact}
-                  helperText={errors.contact?.message}
-                  disabled={isLoading}
-                />
+                <FormControl fullWidth size="small" error={!!errors.contact}>
+                  <InputLabel id="contact-method-label">
+                    Contact Method
+                  </InputLabel>
+                  <Select
+                    {...field}
+                    labelId="contact-method-label"
+                    id="contact-method-select"
+                    label="Contact Method"
+                    disabled={isLoading}
+                  >
+                    {preferredContactOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {errors.contact && (
+                    <FormHelperText>{errors.contact.message}</FormHelperText>
+                  )}
+                </FormControl>
               )}
             />
           </Grid>
@@ -388,42 +402,6 @@ const ClientForm = ({ defaultValues, onSubmit, isLoading }: Props) => {
         </Typography>
 
         <Grid container spacing={2}>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <Controller
-              name="measurementUnit"
-              control={control}
-              rules={validationRules.measurementUnit}
-              render={({ field }) => (
-                <FormControl
-                  fullWidth
-                  size="small"
-                  error={!!errors.measurementUnit}
-                >
-                  <InputLabel id="measurement-unit-label">
-                    Measurement Unit
-                  </InputLabel>
-                  <Select
-                    {...field}
-                    labelId="measurement-unit-label"
-                    id="measurement-unit-select"
-                    label="Measurement Unit"
-                  >
-                    {measurementUnitList.map((unit) => (
-                      <MenuItem key={unit} value={unit}>
-                        {getMeasurementUnitLabel(unit)}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                  {errors.measurementUnit && (
-                    <FormHelperText>
-                      {errors.measurementUnit.message}
-                    </FormHelperText>
-                  )}
-                </FormControl>
-              )}
-            />
-          </Grid>
-
           <Grid size={{ xs: 12, sm: 6 }}>
             <Controller
               name="floorPlan"

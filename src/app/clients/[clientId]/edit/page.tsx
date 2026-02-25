@@ -17,7 +17,7 @@ import {
   Edit as EditIcon,
 } from "@mui/icons-material";
 import AppLayout from "@/components/AppLayout";
-import { ProtectedRoute } from "@/components";
+import { PageHeader, ProtectedRoute } from "@/components";
 import ClientForm from "@/components/ProInteriorEstimate/ClientForm";
 import { SubmitHandler } from "react-hook-form";
 import { ClientFormData } from "@/components/SearchClient/SearchClient.model";
@@ -113,7 +113,7 @@ const EditClientPage = ({ params }: EditClientPageProps) => {
     } catch (err) {
       console.error("Error updating client:", err);
       setError(
-        "Failed to update client. Please check your data and try again."
+        "Failed to update client. Please check your data and try again.",
       );
       toast.error("Failed to update client");
     } finally {
@@ -138,6 +138,11 @@ const EditClientPage = ({ params }: EditClientPageProps) => {
       <ProtectedRoute>
         <AppLayout>
           <Box sx={{ p: 3 }}>
+            <PageHeader
+              title="Edit Client"
+              subtitle="Update client information and property details"
+              onBack={() => router.back()}
+            />
             <Alert severity="error" sx={{ mb: 3 }}>
               {error}
             </Alert>
@@ -179,29 +184,10 @@ const EditClientPage = ({ params }: EditClientPageProps) => {
     <ProtectedRoute>
       <AppLayout>
         <Box sx={{ p: 3, maxWidth: 1000, mx: "auto" }}>
-          {/* Header */}
-          <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 4 }}>
-            <Button
-              startIcon={<ArrowBackIcon />}
-              onClick={() => router.back()}
-              variant="outlined"
-            >
-              Back
-            </Button>
-            <Box>
-              <Typography
-                variant="h4"
-                gutterBottom
-                sx={{ display: "flex", alignItems: "center" }}
-              >
-                <EditIcon sx={{ mr: 2, fontSize: 40 }} />
-                Edit Client
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Update client information and property details
-              </Typography>
-            </Box>
-          </Stack>
+          <PageHeader
+            title="Edit Client"
+            subtitle="Update client information and property details"
+          />
 
           {error && (
             <Alert

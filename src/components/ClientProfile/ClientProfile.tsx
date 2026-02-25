@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import * as maptilersdk from "@maptiler/sdk";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Box,
   Button,
   Card,
-  Chip,
   Divider,
   IconButton,
   Paper,
@@ -30,11 +30,13 @@ import AddIcon from "@mui/icons-material/Add";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import MapIcon from "@mui/icons-material/Map";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ClientFullData, ClientStatus } from "@/types";
+import { ClientFullData, ClientStatus, MetricCard } from "@/types";
 import { formatPhoneNumber } from "@/tools";
 import { clientApi } from "@/services";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { Circle, Edit as EditIcon } from "@mui/icons-material";
+import MetricCards from "../Dashboard/MetricCards";
 
 type StatCardProps = {
   label: string;
@@ -185,6 +187,10 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
     );
   };
 
+  const onEditClient = () => {
+    router.push(`/clients/${client.id}/edit`);
+  };
+
   const handleOpenDeleteDialog = () => {
     setDeleteDialogOpen(true);
   };
@@ -225,6 +231,35 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
     }
   };
 
+  const summaryCards: MetricCard[] = [
+    {
+      title: "Total Projects",
+      value: revenue ?? 0,
+      color: "blue" as const,
+      icon: (
+        <DescriptionOutlinedIcon
+          fontSize="small"
+          sx={{ color: "primary.main" }}
+        />
+      ),
+      format: (value) => `$${Number(value).toLocaleString()}`,
+    },
+    {
+      title: "Completed",
+      value: completedCount,
+      color: "green" as const,
+      icon: <Circle fontSize="small" sx={{ color: "success.main" }} />,
+      format: (value) => value.toString(),
+    },
+    {
+      title: "Revenue",
+      value: revenue,
+      color: "purple" as const,
+      icon: <Circle fontSize="small" sx={{ color: "secondary.main" }} />,
+      format: (value) => `$${Number(value).toLocaleString()}`,
+    },
+  ];
+
   return (
     <>
       <Card
@@ -255,6 +290,14 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
               alignItems="center"
               sx={{ mb: 0.25 }}
             >
+              <IconButton
+                size="small"
+                onClick={onEditClient}
+                title="Edit Client"
+                color="primary"
+              >
+                <EditIcon fontSize="small" />
+              </IconButton>
               <Typography
                 variant="h6"
                 sx={{ fontWeight: 800, lineHeight: 1.2 }}
@@ -271,8 +314,6 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
                   }
                   disabled={isUpdatingStatus}
                   sx={{
-                    height: 28,
-                    fontSize: 12,
                     textTransform: "capitalize",
                     bgcolor: "background.default",
                     "& .MuiSelect-select": {
@@ -281,15 +322,27 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
                   }}
                 >
                   <MenuItem value="lead" sx={{ textTransform: "capitalize" }}>
+                    <Circle
+                      fontSize="small"
+                      sx={{ color: "warning.main", mr: 0.5 }}
+                    />
                     Lead
                   </MenuItem>
                   <MenuItem value="active" sx={{ textTransform: "capitalize" }}>
+                    <Circle
+                      fontSize="small"
+                      sx={{ color: "success.main", mr: 0.5 }}
+                    />
                     Active
                   </MenuItem>
                   <MenuItem
                     value="inactive"
                     sx={{ textTransform: "capitalize" }}
                   >
+                    <Circle
+                      fontSize="small"
+                      sx={{ color: "text.disabled", mr: 0.5 }}
+                    />
                     Inactive
                   </MenuItem>
                 </Select>
@@ -363,73 +416,7 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
 
         {/* Stats */}
         <Box sx={{ px: 3, pb: 2 }}>
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", sm: "repeat(3, 1fr)" },
-              gap: 2,
-            }}
-          >
-            <StatCard tint="blue" label="Total Projects" value={revenue ?? 0} />
-            <StatCard tint="green" label="Completed" value={completedCount} />
-            <StatCard
-              tint="purple"
-              label="Revenue"
-              value={`$${Number(revenue).toLocaleString()}`}
-            />
-          </Box>
-        </Box>
-
-        {/* Map Section */}
-        <Box sx={{ px: 3, pb: 2 }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 800, mb: 1.5 }}>
-            Location
-          </Typography>
-          <Paper
-            variant="outlined"
-            sx={{
-              borderRadius: 2,
-              overflow: "hidden",
-              height: 300,
-              position: "relative",
-            }}
-          >
-            <iframe
-              src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dO0Yy4PvVkRTco&q=${encodeURIComponent(
-                addressLine,
-              )}`}
-              style={{
-                width: "100%",
-                height: "100%",
-                border: 0,
-              }}
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              title={`Map showing location of ${client.displayName}`}
-            />
-            <Box
-              sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                zIndex: 1,
-              }}
-            >
-              <IconButton
-                onClick={openInGoogleMaps}
-                size="small"
-                sx={{
-                  bgcolor: "background.paper",
-                  "&:hover": { bgcolor: "background.default" },
-                  boxShadow: 1,
-                }}
-                title="Open in Google Maps"
-              >
-                <MapIcon fontSize="small" />
-              </IconButton>
-            </Box>
-          </Paper>
+          <MetricCards summaryCards={summaryCards} />
         </Box>
 
         <Divider />
@@ -446,7 +433,7 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
               Project History
             </Typography>
 
-            <Stack direction="row" spacing={1}>
+            <Stack sx={{ direction: { sm: "column", md: "row" }, gap: 1 }}>
               <Button
                 onClick={handleOpenDeleteDialog}
                 color="error"
