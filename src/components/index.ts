@@ -29,7 +29,6 @@ export { default as ProjectSearchSelector } from "./ProjectSearchSelector";
 export { default as PageHeader } from "./PageHeader";
 export { default as NewClientDialog } from "./NewClientDialog";
 export { default as Spinner } from "./Spinner";
-export { default as CustomerSelectionMenu } from "./ProInteriorEstimate/CustomerSelectionMenu";
 
 export { InvoiceGenerator } from "./InvoiceGenerator";
 export type { InvoiceData, InvoiceItem, Customer } from "./InvoiceGenerator";

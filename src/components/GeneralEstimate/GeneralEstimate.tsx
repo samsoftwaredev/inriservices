@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import { InvoiceData, InvoiceGenerator } from "../InvoiceGenerator";
 import { Add, Add as AddIcon, Delete } from "@mui/icons-material";
-import CustomerSelectionMenu from "../ProInteriorEstimate/CustomerSelectionMenu";
 import RoomGeneralInfo from "./RoomGeneralInfo";
 import { useClient } from "@/context/ClientContext";
 import NewClientDialog from "../NewClientDialog";
@@ -45,6 +44,7 @@ import { compareAsc } from "date-fns/compareAsc";
 import { format } from "date-fns";
 import RequireClient from "../RequireClient";
 import Spinner from "../Spinner";
+import PageHeader from "../PageHeader";
 
 const initialCosts: ProjectCost = {
   laborCost: 300,
@@ -450,11 +450,9 @@ const GeneralEstimate = ({ paramsProjectId }: Props) => {
 
   return (
     <>
-      <CustomerSelectionMenu
-        title={"General Estimate"}
-        subtitle={"Select a customer for this estimate"}
-        onCreateNewCustomer={onSubmitNewClient}
-        onCreateNewLocation={() => {}}
+      <PageHeader
+        title="General Estimate"
+        subtitle="Select a customer for this estimate"
       />
 
       <Paper sx={{ p: 3, mb: 3 }}>

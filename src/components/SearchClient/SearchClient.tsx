@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -30,6 +30,7 @@ const SearchClient = () => {
     currentClient,
     handleSelectClient,
     allClients: clients,
+    getClients,
   } = useClient();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
@@ -131,6 +132,10 @@ const SearchClient = () => {
       setIsUpdating(false);
     }
   };
+
+  useEffect(() => {
+    getClients();
+  }, [getClients]);
 
   return (
     <>

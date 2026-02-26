@@ -23,12 +23,14 @@ interface ClientContextType {
   handleSelectClient: (clientId: string) => void;
   handleCreateNewClient: (
     data: ClientFormData,
-    companyId: string
+    companyId: string,
   ) => Promise<void>;
   handleCreateNewProperty: (
     data: ClientFormData,
-    companyId: string
+    companyId: string,
   ) => Promise<void>;
+
+  getClients: () => Promise<void>;
 
   propertyData?: PropertyTransformed;
   setPropertyData: React.Dispatch<
@@ -55,7 +57,7 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
 
   const handleCreateNewClient = async (
     data: ClientFormData,
-    companyId: string
+    companyId: string,
   ) => {
     try {
       await clientApi.createClient({
@@ -88,7 +90,7 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
 
   const handleCreateNewProperty = async (
     data: ClientFormData,
-    companyId: string
+    companyId: string,
   ) => {
     try {
       await propertyApi.createProperty({
@@ -151,14 +153,10 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
   const getClients = async () => {
     const clientRes = await clientApi.listClientsWithAddresses();
     const transformed = clientRes.items.map((client) =>
-      clientFullDataTransformer(client)
+      clientFullDataTransformer(client),
     );
     setAllClients(transformed);
   };
-
-  useEffect(() => {
-    getClients();
-  }, []);
 
   useEffect(() => {
     const clientId = getCustomerIdURL(window.location.href);
@@ -174,6 +172,8 @@ export const ClientProvider = ({ children }: ClientProviderProps) => {
     handleSelectClient,
     handleCreateNewClient,
     handleCreateNewProperty,
+
+    getClients,
 
     propertyData,
     setPropertyData,

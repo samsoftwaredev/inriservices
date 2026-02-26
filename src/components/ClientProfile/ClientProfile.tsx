@@ -306,7 +306,10 @@ const ClientProfile = ({ client, onNewProject }: ClientProfileProps) => {
               </Typography>
 
               {/* Status Dropdown */}
-              <FormControl size="small" sx={{ minWidth: 100 }}>
+              <FormControl
+                size="small"
+                sx={{ flexBasis: 100, width: "100%", ml: 2 }}
+              >
                 <Select
                   value={currentStatus}
                   onChange={(e) =>

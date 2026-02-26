@@ -9,17 +9,16 @@ import {
   TrendingUp as TrendingUpIcon,
   Assessment as AssessmentIcon,
 } from "@mui/icons-material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Receipt, ReceiptStatus, PaymentMethod, MetricCard } from "@/types";
 import { receiptApi, ReceiptWithClient } from "@/services/receiptApi";
 import MetricCards from "@/components/Dashboard/MetricCards";
 import CreateReceiptDialog from "./CreateReceiptDialog";
-import CustomerSelectionMenu from "../ProInteriorEstimate/CustomerSelectionMenu";
 import ReceiptsTable from "./ReceiptsTable";
 import ReceiptsFilters from "./ReceiptsFilters";
 import { useRouter } from "next/navigation";
+import PageHeader from "../PageHeader";
 
 interface ReceiptFilters {
   status?: ReceiptStatus;
@@ -186,11 +185,9 @@ const ReceiptDashboard = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <CustomerSelectionMenu
-        title={"Receipt Dashboard"}
-        subtitle={"Manage and track all payment receipts"}
-        onCreateNewCustomer={() => {}}
-        onCreateNewLocation={() => {}}
+      <PageHeader
+        title="Receipt Dashboard"
+        subtitle="Manage and track all payment receipts"
       />
 
       {/* Stats Cards */}

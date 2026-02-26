@@ -2,7 +2,6 @@
 
 import React from "react";
 
-import MainContent from "./MainContent";
 import EstimateSummary from "./EstimateSummary";
 import {
   BuildingProvider,
@@ -15,7 +14,6 @@ const Building = () => {
     <BuildingProvider>
       <ProjectCostProvider>
         <GallonsProvider>
-          <MainContent />
           <EstimateSummary />
         </GallonsProvider>
       </ProjectCostProvider>
