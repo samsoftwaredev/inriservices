@@ -17,6 +17,7 @@ import MetricCards from "@/components/Dashboard/MetricCards";
 import { useRouter } from "next/navigation";
 import InvoicesTable from "./InvoicesTable";
 import InvoiceFiltersComponent, { InvoiceFilters } from "./InvoiceFilters";
+import PageHeader from "../PageHeader";
 
 interface DashboardStats {
   totalInvoices: number;
@@ -122,28 +123,28 @@ const Invoices = () => {
       title: "Total Invoices",
       value: stats.totalInvoices,
       icon: <InvoiceIcon />,
-      color: "primary.light",
+      color: "primary.main",
       format: (value: number) => value.toString(),
     },
     {
       title: "Total Amount",
       value: stats.totalAmount,
       icon: <MoneyIcon />,
-      color: "success.light",
+      color: "success.main",
       format: formatCurrency,
     },
     {
       title: "Paid Amount",
       value: stats.paidAmount,
       icon: <TrendingUpIcon />,
-      color: "info.light",
+      color: "info.main",
       format: formatCurrency,
     },
     {
       title: "Pending Amount",
       value: stats.pendingAmount,
       icon: <AssessmentIcon />,
-      color: "warning.light",
+      color: "warning.main",
       format: formatCurrency,
     },
   ];
@@ -166,19 +167,10 @@ const Invoices = () => {
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Box>
         {/* Header */}
-        <Box sx={{ mb: 4 }}>
-          <Typography
-            variant="h4"
-            gutterBottom
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            <InvoiceIcon sx={{ mr: 2, fontSize: 40 }} />
-            Invoice Dashboard
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Manage and track all invoices
-          </Typography>
-        </Box>
+        <PageHeader
+          title="Invoice Dashboard"
+          subtitle="Manage and track all invoices"
+        />
 
         {/* Stats Cards */}
         <MetricCards summaryCards={summaryCards} />

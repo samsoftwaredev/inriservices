@@ -42,7 +42,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import AppLayout from "@/components/AppLayout";
-import { ProtectedRoute } from "@/components";
+import { PageHeader, ProtectedRoute } from "@/components";
 import { financialProfileApi } from "@/services/companyFinancialProfilesApi";
 import { productionRateTemplateApi } from "@/services/productionRateTamplatesApi";
 import { companyProductionRateApi } from "@/services/companyProductionRatesApi";
@@ -440,20 +440,10 @@ const GPPAdmin = () => {
     <ProtectedRoute>
       <AppLayout>
         <Container maxWidth="xl" sx={{ py: 4 }}>
-          <Box sx={{ mb: 4 }}>
-            <Typography
-              variant="h3"
-              component="h1"
-              gutterBottom
-              fontWeight={700}
-            >
-              GPP Admin
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              General Pricing & Production — Manage financial settings,
-              production rates, and project estimates
-            </Typography>
-          </Box>
+          <PageHeader
+            title="GPP Admin"
+            subtitle="General Pricing & Production — Manage financial settings, production rates, and project estimates"
+          />
 
           <Paper sx={{ width: "100%" }}>
             <Tabs

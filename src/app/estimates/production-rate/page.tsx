@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Box, Container, Typography, Tabs, Tab, Paper } from "@mui/material";
 import AppLayout from "@/components/AppLayout";
-import { ProtectedRoute } from "@/components";
+import { PageHeader, ProtectedRoute } from "@/components";
 import TaskDefinitionManager from "@/components/ProductionRate/TaskDefinitionManager";
 import JobDataTracker from "@/components/ProductionRate/JobDataTracker";
 import RateCalculator from "@/components/ProductionRate/RateCalculator";
@@ -43,71 +43,59 @@ const ProductionRate = () => {
   return (
     <ProtectedRoute>
       <AppLayout>
-        <Container maxWidth="xl" sx={{ py: 4 }}>
-          <Box sx={{ mb: 4 }}>
-            <Typography
-              variant="h3"
-              component="h1"
-              gutterBottom
-              fontWeight={700}
-            >
-              Production Rate System
-            </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-              Build accurate estimates based on real production data, not
-              guesses.
-            </Typography>
-          </Box>
+        <PageHeader
+          title="Production Rate System"
+          subtitle="Build accurate estimates based on real production data, not guesses."
+        />
 
-          <Paper sx={{ width: "100%" }}>
-            <Tabs
-              value={activeTab}
-              onChange={handleTabChange}
-              variant="scrollable"
-              scrollButtons="auto"
-              sx={{
-                borderBottom: 1,
-                borderColor: "divider",
-                "& .MuiTab-root": {
-                  fontWeight: 600,
-                  textTransform: "none",
-                  fontSize: "1rem",
-                },
-              }}
-            >
-              <Tab label="📊 Beginner Rates" />
-              <Tab label="🧩 Define Tasks" />
-              <Tab label="📝 Job Data Tracker" />
-              <Tab label="⏱️ Rate Calculator" />
-              <Tab label="⚙️ Difficulty Modifiers" />
-              <Tab label="💰 Estimator" />
-            </Tabs>
+        <Paper sx={{ width: "100%" }}>
+          <Tabs
+            value={activeTab}
+            onChange={handleTabChange}
+            variant="scrollable"
+            scrollButtons="auto"
+            sx={{
+              borderBottom: 1,
+              borderColor: "divider",
+              "& .MuiTab-root": {
+                fontWeight: 600,
+                textTransform: "none",
+                fontSize: "1rem",
+              },
+            }}
+          >
+            <Tab label="📊 Beginner Rates" />
+            <Tab label="🧩 Define Tasks" />
+            <Tab label="📝 Job Data Tracker" />
+            <Tab label="⏱️ Rate Calculator" />
+            <Tab label="⚙️ Difficulty Modifiers" />
+            <Tab label="💰 Estimator" />
+          </Tabs>
 
-            <TabPanel value={activeTab} index={0}>
-              <BeginnerRates />
-            </TabPanel>
+          <TabPanel value={activeTab} index={0}>
+            <BeginnerRates />
+          </TabPanel>
 
-            <TabPanel value={activeTab} index={1}>
-              <TaskDefinitionManager />
-            </TabPanel>
+          <TabPanel value={activeTab} index={1}>
+            <TaskDefinitionManager />
+          </TabPanel>
 
-            <TabPanel value={activeTab} index={2}>
-              <JobDataTracker />
-            </TabPanel>
+          <TabPanel value={activeTab} index={2}>
+            <JobDataTracker />
+          </TabPanel>
 
-            <TabPanel value={activeTab} index={3}>
-              <RateCalculator />
-            </TabPanel>
+          <TabPanel value={activeTab} index={3}>
+            <RateCalculator />
+          </TabPanel>
 
-            <TabPanel value={activeTab} index={4}>
-              <DifficultyModifiers />
-            </TabPanel>
+          <TabPanel value={activeTab} index={4}>
+            <DifficultyModifiers />
+          </TabPanel>
 
-            <TabPanel value={activeTab} index={5}>
-              <ProductionEstimator />
-            </TabPanel>
-          </Paper>
-        </Container>
+          <TabPanel value={activeTab} index={5}>
+            <ProductionEstimator />
+          </TabPanel>
+        </Paper>
       </AppLayout>
     </ProtectedRoute>
   );

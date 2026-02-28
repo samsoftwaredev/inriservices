@@ -10,19 +10,13 @@ import {
   AccordionSummary,
   AccordionDetails,
   Button,
-  TextField,
   Paper,
   Stack,
-  Chip,
-  LinearProgress,
-  IconButton,
   Divider,
   Alert,
 } from "@mui/material";
 import {
   ExpandMore as ExpandMoreIcon,
-  Search as SearchIcon,
-  Clear as ClearIcon,
   CheckCircle as CheckCircleIcon,
   RadioButtonUnchecked as UncheckedIcon,
 } from "@mui/icons-material";
@@ -345,10 +339,6 @@ const ACCORDION_SECTIONS: AccordionSection[] = [
   },
 ];
 
-// ============================================================================
-// COMPONENT
-// ============================================================================
-
 const QualifyingQuestions = () => {
   const STORAGE_KEY_CHECKLIST = "qualifying-questions-checklist";
   const STORAGE_KEY_NOTES = "qualifying-questions-notes";
@@ -366,7 +356,6 @@ const QualifyingQuestions = () => {
     Record<string, boolean>
   >({});
 
-  // State for search
   const [searchTerm, setSearchTerm] = useState("");
 
   // Load from localStorage on mount
@@ -430,27 +419,6 @@ const QualifyingQuestions = () => {
     setCheckedQuestions((prev) => ({ ...prev, ...updates }));
   };
 
-  // Reset all
-  const handleResetAll = () => {
-    setCheckedQuestions({});
-    setPhaseNotes({});
-    localStorage.removeItem(STORAGE_KEY_CHECKLIST);
-    localStorage.removeItem(STORAGE_KEY_NOTES);
-  };
-
-  // Expand/Collapse all accordions
-  const handleExpandAll = () => {
-    const expanded: Record<string, boolean> = {};
-    ACCORDION_SECTIONS.forEach((section) => {
-      expanded[section.id] = true;
-    });
-    setExpandedAccordions(expanded);
-  };
-
-  const handleCollapseAll = () => {
-    setExpandedAccordions({});
-  };
-
   // Toggle accordion
   const handleToggleAccordion = (id: string) => {
     setExpandedAccordions((prev) => ({
@@ -458,25 +426,6 @@ const QualifyingQuestions = () => {
       [id]: !prev[id],
     }));
   };
-
-  // Handle notes change
-  const handleNotesChange = (phaseId: string, value: string) => {
-    setPhaseNotes((prev) => ({ ...prev, [phaseId]: value }));
-  };
-
-  // Calculate progress
-  const totalQuestions = useMemo(() => {
-    return PHASES.reduce((acc, phase) => acc + phase.questions.length, 0);
-  }, []);
-
-  const completedQuestions = useMemo(() => {
-    return Object.values(checkedQuestions).filter(Boolean).length;
-  }, [checkedQuestions]);
-
-  const progressPercent = useMemo(() => {
-    if (totalQuestions === 0) return 0;
-    return Math.round((completedQuestions / totalQuestions) * 100);
-  }, [completedQuestions, totalQuestions]);
 
   // Filter questions based on search
   const filteredPhases = useMemo(() => {
@@ -507,100 +456,15 @@ const QualifyingQuestions = () => {
   }, [searchTerm]);
 
   return (
-    <Box sx={{ p: { xs: 2, md: 3 }, maxWidth: 1200, mx: "auto" }}>
+    <Box>
       {/* Header */}
       <PageHeader
         title="Qualifying Questions & Sales Guide"
         subtitle="Use this checklist during client consultations to gather key information and address concerns professionally."
       />
 
-      {/* Progress */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: 2,
-          mb: 3,
-          border: "1px solid",
-          borderColor: "divider",
-          borderRadius: 2,
-        }}
-      >
-        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 1 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Progress
-          </Typography>
-          <Chip
-            icon={<CheckCircleIcon />}
-            label={`${completedQuestions}/${totalQuestions} (${progressPercent}%)`}
-            color="primary"
-            size="small"
-          />
-        </Stack>
-        <LinearProgress
-          variant="determinate"
-          value={progressPercent}
-          sx={{ height: 8, borderRadius: 1 }}
-        />
-      </Paper>
-
-      {/* Search & Controls */}
-      <Paper
-        elevation={0}
-        sx={{
-          p: 2,
-          mb: 3,
-          border: "1px solid",
-          borderColor: "divider",
-          borderRadius: 2,
-        }}
-      >
-        <Stack spacing={2}>
-          <TextField
-            fullWidth
-            size="small"
-            placeholder="Search questions, prep steps, or objections..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <SearchIcon sx={{ mr: 1, color: "action.active" }} />
-              ),
-              endAdornment: searchTerm && (
-                <IconButton size="small" onClick={() => setSearchTerm("")}>
-                  <ClearIcon />
-                </IconButton>
-              ),
-            }}
-          />
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={1}
-            flexWrap="wrap"
-          >
-            <Button size="small" variant="outlined" onClick={handleExpandAll}>
-              Expand All
-            </Button>
-            <Button size="small" variant="outlined" onClick={handleCollapseAll}>
-              Collapse All
-            </Button>
-            <Button
-              size="small"
-              variant="outlined"
-              color="error"
-              onClick={handleResetAll}
-            >
-              Reset All
-            </Button>
-          </Stack>
-        </Stack>
-      </Paper>
-
       {/* Checklist Sections */}
       <Box sx={{ mb: 4 }}>
-        <Typography variant="h5" gutterBottom sx={{ fontWeight: 700, mb: 2 }}>
-          📋 Qualifying Questions Checklist
-        </Typography>
-
         {filteredPhases.length === 0 && (
           <Alert severity="info">
             No questions match your search. Try different keywords.
@@ -679,20 +543,6 @@ const QualifyingQuestions = () => {
                   );
                 })}
               </Stack>
-
-              {/* Notes per phase */}
-              <Box sx={{ mt: 2 }}>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={2}
-                  size="small"
-                  placeholder="Add notes for this phase..."
-                  value={phaseNotes[phase.id] || ""}
-                  onChange={(e) => handleNotesChange(phase.id, e.target.value)}
-                  sx={{ bgcolor: "background.default" }}
-                />
-              </Box>
             </Paper>
           );
         })}
