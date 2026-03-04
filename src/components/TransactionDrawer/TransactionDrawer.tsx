@@ -35,6 +35,7 @@ import type {
   FinancialDocument,
   TransactionSource,
 } from "@/types";
+import { useAuth } from "@/context";
 // Constants not needed for this component
 
 interface TransactionDrawerProps {
@@ -76,6 +77,7 @@ export default function TransactionDrawer({
   transactionId = null,
   onSaved,
 }: TransactionDrawerProps) {
+  const { userData } = useAuth();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -229,7 +231,7 @@ export default function TransactionDrawer({
       if (transactionId) {
         await financialTransactionsApi.update(transactionId, payload);
       } else {
-        payload.company_id = ""; // Set by RLS
+        payload.company_id = userData?.companyId!;
         await financialTransactionsApi.create(payload);
       }
 

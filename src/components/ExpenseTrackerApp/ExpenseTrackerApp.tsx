@@ -38,6 +38,10 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 
 import AddIcon from "@mui/icons-material/Add";
@@ -317,8 +321,6 @@ const seedBudgets: Budget[] = [
   },
 ];
 
-/* ----------------------- Main App ----------------------- */
-
 export default function ExpenseTrackerApp(): React.JSX.Element {
   const theme = useTheme();
   const mdUp = useMediaQuery(theme.breakpoints.up("md"));
@@ -342,14 +344,14 @@ export default function ExpenseTrackerApp(): React.JSX.Element {
 
   const balance = React.useMemo(
     () => calcBalance(transactions),
-    [transactions]
+    [transactions],
   );
 
   const topStats = React.useMemo(() => {
     // Use current month if possible; if none, show all-time.
     const currentMonth = monthISO();
     const monthTx = transactions.filter(
-      (t) => monthKeyFromISO(t.dateISO) === currentMonth
+      (t) => monthKeyFromISO(t.dateISO) === currentMonth,
     );
     const scope = monthTx.length ? monthTx : transactions;
 
@@ -373,7 +375,7 @@ export default function ExpenseTrackerApp(): React.JSX.Element {
 
   const updateTransaction = (id: string, patch: Partial<Transaction>) => {
     setTransactions((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, ...patch } : t))
+      prev.map((t) => (t.id === id ? { ...t, ...patch } : t)),
     );
   };
 
@@ -387,7 +389,7 @@ export default function ExpenseTrackerApp(): React.JSX.Element {
 
   const updateAccount = (id: string, patch: Partial<Account>) => {
     setAccounts((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, ...patch } : a))
+      prev.map((a) => (a.id === id ? { ...a, ...patch } : a)),
     );
   };
 
@@ -428,8 +430,8 @@ export default function ExpenseTrackerApp(): React.JSX.Element {
           {budgetSystem === "Monarch"
             ? "Overall: track everything, categorize, automate."
             : budgetSystem === "YNAB"
-            ? "Zero-based: give every dollar a job."
-            : "Envelope: allocate cash-like envelopes."}
+              ? "Zero-based: give every dollar a job."
+              : "Envelope: allocate cash-like envelopes."}
         </Typography>
       </Paper>
 
@@ -514,27 +516,27 @@ export default function ExpenseTrackerApp(): React.JSX.Element {
               {route === "dashboard"
                 ? "Dashboard"
                 : route === "transactions"
-                ? "Transactions"
-                : route === "scan"
-                ? "Scan Receipt"
-                : route === "reports"
-                ? "Reports"
-                : route === "budgets"
-                ? "Budgets"
-                : "Accounts"}
+                  ? "Transactions"
+                  : route === "scan"
+                    ? "Scan Receipt"
+                    : route === "reports"
+                      ? "Reports"
+                      : route === "budgets"
+                        ? "Budgets"
+                        : "Accounts"}
             </Typography>
             <Typography variant="body2" color="text.secondary" noWrap>
               {route === "dashboard"
                 ? "Track your financial health"
                 : route === "transactions"
-                ? "Manage your income and expenses"
-                : route === "scan"
-                ? "Upload a receipt to automatically extract expense data"
-                : route === "reports"
-                ? "Analyze your spending patterns"
-                : route === "budgets"
-                ? "Plan spending by category and system"
-                : "Link banks & sync transactions securely"}
+                  ? "Manage your income and expenses"
+                  : route === "scan"
+                    ? "Upload a receipt to automatically extract expense data"
+                    : route === "reports"
+                      ? "Analyze your spending patterns"
+                      : route === "budgets"
+                        ? "Plan spending by category and system"
+                        : "Link banks & sync transactions securely"}
             </Typography>
           </Box>
 
@@ -683,14 +685,14 @@ function DashboardScreen(props: {
   // Spending by category: current month only (if none, show "no expenses this month")
   const currentMonth = monthISO();
   const monthTx = props.transactions.filter(
-    (t) => monthKeyFromISO(t.dateISO) === currentMonth
+    (t) => monthKeyFromISO(t.dateISO) === currentMonth,
   );
   const monthExpenses = monthTx.filter((t) => t.type === "expense");
 
   const byCat = React.useMemo(() => {
     const m = new Map<Category, number>();
     monthExpenses.forEach((t) =>
-      m.set(t.category, (m.get(t.category) ?? 0) + t.amount)
+      m.set(t.category, (m.get(t.category) ?? 0) + t.amount),
     );
     return [...m.entries()].sort((a, b) => b[1] - a[1]);
   }, [monthExpenses]);
@@ -699,7 +701,7 @@ function DashboardScreen(props: {
     // pick latest budget
     return (
       [...props.budgets].sort((a, b) =>
-        a.monthISO < b.monthISO ? 1 : -1
+        a.monthISO < b.monthISO ? 1 : -1,
       )[0] ?? null
     );
   }, [props.budgets]);
@@ -708,11 +710,11 @@ function DashboardScreen(props: {
     if (!activeBudget) return [];
     const month = activeBudget.monthISO;
     const monthExp = props.transactions.filter(
-      (t) => t.type === "expense" && monthKeyFromISO(t.dateISO) === month
+      (t) => t.type === "expense" && monthKeyFromISO(t.dateISO) === month,
     );
     const spentByCat = new Map<Category, number>();
     monthExp.forEach((t) =>
-      spentByCat.set(t.category, (spentByCat.get(t.category) ?? 0) + t.amount)
+      spentByCat.set(t.category, (spentByCat.get(t.category) ?? 0) + t.amount),
     );
     return activeBudget.lines.map((l) => ({
       ...l,
@@ -1022,10 +1024,10 @@ function QuickAction(props: {
     props.tone === "danger"
       ? { bgcolor: "#ffecee", color: "#cc2343" }
       : props.tone === "warning"
-      ? { bgcolor: "#fff8dc", color: "#b05d00" }
-      : props.tone === "success"
-      ? { bgcolor: "#e9fff5", color: "#007f55" }
-      : { bgcolor: "#eaf3ff", color: "#0a49c2" };
+        ? { bgcolor: "#fff8dc", color: "#b05d00" }
+        : props.tone === "success"
+          ? { bgcolor: "#e9fff5", color: "#007f55" }
+          : { bgcolor: "#eaf3ff", color: "#0a49c2" };
 
   return (
     <Button
@@ -1062,20 +1064,20 @@ function TransactionRow({ t }: { t: Transaction }) {
     t.category === "Food"
       ? "🍴"
       : t.category === "Transport"
-      ? "🚗"
-      : t.category === "Groceries"
-      ? "🛒"
-      : t.category === "Subscriptions"
-      ? "📺"
-      : t.category === "Shopping"
-      ? "🛍️"
-      : t.category === "Utilities"
-      ? "⚡"
-      : t.category === "Freelance"
-      ? "🧾"
-      : t.category === "Housing"
-      ? "🏠"
-      : "💳";
+        ? "🚗"
+        : t.category === "Groceries"
+          ? "🛒"
+          : t.category === "Subscriptions"
+            ? "📺"
+            : t.category === "Shopping"
+              ? "🛍️"
+              : t.category === "Utilities"
+                ? "⚡"
+                : t.category === "Freelance"
+                  ? "🧾"
+                  : t.category === "Housing"
+                    ? "🏠"
+                    : "💳";
 
   const amountDisplay =
     t.type === "expense" ? `-${toMoney(t.amount)}` : `+${toMoney(t.amount)}`;
@@ -1227,7 +1229,7 @@ function TransactionsScreen(props: {
 
   const editingTx = React.useMemo(
     () => props.transactions.find((t) => t.id === editId) ?? null,
-    [props.transactions, editId]
+    [props.transactions, editId],
   );
 
   const filtered = React.useMemo(() => {
@@ -1501,91 +1503,44 @@ function TransactionUpsertDialog(props: {
         {isEdit ? "Edit Transaction" : "Add Transaction"}
       </DialogTitle>
       <DialogContent dividers>
-        <Stack spacing={2}>
-          <Controller
-            name="dateISO"
-            control={control}
-            rules={{ required: "Date is required" }}
-            render={({ field, fieldState }) => (
-              <TextField
-                {...field}
-                type="date"
-                label="Date"
-                InputLabelProps={{ shrink: true }}
-                error={!!fieldState.error}
-                helperText={fieldState.error?.message}
-                fullWidth
-              />
-            )}
-          />
-
-          <Controller
-            name="merchant"
-            control={control}
-            rules={{
-              required: "Merchant is required",
-              minLength: { value: 2, message: "Too short" },
-            }}
-            render={({ field, fieldState }) => (
-              <TextField
-                {...field}
-                label="Merchant"
-                placeholder="e.g., Starbucks"
-                error={!!fieldState.error}
-                helperText={fieldState.error?.message}
-                fullWidth
-              />
-            )}
-          />
-
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Stack spacing={2}>
             <Controller
-              name="type"
+              name="dateISO"
               control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <TextField {...field} select label="Type" fullWidth>
-                  <MenuItem value="expense">Expense</MenuItem>
-                  <MenuItem value="income">Income</MenuItem>
-                </TextField>
+              rules={{ required: "Date is required" }}
+              render={({ field, fieldState }) => (
+                <DatePicker
+                  label="Date"
+                  value={field.value ? dayjs(field.value) : null}
+                  onChange={(newValue) => {
+                    field.onChange(
+                      newValue ? dayjs(newValue).format("YYYY-MM-DD") : "",
+                    );
+                  }}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      error: !!fieldState.error,
+                      helperText: fieldState.error?.message,
+                    },
+                  }}
+                />
               )}
             />
 
             <Controller
-              name="category"
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <TextField {...field} select label="Category" fullWidth>
-                  {CATEGORIES.map((c) => (
-                    <MenuItem key={c} value={c}>
-                      {c}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              )}
-            />
-          </Stack>
-
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-            <Controller
-              name="amount"
+              name="merchant"
               control={control}
               rules={{
-                required: "Amount is required",
-                validate: (v) => {
-                  const n = typeof v === "number" ? v : Number(v);
-                  if (!Number.isFinite(n)) return "Enter a number";
-                  if (n <= 0) return "Must be greater than 0";
-                  return true;
-                },
+                required: "Merchant is required",
+                minLength: { value: 2, message: "Too short" },
               }}
               render={({ field, fieldState }) => (
                 <TextField
                   {...field}
-                  type="number"
-                  label="Amount"
-                  inputProps={{ step: 0.01, min: 0 }}
+                  label="Merchant"
+                  placeholder="e.g., Starbucks"
                   error={!!fieldState.error}
                   helperText={fieldState.error?.message}
                   fullWidth
@@ -1593,41 +1548,97 @@ function TransactionUpsertDialog(props: {
               )}
             />
 
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <Controller
+                name="type"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <TextField {...field} select label="Type" fullWidth>
+                    <MenuItem value="expense">Expense</MenuItem>
+                    <MenuItem value="income">Income</MenuItem>
+                  </TextField>
+                )}
+              />
+
+              <Controller
+                name="category"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <TextField {...field} select label="Category" fullWidth>
+                    {CATEGORIES.map((c) => (
+                      <MenuItem key={c} value={c}>
+                        {c}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                )}
+              />
+            </Stack>
+
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <Controller
+                name="amount"
+                control={control}
+                rules={{
+                  required: "Amount is required",
+                  validate: (v) => {
+                    const n = typeof v === "number" ? v : Number(v);
+                    if (!Number.isFinite(n)) return "Enter a number";
+                    if (n <= 0) return "Must be greater than 0";
+                    return true;
+                  },
+                }}
+                render={({ field, fieldState }) => (
+                  <TextField
+                    {...field}
+                    type="number"
+                    label="Amount"
+                    inputProps={{ step: 0.01, min: 0 }}
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
+                    fullWidth
+                  />
+                )}
+              />
+
+              <Controller
+                name="accountId"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    select
+                    label="Account (optional)"
+                    fullWidth
+                  >
+                    <MenuItem value="">None</MenuItem>
+                    {props.accounts.map((a) => (
+                      <MenuItem key={a.id} value={a.id}>
+                        {a.institution} • {a.name} {a.mask ? `(${a.mask})` : ""}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                )}
+              />
+            </Stack>
+
             <Controller
-              name="accountId"
+              name="notes"
               control={control}
               render={({ field }) => (
                 <TextField
                   {...field}
-                  select
-                  label="Account (optional)"
+                  label="Notes (optional)"
                   fullWidth
-                >
-                  <MenuItem value="">None</MenuItem>
-                  {props.accounts.map((a) => (
-                    <MenuItem key={a.id} value={a.id}>
-                      {a.institution} • {a.name} {a.mask ? `(${a.mask})` : ""}
-                    </MenuItem>
-                  ))}
-                </TextField>
+                  multiline
+                  minRows={3}
+                />
               )}
             />
           </Stack>
-
-          <Controller
-            name="notes"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Notes (optional)"
-                fullWidth
-                multiline
-                minRows={3}
-              />
-            )}
-          />
-        </Stack>
+        </LocalizationProvider>
       </DialogContent>
 
       <DialogActions sx={{ p: 2, gap: 1 }}>
@@ -1703,28 +1714,28 @@ function ScanReceiptScreen(props: {
     const merchant = name.includes("starbucks")
       ? "Starbucks Coffee"
       : name.includes("uber")
-      ? "Uber Ride"
-      : name.includes("walmart")
-      ? "Walmart"
-      : name.includes("home")
-      ? "Home Depot"
-      : "Receipt Merchant";
+        ? "Uber Ride"
+        : name.includes("walmart")
+          ? "Walmart"
+          : name.includes("home")
+            ? "Home Depot"
+            : "Receipt Merchant";
 
     const category: Category = name.includes("starbucks")
       ? "Food"
       : name.includes("uber")
-      ? "Transport"
-      : name.includes("walmart")
-      ? "Groceries"
-      : name.includes("home")
-      ? "Shopping"
-      : "Other";
+        ? "Transport"
+        : name.includes("walmart")
+          ? "Groceries"
+          : name.includes("home")
+            ? "Shopping"
+            : "Other";
 
     const amount = name.includes("uber")
       ? 18.5
       : name.includes("starbucks")
-      ? 5.75
-      : 24.99;
+        ? 5.75
+        : 24.99;
 
     const nextDraft: ReceiptDraft = {
       dateISO: todayISO(),
@@ -1737,8 +1748,8 @@ function ScanReceiptScreen(props: {
         v.systemHint === "YNAB"
           ? "YNAB hint: assign this expense to a category envelope/job."
           : v.systemHint === "Goodbudget"
-          ? "Goodbudget hint: this should come out of an envelope category."
-          : "Monarch hint: categorize and track trends over time.",
+            ? "Goodbudget hint: this should come out of an envelope category."
+            : "Monarch hint: categorize and track trends over time.",
     };
 
     setDraft(nextDraft);
@@ -1809,7 +1820,7 @@ function ScanReceiptScreen(props: {
                     if (!f) return "Receipt file is required";
                     const ok =
                       ["image/jpeg", "image/png", "application/pdf"].includes(
-                        f.type
+                        f.type,
                       ) || f.name.toLowerCase().endsWith(".pdf");
                     if (!ok) return "Must be JPG/PNG/PDF";
                     if (f.size > 15 * 1024 * 1024)
@@ -2012,7 +2023,7 @@ function ReportsScreen(props: {
   const txSorted = React.useMemo(
     () =>
       [...props.transactions].sort((a, b) => (a.dateISO < b.dateISO ? 1 : -1)),
-    [props.transactions]
+    [props.transactions],
   );
 
   const months = React.useMemo(() => {
@@ -2029,10 +2040,10 @@ function ReportsScreen(props: {
       months.length >= 2 ? months[months.length - 2] : latestMonth;
 
     const m0 = props.transactions.filter(
-      (t) => monthKeyFromISO(t.dateISO) === latestMonth
+      (t) => monthKeyFromISO(t.dateISO) === latestMonth,
     );
     const m1 = props.transactions.filter(
-      (t) => monthKeyFromISO(t.dateISO) === lastMonth
+      (t) => monthKeyFromISO(t.dateISO) === lastMonth,
     );
 
     const exp0 = sumExpenses(m0);
@@ -2056,11 +2067,11 @@ function ReportsScreen(props: {
   const byCat = React.useMemo(() => {
     const latestMonth = stats.latestMonth;
     const m0 = props.transactions.filter(
-      (t) => t.type === "expense" && monthKeyFromISO(t.dateISO) === latestMonth
+      (t) => t.type === "expense" && monthKeyFromISO(t.dateISO) === latestMonth,
     );
     const map = new Map<Category, number>();
     m0.forEach((t) =>
-      map.set(t.category, (map.get(t.category) ?? 0) + t.amount)
+      map.set(t.category, (map.get(t.category) ?? 0) + t.amount),
     );
     return [...map.entries()].sort((a, b) => b[1] - a[1]);
   }, [props.transactions, stats.latestMonth]);
@@ -2278,7 +2289,7 @@ function BudgetsScreen(props: {
     if (exact) return exact;
     return (
       [...props.budgets].sort((a, b) =>
-        a.monthISO < b.monthISO ? 1 : -1
+        a.monthISO < b.monthISO ? 1 : -1,
       )[0] ?? null
     );
   }, [props.budgets, currentMonth]);
@@ -2295,7 +2306,7 @@ function BudgetsScreen(props: {
 
   const editing = React.useMemo(
     () => props.budgets.find((b) => b.id === editId) ?? null,
-    [props.budgets, editId]
+    [props.budgets, editId],
   );
 
   // Status overview for active budget
@@ -2303,11 +2314,11 @@ function BudgetsScreen(props: {
     if (!active) return [];
     const monthExp = props.transactions.filter(
       (t) =>
-        t.type === "expense" && monthKeyFromISO(t.dateISO) === active.monthISO
+        t.type === "expense" && monthKeyFromISO(t.dateISO) === active.monthISO,
     );
     const spentByCat = new Map<Category, number>();
     monthExp.forEach((t) =>
-      spentByCat.set(t.category, (spentByCat.get(t.category) ?? 0) + t.amount)
+      spentByCat.set(t.category, (spentByCat.get(t.category) ?? 0) + t.amount),
     );
     return active.lines
       .map((l) => ({ ...l, spent: spentByCat.get(l.category) ?? 0 }))
@@ -2518,8 +2529,8 @@ function BudgetExplainer(props: { system: BudgetSystem; active: boolean }) {
     props.system === "Monarch"
       ? "Overall approach: categorize transactions and watch trends. Budgets act like monthly guardrails."
       : props.system === "YNAB"
-      ? "Zero-based: assign every dollar to a category. Spending reduces available category balance."
-      : "Envelope system: each category is an envelope. Fund envelopes and spend from them.";
+        ? "Zero-based: assign every dollar to a category. Spending reduces available category balance."
+        : "Envelope system: each category is an envelope. Fund envelopes and spend from them.";
 
   return (
     <Paper
@@ -2570,7 +2581,7 @@ function BudgetUpsertDialog(props: {
         })) ?? [{ category: "Food", limit: 300 }],
       },
       mode: "onChange",
-    }
+    },
   );
 
   const { fields, append, remove } = useFieldArray({ control, name: "lines" });
@@ -2615,150 +2626,166 @@ function BudgetUpsertDialog(props: {
         {isEdit ? "Edit Budget" : "New Budget"}
       </DialogTitle>
       <DialogContent dividers>
-        <Stack spacing={2}>
-          <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-            <Controller
-              name="name"
-              control={control}
-              rules={{
-                required: "Name is required",
-                minLength: { value: 3, message: "Too short" },
-              }}
-              render={({ field, fieldState }) => (
-                <TextField
-                  {...field}
-                  label="Budget name"
-                  fullWidth
-                  error={!!fieldState.error}
-                  helperText={fieldState.error?.message}
-                />
-              )}
-            />
-
-            <Controller
-              name="monthISO"
-              control={control}
-              rules={{
-                required: "Month is required",
-                pattern: { value: /^\d{4}-\d{2}$/, message: "Use YYYY-MM" },
-              }}
-              render={({ field, fieldState }) => (
-                <TextField
-                  {...field}
-                  label="Month (YYYY-MM)"
-                  fullWidth
-                  error={!!fieldState.error}
-                  helperText={fieldState.error?.message}
-                />
-              )}
-            />
-
-            <Controller
-              name="system"
-              control={control}
-              render={({ field }) => (
-                <TextField {...field} select label="System" fullWidth>
-                  <MenuItem value="Monarch">Monarch</MenuItem>
-                  <MenuItem value="YNAB">YNAB</MenuItem>
-                  <MenuItem value="Goodbudget">Goodbudget</MenuItem>
-                </TextField>
-              )}
-            />
-          </Stack>
-
-          <Divider />
-
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-          >
-            <Typography fontWeight={900}>Category limits</Typography>
-            <Button
-              onClick={() => append({ category: "Other", limit: 100 })}
-              startIcon={<AddIcon />}
-              variant="outlined"
-              sx={{ borderRadius: 999, textTransform: "none", fontWeight: 900 }}
-            >
-              Add line
-            </Button>
-          </Stack>
-
-          <Stack spacing={1.5}>
-            {fields.map((f, idx) => (
-              <Paper
-                key={f.id}
-                variant="outlined"
-                sx={{ borderRadius: 3, p: 1.5 }}
-              >
-                <Stack
-                  direction={{ xs: "column", md: "row" }}
-                  spacing={2}
-                  alignItems={{ md: "center" }}
-                >
-                  <Controller
-                    name={`lines.${idx}.category`}
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        select
-                        label="Category"
-                        sx={{ minWidth: { md: 220 } }}
-                        fullWidth
-                      >
-                        {CATEGORIES.map((c) => (
-                          <MenuItem key={c} value={c}>
-                            {c}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                    )}
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Stack spacing={2}>
+            <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+              <Controller
+                name="name"
+                control={control}
+                rules={{
+                  required: "Name is required",
+                  minLength: { value: 3, message: "Too short" },
+                }}
+                render={({ field, fieldState }) => (
+                  <TextField
+                    {...field}
+                    label="Budget name"
+                    fullWidth
+                    error={!!fieldState.error}
+                    helperText={fieldState.error?.message}
                   />
+                )}
+              />
 
-                  <Controller
-                    name={`lines.${idx}.limit`}
-                    control={control}
-                    rules={{
-                      required: "Limit required",
-                      validate: (v) => {
-                        const n = typeof v === "number" ? v : Number(v);
-                        if (!Number.isFinite(n)) return "Enter a number";
-                        if (n <= 0) return "Must be > 0";
-                        return true;
+              <Controller
+                name="monthISO"
+                control={control}
+                rules={{
+                  required: "Month is required",
+                  pattern: { value: /^\d{4}-\d{2}$/, message: "Use YYYY-MM" },
+                }}
+                render={({ field, fieldState }) => (
+                  <DatePicker
+                    label="Month"
+                    views={["year", "month"]}
+                    value={field.value ? dayjs(field.value + "-01") : null}
+                    onChange={(newValue) => {
+                      field.onChange(
+                        newValue ? dayjs(newValue).format("YYYY-MM") : "",
+                      );
+                    }}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        error: !!fieldState.error,
+                        helperText: fieldState.error?.message,
                       },
                     }}
-                    render={({ field, fieldState }) => (
-                      <TextField
-                        {...field}
-                        type="number"
-                        label="Monthly limit"
-                        inputProps={{ step: 1, min: 0 }}
-                        error={!!fieldState.error}
-                        helperText={fieldState.error?.message}
-                        fullWidth
-                      />
-                    )}
                   />
+                )}
+              />
 
-                  <IconButton
-                    onClick={() => remove(idx)}
-                    aria-label="Remove line"
-                    disabled={fields.length === 1}
-                    sx={{ alignSelf: { xs: "flex-end", md: "center" } }}
+              <Controller
+                name="system"
+                control={control}
+                render={({ field }) => (
+                  <TextField {...field} select label="System" fullWidth>
+                    <MenuItem value="Monarch">Monarch</MenuItem>
+                    <MenuItem value="YNAB">YNAB</MenuItem>
+                    <MenuItem value="Goodbudget">Goodbudget</MenuItem>
+                  </TextField>
+                )}
+              />
+            </Stack>
+
+            <Divider />
+
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Typography fontWeight={900}>Category limits</Typography>
+              <Button
+                onClick={() => append({ category: "Other", limit: 100 })}
+                startIcon={<AddIcon />}
+                variant="outlined"
+                sx={{
+                  borderRadius: 999,
+                  textTransform: "none",
+                  fontWeight: 900,
+                }}
+              >
+                Add line
+              </Button>
+            </Stack>
+
+            <Stack spacing={1.5}>
+              {fields.map((f, idx) => (
+                <Paper
+                  key={f.id}
+                  variant="outlined"
+                  sx={{ borderRadius: 3, p: 1.5 }}
+                >
+                  <Stack
+                    direction={{ xs: "column", md: "row" }}
+                    spacing={2}
+                    alignItems={{ md: "center" }}
                   >
-                    <DeleteOutlineIcon />
-                  </IconButton>
-                </Stack>
-              </Paper>
-            ))}
-          </Stack>
+                    <Controller
+                      name={`lines.${idx}.category`}
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          select
+                          label="Category"
+                          sx={{ minWidth: { md: 220 } }}
+                          fullWidth
+                        >
+                          {CATEGORIES.map((c) => (
+                            <MenuItem key={c} value={c}>
+                              {c}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      )}
+                    />
 
-          <Typography variant="caption" color="text.secondary">
-            Production tip: validate category duplicates, add rollover/goals,
-            and allow “funding” events (YNAB/Goodbudget).
-          </Typography>
-        </Stack>
+                    <Controller
+                      name={`lines.${idx}.limit`}
+                      control={control}
+                      rules={{
+                        required: "Limit required",
+                        validate: (v) => {
+                          const n = typeof v === "number" ? v : Number(v);
+                          if (!Number.isFinite(n)) return "Enter a number";
+                          if (n <= 0) return "Must be > 0";
+                          return true;
+                        },
+                      }}
+                      render={({ field, fieldState }) => (
+                        <TextField
+                          {...field}
+                          type="number"
+                          label="Monthly limit"
+                          inputProps={{ step: 1, min: 0 }}
+                          error={!!fieldState.error}
+                          helperText={fieldState.error?.message}
+                          fullWidth
+                        />
+                      )}
+                    />
+
+                    <IconButton
+                      onClick={() => remove(idx)}
+                      aria-label="Remove line"
+                      disabled={fields.length === 1}
+                      sx={{ alignSelf: { xs: "flex-end", md: "center" } }}
+                    >
+                      <DeleteOutlineIcon />
+                    </IconButton>
+                  </Stack>
+                </Paper>
+              ))}
+            </Stack>
+
+            <Typography variant="caption" color="text.secondary">
+              Production tip: validate category duplicates, add rollover/goals,
+              and allow “funding” events (YNAB/Goodbudget).
+            </Typography>
+          </Stack>
+        </LocalizationProvider>
       </DialogContent>
       <DialogActions sx={{ p: 2, gap: 1 }}>
         <Button
@@ -2918,8 +2945,8 @@ function AccountsScreen(props: {
                       {a.type === "credit"
                         ? "💳"
                         : a.type === "savings"
-                        ? "🏦"
-                        : "🏛️"}
+                          ? "🏦"
+                          : "🏛️"}
                     </Avatar>
                     <Box sx={{ minWidth: 0 }}>
                       <Typography fontWeight={900} noWrap>
