@@ -225,7 +225,6 @@ export default function LedgerTable() {
             totalAmountCents={totalAmountCents}
             totalTransactions={transactions.length}
             transactionsWithNoLinks={transactionsWithNoLinks}
-            formatCurrency={formatCurrency}
           />
           <TransactionsTable
             transactions={transactions}

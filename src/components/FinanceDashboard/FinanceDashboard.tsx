@@ -209,8 +209,11 @@ export default function FinanceDashboard() {
       value: metrics.cogs,
       icon: <ShoppingCartIcon />,
       color: "warning.main",
-      description:
-        "Cost of Goods Sold: Direct costs of materials and labor for services delivered.",
+      description: `Cost of Goods Sold: Direct costs of materials and labor for services delivered.${
+        metrics.grossRevenue !== 0
+          ? ` (${Math.abs((metrics.cogs / metrics.grossRevenue) * 100).toFixed(1)}% of revenue)`
+          : ""
+      }`,
     },
     {
       format: formatCurrency,
@@ -218,8 +221,11 @@ export default function FinanceDashboard() {
       value: metrics.operatingExpenses,
       icon: <ReceiptIcon />,
       color: "error.main",
-      description:
-        "Business expenses not directly tied to services (rent, utilities, insurance, etc.).",
+      description: `Business expenses not directly tied to services (rent, utilities, insurance, etc.).${
+        metrics.grossRevenue !== 0
+          ? ` (${Math.abs((metrics.operatingExpenses / metrics.grossRevenue) * 100).toFixed(1)}% of revenue)`
+          : ""
+      }`,
     },
     {
       format: formatCurrency,
@@ -227,8 +233,11 @@ export default function FinanceDashboard() {
       value: metrics.netProfit,
       icon: <MoneyIcon />,
       color: metrics.netProfit >= 0 ? "success.main" : "error.main",
-      description:
-        "Calculated as: Gross Revenue + COGS + Operating Expenses (expenses are negative).",
+      description: `Calculated as: Gross Revenue + COGS + Operating Expenses (expenses are negative).${
+        metrics.grossRevenue !== 0
+          ? ` Profit margin: ${((metrics.netProfit / metrics.grossRevenue) * 100).toFixed(1)}%`
+          : ""
+      }`,
     },
     {
       title: "Owner Draws",
@@ -236,8 +245,11 @@ export default function FinanceDashboard() {
       icon: <TrendingDownIcon />,
       format: formatCurrency,
       color: "info.main",
-      description:
-        "Money withdrawn by the owner from the business (equity transactions with negative amounts).",
+      description: `Money withdrawn by the owner from the business (equity transactions with negative amounts).${
+        metrics.netProfit !== 0
+          ? ` (${Math.abs((metrics.ownerDraws / metrics.netProfit) * 100).toFixed(1)}% of net profit)`
+          : ""
+      }`,
     },
     {
       format: formatCurrency,
@@ -245,8 +257,11 @@ export default function FinanceDashboard() {
       value: metrics.ownerContributions,
       icon: <AccountBalanceIcon />,
       color: "primary.main",
-      description:
-        "Money invested by the owner into the business (equity transactions with positive amounts).",
+      description: `Money invested by the owner into the business (equity transactions with positive amounts).${
+        metrics.grossRevenue !== 0
+          ? ` (${((metrics.ownerContributions / metrics.grossRevenue) * 100).toFixed(1)}% of revenue)`
+          : ""
+      }`,
     },
   ];
 

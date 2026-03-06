@@ -342,14 +342,14 @@ export default function ExpenseTrackerApp(): React.JSX.Element {
 
   const balance = React.useMemo(
     () => calcBalance(transactions),
-    [transactions]
+    [transactions],
   );
 
   const topStats = React.useMemo(() => {
     // Use current month if possible; if none, show all-time.
     const currentMonth = monthISO();
     const monthTx = transactions.filter(
-      (t) => monthKeyFromISO(t.dateISO) === currentMonth
+      (t) => monthKeyFromISO(t.dateISO) === currentMonth,
     );
     const scope = monthTx.length ? monthTx : transactions;
 
@@ -373,7 +373,7 @@ export default function ExpenseTrackerApp(): React.JSX.Element {
 
   const updateTransaction = (id: string, patch: Partial<Transaction>) => {
     setTransactions((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, ...patch } : t))
+      prev.map((t) => (t.id === id ? { ...t, ...patch } : t)),
     );
   };
 
@@ -387,7 +387,7 @@ export default function ExpenseTrackerApp(): React.JSX.Element {
 
   const updateAccount = (id: string, patch: Partial<Account>) => {
     setAccounts((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, ...patch } : a))
+      prev.map((a) => (a.id === id ? { ...a, ...patch } : a)),
     );
   };
 
@@ -428,8 +428,8 @@ export default function ExpenseTrackerApp(): React.JSX.Element {
           {budgetSystem === "Monarch"
             ? "Overall: track everything, categorize, automate."
             : budgetSystem === "YNAB"
-            ? "Zero-based: give every dollar a job."
-            : "Envelope: allocate cash-like envelopes."}
+              ? "Zero-based: give every dollar a job."
+              : "Envelope: allocate cash-like envelopes."}
         </Typography>
       </Paper>
 
@@ -514,27 +514,27 @@ export default function ExpenseTrackerApp(): React.JSX.Element {
               {route === "dashboard"
                 ? "Dashboard"
                 : route === "transactions"
-                ? "Transactions"
-                : route === "scan"
-                ? "Scan Receipt"
-                : route === "reports"
-                ? "Reports"
-                : route === "budgets"
-                ? "Budgets"
-                : "Accounts"}
+                  ? "Transactions"
+                  : route === "scan"
+                    ? "Scan Receipt"
+                    : route === "reports"
+                      ? "Reports"
+                      : route === "budgets"
+                        ? "Budgets"
+                        : "Accounts"}
             </Typography>
             <Typography variant="body2" color="text.secondary" noWrap>
               {route === "dashboard"
                 ? "Track your financial health"
                 : route === "transactions"
-                ? "Manage your income and expenses"
-                : route === "scan"
-                ? "Upload a receipt to automatically extract expense data"
-                : route === "reports"
-                ? "Analyze your spending patterns"
-                : route === "budgets"
-                ? "Plan spending by category and system"
-                : "Link banks & sync transactions securely"}
+                  ? "Manage your income and expenses"
+                  : route === "scan"
+                    ? "Upload a receipt to automatically extract expense data"
+                    : route === "reports"
+                      ? "Analyze your spending patterns"
+                      : route === "budgets"
+                        ? "Plan spending by category and system"
+                        : "Link banks & sync transactions securely"}
             </Typography>
           </Box>
 
@@ -683,14 +683,14 @@ function DashboardScreen(props: {
   // Spending by category: current month only (if none, show "no expenses this month")
   const currentMonth = monthISO();
   const monthTx = props.transactions.filter(
-    (t) => monthKeyFromISO(t.dateISO) === currentMonth
+    (t) => monthKeyFromISO(t.dateISO) === currentMonth,
   );
   const monthExpenses = monthTx.filter((t) => t.type === "expense");
 
   const byCat = React.useMemo(() => {
     const m = new Map<Category, number>();
     monthExpenses.forEach((t) =>
-      m.set(t.category, (m.get(t.category) ?? 0) + t.amount)
+      m.set(t.category, (m.get(t.category) ?? 0) + t.amount),
     );
     return [...m.entries()].sort((a, b) => b[1] - a[1]);
   }, [monthExpenses]);
@@ -699,7 +699,7 @@ function DashboardScreen(props: {
     // pick latest budget
     return (
       [...props.budgets].sort((a, b) =>
-        a.monthISO < b.monthISO ? 1 : -1
+        a.monthISO < b.monthISO ? 1 : -1,
       )[0] ?? null
     );
   }, [props.budgets]);
@@ -708,11 +708,11 @@ function DashboardScreen(props: {
     if (!activeBudget) return [];
     const month = activeBudget.monthISO;
     const monthExp = props.transactions.filter(
-      (t) => t.type === "expense" && monthKeyFromISO(t.dateISO) === month
+      (t) => t.type === "expense" && monthKeyFromISO(t.dateISO) === month,
     );
     const spentByCat = new Map<Category, number>();
     monthExp.forEach((t) =>
-      spentByCat.set(t.category, (spentByCat.get(t.category) ?? 0) + t.amount)
+      spentByCat.set(t.category, (spentByCat.get(t.category) ?? 0) + t.amount),
     );
     return activeBudget.lines.map((l) => ({
       ...l,
@@ -1022,10 +1022,10 @@ function QuickAction(props: {
     props.tone === "danger"
       ? { bgcolor: "#ffecee", color: "#cc2343" }
       : props.tone === "warning"
-      ? { bgcolor: "#fff8dc", color: "#b05d00" }
-      : props.tone === "success"
-      ? { bgcolor: "#e9fff5", color: "#007f55" }
-      : { bgcolor: "#eaf3ff", color: "#0a49c2" };
+        ? { bgcolor: "#fff8dc", color: "#b05d00" }
+        : props.tone === "success"
+          ? { bgcolor: "#e9fff5", color: "#007f55" }
+          : { bgcolor: "#eaf3ff", color: "#0a49c2" };
 
   return (
     <Button
@@ -1062,20 +1062,20 @@ function TransactionRow({ t }: { t: Transaction }) {
     t.category === "Food"
       ? "🍴"
       : t.category === "Transport"
-      ? "🚗"
-      : t.category === "Groceries"
-      ? "🛒"
-      : t.category === "Subscriptions"
-      ? "📺"
-      : t.category === "Shopping"
-      ? "🛍️"
-      : t.category === "Utilities"
-      ? "⚡"
-      : t.category === "Freelance"
-      ? "🧾"
-      : t.category === "Housing"
-      ? "🏠"
-      : "💳";
+        ? "🚗"
+        : t.category === "Groceries"
+          ? "🛒"
+          : t.category === "Subscriptions"
+            ? "📺"
+            : t.category === "Shopping"
+              ? "🛍️"
+              : t.category === "Utilities"
+                ? "⚡"
+                : t.category === "Freelance"
+                  ? "🧾"
+                  : t.category === "Housing"
+                    ? "🏠"
+                    : "💳";
 
   const amountDisplay =
     t.type === "expense" ? `-${toMoney(t.amount)}` : `+${toMoney(t.amount)}`;
@@ -1227,7 +1227,7 @@ function TransactionsScreen(props: {
 
   const editingTx = React.useMemo(
     () => props.transactions.find((t) => t.id === editId) ?? null,
-    [props.transactions, editId]
+    [props.transactions, editId],
   );
 
   const filtered = React.useMemo(() => {
@@ -1703,28 +1703,28 @@ function ScanReceiptScreen(props: {
     const merchant = name.includes("starbucks")
       ? "Starbucks Coffee"
       : name.includes("uber")
-      ? "Uber Ride"
-      : name.includes("walmart")
-      ? "Walmart"
-      : name.includes("home")
-      ? "Home Depot"
-      : "Receipt Merchant";
+        ? "Uber Ride"
+        : name.includes("walmart")
+          ? "Walmart"
+          : name.includes("home")
+            ? "Home Depot"
+            : "Receipt Merchant";
 
     const category: Category = name.includes("starbucks")
       ? "Food"
       : name.includes("uber")
-      ? "Transport"
-      : name.includes("walmart")
-      ? "Groceries"
-      : name.includes("home")
-      ? "Shopping"
-      : "Other";
+        ? "Transport"
+        : name.includes("walmart")
+          ? "Groceries"
+          : name.includes("home")
+            ? "Shopping"
+            : "Other";
 
     const amount = name.includes("uber")
       ? 18.5
       : name.includes("starbucks")
-      ? 5.75
-      : 24.99;
+        ? 5.75
+        : 24.99;
 
     const nextDraft: ReceiptDraft = {
       dateISO: todayISO(),
@@ -1737,8 +1737,8 @@ function ScanReceiptScreen(props: {
         v.systemHint === "YNAB"
           ? "YNAB hint: assign this expense to a category envelope/job."
           : v.systemHint === "Goodbudget"
-          ? "Goodbudget hint: this should come out of an envelope category."
-          : "Monarch hint: categorize and track trends over time.",
+            ? "Goodbudget hint: this should come out of an envelope category."
+            : "Monarch hint: categorize and track trends over time.",
     };
 
     setDraft(nextDraft);
@@ -1809,7 +1809,7 @@ function ScanReceiptScreen(props: {
                     if (!f) return "Receipt file is required";
                     const ok =
                       ["image/jpeg", "image/png", "application/pdf"].includes(
-                        f.type
+                        f.type,
                       ) || f.name.toLowerCase().endsWith(".pdf");
                     if (!ok) return "Must be JPG/PNG/PDF";
                     if (f.size > 15 * 1024 * 1024)
@@ -2012,7 +2012,7 @@ function ReportsScreen(props: {
   const txSorted = React.useMemo(
     () =>
       [...props.transactions].sort((a, b) => (a.dateISO < b.dateISO ? 1 : -1)),
-    [props.transactions]
+    [props.transactions],
   );
 
   const months = React.useMemo(() => {
@@ -2029,10 +2029,10 @@ function ReportsScreen(props: {
       months.length >= 2 ? months[months.length - 2] : latestMonth;
 
     const m0 = props.transactions.filter(
-      (t) => monthKeyFromISO(t.dateISO) === latestMonth
+      (t) => monthKeyFromISO(t.dateISO) === latestMonth,
     );
     const m1 = props.transactions.filter(
-      (t) => monthKeyFromISO(t.dateISO) === lastMonth
+      (t) => monthKeyFromISO(t.dateISO) === lastMonth,
     );
 
     const exp0 = sumExpenses(m0);
@@ -2056,11 +2056,11 @@ function ReportsScreen(props: {
   const byCat = React.useMemo(() => {
     const latestMonth = stats.latestMonth;
     const m0 = props.transactions.filter(
-      (t) => t.type === "expense" && monthKeyFromISO(t.dateISO) === latestMonth
+      (t) => t.type === "expense" && monthKeyFromISO(t.dateISO) === latestMonth,
     );
     const map = new Map<Category, number>();
     m0.forEach((t) =>
-      map.set(t.category, (map.get(t.category) ?? 0) + t.amount)
+      map.set(t.category, (map.get(t.category) ?? 0) + t.amount),
     );
     return [...map.entries()].sort((a, b) => b[1] - a[1]);
   }, [props.transactions, stats.latestMonth]);
@@ -2278,7 +2278,7 @@ function BudgetsScreen(props: {
     if (exact) return exact;
     return (
       [...props.budgets].sort((a, b) =>
-        a.monthISO < b.monthISO ? 1 : -1
+        a.monthISO < b.monthISO ? 1 : -1,
       )[0] ?? null
     );
   }, [props.budgets, currentMonth]);
@@ -2295,7 +2295,7 @@ function BudgetsScreen(props: {
 
   const editing = React.useMemo(
     () => props.budgets.find((b) => b.id === editId) ?? null,
-    [props.budgets, editId]
+    [props.budgets, editId],
   );
 
   // Status overview for active budget
@@ -2303,11 +2303,11 @@ function BudgetsScreen(props: {
     if (!active) return [];
     const monthExp = props.transactions.filter(
       (t) =>
-        t.type === "expense" && monthKeyFromISO(t.dateISO) === active.monthISO
+        t.type === "expense" && monthKeyFromISO(t.dateISO) === active.monthISO,
     );
     const spentByCat = new Map<Category, number>();
     monthExp.forEach((t) =>
-      spentByCat.set(t.category, (spentByCat.get(t.category) ?? 0) + t.amount)
+      spentByCat.set(t.category, (spentByCat.get(t.category) ?? 0) + t.amount),
     );
     return active.lines
       .map((l) => ({ ...l, spent: spentByCat.get(l.category) ?? 0 }))
@@ -2518,8 +2518,8 @@ function BudgetExplainer(props: { system: BudgetSystem; active: boolean }) {
     props.system === "Monarch"
       ? "Overall approach: categorize transactions and watch trends. Budgets act like monthly guardrails."
       : props.system === "YNAB"
-      ? "Zero-based: assign every dollar to a category. Spending reduces available category balance."
-      : "Envelope system: each category is an envelope. Fund envelopes and spend from them.";
+        ? "Zero-based: assign every dollar to a category. Spending reduces available category balance."
+        : "Envelope system: each category is an envelope. Fund envelopes and spend from them.";
 
   return (
     <Paper
@@ -2570,7 +2570,7 @@ function BudgetUpsertDialog(props: {
         })) ?? [{ category: "Food", limit: 300 }],
       },
       mode: "onChange",
-    }
+    },
   );
 
   const { fields, append, remove } = useFieldArray({ control, name: "lines" });
@@ -2918,8 +2918,8 @@ function AccountsScreen(props: {
                       {a.type === "credit"
                         ? "💳"
                         : a.type === "savings"
-                        ? "🏦"
-                        : "🏛️"}
+                          ? "🏦"
+                          : "🏛️"}
                     </Avatar>
                     <Box sx={{ minWidth: 0 }}>
                       <Typography fontWeight={900} noWrap>

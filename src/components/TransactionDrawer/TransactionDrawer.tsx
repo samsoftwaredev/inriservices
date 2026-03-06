@@ -35,7 +35,7 @@ import type {
   FinancialDocument,
   TransactionSource,
 } from "@/types";
-// Constants not needed for this component
+import { useAuth } from "@/context";
 
 interface TransactionDrawerProps {
   open: boolean;
@@ -76,6 +76,7 @@ export default function TransactionDrawer({
   transactionId = null,
   onSaved,
 }: TransactionDrawerProps) {
+  const { userData } = useAuth();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
