@@ -4,23 +4,26 @@ import React from "react";
 import { Box, Grid } from "@mui/material";
 import {
   AccountBalance as AccountBalanceIcon,
+  TrendingUp as TrendingUpIcon,
+  TrendingDown as TrendingDownIcon,
   Receipt as ReceiptIcon,
   LinkOff as LinkOffIcon,
 } from "@mui/icons-material";
 import MetricCards from "../Dashboard/MetricCards";
 import { MetricCard } from "@/types";
-import { formatCurrency } from "../FinancialReportPDF";
 
 interface LedgerMetricsProps {
   totalAmountCents: number;
   totalTransactions: number;
   transactionsWithNoLinks: number;
+  formatCurrency: (cents: number) => string;
 }
 
 export default function LedgerMetrics({
   totalAmountCents,
   totalTransactions,
   transactionsWithNoLinks,
+  formatCurrency,
 }: LedgerMetricsProps) {
   const isPositive = totalAmountCents >= 0;
   const color = isPositive ? "success.main" : "error.main";

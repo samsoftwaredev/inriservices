@@ -39,7 +39,6 @@ import { accountsApi } from "@/services/accountsApi";
 import type { Accounts, AccountType } from "@/types";
 import { Constants } from "../../../database.types";
 import PageHeader from "../PageHeader";
-import { useAuth } from "@/context";
 
 interface AccountFormData {
   name: string;
@@ -67,7 +66,6 @@ const AccountTypeColors: Record<AccountType, string> = {
 };
 
 export default function AccountsManager() {
-  const { userData } = useAuth();
   const [accounts, setAccounts] = useState<Accounts[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -163,7 +161,7 @@ export default function AccountsManager() {
           code: formData.code.trim() || null,
           description: formData.description.trim() || null,
           is_active: formData.is_active,
-          company_id: userData?.companyId!, // Will be set by backend via RLS
+          company_id: "", // Will be set by backend via RLS
           parent_account_id: null,
         });
         setSuccessMessage("Account created successfully!");
