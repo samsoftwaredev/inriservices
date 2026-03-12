@@ -20,6 +20,7 @@ import {
   Download as DownloadIcon,
   Preview as PreviewIcon,
   Edit as EditIcon,
+  Send as SendIcon,
 } from "@mui/icons-material";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { toast } from "react-toastify";
@@ -588,6 +589,15 @@ const ContractForm: React.FC = () => {
                 </Button>
               )}
             </PDFDownloadLink>
+            <Button
+              variant="contained"
+              color="success"
+              size="large"
+              startIcon={<SendIcon />}
+              onClick={() => router.push("/contracts/sign/demo")}
+            >
+              Preview Signing Experience
+            </Button>
           </Box>
           <ContractPreview data={formValues} />
         </Box>

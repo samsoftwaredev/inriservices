@@ -2,6 +2,7 @@
   "deno.enablePaths": ["supabase/functions"],
   "deno.lint": true,
   "deno.unstable": true,
+  "chat.autopilot.enabled": true,
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
