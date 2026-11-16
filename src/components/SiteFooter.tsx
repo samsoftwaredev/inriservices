@@ -11,9 +11,9 @@ export function SiteFooter() {
           <p className="footer-brand">INRI Paint &amp; Wall LLC</p>
           <p>Painting, drywall repair and surface finishing for Garland and nearby Dallas-area communities.</p>
         </div>
-        <nav aria-label="Footer navigation"><p className="footer-head">Explore</p>{navLinks.map(item=><Link key={item.href} href={item.href}>{item.label}</Link>)}<Link href="/pricing-and-estimates">Estimates &amp; Pricing</Link><Link href="/licensing-and-insurance">Licensing &amp; Insurance</Link><Link href="/environmental-and-safety-practices">Safety &amp; Environment</Link></nav>
+        <nav aria-label="Footer navigation"><p className="footer-head">Explore</p>{navLinks.map(item=><Link key={item.href} href={item.href}>{item.label}</Link>)}<Link href="/pricing-and-estimates">Estimates &amp; Pricing</Link><Link href="/guides">Guides</Link><Link href="/es" hrefLang="es" lang="es">Español</Link><Link href="/privacy-policy">Privacy Policy</Link><Link href="/licensing-and-insurance">Licensing &amp; Insurance</Link><Link href="/environmental-and-safety-practices">Safety &amp; Environment</Link></nav>
         <nav aria-label="Service areas"><p className="footer-head">Service areas</p>{areas.map(a=><Link key={a.slug} href={areaPath(a.slug)}>{a.name}, TX</Link>)}</nav>
-        <div><p className="footer-head">Get in touch</p><a href={`tel:${business.phone}`}>{business.phoneDisplay}</a><a href={`mailto:${business.email}`}>{business.email}</a><p>{hours.display}<br />{hours.closed}</p><p className="footer-head">Follow us</p><SocialLinks /></div>
+        <div><p className="footer-head">Get in touch</p><a href={`tel:${business.phone}`} data-analytics-location="footer">{business.phoneDisplay}</a><a href={`mailto:${business.email}`} data-analytics-location="footer">{business.email}</a><p>{hours.display}<br />{hours.closed}</p><p className="footer-head">Follow us</p><SocialLinks /></div>
       </div>
       <div className="container footer-bottom">© {new Date().getFullYear()} {business.name}. All rights reserved.</div>
     </footer>

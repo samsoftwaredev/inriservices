@@ -1,4 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+
+afterEach(() => vi.unstubAllGlobals());
 import { existsSync } from 'node:fs';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ContactForm } from '../src/components/ContactForm';
@@ -49,19 +51,62 @@ describe('ContactForm', () => {
     expect(screen.getByLabelText(/full name/i)).toHaveFocus();
     expect(screen.getByLabelText(/full name/i)).toHaveAttribute('aria-invalid', 'true');
   });
-  it('submits a valid request by navigating to a prefilled mailto link', () => {
-    const loc = { href: '' };
-    vi.stubGlobal('location', loc);
-    render(<ContactForm />);
+  const fill = () => {
     fireEvent.change(screen.getByLabelText(/full name/i), { target: { value: good.fullName } });
     fireEvent.change(screen.getByLabelText(/phone number/i), { target: { value: good.phone } });
     fireEvent.change(screen.getByLabelText(/email/i), { target: { value: good.email } });
     fireEvent.change(screen.getByLabelText(/what do you need done/i), { target: { value: good.description } });
     fireEvent.click(screen.getByRole('button', { name: /send estimate request/i }));
+  };
+  it('posts the request to the API and shows a confirmation on success', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, status: 200 });
+    vi.stubGlobal('fetch', fetchMock);
+    render(<ContactForm />);
+    fill();
+    expect(await screen.findByRole('status')).toHaveTextContent(/received your request/i);
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe('/api/contact');
+    expect((init.body as FormData).get('fullName')).toBe(good.fullName);
+    expect((init.body as FormData).get('website')).toBe('');
+  });
+  it('falls back to a prefilled mailto link when server delivery is not configured (503)', async () => {
+    const loc = { href: '', pathname: '/contact' };
+    vi.stubGlobal('location', loc);
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 503 }));
+    render(<ContactForm />);
+    fill();
+    expect(await screen.findByRole('status')).toHaveTextContent(/email app should open/i);
     expect(loc.href).toContain('mailto:');
-    expect(screen.queryAllByRole('alert')).toHaveLength(0);
-    expect(screen.getByRole('status')).toBeInTheDocument();
-    vi.unstubAllGlobals();
+  });
+  it('falls back to mailto when the network request itself fails', async () => {
+    const loc = { href: '', pathname: '/contact' };
+    vi.stubGlobal('location', loc);
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Failed to fetch')));
+    render(<ContactForm />);
+    fill();
+    await screen.findByRole('status');
+    expect(loc.href).toContain('mailto:');
+  });
+  it('shows the phone number when the server rejects the request (not a mailto fallback)', async () => {
+    const loc = { href: '', pathname: '/contact' };
+    vi.stubGlobal('location', loc);
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 502 }));
+    render(<ContactForm />);
+    fill();
+    expect(await screen.findByRole('alert')).toHaveTextContent(/could not send/i);
+    expect(loc.href).toBe('');
+  });
+  it('renders Spanish labels and validation messages', () => {
+    render(<ContactForm locale="es" />);
+    expect(screen.getByLabelText(/nombre completo/i)).toBeRequired();
+    fireEvent.click(screen.getByRole('button', { name: /enviar solicitud/i }));
+    expect(screen.getAllByRole('alert')[0]).toHaveTextContent(/escriba su nombre/i);
+  });
+  it('offers optional service, time and photo fields that are not required', () => {
+    render(<ContactForm />);
+    expect(screen.getByLabelText(/service \(optional\)/i)).not.toBeRequired();
+    expect(screen.getByLabelText(/best time/i)).not.toBeRequired();
+    expect(screen.getByLabelText(/photos/i)).toHaveAttribute('accept', 'image/jpeg,image/png,image/webp');
   });
 });
 

@@ -6,6 +6,8 @@ import { ContactActions } from '../components/ContactActions';
 import { ServiceCard } from '../components/ServiceCard';
 import { SectionHeading } from '../components/SectionHeading';
 import { Callout } from '../components/Callout';
+import { TeamSection } from '../components/TeamSection';
+import { BeforeAfter } from '../components/BeforeAfter';
 import { ProjectGallery } from '../components/ProjectGallery';
 import { PricingPackages } from '../components/PricingPackages';
 import { Reviews } from '../components/Reviews';
@@ -18,6 +20,7 @@ export const metadata: Metadata = pageMetadata({
   title: 'House Painters & Drywall Repair in Garland, TX',
   description: defaultDescription,
   path: '/',
+  languages: { 'en-US': '/', 'es-US': '/es', 'x-default': '/' },
 });
 
 export default function HomePage() {
@@ -29,7 +32,7 @@ export default function HomePage() {
             <p className="eyebrow">Garland, Texas • Painting &amp; drywall services</p>
             <h1>Painting &amp; drywall repair <em>in Garland, TX.</em></h1>
             <p className="hero-lead">Interior and exterior painting, drywall repairs, cabinet painting, ceiling work and trim repairs for homes in Garland and nearby communities.</p>
-            <ContactActions />
+            <ContactActions location="home_hero" />
             <p className="hero-note">Locally operated. Clear estimates. Respect for your home.</p>
           </div>
           <div className="hero-art" aria-hidden="true">
@@ -58,6 +61,11 @@ export default function HomePage() {
           <div className="centered-link"><Link className="text-link" href="/services">View all services <span aria-hidden="true">→</span></Link></div>
         </div>
       </section>
+      <TeamSection />
+      <section className="section section-tint" id="before-after" aria-label="Before and after"><div className="container">
+        <SectionHeading reveal eyebrow="Before &amp; after" title="Real results from our projects" description="Photos from jobs we completed: repairs, repaints and refinishing." />
+        <BeforeAfter />
+      </div></section>
       <section className="section section-tint" id="our-work" aria-label="Our work"><div className="container">
         <SectionHeading reveal eyebrow="Our work" title="What we can do for you" description="Take a look at some of the transformations. We bring your vision to life with precision and care." />
         <ProjectGallery />

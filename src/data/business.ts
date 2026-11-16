@@ -15,6 +15,7 @@ export const publicPaths = [
   '/', '/about', '/services', '/areas', '/contact',
   '/frequently-asked-questions', '/pricing-and-estimates',
   '/licensing-and-insurance', '/environmental-and-safety-practices',
+  '/guides', '/privacy-policy', '/es',
 ] as const;
 
 /** Source: the owner's existing inripaintwall.com. Keep in sync with the Google Business Profile. */
@@ -42,7 +43,18 @@ export const trustPoints = ['Family owned & operated', 'Licensed & insured', 'Fr
 export const navLinks = [
   { href: '/services', label: 'Services' },
   { href: '/areas', label: 'Service Areas' },
+  { href: '/guides', label: 'Guides' },
   { href: '/about', label: 'About' },
   { href: '/frequently-asked-questions', label: 'FAQs' },
   { href: '/contact', label: 'Contact' },
 ] as const;
+
+/** Payment methods shown on the owner's existing site. */
+export const paymentMethods = ['American Express', 'Mastercard', 'Visa', 'Discover'] as const;
+
+/** Optional integrations. Leave unset to hide the related UI. */
+export const bookingUrl = process.env.NEXT_PUBLIC_BOOKING_URL;
+export const googleReviewUrl = process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL;
+
+/** Google Maps embed for the Garland business listing (from the owner's previous site). */
+export const mapEmbedUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d428502.0922754842!2d-96.67232899999999!3d32.95965245!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x42b7eb5354124873%3A0xfddef2cad263c247!2sINRI%20Paint%20%26%20Wall!5e0!3m2!1sen!2sus!4v1750204434395!5m2!1sen!2sus';
