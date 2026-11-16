@@ -23,3 +23,12 @@ export const gallery: readonly GalleryImage[] = [
   P(13, 'Opened ceiling and wall during repair work above painted cabinets'),
   P(12, 'Exposed ceiling framing before new drywall in a room with painted trim'),
 ];
+
+/** Real before/after photos from the owner's previous site, with the work each one shows. */
+export const beforeAfter = [
+  { src: '/work/before-after-family-room.jpg', caption: 'Family room: cabinets, fireplace trim and walls repainted', alt: 'Before and after of a family room with white cabinets and fireplace repainted and mint green walls added' },
+  { src: '/work/before-after-laundry-drywall.jpg', caption: 'Laundry room: drywall repair, new finish and paint', alt: 'Before and after of a laundry room with open walls and ceiling repaired, finished and painted teal' },
+  { src: '/work/before-after-bathroom-door.jpg', caption: 'Bathroom: wall color and door refreshed', alt: 'Before and after of a bathroom with beige walls repainted blue and a white door finished' },
+  { src: '/work/before-after-stairwell-wall.jpg', caption: 'Stairwell wall: patch repaired and painted', alt: 'Before and after of a stairwell wall with a damaged patch repaired and repainted to a smooth finish' },
+  { src: '/work/before-after-entry-door.jpg', caption: 'Entry door: worn finish restored', alt: 'Before and after of a worn wood entry door refinished with a rich, even stain' },
+] as const;

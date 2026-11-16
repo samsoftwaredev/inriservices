@@ -35,7 +35,7 @@ export function SiteHeader() {
             <Link href={item.href} key={item.href} onClick={() => setOpen(false)}>{item.label}</Link>
           ))}
         </nav>
-        <a href={`tel:${business.phone}`} className="header-phone">Call for an Estimate</a>
+        <a href={`tel:${business.phone}`} className="header-phone" data-analytics-location="header" data-analytics-cta="call">Call for an Estimate</a>
         <button
           ref={buttonRef}
           type="button"

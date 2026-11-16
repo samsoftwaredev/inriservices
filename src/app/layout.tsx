@@ -4,13 +4,19 @@ import { business } from '../data/business';
 import { defaultDescription, paintingContractorJsonLd, safeJsonLd, websiteJsonLd } from '../lib/seo';
 import { SiteHeader } from '../components/SiteHeader';
 import { SiteFooter } from '../components/SiteFooter';
+import { MobileActionBar } from '../components/MobileActionBar';
+import { Analytics } from '../components/Analytics';
 import './globals.css';
+
+const googleSiteVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
+const bingSiteVerification = process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION;
 
 export const metadata: Metadata = {
   metadataBase: new URL(business.url),
   title: { default: 'House Painters & Drywall Repair in Garland, TX | INRI Paint & Wall', template: '%s | INRI Paint & Wall' },
   description: defaultDescription,
   robots: { index: true, follow: true },
+  verification: googleSiteVerification || bingSiteVerification ? { ...(googleSiteVerification ? { google: googleSiteVerification } : {}), ...(bingSiteVerification ? { other: { 'msvalidate.01': bingSiteVerification } } : {}) } : undefined,
   applicationName: business.name,
   openGraph: {
     type: 'website', title: 'House Painters & Drywall Repair in Garland, TX | INRI Paint & Wall', description: defaultDescription,
@@ -24,10 +30,12 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="en">
       <body>
+        <Analytics />
         <a className="skip-link" href="#main-content">Skip to content</a>
         <SiteHeader />
         {children}
         <SiteFooter />
+        <MobileActionBar />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(paintingContractorJsonLd()) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(websiteJsonLd()) }} />
       </body>

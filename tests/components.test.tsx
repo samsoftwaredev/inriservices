@@ -18,10 +18,17 @@ describe('marketing components', () => {
     expect(screen.queryByText(/sign up|log in/i)).not.toBeInTheDocument();
     expect(screen.getByRole('link',{name:`${business.name} homepage`})).toHaveAttribute('href','/');
   });
+
+  it('marks primary contact actions for analytics without exposing visitor details', () => {
+    render(<ContactActions />);
+    expect(screen.getByRole('link', { name: /Call/ })).toHaveAttribute('data-analytics-cta', 'call');
+    expect(screen.getByRole('link', { name: 'Request an Estimate' })).toHaveAttribute('data-analytics-cta', 'estimate_form');
+  });
   it('renders the call and email CTAs as functional links', () => {
     render(<ContactActions />);
-    expect(screen.getByRole('link',{name:`Call ${business.name} at ${business.phoneDisplay}`})).toHaveAttribute('href',`tel:${business.phone}`);
-    expect(screen.getByRole('link',{name:'Request an Estimate'})).toHaveAttribute('href',expect.stringContaining(`mailto:${business.email}`));
+    expect(screen.getByRole('link',{name:`Call ${business.phoneDisplay}`})).toHaveAttribute('href',`tel:${business.phone}`);
+    expect(screen.getByRole('link',{name:'Text us'})).toHaveAttribute('href',`sms:${business.phone}`);
+    expect(screen.getByRole('link',{name:'Request an Estimate'})).toHaveAttribute('href','/contact#estimate');
   });
   it('links a service card to its real service detail page', () => {
     render(<ServiceCard service={services[0]} />);

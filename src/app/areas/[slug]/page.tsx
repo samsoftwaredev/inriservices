@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const area = getArea(slug);
   if (!area) return { title: 'Service area not found', robots: { index: false, follow: false } };
-  return pageMetadata({ title: area.metaTitle, description: area.metaDescription, path: areaPath(slug) });
+  return pageMetadata({ title: area.metaTitle, description: area.metaDescription, path: areaPath(slug), imageKey: slug });
 }
 
 export default async function AreaPage({ params }: Props) {
@@ -37,7 +37,7 @@ export default async function AreaPage({ params }: Props) {
         <p className="eyebrow">{area.name}, Texas • Painting &amp; drywall</p>
         <h1>Painting &amp; drywall repair in {area.name}, TX</h1>
         <p>{area.lead}</p>
-        <ContactActions compact />
+        <ContactActions compact location="area_hero" />
       </div></section>
       <section className="section"><div className="container reading-content">
         <h2>{area.contextHeading}</h2>
