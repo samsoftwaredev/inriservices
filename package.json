@@ -1,0 +1,37 @@
+{
+  "name": "inriservices-marketing-only",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "validate": "npm run audit:legacy && npm run typecheck && npm run lint && npm run test:coverage && npm run build",
+    "audit:legacy": "node scripts/check-marketing-only.mjs"
+  },
+  "dependencies": {
+    "next": "^15.5.12",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.0.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.5.12",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.0.0",
+    "vitest": "^3.2.4",
+    "@vitejs/plugin-react": "^4.4.0"
+  }
+}
