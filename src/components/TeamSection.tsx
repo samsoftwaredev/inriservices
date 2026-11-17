@@ -10,7 +10,6 @@ export function TeamSection() {
         <p className="eyebrow">Family owned &amp; operated</p>
         <h2>Meet the crew who will be in your home</h2>
         <p>We are more than painters. We are homeowners too, which is why we treat every project with the care and respect it deserves. Our team is made up of skilled professionals who put cleanliness and quality first.</p>
-        <p>You will see the same people from estimate to final walkthrough, and we stand behind our work with a 6-month workmanship warranty.</p>
         <Link className="text-link" href="/about">More about our team <span aria-hidden="true">→</span></Link>
       </div>
       <RevealGroup className="team-photos" columns={2}>

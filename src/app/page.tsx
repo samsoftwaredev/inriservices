@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { services } from '../data/services';
 import { defaultDescription, pageMetadata } from '../lib/seo';
 import { ContactActions } from '../components/ContactActions';
+import { GoogleFormEmbed } from '../components/GoogleFormEmbed';
 import { ServiceCard } from '../components/ServiceCard';
 import { SectionHeading } from '../components/SectionHeading';
 import { Callout } from '../components/Callout';
@@ -11,10 +12,9 @@ import { BeforeAfter } from '../components/BeforeAfter';
 import { ProjectGallery } from '../components/ProjectGallery';
 import { PricingPackages } from '../components/PricingPackages';
 import { Reviews } from '../components/Reviews';
-import { ContactForm } from '../components/ContactForm';
 import { RevealGroup } from '../components/RevealGroup';
 import { areas, areaPath } from '../data/areas';
-import { business, trustPoints } from '../data/business';
+import { business, estimateFee, trustPoints } from '../data/business';
 
 export const metadata: Metadata = pageMetadata({
   title: 'House Painters & Drywall Repair in Garland, TX',
@@ -32,7 +32,7 @@ export default function HomePage() {
             <p className="eyebrow">Garland, Texas • Painting &amp; drywall services</p>
             <h1>Painting &amp; drywall repair <em>in Garland, TX.</em></h1>
             <p className="hero-lead">Interior and exterior painting, drywall repairs, cabinet painting, ceiling work and trim repairs for homes in Garland and nearby communities.</p>
-            <ContactActions location="home_hero" />
+            <ContactActions location="home_hero" estimateHref="#estimate" />
             <p className="hero-note">Locally operated. Clear estimates. Respect for your home.</p>
           </div>
           <div className="hero-art" aria-hidden="true">
@@ -86,9 +86,18 @@ export default function HomePage() {
           <div><span className="step-number">03</span><h3>Paint, repair and finish</h3><p>Complete the agreed scope, tidy the space and review the finished work.</p></div>
         </div>
       </div></section>
-      <section className="section"><div className="container split-content">
+      <section className="section"><div className="container narrow-local">
         <div><p className="eyebrow">Local service</p><h2>Painting and drywall work around Garland</h2><p>We are based in Garland and serve homeowners in nearby communities. Project availability depends on the property and work involved.</p><ul className="city-links">{areas.map(area => <li key={area.slug}><Link href={areaPath(area.slug)}>{area.name}, TX</Link></li>)}</ul><Link href="/areas" className="text-link">Explore service areas <span aria-hidden="true">→</span></Link></div>
-        <div className="quote-panel" id="estimate"><p className="eyebrow">Need an estimate?</p><h3>Tell us about the surfaces you need help with.</h3><p>Fill in every field below, or call {business.phoneDisplay}.</p><ContactForm /></div>
+      </div></section>
+      <section className="section section-tint" id="estimate" aria-label="Request an estimate"><div className="container split-content estimate-split">
+        <div>
+          <p className="eyebrow">Need an estimate?</p>
+          <h2>Tell us about the surfaces you need help with</h2>
+          <p>{estimateFee.summary}</p>
+          <p>Fill out the form, or call or text {business.phoneDisplay}. Include the location, the type of work and the approximate size.</p>
+          <ContactActions compact location="home_estimate" estimateHref="#estimate-form" />
+        </div>
+        <div className="quote-panel" id="estimate-form"><GoogleFormEmbed /></div>
       </div></section>
       <div className="container"><Callout /></div>
     </main>

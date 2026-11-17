@@ -5,7 +5,7 @@ import { Callout } from '../../components/Callout';
 
 export const metadata: Metadata = pageMetadata({
   title: 'Licensing, Insurance & Certifications',
-  description: 'INRI Paint & Wall LLC is licensed and insured with general liability and workers\' compensation coverage, EPA Lead-Safe (RRP) certified and OSHA 10 trained.',
+  description: 'INRI Paint & Wall LLC is licensed and insured with general liability and workers\' compensation coverage, and OSHA 10 safety trained.',
   path: '/licensing-and-insurance',
 });
 
@@ -15,7 +15,6 @@ const coverage = [
   { title: "Workers' compensation", text: "All employees are covered, so you are not responsible if a worker is injured on your property." },
 ];
 const credentials = [
-  { title: 'EPA Lead-Safe certified (RRP)', text: 'The Renovation, Repair and Painting rule applies to homes built before 1978 and covers safe handling of lead-based paint.' },
   { title: 'OSHA 10-hour construction safety', text: 'Team members are trained in workplace safety standards and protocols.' },
 ];
 
@@ -25,7 +24,7 @@ export default function LicensingPage() {
       <section className="page-hero"><div className="container narrow">
         <p className="eyebrow">Licensing &amp; insurance</p>
         <h1>Licensed, insured and certified</h1>
-        <p>Your home is protected while we work. Documentation is available on request with your free estimate.</p>
+        <p>Your home is protected while we work. Documentation is available on request with your estimate.</p>
       </div></section>
       <section className="section"><div className="container reading-content">
         <h2>Active insurance coverage</h2>
@@ -36,7 +35,6 @@ export default function LicensingPage() {
         <ul>
           <li>Accidental damage during the work is covered by liability insurance.</li>
           <li>Workers&apos; compensation means you are not liable for worker injuries.</li>
-          <li>Lead-safe practices are followed for homes built before 1978.</li>
           <li>Safety training for every team member on site.</li>
         </ul>
         <p>To receive a copy of our insurance certificate, ask for it when you request an estimate by calling <a href={`tel:${business.phone}`}>{business.phoneDisplay}</a> or emailing <a href={`mailto:${business.email}?subject=Insurance%20certificate%20request`}>{business.email}</a>.</p>

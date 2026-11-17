@@ -22,7 +22,7 @@ export default function PrivacyPage() {
         <h2>Who we are</h2>
         <p>{business.name} is a painting and drywall repair company based in Garland, Texas. This policy covers {business.url.replace('https://', '')}.</p>
         <h2>Information you give us</h2>
-        <p>When you request an estimate we collect your name, phone number, email address and a description of your project. You may also choose to add the service you need, the best time to reach you and up to four photos. If you call, text or email us, we receive the contact details you use.</p>
+        <p>When you request an estimate we collect your name, phone number, email address and a description of your project. If you call, text or email us, we receive the contact details you use.</p>
         <h2>How we use it</h2>
         <ul>
           <li>To respond to your request, schedule an estimate and communicate about your project.</li>
@@ -32,7 +32,7 @@ export default function PrivacyPage() {
         <h2>Analytics</h2>
         <p>We use Google Analytics 4 to understand how visitors use the site, such as which pages are viewed and whether people tap the call, text or email buttons or start the estimate form. Analytics receives page and device information and may set cookies. We never send what you type into the form, your name, phone number or email to Analytics, and we have turned off Google Signals and ad personalization. You can block analytics with your browser settings or by using the <a href="https://tools.google.com/dlpage/gaoptout">Google Analytics opt-out add-on</a>.</p>
         <h2>Service providers</h2>
-        <p>Estimate requests are delivered to us by email through an email delivery provider. The website is hosted by a cloud hosting provider, and maps on the site are provided by Google. These providers process information only to provide their services to us.</p>
+        <p>Estimate requests are collected with Google Forms, which is provided by Google and subject to Google&apos;s privacy policy, and we receive them by email. The website is hosted by a cloud hosting provider, and maps on the site are also provided by Google. These providers process information only to provide their services to us.</p>
         <h2>How long we keep information</h2>
         <p>We keep estimate requests for as long as needed to respond and to maintain our business records, then delete them when no longer needed.</p>
         <h2>Your choices</h2>

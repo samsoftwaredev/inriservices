@@ -38,7 +38,7 @@ export const googleMapsUrl = 'https://maps.app.goo.gl/f5QAd9NT7ZUtNxt76';
 export const logoPath = '/inri-logo.png';
 
 /** Trust facts the owner publishes on the existing site. Verify before launch. */
-export const trustPoints = ['Family owned & operated', 'Licensed & insured', 'Free estimates', '6-month workmanship warranty', 'EPA lead-safe (RRP) certified'] as const;
+export const trustPoints = ['Family owned & operated', 'Licensed & insured', '$30 estimate, credited toward your project'] as const;
 
 export const navLinks = [
   { href: '/services', label: 'Services' },
@@ -58,3 +58,14 @@ export const googleReviewUrl = process.env.NEXT_PUBLIC_GOOGLE_REVIEW_URL;
 
 /** Google Maps embed for the Garland business listing (from the owner's previous site). */
 export const mapEmbedUrl = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d428502.0922754842!2d-96.67232899999999!3d32.95965245!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x42b7eb5354124873%3A0xfddef2cad263c247!2sINRI%20Paint%20%26%20Wall!5e0!3m2!1sen!2sus!4v1750204434395!5m2!1sen!2sus';
+
+/** Estimates cost $30. If the customer goes ahead with the work, the $30 is deducted from the final price. */
+export const estimateFee = {
+  amount: '$30',
+  summary: 'Estimates are $30, and the $30 is deducted from your final price if you go ahead with the work.',
+} as const;
+
+/** Google Form used for estimate requests (embedded on /contact). Responses and email alerts are configured in Google Forms. */
+export const contactFormId = '1FAIpQLSeLwFHFavzS9xZOamOBW46mQN8QYE9MamdgYExtRNo2lfHCfw';
+export const contactFormEmbedUrl = `https://docs.google.com/forms/d/e/${contactFormId}/viewform?embedded=true`;
+export const contactFormUrl = `https://docs.google.com/forms/d/e/${contactFormId}/viewform`;
