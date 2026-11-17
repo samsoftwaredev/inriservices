@@ -106,7 +106,7 @@ export const areas: readonly Area[] = [
       { title: 'Room-by-room interior updates', text: 'Many owners refresh one area at a time. We can scope a single room or build a plan across several.', serviceSlug: 'interior-painting' },
     ],
     goodToKnowHeading: "Tell us your home's age",
-    goodToKnow: 'Paint applied to homes built before 1978 may contain lead, and federal rules apply to work that disturbs it. INRI Paint & Wall is EPA Lead-Safe (RRP) certified. When you contact us about a Richardson home from that era, mention the build year so we can plan containment and preparation before any sanding or scraping.',
+    goodToKnow: 'Paint applied to homes built before 1978 may contain lead, and federal rules apply to work that disturbs it. When you contact us about a Richardson home from that era, mention the build year so we can plan preparation and discuss precautions before any sanding or scraping.',
     nearby: ['plano', 'garland', 'dallas'],
     questions: [
       { question: 'Can you fix wall patches from earlier remodels before painting?', answer: 'Yes. Drywall patching and texture blending are part of our work, and we review how visible the old repairs are during the estimate.' },
@@ -229,7 +229,7 @@ export const areas: readonly Area[] = [
     name: 'Addison',
     summary: 'Townhomes, condos and compact homes: patch repairs, interior repaints and trim.',
     metaTitle: 'Painting & Drywall in Addison, TX',
-    metaDescription: 'Interior painting, drywall patch repair and trim work for Addison, TX townhomes, condos and homes. Call INRI Paint & Wall for a free estimate.',
+    metaDescription: 'Interior painting, drywall patch repair and trim work for Addison, TX townhomes, condos and homes. Call INRI Paint & Wall for an estimate.',
     lead: 'We take painting and drywall repair projects in Addison, where much of the work is interior and focused on townhomes, condos and smaller homes.',
     contextHeading: 'Interior-focused projects in Addison townhomes and condos',
     context: [

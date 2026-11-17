@@ -236,6 +236,15 @@ ul, ol { padding-left: 1.25rem; }
 .crew-gallery .gallery-item { background: var(--surface); }
 @media (min-width: 960px) { .gallery.crew-gallery { columns: 3; } .team-grid { grid-template-columns: .9fr 1.1fr; gap: 56px; } }
 
+/* ---------- Embedded Google Form ---------- */
+.gform { display: grid; gap: 12px; margin-top: 16px; }
+.gform-frame { width: 100%; height: 1300px; border: 1px solid var(--line); border-radius: var(--r-md); background: #fff; }
+@media (min-width: 600px) { .gform-frame { height: 1100px; } }
+.estimate-fee { font-size: 1.25rem; color: var(--ink); background: var(--primary-container); border-radius: var(--r-md); padding: 16px 20px; }
+
+.estimate-split { align-items: start; }
+.estimate-split .quote-panel { padding: 16px; background: var(--surface); border: 1px solid var(--line); }
+
 /* ---------- Inner pages ---------- */
 .page-hero { padding: 48px 0 40px; background: var(--powder); }
 .page-hero .container { background-color: var(--surface); background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px); background-size: 32px 32px; border: 1px solid var(--outline); border-radius: var(--r-lg); padding: 32px 20px; box-shadow: var(--e2); }

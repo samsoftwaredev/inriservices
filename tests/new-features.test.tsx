@@ -66,12 +66,13 @@ describe('privacy and Spanish pages', () => {
     expect(container.querySelectorAll('h1')).toHaveLength(1);
     expect(screen.getByText(/Google Analytics 4/)).toBeInTheDocument();
   });
-  it('renders the Spanish landing page with hreflang alternates and a Spanish form', () => {
+  it('renders the Spanish landing page with hreflang alternates and Spanish contact options', () => {
     const { container } = render(<SpanishHome />);
     expect(container.querySelectorAll('h1')).toHaveLength(1);
     expect(container.querySelector('main')?.getAttribute('lang')).toBe('es');
     expect(esMeta.alternates?.languages).toMatchObject({ 'en-US': '/', 'es-US': '/es', 'x-default': '/' });
-    expect(screen.getByLabelText(/nombre completo/i)).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /Llame al/ })[0]).toHaveAttribute('href', `tel:${business.phone}`);
+    expect(screen.getByRole('link', { name: /Formulario/ })).toHaveAttribute('href', '/contact#estimate');
     expect(screen.getAllByRole('heading', { level: 3 }).length).toBeGreaterThanOrEqual(services.length);
   });
 });

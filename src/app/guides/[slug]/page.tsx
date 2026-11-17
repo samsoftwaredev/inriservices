@@ -47,7 +47,7 @@ export default async function GuidePage({ params }: Props) {
         <ul>{related.map((sv) => <li key={sv.slug}><Link href={`/services/${sv.slug}`}>{sv.shortTitle}</Link>: {sv.summary}</li>)}</ul>
         <p>More <Link href="/guides">homeowner guides</Link>.</p>
       </article></section>
-      <div className="container"><Callout title="Have a question about your home?" message="Send us photos and a short description. We will tell you what the job involves and give you a free estimate." /></div>
+      <div className="container"><Callout title="Have a question about your home?" message="Send us photos and a short description. We will tell you what the job involves and give you an estimate ($30, deducted from your final price if you go ahead)." /></div>
       {jsonLd.map((d, i) => <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(d) }} />)}
     </main>
   );

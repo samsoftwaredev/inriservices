@@ -52,7 +52,7 @@ Or `npm run validate` to run typecheck, lint, tests, and build.
 - Unverified pricing, expired 2025 promotions, author attributions, reviews and fake project data are excluded.
 - Community pages (`/areas/[slug]`, content in `src/data/areas.ts`) exist for each service city. Google treats near-identical city pages as doorway spam, so each has its own housing context, project mix, local considerations and FAQs, and `tests/areas.test.tsx` fails if copy is shared between cities or is too thin. Only general, verifiable local context is used. Add real project photos/testimonials per city when you have them, and do not add a city you do not actually serve.
 - Project photos in `public/work/` are the 18 images from the "What We Can Do for You" section of the existing inripaintwall.com. Descriptions live in `src/data/gallery.ts`. Reviews and patch pricing in `src/data/offers.ts` were supplied by the owner; only add reviews left by customers.
-- The contact form (`ContactForm`) requires full name, phone, email and a project description; service, best time and up to 4 photos are optional (photos are shrunk in the browser first). It posts to `/api/contact`, which validates, applies spam traps (hidden field, minimum fill time, rate limit, image signature checks) and emails the request through Resend. If `RESEND_API_KEY`/`CONTACT_FROM_EMAIL` are not set (HTTP 503) or the network fails, the form falls back to opening the visitor's email app pre-filled. Nothing is stored in a database.
+- The contact page embeds the owner's Google Form (`GoogleFormEmbed`, URL in `src/data/business.ts`). Required questions and email alerts are configured inside Google Forms, not in this code. Page analytics infer starts (clicking into the iframe) and submissions (the iframe's second load). The earlier custom form (`ContactForm`, `/api/contact`, Resend) is still in the repo but unused; it can be re-enabled or deleted.
 
 ### Validation status
 
@@ -71,6 +71,14 @@ Create a GA4 web data stream for the production domain, copy its Measurement ID,
 - *Limits:* `phone_click` counts taps on the number, not completed calls, and `generate_lead` means the email app opened, not that the email was sent. Real call volume lives in Google Business Profile, or add a call-tracking number. Link GA4 to Search Console to connect queries to these outcomes.
 
 If Search Console provides an HTML-tag verification token, set `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` before building. Domain-property verification through DNS is also supported and does not require a code change.
+
+### Estimates
+
+Estimates cost $30, and the $30 is deducted from the final price if the customer proceeds (`estimateFee` in `src/data/business.ts`). The site makes no free-estimate, workmanship-warranty or EPA lead-safe (RRP) claims, and `tests/content-integrity.test.ts` fails if they reappear. Only add the RRP claim back if the company holds the EPA certification.
+
+### Google Form setup (do this in Google Forms)
+
+Mark name, phone, email and the project description as required. In Responses, turn on "Get email notifications for new responses" on the account that owns the form, and make sure that is `samuel@inripaintwall.com` (or share the form with it). Do not add a file-upload question, because Google requires visitors to sign in to upload; the page tells visitors to text or email photos instead.
 
 ### Delivery, booking and optional integrations
 
